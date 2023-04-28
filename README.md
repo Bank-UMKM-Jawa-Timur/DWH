@@ -10,6 +10,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus molestie imperd
 
 1. Clone repository.
 2. Run command "composer install".
-3. Run command "php artisan migrate --seed".
-4. Run command "php artisan serve" to run the project.
-5. Open [http://127.0.0.1:8000](http://127.0.0.1:8000) to open the project.
+3. Duplicate .env.example file and rename into .env
+4. Open .env file and change DB_DATABASE variable value to "datawarehouse_db"
+5. Run command "php artisan migrate --seed".
+6. Run command "php artisan serve" to run the project.
+7. Open [http://127.0.0.1:8000](http://127.0.0.1:8000) to open the project.
