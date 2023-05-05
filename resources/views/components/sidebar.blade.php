@@ -44,18 +44,18 @@
                     <div class="collapse {{ request()->is('template_notifikasi', 'template_notifikasi/*', 'hak_akses', 'hak_akses/*', 'vendor', 'vendor/*', 'role', 'role/*', 'pengguna', 'pengguna/*') ? 'show' : '' }}"
                         id="base">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="/role">
+                            <li class="{{ request()->is('master/role') ? 'active' : '' }}">
+                                <a href="{{ route('role.index') }}">
                                     <span class="sub-item">Role / Peran</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="/pengguna">
+                            <li class="{{ request()->is('master/pengguna') ? 'active' : '' }}">
+                                <a href="/master/pengguna">
                                     <span class="sub-item">Pengguna</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="/vendor">
+                            <li class="{{ request()->is('master/vendor') ? 'active' : '' }}">
+                                <a href="/master/vendor">
                                     <span class="sub-item">Vendor</span>
                                 </a>
                             </li>
@@ -64,13 +64,13 @@
                                     <span class="sub-item">Hak Akses</span>
                                 </a>
                             </li> --}}
-                            <li>
-                                <a href="/kategori_dokumen">
+                            <li class="{{ request()->is('master/kategori_dokumen') ? 'active' : '' }}">
+                                <a href="/master/kategori_dokumen">
                                     <span class="sub-item">Kategori Dokumen</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="/template_notifikasi">
+                            <li class="{{ request()->is('master/template_notifikasi') ? 'active' : '' }}">
+                                <a href="/master/template_notifikasi">
                                     <span class="sub-item">Template Notifikasi</span>
                                 </a>
                             </li>
