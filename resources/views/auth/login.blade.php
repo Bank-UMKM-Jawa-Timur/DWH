@@ -35,11 +35,15 @@
     <div class="wrapper wrapper-login">
         <div class="container container-login animated fadeIn">
             <img src="{{ asset('template') }}/assets/img/logo.png" alt="navbar brand" class="login-logo">
-            <div class="login-form">
+            <form class="login-form" action="{{ route('login') }}" method="POST">
+                @csrf
                 <div class="form-group form-floating-label">
-                    <input id="username" autofocus name="username" type="text"
+                    <input id="email" autofocus name="email" type="text"
                         class="form-control input-border-bottom" required>
-                    <label for="username" class="placeholder">Username</label>
+                    <label for="email" class="placeholder">Username / Email</label>
+                    @if ($errors->get('email'))
+                        <span class="text-danger">{{ $errors->get('email')[0] }}</span>
+                    @endif
                 </div>
                 <div class="form-group form-floating-label">
                     <input id="password" name="password" type="password" class="form-control input-border-bottom"
@@ -48,6 +52,9 @@
                     <div class="show-password">
                         <i class="icon-eye"></i>
                     </div>
+                    @if ($errors->get('password'))
+                        <span class="text-danger">{{ $errors->get('password')[0] }}</span>
+                    @endif
                 </div>
                 {{-- <div class="row form-sub m-0">
                     <div class="custom-control custom-checkbox">
@@ -58,18 +65,18 @@
                     <a href="#" class="link float-right">Forget Password ?</a>
                 </div> --}}
                 <div class="form-group form-floating-label">
-                    <a href="#" class="btn btn-danger btn-login">Login</a>
+                    <button type="submit" class="btn btn-danger btn-login">Login</button>
                 </div>
                 {{-- <div class="login-account">
                     <span class="msg">Don't have an account yet ?</span>
                     <a href="#" id="show-signup" class="link">Sign Up</a>
                 </div> --}}
-            </div>
+            </form>
         </div>
 
         <div class="container container-signup animated fadeIn">
             <h3 class="text-center">Sign Up</h3>
-            <div class="login-form">
+            <form class="login-form">
                 <div class="form-group form-floating-label">
                     <input id="fullname" name="fullname" type="text" class="form-control input-border-bottom"
                         required>
@@ -106,7 +113,7 @@
                     <a href="#" id="show-signin" class="btn btn-danger btn-link btn-login mr-3">Cancel</a>
                     <a href="#" class="btn btn-primary btn-rounded btn-login">Sign Up</a>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     <script src="{{ asset('template') }}/assets/js/core/jquery.3.2.1.min.js"></script>
