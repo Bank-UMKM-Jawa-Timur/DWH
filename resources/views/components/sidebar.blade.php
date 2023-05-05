@@ -15,8 +15,8 @@
                 </div>
             </div>
             <ul class="nav nav-danger">
-                <li class="nav-item active">
-                    <a href="../forms/formwidget.html">
+                <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
+                    <a href="/">
                         <i class="icon-home"></i>
                         <p>Dashboard</p>
                     </a>
@@ -27,68 +27,70 @@
                     </span>
                     <h4 class="text-section">Fitur Aplikasi</h4>
                 </li>
-                <li class="nav-item">
-                    <a href="#">
+                <li class="nav-item {{ request()->is('kredit') ? 'active' : '' }}">
+                    <a href="/kredit">
                         <i class="icon-credit-card"></i>
                         <p>Kredit</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li
+                    class="nav-item {{ request()->is('template_notifikasi', 'template_notifikasi/*', 'hak_akses', 'hak_akses/*', 'vendor', 'vendor/*', 'role', 'role/*', 'pengguna', 'pengguna/*') ? 'active' : '' }}">
                     <a data-toggle="collapse" href="#base">
                         <i class="
                             icon-user-following"></i>
                         <p>Master</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="base">
+                    <div class="collapse {{ request()->is('template_notifikasi', 'template_notifikasi/*', 'hak_akses', 'hak_akses/*', 'vendor', 'vendor/*', 'role', 'role/*', 'pengguna', 'pengguna/*') ? 'show' : '' }}"
+                        id="base">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="#">
+                                <a href="/role">
                                     <span class="sub-item">Role / Peran</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="/pengguna">
                                     <span class="sub-item">Pengguna</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="/vendor">
                                     <span class="sub-item">Vendor</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            {{-- <li>
+                                <a href="/hak_akses">
                                     <span class="sub-item">Hak Akses</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li>
-                                <a href="#">
+                                <a href="/kategori_dokumen">
                                     <span class="sub-item">Kategori Dokumen</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="/template_notifikasi">
                                     <span class="sub-item">Template Notifikasi</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a href="#">
+                <li class="nav-item {{ request()->is('log_aktivitas') ? 'active' : '' }}">
+                    <a href="/log_aktivitas">
                         <i class="icon-clock"></i>
                         <p>Log Aktivitas</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#">
+                    <a href="/laporan">
                         <i class="icon-printer"></i>
                         <p>Laporan</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#">
+                    <a href="/target">
                         <i class="icon-graph"></i>
                         <p>Target</p>
                     </a>
@@ -100,7 +102,7 @@
                     <h4 class="text-section">Settings</h4>
                 </li>
                 <li class="nav-item">
-                    <a href="#">
+                    <a href="/notifikasi">
                         <i class="icon-bell"></i>
                         <p>Notifikasi</p>
                     </a>

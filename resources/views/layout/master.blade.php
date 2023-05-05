@@ -4,8 +4,16 @@
     <!-- Sidebar -->
     @include('components.sidebar')
     <div class="main-panel">
-        @yield('content')
-
+        <div class="container">
+            @yield('content')
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="copyright ml-auto">
+                        @2023 Data Warehouse | All rights reserved
+                    </div>
+                </div>
+            </footer>
+        </div>
 
         {{-- notif --}}
         <div class="quick-sidebar">
