@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,11 +18,23 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', function () {
     return view('auth.login');
 });
-Route::get('/role', function () {
-    $param['title'] = 'Role/Peran';
-    $param['pageTitle'] = 'Role/Peran';
-    return view('pages.role.index', $param);
-});
+
+Route::get('/', function () {
+    $param['title'] = 'Dashboard';
+    $param['pageTitle'] = 'Dashboard SuperAdmin';
+    return view('pages.home', $param);
+})->middleware(['auth', 'verified']);
+
+Route::get('/dashboard', function () {
+    $param['title'] = 'Dashboard';
+    $param['pageTitle'] = 'Dashboard SuperAdmin';
+    return view('pages.home', $param);
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::prefix('master')->group(function () {
+    Route::resource('/role', RoleController::class);
+})->middleware(['auth', 'verified']);
+
 
 Route::get('/pengguna', function () {
     $param['title'] = 'Pengguna';
@@ -60,17 +73,6 @@ Route::get('/log_aktivitas', function () {
 });
 
 
-Route::get('/', function () {
-    $param['title'] = 'Dashboard';
-    $param['pageTitle'] = 'Dashboard SuperAdmin';
-    return view('pages.home', $param);
-});
-
-Route::get('/dashboard', function () {
-    $param['title'] = 'Dashboard';
-    $param['pageTitle'] = 'Dashboard SuperAdmin';
-    return view('pages.home', $param);
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

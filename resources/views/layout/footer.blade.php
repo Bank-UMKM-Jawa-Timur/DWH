@@ -41,6 +41,7 @@
         });
     });
 </script>
+@stack('extraScript')
 </body>
 
 </html>
