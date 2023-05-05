@@ -19,11 +19,12 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
-Route::get('/', function () {
-    return view('auth.login');
-});
-
 Route::middleware('auth')->group(function () {
+    Route::get('/', function () {
+        $param['title'] = 'Dashboard';
+        $param['pageTitle'] = 'Dashboard SuperAdmin';
+        return view('pages.home', $param);
+    });
     Route::get('/dashboard', function () {
         $param['title'] = 'Dashboard';
         $param['pageTitle'] = 'Dashboard SuperAdmin';
