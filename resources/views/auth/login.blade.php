@@ -1,47 +1,119 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!DOCTYPE html>
+<html lang="en">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Login</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" href="{{ asset('template') }}/assets/img/icon.ico" type="image/x-icon" />
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    <!-- Fonts and icons -->
+    <script src="{{ asset('template') }}/assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+            google: {
+                "families": ["Lato:300,400,700,900"]
+            },
+            custom: {
+                "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands",
+                    "simple-line-icons"
+                ],
+                urls: ['{{ asset('template') }}/assets/css/fonts.min.css']
+            },
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ asset('template') }}/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('template') }}/assets/css/atlantis.css">
+</head>
+
+<body class="login">
+    <div class="wrapper wrapper-login">
+        <div class="container container-login animated fadeIn">
+            <img src="{{ asset('template') }}/assets/img/logo.png" alt="navbar brand" class="login-logo">
+            <div class="login-form">
+                <div class="form-group form-floating-label">
+                    <input id="username" autofocus name="username" type="text"
+                        class="form-control input-border-bottom" required>
+                    <label for="username" class="placeholder">Username</label>
+                </div>
+                <div class="form-group form-floating-label">
+                    <input id="password" name="password" type="password" class="form-control input-border-bottom"
+                        required>
+                    <label for="password" class="placeholder">Password</label>
+                    <div class="show-password">
+                        <i class="icon-eye"></i>
+                    </div>
+                </div>
+                {{-- <div class="row form-sub m-0">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="rememberme">
+                        <label class="custom-control-label" for="rememberme">Remember Me</label>
+                    </div>
+
+                    <a href="#" class="link float-right">Forget Password ?</a>
+                </div> --}}
+                <div class="form-group form-floating-label">
+                    <a href="#" class="btn btn-danger btn-login">Login</a>
+                </div>
+                {{-- <div class="login-account">
+                    <span class="msg">Don't have an account yet ?</span>
+                    <a href="#" id="show-signup" class="link">Sign Up</a>
+                </div> --}}
+            </div>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="container container-signup animated fadeIn">
+            <h3 class="text-center">Sign Up</h3>
+            <div class="login-form">
+                <div class="form-group form-floating-label">
+                    <input id="fullname" name="fullname" type="text" class="form-control input-border-bottom"
+                        required>
+                    <label for="fullname" class="placeholder">Fullname</label>
+                </div>
+                <div class="form-group form-floating-label">
+                    <input id="email" name="email" type="email" class="form-control input-border-bottom"
+                        required>
+                    <label for="email" class="placeholder">Email</label>
+                </div>
+                <div class="form-group form-floating-label">
+                    <input id="passwordsignin" name="passwordsignin" type="password"
+                        class="form-control input-border-bottom" required>
+                    <label for="passwordsignin" class="placeholder">Password</label>
+                    <div class="show-password">
+                        <i class="icon-eye"></i>
+                    </div>
+                </div>
+                <div class="form-group form-floating-label">
+                    <input id="confirmpassword" name="confirmpassword" type="password"
+                        class="form-control input-border-bottom" required>
+                    <label for="confirmpassword" class="placeholder">Confirm Password</label>
+                    <div class="show-password">
+                        <i class="icon-eye"></i>
+                    </div>
+                </div>
+                <div class="row form-sub m-0">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" name="agree" id="agree">
+                        <label class="custom-control-label" for="agree">I Agree the terms and conditions.</label>
+                    </div>
+                </div>
+                <div class="form-action">
+                    <a href="#" id="show-signin" class="btn btn-danger btn-link btn-login mr-3">Cancel</a>
+                    <a href="#" class="btn btn-primary btn-rounded btn-login">Sign Up</a>
+                </div>
+            </div>
         </div>
+    </div>
+    <script src="{{ asset('template') }}/assets/js/core/jquery.3.2.1.min.js"></script>
+    <script src="{{ asset('template') }}/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="{{ asset('template') }}/assets/js/core/popper.min.js"></script>
+    <script src="{{ asset('template') }}/assets/js/core/bootstrap.min.js"></script>
+    <script src="{{ asset('template') }}/assets/js/atlantis.min.js"></script>
+</body>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ml-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</html>
