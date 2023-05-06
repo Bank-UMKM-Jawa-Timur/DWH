@@ -49,7 +49,7 @@
                                                 </button>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
-                                                            data-id="{{ $item->id }}" data-nip="{{ $item->name }}"
+                                                            data-id="{{ $item->id }}" data-nip="{{ $item->nip }}"
                                                             data-email="{{ $item->email }}" data-role="{{ $item->role_id }}" href="#">Edit</a>
                                                     <a class="dropdown-item deleteModal" data-toggle="modal" data-target="#deleteModal"
                                                     data-id="{{ $item->id }}" href="#">Hapus</a>
@@ -77,7 +77,7 @@
     </div>
 
     <!-- Modal-tambah -->
-    <div class="modal fade" id="add-modal">
+    <div class="modal fade" id="addModal">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -362,7 +362,7 @@
                 }
             })
 
-            $('#add-modal').modal('show')
+            $('#addModal').modal('show')
         })
         
         $(document).ready(function() {
@@ -413,6 +413,16 @@
             })
             
         });
+        
+        function showError(input, message) {
+            const formGroup = input.parentElement;
+            const errorSpan = formGroup.querySelector('.error');
+            
+            formGroup.classList.add('has-error');
+            errorSpan.innerText = message;
+            input.focus();
+        }
+        
         $(document).on("click", ".deleteModal", function () {
             var data_id = $(this).data('id');
             var url = "{{ url('/master/pengguna') }}/"+data_id;
@@ -421,15 +431,6 @@
             
             $('#deleteModal').modal('show');
         });
-
-        function showError(input, message) {
-            const formGroup = input.parentElement;
-            const errorSpan = formGroup.querySelector('.error');
-
-            formGroup.classList.add('has-error');
-            errorSpan.innerText = message;
-            input.focus();
-        }
     </script>
     @endpush
 @endsection

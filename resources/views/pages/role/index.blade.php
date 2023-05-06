@@ -264,10 +264,6 @@
                 errorSpan.innerText = message;
                 input.focus();
             }
-            function deleteModal(id) {
-                console.log('delete :'+id)
-                $('#deleteModal').show();
-            }
 
             // Modal
             $(document).ready(function() {

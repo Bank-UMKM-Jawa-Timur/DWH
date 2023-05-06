@@ -26,12 +26,5 @@ class UserSeeder extends Seeder
         $cabang->password = \Hash::make('12345678');
         $cabang->role_id = 2;
         $cabang->save();
-
-        $vendor = new User();
-        $vendor->email = 'bjsc@mail.com';
-        $vendor->password = \Hash::make('12345678');
-        $vendor->vendor_id = 1;
-        $vendor->role_id = 3;
-        $vendor->save();
     }
 }

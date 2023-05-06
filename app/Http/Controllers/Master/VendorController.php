@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class PenggunaController extends Controller
+class VendorController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,31 +16,26 @@ class PenggunaController extends Controller
      */
     public function index()
     {
-        $param['title'] = 'Pengguna';
-        $param['pageTitle'] = 'Pengguna';
-        $data = User::select(
-                'users.*',
-                'r.name AS role',
-            )
-            ->join('roles AS r', 'r.id', 'users.role_id')
-            ->orderBy('users.id')
-            ->get();
-        $param['data'] = $data;
+        $param['title'] = 'Vendor';
+        $param['pageTitle'] = 'Vendor';
+        $param['data'] = $this->list();
 
-        return view('pages.pengguna.index', $param);
+        return view('pages.vendor.index', $param);
     }
 
-    public function listCabang()
+    public function list()
     {
-        return User::select(
-                    'users.id',
-                    'users.nip',
-                    'r.name AS role_name',
-                )
-                ->join('roles AS r', 'r.id', 'users.role_id')
-                ->where('r.name', 'Cabang')
-                ->orderBy('nip')
-                ->get();
+        return Vendor::orderBy('name')->get();
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
     /**
@@ -55,20 +50,19 @@ class PenggunaController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
-            'nip' => $request->nip ? 'unique:users,nip' : '',
-            'email' => $request->email ? 'unique:users,email' : '',
-            'password' => 'required|min:8',
-            'role_id' => 'not_in:0',
+            'name' => 'required|unique:vendors,name',
+            'phone' => 'required|unique:vendors,phone',
+            'cabang_id' => 'not_in:0',
+            'address' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
             'not_in' => ':attribute harus dipilih.',
-            'min' => 'Minimal adalah 8 karakter.'
         ], [
-            'nip' => 'NIP',
-            'email' => 'Email',
-            'password' => 'Password',
-            'role_id' => 'Role'
+            'name' => 'Nama',
+            'phone' => 'Nomor HP',
+            'cabang_id' => 'NIP Cabang',
+            'address' => 'Alamat',
         ]);
 
         if ($validator->fails()) {
@@ -78,12 +72,12 @@ class PenggunaController extends Controller
         }
 
         try {
-            $newUser = new User();
-            $newUser->nip = $request->nip;
-            $newUser->email = $request->email;
-            $newUser->password = $request->password;
-            $newUser->role_id = $request->role_id;
-            $newUser->save();
+            $newVendor = new Vendor();
+            $newVendor->name = $request->name;
+            $newVendor->phone = $request->phone;
+            $newVendor->cabang_id = $request->cabang_id;
+            $newVendor->address = $request->address;
+            $newVendor->save();
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -115,22 +109,24 @@ class PenggunaController extends Controller
         $status = '';
         $message = '';
 
-        $currentUser = User::find($id);
-        $isUniqueNip = $request->nip && $request->nip != $currentUser->nip ? '|unique:users,nip' : '';
-        $isUniqueEmail = $request->email && $request->email != $currentUser->email ? 'unique:users,email' : '';
+        $currentVendor = Vendor::find($id);
+        $isUniqueName = $request->name && $request->name != $currentVendor->name ? '|unique:vendors,name' : '';
+        $isUniquePhone = $request->phone && $request->phone != $currentVendor->phone ? '|unique:vendors,phone' : '';
 
         $validator = Validator::make($request->all(), [
-            'nip' => $request->nip ? 'numeric'.$isUniqueNip : '',
-            'email' => $request->email ? $isUniqueEmail : '',
-            'role_id' => 'not_in:0'
+            'name' => 'required'.$isUniqueName,
+            'phone' => 'required'.$isUniquePhone,
+            'address' => 'required',
+            'cabang_id' => 'not_in:0'
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
             'not_in' => ':attribute harus dipilih.'
         ], [
-            'nip' => 'NIP',
-            'email' => 'Email',
-            'role_id' => 'Role'
+            'name' => 'Nama',
+            'phone' => 'Nomor HP',
+            'address' => 'Alamat',
+            'cabang_id' => 'NIP Cabang'
         ]);
 
         if ($validator->fails()) {
@@ -140,12 +136,11 @@ class PenggunaController extends Controller
         }
 
         try {
-            $currentUser->nip = $request->nip;
-            $currentUser->email = $request->email;
-            $currentUser->role_id = $request->role_id;
-            if ($request->password)
-                $currentUser->password = \Hash::make($request->password);
-            $currentUser->save();
+            $currentVendor->name = $request->name;
+            $currentVendor->phone = $request->phone;
+            $currentVendor->address = $request->address;
+            $currentVendor->cabang_id = $request->cabang_id;
+            $currentVendor->save();
 
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
@@ -177,7 +172,7 @@ class PenggunaController extends Controller
         $message = '';
 
         try {
-            $currentRole = User::findOrFail($id);
+            $currentRole = Vendor::findOrFail($id);
             if ($currentRole) {
                 $currentRole->delete();
                 $status = 'success';
