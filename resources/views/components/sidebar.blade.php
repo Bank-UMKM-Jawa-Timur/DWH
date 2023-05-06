@@ -15,7 +15,7 @@
                 </div>
             </div>
             <ul class="nav nav-danger">
-                <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('/', 'dashboard') ? 'active' : '' }}">
                     <a href="/">
                         <i class="icon-home"></i>
                         <p>Dashboard</p>
