@@ -33,7 +33,7 @@
                     </a>
                     <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
                         <li>
-                            <div class="dropdown-title">You have 4 new notification</div>
+                            <div class="dropdown-title">Kamu Mempunyai 1 Notifikasi Belum Dibaca</div>
                         </li>
                         <li>
                             <div class="notif-center">
@@ -79,8 +79,8 @@
                             </div>
                         </li>
                         <li>
-                            <a class="see-all" href="javascript:void(0);">See all notifications<i
-                                    class="fa fa-angle-right"></i> </a>
+                            <a class="see-all" href="/notifikasi">See all notifications<i class="fa fa-angle-right"></i>
+                            </a>
                         </li>
                     </ul>
                 </li>
@@ -98,24 +98,23 @@
                                     <div class="avatar-lg"><img src="{{ asset('template') }}/assets/img/profile.jpg"
                                             alt="image profile" class="avatar-img rounded"></div>
                                     <div class="u-text">
-                                        <h4>Hizrian</h4>
-                                        <p class="text-muted">hello@example.com</p><a href="profile.html"
-                                            class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                        <h4>{{ Auth::user()->nip }}</h4>
+                                        <p class="text-muted">{{ Auth::user()->email }}</p>
+                                        {{-- <a href="profile.html"
+                                            class="btn btn-xs btn-secondary btn-sm">View Profile</a> --}}
                                     </div>
                                 </div>
                             </li>
                             <li>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">My Profile</a>
-                                <a class="dropdown-item" href="#">My Balance</a>
-                                <a class="dropdown-item" href="#">Inbox</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Account Setting</a>
-                                <div class="dropdown-divider"></div>
-                                <form action="{{ route('logout') }}" method="post">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item" style="cursor: pointer;">Logout</button>
-                                </form>
+                                <a class="dropdown-item" href="/reset_password">Reset Password</a>
+                                {{-- <a class="dropdown-item" href="#"></a> --}}
+                                {{-- <a class="dropdown-item" href="#">Inbox</a> --}}
+                                {{-- <div class="dropdown-divider"></div> --}}
+                                {{-- <a class="dropdown-item" href="#">Account Setting</a> --}}
+                                {{-- <div class="dropdown-divider"></div> --}}
+                                <button type="submit" class="dropdown-item" style="cursor: pointer;"
+                                    data-toggle="modal" data-target="#logout">Logout</button>
                             </li>
                         </div>
                     </ul>
@@ -123,5 +122,25 @@
             </ul>
         </div>
     </nav>
+
+
     <!-- End Navbar -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="logout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                Apakah Kamu Yakin Ingin Logout?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Batal</button>
+                <form action="{{ route('logout') }}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

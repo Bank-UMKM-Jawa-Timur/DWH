@@ -18,51 +18,40 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#exampleModal">
-                            Tambah {{ $pageTitle }}
-                        </button>
-                        <div class="table-responsive">
-                            <table class="table mt-2">
-                                <thead>
-                                    <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        {{-- <th scope="col">Nama</th> --}}
-                                        <th scope="col">NIP</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Role</th>
-                                        <th scope="col">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        {{-- <td>Antoni</td> --}}
-                                        <td>1234567</td>
-                                        <td>Antoni23@gmail.com</td>
-                                        <td>Cabang</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Reset Password</a>
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#edit1"
-                                                        href="#">Edit</a>
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#hapus1"
-                                                        href="#">Hapus</a>
-                                                </div>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <form method="POST" action="#" id="modal-form">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="passwordLama">
+                                            <label for="passwordLama">Password Lama</label>
+                                            <input autofocus type="password" class="form-control" id="passwordLama"
+                                                name="passwordLama">
+                                            <small class="form-text text-danger error"></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="passwordBaru">
+                                            <label for="passwordBaru">Password Baru</label>
+                                            <input autofocus type="password" class="form-control" id="passwordBaru"
+                                                name="passwordBaru">
+                                            <small class="form-text text-danger error"></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="konfirmasiPassword">
+                                            <label for="konfirmasiPassword">Konfirmasi Password</label>
+                                            <input autofocus type="password" class="form-control" id="konfirmasiPassword"
+                                                name="konfirmasiPassword">
+                                            <small class="form-text text-danger error"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -85,29 +74,22 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <div class="name">
-                                        <label for="Nip">Nip</label>
-                                        <input autofocus type="text" class="form-control" id="Nip" name="Nip">
+                                    <div class="Title">
+                                        <label for="Title">Title</label>
+                                        <input autofocus type="text" class="form-control" id="Title" name="Title">
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-                                    <div class="email">
-                                        <label for="Email">Email</label>
-                                        <input type="email" class="form-control" id="Email" name="Email">
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="password">
-                                        <label for="Password">Password</label>
-                                        <input type="password" class="form-control" id="Password" name="Password">
+                                    <div class="Content">
+                                        <label for="Content">Content</label>
+                                        <input type="email" class="form-control" id="Content" name="Content">
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="role">
-                                        <label for="exampleFormControlSelect1">Role</label>
+                                        <label for="exampleFormControlSelect1">Role Notifikasi</label>
                                         <select class="form-control" id="exampleFormControlSelect1">
                                             <option>Cabang</option>
                                             <option>Vendor</option>
@@ -143,30 +125,23 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <div class="name">
-                                        <label for="Nip">Nip</label>
-                                        <input autofocus type="text" class="form-control" id="Nip"
-                                            name="Nip">
+                                    <div class="Title">
+                                        <label for="Title">Title</label>
+                                        <input autofocus type="text" class="form-control" id="Title"
+                                            name="Title">
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-                                    <div class="email">
-                                        <label for="Email">Email</label>
-                                        <input type="email" class="form-control" id="Email" name="Email">
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="password">
-                                        <label for="Password">Password</label>
-                                        <input type="password" class="form-control" id="Password" name="Password">
+                                    <div class="Content">
+                                        <label for="Content">Content</label>
+                                        <input type="email" class="form-control" id="Content" name="Content">
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="role">
-                                        <label for="exampleFormControlSelect1">Role</label>
+                                        <label for="exampleFormControlSelect1">Role Notifikasi</label>
                                         <select class="form-control" id="exampleFormControlSelect1">
                                             <option>Cabang</option>
                                             <option>Vendor</option>

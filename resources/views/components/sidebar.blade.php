@@ -34,14 +34,14 @@
                     </a>
                 </li>
                 <li
-                    class="nav-item {{ request()->is('template_notifikasi', 'template_notifikasi/*', 'hak_akses', 'hak_akses/*', 'vendor', 'vendor/*', 'role', 'role/*', 'pengguna', 'pengguna/*') ? 'active' : '' }}">
+                    class="nav-item {{ request()->is('master/template_notifikasi', 'master/template_notifikasi/*', 'master/hak_akses', 'master/hak_akses/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori_dokumen', 'master/kategori_dokumen/*') ? 'active' : '' }}">
                     <a data-toggle="collapse" href="#base">
                         <i class="
                             icon-user-following"></i>
                         <p>Master</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ request()->is('template_notifikasi', 'template_notifikasi/*', 'hak_akses', 'hak_akses/*', 'vendor', 'vendor/*', 'role', 'role/*', 'pengguna', 'pengguna/*') ? 'show' : '' }}"
+                    <div class="collapse {{ request()->is('master/template_notifikasi', 'master/template_notifikasi/*', 'master/hak_akses', 'master/hak_akses/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori_dokumen', 'master/kategori_dokumen/*') ? 'show' : '' }}"
                         id="base">
                         <ul class="nav nav-collapse">
                             <li class="{{ request()->is('master/role') ? 'active' : '' }}">
@@ -89,19 +89,19 @@
                         <p>Laporan</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->is('target') ? 'active' : '' }}">
                     <a href="/target">
                         <i class="icon-graph"></i>
                         <p>Target</p>
                     </a>
                 </li>
-                <li class="nav-section">
+                {{-- <li class="nav-section">
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>
                     </span>
                     <h4 class="text-section">Settings</h4>
-                </li>
-                <li class="nav-item">
+                </li> --}}
+                <li class="nav-item {{ request()->is('notifikasi') ? 'active' : '' }}">
                     <a href="/notifikasi">
                         <i class="icon-bell"></i>
                         <p>Notifikasi</p>

@@ -25,6 +25,21 @@ Route::middleware('auth')->group(function () {
         $param['pageTitle'] = 'Dashboard SuperAdmin';
         return view('pages.home', $param);
     });
+    Route::get('/reset_password', function () {
+        $param['title'] = 'Reset Password';
+        $param['pageTitle'] = 'Reset Password';
+        return view('pages.reset_password.index', $param);
+    });
+    Route::get('/notifikasi', function () {
+        $param['title'] = 'Notifikasi';
+        $param['pageTitle'] = 'Notifikasi';
+        return view('pages.notifikasi.index', $param);
+    });
+    Route::get('/target', function () {
+        $param['title'] = 'Target Cabang';
+        $param['pageTitle'] = 'Target';
+        return view('pages.target.index', $param);
+    });
     Route::get('/dashboard', function () {
         $param['title'] = 'Dashboard';
         $param['pageTitle'] = 'Dashboard SuperAdmin';
@@ -37,6 +52,11 @@ Route::middleware('auth')->group(function () {
             $param['title'] = 'Pengguna';
             $param['pageTitle'] = 'Pengguna';
             return view('pages.pengguna.index', $param);
+        });
+        Route::get('/kategori_dokumen', function () {
+            $param['title'] = 'Kategori Dokumen';
+            $param['pageTitle'] = 'Kategori Dokumen';
+            return view('pages.kategori_dokumen.index', $param);
         });
         Route::get('/vendor', function () {
             $param['title'] = 'Vendor';
@@ -57,7 +77,7 @@ Route::middleware('auth')->group(function () {
         return view('pages.kredit.index', $param);
     });
 
-    
+
 
     Route::get('/hak_akses/1', function () {
         $param['title'] = 'Hak Akses';
