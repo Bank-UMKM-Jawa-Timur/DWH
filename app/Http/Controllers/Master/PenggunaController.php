@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class RoleController extends Controller
+class PenggunaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,27 +16,18 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $param['title'] = 'Role/Peran';
-        $param['pageTitle'] = 'Role/Peran';
-        $data = $this->list();
+        $param['title'] = 'Pengguna';
+        $param['pageTitle'] = 'Pengguna';
+        $data = User::select(
+                'users.*',
+                'r.name AS role',
+            )
+            ->join('roles AS r', 'r.id', 'users.role_id')
+            ->orderBy('users.id')
+            ->get();
         $param['data'] = $data;
 
-        return view('pages.role.index', $param);
-    }
-
-    public function list()
-    {
-        return Role::orderBy('name')->get();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('pages.pengguna.index', $param);
     }
 
     /**
@@ -51,12 +42,20 @@ class RoleController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:roles,name'
+            'nip' => $request->nip ? 'unique:users,nip' : '',
+            'email' => $request->email ? 'unique:users,email' : '',
+            'password' => 'required|min:8',
+            'role_id' => 'not_in:0',
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
+            'not_in' => ':attribute harus dipilih.',
+            'min' => 'Minimal adalah 8 karakter.'
         ], [
-            'name' => 'Nama',
+            'nip' => 'NIP',
+            'email' => 'Email',
+            'password' => 'Password',
+            'role_id' => 'Role'
         ]);
 
         if ($validator->fails()) {
@@ -66,9 +65,12 @@ class RoleController extends Controller
         }
 
         try {
-            $newRole = new Role();
-            $newRole->name = $request->name;
-            $newRole->save();
+            $newUser = new User();
+            $newUser->nip = $request->nip;
+            $newUser->email = $request->email;
+            $newUser->password = $request->password;
+            $newUser->role_id = $request->role_id;
+            $newUser->save();
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -89,29 +91,6 @@ class RoleController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -123,16 +102,22 @@ class RoleController extends Controller
         $status = '';
         $message = '';
 
-        $currentRole = Role::find($id);
-        $isUnique = $request->name && $request->name != $currentRole->name ? '|unique:roles,name' : '';
+        $currentUser = User::find($id);
+        $isUniqueNip = $request->nip && $request->nip != $currentUser->nip ? '|unique:users,nip' : '';
+        $isUniqueEmail = $request->email && $request->email != $currentUser->email ? 'unique:users,email' : '';
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required'.$isUnique,
+            'nip' => $request->nip ? 'numeric'.$isUniqueNip : '',
+            'email' => $request->email ? $isUniqueEmail : '',
+            'role_id' => 'not_in:0'
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
+            'not_in' => ':attribute harus dipilih.'
         ], [
-            'name' => 'Nama',
+            'nip' => 'NIP',
+            'email' => 'Email',
+            'role_id' => 'Role'
         ]);
 
         if ($validator->fails()) {
@@ -142,8 +127,12 @@ class RoleController extends Controller
         }
 
         try {
-            $currentRole->name = $request->name;
-            $currentRole->save();
+            $currentUser->nip = $request->nip;
+            $currentUser->email = $request->email;
+            $currentUser->role_id = $request->role_id;
+            if ($request->password)
+                $currentUser->password = \Hash::make($request->password);
+            $currentUser->save();
 
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
@@ -175,7 +164,7 @@ class RoleController extends Controller
         $message = '';
 
         try {
-            $currentRole = Role::findOrFail($id);
+            $currentRole = User::findOrFail($id);
             if ($currentRole) {
                 $currentRole->delete();
                 $status = 'success';
