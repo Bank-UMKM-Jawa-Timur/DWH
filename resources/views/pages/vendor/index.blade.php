@@ -60,7 +60,7 @@
                                     </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5">
+                                            <td colspan="5" class="text-center">
                                                 <span class="text-danger">Maaf data belum tersedia.</span>
                                             </td>
                                         </tr>

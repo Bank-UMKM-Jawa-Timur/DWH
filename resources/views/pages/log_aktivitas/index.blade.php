@@ -25,14 +25,24 @@
                                         <th scope="col">No</th>
                                         <th scope="col">Nama Pengguna</th>
                                         <th scope="col">Content</th>
+                                        <th scope="col">Waktu</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @forelse ($data as $item)
                                     <tr>
-                                        <td>1</td>
-                                        <td>Andriansyah</td>
-                                        <td>Melakukan Pengiriman STNK</td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->nip ? $item->nip : $item->email }}</td>
+                                        <td>{{ $item->content }}</td>
+                                        <td>{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</td>
                                     </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            <span class="text-danger">Maaf data belum tersedia.</span>
+                                        </td>
+                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

@@ -3,12 +3,19 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PenggunaController extends Controller
 {
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -84,7 +91,10 @@ class PenggunaController extends Controller
             $newUser->password = $request->password;
             $newUser->role_id = $request->role_id;
             $newUser->save();
-
+            
+            $title = $request->nip ? $request->nip : $request->email;
+            $this->logActivity->store("Membuat data pengguna $title.");
+            
             $status = 'success';
             $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
@@ -146,6 +156,7 @@ class PenggunaController extends Controller
             if ($request->password)
                 $currentUser->password = \Hash::make($request->password);
             $currentUser->save();
+            $this->logActivity->store("Memperbarui data pengguna.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
@@ -178,8 +189,11 @@ class PenggunaController extends Controller
 
         try {
             $currentRole = User::findOrFail($id);
+            $currentName = $currentRole->name;
             if ($currentRole) {
                 $currentRole->delete();
+                $this->logActivity->store("Menghapus data pengguna $currentName.");
+
                 $status = 'success';
                 $message = 'Berhasil menghapus data.';
             }

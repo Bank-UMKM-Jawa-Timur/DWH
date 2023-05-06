@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LogActivitesController;
 use App\Http\Controllers\Master\PenggunaController;
 use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\VendorController;
@@ -82,11 +83,7 @@ Route::middleware('auth')->group(function () {
         return view('pages.hak_akses.index', $param);
     });
 
-    Route::get('/log_aktivitas', function () {
-        $param['title'] = 'Log Aktivitas';
-        $param['pageTitle'] = 'Log Aktivitas';
-        return view('pages.log_aktivitas.index', $param);
-    });
+    Route::get('/log_aktivitas', [LogActivitesController::class, 'index']);
 });
 
 

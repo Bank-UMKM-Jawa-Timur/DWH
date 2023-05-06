@@ -3,12 +3,19 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class VendorController extends Controller
 {
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -79,6 +86,8 @@ class VendorController extends Controller
             $newVendor->address = $request->address;
             $newVendor->save();
 
+            $this->logActivity->store("Membuat data vendor $request->name.");
+
             $status = 'success';
             $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
@@ -142,6 +151,8 @@ class VendorController extends Controller
             $currentVendor->cabang_id = $request->cabang_id;
             $currentVendor->save();
 
+            $this->logActivity->store("Memperbarui data vendor.");
+
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
         } catch (\Exception $e) {
@@ -172,9 +183,12 @@ class VendorController extends Controller
         $message = '';
 
         try {
-            $currentRole = Vendor::findOrFail($id);
-            if ($currentRole) {
-                $currentRole->delete();
+            $currentVendor = Vendor::findOrFail($id);
+            $currentName = $currentVendor->name;
+            if ($currentVendor) {
+                $currentVendor->delete();
+                $this->logActivity->store("Menghapus data vendor '$currentName'.");
+                
                 $status = 'success';
                 $message = 'Berhasil menghapus data.';
             }

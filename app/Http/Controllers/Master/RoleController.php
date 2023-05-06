@@ -3,12 +3,19 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -69,6 +76,8 @@ class RoleController extends Controller
             $newRole = new Role();
             $newRole->name = $request->name;
             $newRole->save();
+            
+            $this->logActivity->store('Membuat role '.$request->name.'.');
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -87,29 +96,6 @@ class RoleController extends Controller
             return response()->json($response);
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
 
     /**
      * Update the specified resource in storage.
@@ -145,6 +131,8 @@ class RoleController extends Controller
             $currentRole->name = $request->name;
             $currentRole->save();
 
+            $this->logActivity->store("Memperbarui role '".$currentRole->name."' menjadi $request->name.");
+
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
         } catch (\Exception $e) {
@@ -176,8 +164,11 @@ class RoleController extends Controller
 
         try {
             $currentRole = Role::findOrFail($id);
+            $currentName = $currentRole->name;
             if ($currentRole) {
                 $currentRole->delete();
+                $this->logActivity->store("Menghapus role $currentName.");
+                
                 $status = 'success';
                 $message = 'Berhasil menghapus data.';
             }
