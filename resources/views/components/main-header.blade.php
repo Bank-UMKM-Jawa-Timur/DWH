@@ -29,57 +29,45 @@
                     <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-bell"></i>
-                        <span class="notification">4</span>
+                        <span class="notification">1</span>
                     </a>
                     <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
-                        <li>
+                        {{-- <li>
                             <div class="dropdown-title">Kamu Mempunyai 1 Notifikasi Belum Dibaca</div>
-                        </li>
+                        </li> --}}
                         <li>
                             <div class="notif-center">
                                 <a href="#">
-                                    <div class="notif-icon notif-primary"> <i class="fa fa-user-plus"></i>
-                                    </div>
-                                    <div class="notif-content">
+                                    <div class="notif-content reading">
+                                        <span class="text-success alert-notif">Telah Dibaca</span>
                                         <span class="block">
-                                            New user registered
+                                            vendor dimohon untuk mengisikan Ketersediaan Unit...
                                         </span>
-                                        <span class="time">5 minutes ago</span>
+                                        <span class="time">5 menit yang lalu</span>
                                     </div>
                                 </a>
                                 <a href="#">
-                                    <div class="notif-icon notif-success"> <i class="fa fa-comment"></i> </div>
-                                    <div class="notif-content">
+                                    <div class="notif-content reading">
+                                        <span class="text-success alert-notif">Telah Dibaca</span>
                                         <span class="block">
-                                            Rahmad commented on Admin
+                                            vendor dimohon untuk mengisikan Ketersediaan Unit...
                                         </span>
-                                        <span class="time">12 minutes ago</span>
+                                        <span class="time">5 menit yang lalu</span>
                                     </div>
                                 </a>
                                 <a href="#">
-                                    <div class="notif-img">
-                                        <img src="{{ asset('template') }}/assets/img/profile2.jpg" alt="Img Profile">
-                                    </div>
                                     <div class="notif-content">
+                                        <span class="text-danger alert-notif">Belum Dibaca</span>
                                         <span class="block">
-                                            Reza send messages to you
+                                            vendor dimohon untuk mengisikan Ketersediaan Unit...
                                         </span>
-                                        <span class="time">12 minutes ago</span>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="notif-icon notif-danger"> <i class="fa fa-heart"></i> </div>
-                                    <div class="notif-content">
-                                        <span class="block">
-                                            Farrah liked Admin
-                                        </span>
-                                        <span class="time">17 minutes ago</span>
+                                        <span class="time">5 menit yang lalu</span>
                                     </div>
                                 </a>
                             </div>
                         </li>
                         <li>
-                            <a class="see-all" href="/notifikasi">See all notifications<i class="fa fa-angle-right"></i>
+                            <a class="see-all" href="/notifikasi">Tampilkan Semua<i class="fa fa-angle-right"></i>
                             </a>
                         </li>
                     </ul>

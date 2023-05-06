@@ -18,8 +18,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#addModal">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
                             Tambah Peran
                         </button>
                         <div class="table-responsive">
@@ -44,10 +43,12 @@
                                                     </button>
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item" href="/hak_akses/1">Hak Akses</a>
-                                                        <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
-                                                            data-id="{{ $item->id }}" data-name="{{ $item->name }}" href="#">Edit</a>
-                                                        <a class="dropdown-item deleteModal" data-toggle="modal" data-target="#deleteModal"
-                                                        data-id="{{ $item->id }}" href="#">Hapus</a>
+                                                        <a class="dropdown-item" data-toggle="modal"
+                                                            data-target="#editModal" data-id="{{ $item->id }}"
+                                                            data-name="{{ $item->name }}" href="#">Edit</a>
+                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
+                                                            data-target="#deleteModal" data-name="{{ $item->name }}"
+                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -109,7 +110,8 @@
                         <input type="hidden" name="edit_id" id="edit-id">
                         <div class="form-group name">
                             <label for="edit-name">Nama Peran</label>
-                            <input type="text" class="form-control edit-name" id="edit-name" name="name" value="{{ old('name') }}">
+                            <input type="text" class="form-control edit-name" id="edit-name" name="name"
+                                value="{{ old('name') }}">
                             <small class="form-text text-danger error"></small>
                         </div>
                         <div class="form-group">
@@ -126,15 +128,9 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                {{-- <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Hapus {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div> --}}
                 <div class="modal-body">
                     <div class="form-group name">
-                        Apakah Anda Ingin Menghapus Role Cabang?
+                        Apakah Anda Ingin Menghapus Role?
                     </div>
                     <div class="form-inline">
                         <button data-dismiss="modal" class="btn btn-danger mr-2">Batal</button>
@@ -157,28 +153,28 @@
 
                 store();
             })
-            
+
             $('#edit-button').click(function(e) {
                 e.preventDefault()
 
                 update();
             })
-            
+
             $('#add-name').keypress(function(e) {
                 var key = e.which;
-                if(key == 13)  // the enter key code
+                if (key == 13) // the enter key code
                 {
                     store()
-                    return false;  
+                    return false;
                 }
             })
-            
+
             $('#edit-name').keypress(function(e) {
                 var key = e.which;
-                if(key == 13)  // the enter key code
+                if (key == 13) // the enter key code
                 {
                     update()
-                    return false;  
+                    return false;
                 }
             })
 
@@ -191,23 +187,20 @@
                 }
 
                 $.ajax({
-                    type:"POST",
-                    url:"{{ route('role.store') }}",
-                    data:{
-                        _token : "{{csrf_token()}}",
-                        name : req_name.value
+                    type: "POST",
+                    url: "{{ route('role.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: req_name.value
                     },
-                    success:function(data){
+                    success: function(data) {
                         console.log(data);
                         if (Array.isArray(data.error)) {
                             showError(req_name, data.error[0])
-                        }
-                        else {
+                        } else {
                             if (data.status == 'success') {
-                                alert(data.message);
-                                location.reload();
-                            }
-                            else {
+                                SuccessMessage(data.message);
+                            } else {
                                 alert(data.message)
                             }
                             $('#addModal').modal().hide()
@@ -228,24 +221,21 @@
                 }
 
                 $.ajax({
-                    type:"POST",
-                    url:"{{ url('/master/role') }}/"+req_id.value,
-                    data:{
-                        _token : "{{csrf_token()}}",
-                        _method : 'PUT',
-                        name : req_name.value
+                    type: "POST",
+                    url: "{{ url('/master/role') }}/" + req_id.value,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'PUT',
+                        name: req_name.value
                     },
-                    success:function(data){
+                    success: function(data) {
                         console.log(data);
                         if (Array.isArray(data.error)) {
                             showError(req_name, data.error[0])
-                        }
-                        else {
+                        } else {
                             if (data.status == 'success') {
-                                alert(data.message);
-                                location.reload();
-                            }
-                            else {
+                                SuccessMessage(data.message);
+                            } else {
                                 alert(data.message)
                             }
                             $('#editModal').modal().hide()
@@ -265,9 +255,22 @@
                 input.focus();
             }
 
+            function SuccessMessage(message) {
+                swal("Berhasil!", message, {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            }
+
             // Modal
             $(document).ready(function() {
-                $('a[data-toggle=modal], button[data-toggle=modal]').click(function () {
+                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
                     var data_id = '';
                     var data_name = '';
                     if (typeof $(this).data('id') !== 'undefined') {
@@ -278,18 +281,18 @@
                     }
                     $('#edit-id').val(data_id);
                     $('.edit-name').val(data_name);
-                    
-                    var url = "{{ url('/master/role') }}/"+data_id;
-                    $('.edit-form').attr("action", url);   
+
+                    var url = "{{ url('/master/role') }}/" + data_id;
+                    $('.edit-form').attr("action", url);
                 })
-                
+
             });
-            $(document).on("click", ".deleteModal", function () {
+            $(document).on("click", ".deleteModal", function() {
                 var data_id = $(this).data('id');
-                var url = "{{ url('/master/role') }}/"+data_id;
+                var url = "{{ url('/master/role') }}/" + data_id;
                 console.log(url)
-                $('#delete-form').attr("action", url);   
-                
+                $('#delete-form').attr("action", url);
+
                 $('#deleteModal').modal('show');
             });
         </script>

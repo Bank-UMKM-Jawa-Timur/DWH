@@ -2707,7 +2707,7 @@ body {
 
 .rtl .notif-box .notif-center a .notif-content,
 .rtl .messages-notif-box .notif-center a .notif-content {
-    padding: 10px 0px 10px 15px;
+    padding: 0px 0px 0px 15px;
 }
 
 .rtl .avatar-group .avatar+.avatar {
@@ -7545,7 +7545,6 @@ label.error {
     font-size: 12px;
     font-weight: 500;
     padding: 12px 15px;
-    text-align: center;
 }
 
 .notif-box,
@@ -7655,9 +7654,14 @@ label.error {
     font-size: 15px;
 }
 
+.notif-box .notif-center a .reading {
+    background-color: #F1F3F4;
+}
+
 .notif-box .notif-center a .notif-content,
 .messages-notif-box .notif-center a .notif-content {
-    padding: 10px 15px 10px 0;
+    padding: 0px 0px 0px 20px;
+    border-bottom: 0.5px solid #1F1D62;
 }
 
 .notif-box .notif-center a .message-content,
@@ -7676,14 +7680,21 @@ label.error {
 .notif-box .notif-center a .notif-content .block,
 .messages-notif-box .notif-center a .notif-content .block {
     font-size: 13px;
-    line-height: 20px;
+    font-weight: 700;
+    line-height: 14px;
+    /* margin: 0; */
     display: block;
+}
+
+.notif-content .alert-notif {
+    font-size: 10px;
 }
 
 .notif-box .notif-center a .notif-content .time,
 .messages-notif-box .notif-center a .notif-content .time {
     color: #7d8c95;
     font-size: 11px;
+    margin: 0;
 }
 
 .notif-box .see-all,
