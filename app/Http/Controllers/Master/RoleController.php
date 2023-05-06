@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Master;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
@@ -31,29 +32,44 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                [
-                    'name' => 'required|unique:roles,name'
-                ],
-                [
-                    'required' => ':attribute harus diisi.',
-                    'unique' => ':attribute telah digunakan.',
-                ],
-                [
-                    'name' => 'Nama'
-                ]
-            ]);
+        $status = '';
+        $message = '';
 
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:roles,name'
+        ], [
+            'required' => ':attribute harus diisi.',
+            'unique' => ':attribute telah digunakan.',
+        ], [
+            'name' => 'Nama',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                        'error' => $validator->errors()->all()
+                    ]);
+        }
+
+        try {
             $newRole = new Role();
             $newRole->name = $request->name;
             $newRole->save();
 
-            return redirect('/master/role');
+            $status = 'success';
+            $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
-            return back()->withError('Terjadi kesalahan');
+            $status = 'failed';
+            $message = 'Terjadi kesalahan';
         } catch (\Illuminate\Database\QueryException $e) {
-            return back()->withError('Terjadi kesalahan pada database.');
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
         }
     }
 
@@ -66,30 +82,46 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $currentRole = Role::find($id);
-            $isUnique = $request->name && $request->name != $currentRole->name ? '|unique:roles,name' : '';
+        $status = '';
+        $message = '';
 
-            $request->validate([
-                [
-                    'name' => 'required'.$isUnique,
-                ],
-                [
-                    'required' => ':attribute harus diisi.',
-                    'unique' => ':attribute telah digunakan.',
-                ],
-                [
-                    'name' => 'Nama'
-                ]
-            ]);
+        $currentRole = Role::find($id);
+        $isUnique = $request->name && $request->name != $currentRole->name ? '|unique:roles,name' : '';
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'.$isUnique,
+        ], [
+            'required' => ':attribute harus diisi.',
+            'unique' => ':attribute telah digunakan.',
+        ], [
+            'name' => 'Nama',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                        'error' => $validator->errors()->all()
+                    ]);
+        }
+
+        try {
             $currentRole->name = $request->name;
             $currentRole->save();
 
-            return redirect('/master/role');
+            $status = 'success';
+            $message = 'Berhasil menyimpan perubahan';
         } catch (\Exception $e) {
-            return back()->withError('Terjadi kesalahan');
+            $status = 'failed';
+            $message = 'Terjadi kesalahan';
         } catch (\Illuminate\Database\QueryException $e) {
-            return back()->withError('Terjadi kesalahan pada database.');
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
         }
     }
 
