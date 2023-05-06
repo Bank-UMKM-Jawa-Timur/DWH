@@ -152,7 +152,6 @@
     @push('extraScript')
         <script>
             // Form
-
             $('#add-button').click(function(e) {
                 e.preventDefault()
 
@@ -249,7 +248,7 @@
                             else {
                                 alert(data.message)
                             }
-                            $('#addModal').modal().hide()
+                            $('#editModal').modal().hide()
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                         }

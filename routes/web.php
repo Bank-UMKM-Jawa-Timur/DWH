@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Master\PenggunaController;
 use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -48,20 +49,17 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('master')->group(function () {
         Route::resource('/role', RoleController::class);
-        Route::get('/pengguna', function () {
-            $param['title'] = 'Pengguna';
-            $param['pageTitle'] = 'Pengguna';
-            return view('pages.pengguna.index', $param);
-        });
-        Route::get('/kategori_dokumen', function () {
-            $param['title'] = 'Kategori Dokumen';
-            $param['pageTitle'] = 'Kategori Dokumen';
-            return view('pages.kategori_dokumen.index', $param);
-        });
+        Route::get('/role-list', [RoleController::class, 'list'])->name('role.list');
+        Route::resource('/pengguna', PenggunaController::class);
         Route::get('/vendor', function () {
             $param['title'] = 'Vendor';
             $param['pageTitle'] = 'Vendor';
             return view('pages.vendor.index', $param);
+        });        
+        Route::get('/kategori_dokumen', function () {
+            $param['title'] = 'Kategori Dokumen';
+            $param['pageTitle'] = 'Kategori Dokumen';
+            return view('pages.kategori_dokumen.index', $param);
         });
         Route::get('/template_notifikasi', function () {
             $param['title'] = 'Template Notifikasi';
