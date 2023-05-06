@@ -79,15 +79,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="" id="modal-form">
-                        @csrf
+                    <form id="modal-add-form">
                         <div class="form-group name">
-                            <label for="name">Nama Peran</label>
-                            <input type="text" class="form-control add-name" id="name" name="name">
+                            <label for="add-name">Nama Peran</label>
+                            <input type="text" class="form-control add-name" id="add-name" name="name">
                             <small class="form-text text-danger error"></small>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <button class="btn btn-primary" id="add-button">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -106,17 +105,15 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {{--  <form method="POST" action="{{ url('/master/role') }}" id="modal-form edit-form">  --}}
-                    <form method="POST" id="modal-form" class="edit-form">
-                        @csrf
-                        @method('PUT')
+                    <form id="modal-edit-form" class="edit-form">
+                        <input type="hidden" name="edit_id" id="edit-id">
                         <div class="form-group name">
-                            <label for="name">Nama Peran</label>
-                            <input type="text" class="form-control edit-name" id="name" name="name" value="{{ old('name') }}">
+                            <label for="edit-name">Nama Peran</label>
+                            <input type="text" class="form-control edit-name" id="edit-name" name="name" value="{{ old('name') }}">
                             <small class="form-text text-danger error"></small>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <button type="submit" class="btn btn-primary" id="edit-button">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -155,20 +152,110 @@
     @push('extraScript')
         <script>
             // Form
-            const form = document.getElementById('modal-form');
-            form.addEventListener('submit', (event) => {
-                event.preventDefault();
 
-                const nameInput = document.getElementById('name');
+            $('#add-button').click(function(e) {
+                e.preventDefault()
 
-                // Lakukan validasi pada data yang diterima dari form
-                if (nameInput.value === '') {
-                    showError(nameInput, 'Nama Peran Wajib Diisi');
+                store();
+            })
+            
+            $('#edit-button').click(function(e) {
+                e.preventDefault()
+
+                update();
+            })
+            
+            $('#add-name').keypress(function(e) {
+                var key = e.which;
+                if(key == 13)  // the enter key code
+                {
+                    store()
+                    return false;  
+                }
+            })
+            
+            $('#edit-name').keypress(function(e) {
+                var key = e.which;
+                if(key == 13)  // the enter key code
+                {
+                    update()
+                    return false;  
+                }
+            })
+
+            function store() {
+                const req_name = document.getElementById('add-name')
+
+                if (req_name == '') {
+                    showError(req_name, 'Nama Peran Wajib Diisi');
                     return false;
                 }
 
-                form.submit();
-            });
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('role.store') }}",
+                    data:{
+                        _token : "{{csrf_token()}}",
+                        name : req_name.value
+                    },
+                    success:function(data){
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            showError(req_name, data.error[0])
+                        }
+                        else {
+                            if (data.status == 'success') {
+                                alert(data.message);
+                                location.reload();
+                            }
+                            else {
+                                alert(data.message)
+                            }
+                            $('#addModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                });
+            }
+
+            function update() {
+                const req_id = document.getElementById('edit-id')
+                const req_name = document.getElementById('edit-name')
+
+                if (req_name == '') {
+                    showError(req_name, 'Nama Peran Wajib Diisi');
+                    return false;
+                }
+
+                $.ajax({
+                    type:"POST",
+                    url:"{{ url('/master/role') }}/"+req_id.value,
+                    data:{
+                        _token : "{{csrf_token()}}",
+                        _method : 'PUT',
+                        name : req_name.value
+                    },
+                    success:function(data){
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            showError(req_name, data.error[0])
+                        }
+                        else {
+                            if (data.status == 'success') {
+                                alert(data.message);
+                                location.reload();
+                            }
+                            else {
+                                alert(data.message)
+                            }
+                            $('#addModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                });
+            }
 
             function showError(input, message) {
                 const formGroup = input.parentElement;
@@ -194,6 +281,7 @@
                     if (typeof $(this).data('name') !== 'undefined') {
                         data_name = $(this).data('name');
                     }
+                    $('#edit-id').val(data_id);
                     $('.edit-name').val(data_name);
                     
                     var url = "{{ url('/master/role') }}/"+data_id;
@@ -208,7 +296,7 @@
                 $('#delete-form').attr("action", url);   
                 
                 $('#deleteModal').modal('show');
-           });
+            });
         </script>
     @endpush
 
