@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $this->logActivity->store("Pengguna '$request->email' melakukan log in.");
+        $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
@@ -46,7 +46,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $this->logActivity->store("Pengguna '$request->email' melakukan log out.");
+        $user = Auth::guard('web')->user()->nip != null ? Auth::guard('web')->user()->email . " (" . Auth::guard('web')->user()->nip . ")" : Auth::guard('web')->user()->email;
+        $this->logActivity->store("Pengguna '$user' melakukan log out.");
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
