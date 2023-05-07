@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LogActivitesController;
+use App\Http\Controllers\Master\DocumenCategoryController;
 use App\Http\Controllers\Master\PenggunaController;
 use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\VendorController;
@@ -54,12 +55,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/role-list', [RoleController::class, 'list'])->name('role.list');
         Route::resource('/pengguna', PenggunaController::class);
         Route::get('/pengguna-list-cabang', [PenggunaController::class, 'listCabang'])->name('pengguna.list_cabang');
-        Route::resource('/vendor', VendorController::class);        
-        Route::get('/kategori_dokumen', function () {
-            $param['title'] = 'Kategori Dokumen';
-            $param['pageTitle'] = 'Kategori Dokumen';
-            return view('pages.kategori_dokumen.index', $param);
-        });
+        Route::resource('/vendor', VendorController::class);
+        Route::resource('/kategori-dokumen', DocumenCategoryController::class);
         Route::get('/template_notifikasi', function () {
             $param['title'] = 'Template Notifikasi';
             $param['pageTitle'] = 'Template Notifikasi';

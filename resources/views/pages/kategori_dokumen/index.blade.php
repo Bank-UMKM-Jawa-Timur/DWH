@@ -31,25 +31,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Dokumen STNK</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
-                                                        href="#">Edit</a>
-                                                    <a class="dropdown-item deleteModal" data-toggle="modal"
-                                                        data-target="#deleteModal" href="#">Hapus</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{-- @forelse ($data as $item)
+                                    @forelse ($data as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->name }}</td>
@@ -60,7 +42,6 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="/hak_akses/1">Hak Akses</a>
                                                         <a class="dropdown-item" data-toggle="modal"
                                                             data-target="#editModal" data-id="{{ $item->id }}"
                                                             data-name="{{ $item->name }}" href="#">Edit</a>
@@ -77,7 +58,7 @@
                                                 <span class="text-danger">Maaf data belum tersedia.</span>
                                             </td>
                                         </tr>
-                                    @endforelse --}}
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -98,15 +79,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="" id="modal-form">
-                        @csrf
+                    <form id="modal-form">
                         <div class="form-group name">
-                            <label for="name">Nama Kategori Dokumen</label>
-                            <input type="text" class="form-control add-name" id="name" name="name">
+                            <label for="add-name">Nama Kategori Dokumen</label>
+                            <input type="text" class="form-control add-name" id="add-name" name="name">
                             <small class="form-text text-danger error"></small>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <button class="btn btn-primary" id="add-button">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -125,18 +105,16 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {{--  <form method="POST" action="{{ url('/master/role') }}" id="modal-form edit-form">  --}}
-                    <form method="POST" id="modal-form" class="edit-form">
-                        @csrf
-                        @method('PUT')
+                    <form id="modal-edit-form" class="edit-form">
+                        <input type="hidden" name="edit_id" id="edit-id">
                         <div class="form-group name">
                             <label for="name">Nama Kategori Dokumen</label>
-                            <input type="text" class="form-control edit-name" id="name" name="name"
-                                value="tes">
+                            <input type="text" class="form-control edit-name" id="edit-name" name="name"
+                                value="{{ old('name') }}">
                             <small class="form-text text-danger error"></small>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <button class="btn btn-primary" id="edit-button">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -149,15 +127,9 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                {{-- <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Hapus {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div> --}}
                 <div class="modal-body">
                     <div class="form-group name">
-                        Apakah Anda Ingin Menghapus Role Cabang?
+                        Apakah Anda Ingin Menghapus Kategori Dokumen?
                     </div>
                     <div class="form-inline">
                         <button data-dismiss="modal" class="btn btn-danger mr-2">Batal</button>
@@ -173,22 +145,118 @@
     </div>
 
     @push('extraScript')
+        @if (session('status'))
+            <script>
+                swal("Berhasil!", '{{ session('status') }}', {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            </script>
+        @endif
         <script>
             // Form
-            const form = document.getElementById('modal-form');
-            form.addEventListener('submit', (event) => {
-                event.preventDefault();
+            $('#add-button').click(function(e) {
+                e.preventDefault()
 
-                const nameInput = document.getElementById('name');
+                store();
+            })
 
-                // Lakukan validasi pada data yang diterima dari form
-                if (nameInput.value === '') {
-                    showError(nameInput, 'Nama Peran Wajib Diisi');
+            $('#edit-button').click(function(e) {
+                e.preventDefault()
+
+                update();
+            })
+
+            $('#add-name').keypress(function(e) {
+                var key = e.which;
+                if (key == 13) // the enter key code
+                {
+                    store()
+                    return false;
+                }
+            })
+
+            $('#edit-name').keypress(function(e) {
+                var key = e.which;
+                if (key == 13) // the enter key code
+                {
+                    update()
+                    return false;
+                }
+            })
+
+            function store() {
+                const req_name = document.getElementById('add-name');
+
+                if (req_name == '') {
+                    showError(req_name, 'Nama Dokumen Kategori Wajib Diisi');
                     return false;
                 }
 
-                form.submit();
-            });
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kategori-dokumen.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: req_name.value
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            showError(req_name, data.error[0])
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#addModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                });
+            }
+
+            function update() {
+                const req_id = document.getElementById('edit-id')
+                const req_name = document.getElementById('edit-name')
+
+                if (req_name == '') {
+                    showError(req_name, 'Nama Dokumen Kategori Wajib Diisi');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/master/kategori-dokumen') }}/" + req_id.value,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'PUT',
+                        name: req_name.value
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            showError(req_name, data.error[0])
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#editModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                });
+            }
 
             function showError(input, message) {
                 const formGroup = input.parentElement;
@@ -199,9 +267,17 @@
                 input.focus();
             }
 
-            function deleteModal(id) {
-                console.log('delete :' + id)
-                $('#deleteModal').show();
+            function SuccessMessage(message) {
+                swal("Berhasil!", message, {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
             }
 
             // Modal
@@ -215,16 +291,17 @@
                     if (typeof $(this).data('name') !== 'undefined') {
                         data_name = $(this).data('name');
                     }
+                    $('#edit-id').val(data_id);
                     $('.edit-name').val(data_name);
 
-                    var url = "{{ url('/master/role') }}/" + data_id;
+                    var url = "{{ url('/master/kategori-dokumen') }}/" + data_id;
                     $('.edit-form').attr("action", url);
                 })
 
             });
             $(document).on("click", ".deleteModal", function() {
                 var data_id = $(this).data('id');
-                var url = "{{ url('/master/role') }}/" + data_id;
+                var url = "{{ url('/master/kategori-dokumen') }}/" + data_id;
                 console.log(url)
                 $('#delete-form').attr("action", url);
 

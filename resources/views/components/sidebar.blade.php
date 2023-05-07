@@ -64,8 +64,8 @@
                                     <span class="sub-item">Hak Akses</span>
                                 </a>
                             </li> --}}
-                            <li class="{{ request()->is('master/kategori_dokumen') ? 'active' : '' }}">
-                                <a href="/master/kategori_dokumen">
+                            <li class="{{ request()->is('master/kategori-dokumen') ? 'active' : '' }}">
+                                <a href="/master/kategori-dokumen">
                                     <span class="sub-item">Kategori Dokumen</span>
                                 </a>
                             </li>
