@@ -70,7 +70,7 @@
                                 </a>
                             </li>
                             <li class="{{ request()->is('master/template_notifikasi') ? 'active' : '' }}">
-                                <a href="/master/template_notifikasi">
+                                <a href="/master/template-notifikasi">
                                     <span class="sub-item">Template Notifikasi</span>
                                 </a>
                             </li>

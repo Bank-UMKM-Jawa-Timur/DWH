@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Master;
 
-
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
-use App\Models\DocumentCategory;
+use App\Models\NotificationTemplate;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class DocumenCategoryController extends Controller
+class NotificationTemplateController extends Controller
 {
     private $logActivity;
 
@@ -24,16 +25,18 @@ class DocumenCategoryController extends Controller
      */
     public function index()
     {
-        $param['title'] = 'Kategori Dokumen';
-        $param['pageTitle'] = 'Kategori Dokumen';
+        $param['title'] = 'Notifikasi Template';
+        $param['pageTitle'] = 'Notifikasi Template';
         $param['data'] = $this->list();
+        $param['roles'] = Role::orderBy('name', 'ASC')->get();
+        $param['actions'] = DB::table('actions')->orderBy('name', 'ASC')->get();
 
-        return view('pages.kategori_dokumen.index', $param);
+        return view('pages.notifikasi_template.index', $param);
     }
 
     public function list()
     {
-        return DocumentCategory::orderBy('name')->get();
+        return NotificationTemplate::orderBy('id')->get();
     }
 
     /**
@@ -58,12 +61,18 @@ class DocumenCategoryController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:document_categories,name',
+            'title' => 'required|unique:notification_templates,title',
+            'content' => 'required',
+            'role' => 'required',
+            'action' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
         ], [
-            'name' => 'Nama Kategori Dokumen',
+            'title' => 'Judul Notifikasi',
+            'content' => 'Konten',
+            'role' => 'Role / Peran',
+            'action' => 'Aksi',
         ]);
 
         if ($validator->fails()) {
@@ -73,11 +82,14 @@ class DocumenCategoryController extends Controller
         }
 
         try {
-            $newVendor = new DocumentCategory();
-            $newVendor->name = $request->name;
-            $newVendor->save();
+            $model = new NotificationTemplate();
+            $model->title = $request->title;
+            $model->content = $request->content;
+            $model->role_id = $request->role;
+            $model->action_id = $request->action;
+            $model->save();
 
-            $this->logActivity->store("Membuat data dokumen kategori $request->name.");
+            $this->logActivity->store("Membuat data notifikasi template $request->title.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -131,16 +143,22 @@ class DocumenCategoryController extends Controller
         $status = '';
         $message = '';
 
-        $model = DocumentCategory::find($id);
-        $isUniqueName = $request->name && $request->name != $model->name ? '|unique:document_categories,name' : '';
+        $model = NotificationTemplate::find($id);
+        $isUniqueTitle = $request->title && $request->title != $model->title ? '|unique:notification_templates,title' : '';
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required' . $isUniqueName,
+            'title' => 'required' . $isUniqueTitle,
+            'content' => 'required',
+            'role' => 'required',
+            'action' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
         ], [
-            'name' => 'Nama Dokumen Kategori',
+            'title' => 'Judul Notifikasi',
+            'content' => 'Konten',
+            'role' => 'Role / Peran',
+            'action' => 'Aksi',
         ]);
 
         if ($validator->fails()) {
@@ -150,16 +168,19 @@ class DocumenCategoryController extends Controller
         }
 
         try {
-            $model->name = $request->name;
+            $model->title = $request->title;
+            $model->content = $request->content;
+            $model->role_id = $request->role;
+            $model->action_id = $request->action;
             $model->save();
 
-            $this->logActivity->store("Memperbarui data dokumen kategori.");
+            $this->logActivity->store("Memperbarui data notifikasi template.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
         } catch (\Exception $e) {
             $status = 'failed';
-            $message = 'Terjadi kesalahan';
+            $message = 'Terjadi kesalahan ' . $e;
         } catch (\Illuminate\Database\QueryException $e) {
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database';
@@ -185,9 +206,9 @@ class DocumenCategoryController extends Controller
         $message = '';
 
         try {
-            $model = DocumentCategory::findOrFail($id);
+            $model = NotificationTemplate::findOrFail($id);
             if ($model) {
-                $this->logActivity->store("Menghapus data dokumen kategori '$model->name'.");
+                $this->logActivity->store("Menghapus data notifikasi template '$model->name'.");
                 $model->delete();
 
                 $status = 'success';
