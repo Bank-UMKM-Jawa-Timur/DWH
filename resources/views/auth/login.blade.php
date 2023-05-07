@@ -38,11 +38,14 @@
             <form class="login-form" action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="form-group form-floating-label">
-                    <input id="email" autofocus name="email" type="text"
+                    <input id="input_type" autofocus name="input_type" type="text"
                         class="form-control input-border-bottom" required>
-                    <label for="email" class="placeholder">Username / Email</label>
+                    <label for="input_type" class="placeholder">NIP / Email</label>
                     @if ($errors->get('email'))
                         <span class="text-danger">{{ $errors->get('email')[0] }}</span>
+                    @endif
+                    @if ($errors->get('nip'))
+                        <span class="text-danger">{{ $errors->get('nip')[0] }}</span>
                     @endif
                 </div>
                 <div class="form-group form-floating-label">
