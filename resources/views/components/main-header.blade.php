@@ -95,7 +95,7 @@
                             </li>
                             <li>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/reset_password">Reset Password</a>
+                                <a class="dropdown-item" href="{{ route('change_password') }}">Change Password</a>
                                 {{-- <a class="dropdown-item" href="#"></a> --}}
                                 {{-- <a class="dropdown-item" href="#">Inbox</a> --}}
                                 {{-- <div class="dropdown-divider"></div> --}}

@@ -30,6 +30,10 @@ Route::middleware('auth')->group(function () {
         $param['pageTitle'] = 'Dashboard SuperAdmin';
         return view('pages.home', $param);
     });
+
+    Route::get('/change-password', [ProfileController::class, 'changePassword'])->name('change_password');
+    Route::post('/change-password', [ProfileController::class, 'updatePassword'])->name('update_password');
+
     Route::get('/reset_password', function () {
         $param['title'] = 'Reset Password';
         $param['pageTitle'] = 'Reset Password';
