@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/role-list', [RoleController::class, 'list'])->name('role.list');
         Route::resource('/pengguna', PenggunaController::class);
         Route::get('/pengguna-list-cabang', [PenggunaController::class, 'listCabang'])->name('pengguna.list_cabang');
+        Route::post('/pengguna/reset-password', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset_password');
         Route::resource('/vendor', VendorController::class);
         Route::resource('/kategori-dokumen', DocumenCategoryController::class);
         Route::resource('/template-notifikasi', NotificationTemplateController::class);

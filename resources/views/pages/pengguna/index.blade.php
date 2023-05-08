@@ -48,14 +48,12 @@
                                                     Selengkapnya
                                                 </button>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
+                                                    <a class="dropdown-item" id="edit-link" data-toggle="modal" data-target="#editModal"
                                                             data-id="{{ $item->id }}" data-nip="{{ $item->nip }}"
                                                             data-email="{{ $item->email }}" data-role="{{ $item->role_id }}" href="#">Edit</a>
+                                                    <a class="dropdown-item" id="reset-password-link" data-toggle="modal" data-target="#resetPasswordModal" data-id="{{ $item->id }}" href="#">Reset Password</a>
                                                     <a class="dropdown-item deleteModal" data-toggle="modal" data-target="#deleteModal"
                                                     data-id="{{ $item->id }}" href="#">Hapus</a>
-                                                </div>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Edit</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -191,6 +189,59 @@
         </div>
     </div>
 
+    <!-- Modal-reset password -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit {{ $pageTitle }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="modal-reset-password-form">
+                        <input type="hidden" name="reset_password_id" id="reset-password-id">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="name">
+                                        <label for="reset-password">Password</label>
+                                        <ul class="pl-3">
+                                            <li class="text-light text-info">Masukkan password atau gunakan password acak dengan menekan tombol dadu</li>
+                                            <li class="text-light text-info">Klik tombol papan klip untuk menyalin password.</li>
+                                            <li class="text-light text-info">Klik tombol simpan klip untuk menyimpan password.</li>
+                                        </ul>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder="Masukkan password" id="reset-password"
+                                            name="reset_password" autofocus required>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-black btn-border" type="button" id="button-generate">
+                                                    <span class="fas fa-dice-six" id="basic-addon2"></span>
+                                                </button>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-black btn-border" type="button" id="button-copy">
+                                                    <span class="fas fa-clipboard" id="basic-addon2"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-danger error"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button id="reset-password-button" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Modal Delete --}}
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -221,6 +272,20 @@
 
 
     @push('extraScript')
+    @if (session('status'))
+        <script>
+            swal("Berhasil!", '{{ session('status') }}', {
+                icon: "success",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        </script>
+    @endif
     <script>
         $('#add-button').click(function(e) {
             e.preventDefault()
@@ -232,6 +297,30 @@
             e.preventDefault()
 
             update();
+        })
+
+        $('#reset-password-button').click(function(e) {
+            e.preventDefault()
+            
+            resetPassword();
+        })
+
+        $('#button-generate').click(function(e) {
+            console.log('generate password')
+            var chars = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var passwordLength = 12;
+            var password = "";
+            for (var i = 0; i <= passwordLength; i++) {
+                var randomNumber = Math.floor(Math.random() * chars.length);
+                password += chars.substring(randomNumber, randomNumber +1);
+            }
+
+            $('#reset-password').val(password)
+        })
+        $('#button-copy').click(function(e) {
+            var copyText = document.getElementById("reset-password");
+            copyText.select();
+            document.execCommand("copy");  
         })
 
         function store() {
@@ -277,11 +366,10 @@
                     }
                     else {
                         if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
+                            SuccessMessage(data.message);
                         }
                         else {
-                            alert(data.message)
+                            ErrorMessage(data.message)
                         }
                         $('#addModal').modal().hide()
                         $('body').removeClass('modal-open');
@@ -332,11 +420,10 @@
                     }
                     else {
                         if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
+                            SuccessMessage(data.message);
                         }
                         else {
-                            alert(data.message)
+                            ErrorMessage(data.message)
                         }
                         $('#editModal').modal().hide()
                         $('body').removeClass('modal-open');
@@ -344,6 +431,51 @@
                     }
                 }
             });
+        }
+
+        function resetPassword() {
+            const req_id = document.getElementById('reset-password-id')
+            const req_password = document.getElementById('reset-password')
+
+            if (req_password == '') {
+                showError(req_password, 'Password harus diisi.');
+                return false;
+            }
+
+            $.ajax({
+                type:"POST",
+                url:"{{ route('pengguna.reset_password') }}",
+                data: {
+                    _token : "{{csrf_token()}}",
+                    id : req_id.value,
+                    password : req_password.value,
+                },
+                success: function(data){
+                    console.log(data)
+                    if (Array.isArray(data.error)) {
+                        for (var i=0; i < data.error.length; i++) {
+                            var message = data.error[i];
+                            if (message.toLowerCase().includes('password'))
+                                showError(req_password, message)
+                        }
+                    }
+                    else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        }
+                        else {
+                            ErrorMessage(data.message)
+                        }
+                        $('#resetPasswordModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                    }
+                },
+                error: function(e) {
+                    console.log(e)
+                    alert('Terjadi kesalahan')
+                }
+            })
         }
 
         // Modal
@@ -366,6 +498,7 @@
         })
         
         $(document).ready(function() {
+            // Edit link
             $('a[data-toggle=modal], button[data-toggle=modal]').click(function () {
                 var data_id = '';
                 var data_nip = '';
@@ -412,6 +545,18 @@
                 $('.edit-form').attr("action", url);   
             })
             
+
+            // Reset link
+            $('a[data-toggle=modal], button[data-toggle=modal]').click(function (e) {
+                e.preventDefault()
+                var data_id = '';
+
+                if (typeof $(this).data('id') !== 'undefined') {
+                    data_id = $(this).data('id');
+                }
+
+                $('#reset-password-id').val(data_id)
+            })
         });
         
         function showError(input, message) {
@@ -421,6 +566,32 @@
             formGroup.classList.add('has-error');
             errorSpan.innerText = message;
             input.focus();
+        }
+
+        function SuccessMessage(message) {
+            swal("Berhasil!", message, {
+                icon: "success",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        }
+        
+        function ErrorMessage(message) {
+            swal("Gagal!", message, {
+                icon: "error",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
         }
         
         $(document).on("click", ".deleteModal", function () {

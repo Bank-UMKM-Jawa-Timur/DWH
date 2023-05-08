@@ -220,6 +220,20 @@
 
 
     @push('extraScript')
+    @if (session('status'))
+        <script>
+            swal("Berhasil!", '{{ session('status') }}', {
+                icon: "success",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        </script>
+    @endif
     <script>
         $('#add-button').click(function(e) {
             e.preventDefault()
@@ -284,11 +298,10 @@
                     }
                     else {
                         if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
+                            SuccessMessage(data.message);
                         }
                         else {
-                            alert(data.message)
+                            ErrorMessage(data.message)
                         }
                         $('#addModal').modal().hide()
                         $('body').removeClass('modal-open');
@@ -354,11 +367,10 @@
                     }
                     else {
                         if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
+                            SuccessMessage(data.message);
                         }
                         else {
-                            alert(data.message)
+                            ErrorMessage(data.message)
                         }
                         $('#editModal').modal().hide()
                         $('body').removeClass('modal-open');
@@ -369,6 +381,32 @@
                     console.log(e)
                 }
             });
+        }
+
+        function SuccessMessage(message) {
+            swal("Berhasil!", message, {
+                icon: "success",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        }
+        
+        function ErrorMessage(message) {
+            swal("Gagal!", message, {
+                icon: "error",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
         }
 
         function showError(input, message) {

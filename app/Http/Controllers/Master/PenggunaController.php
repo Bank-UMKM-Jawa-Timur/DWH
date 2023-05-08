@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class PenggunaController extends Controller
@@ -210,6 +211,55 @@ class PenggunaController extends Controller
             $message = 'Terjadi kesalahan pada database.';
         } finally {
             return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $status = '';
+        $message = '';
+
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|min:8',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'min' => 'Minimal harus menggunakan 8 karakter.'
+        ], [
+            'password' => 'Password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                        'error' => $validator->errors()->all()
+                    ]);
+        }
+
+        try {
+            $user = User::find($request->id);
+            $user->password = \Hash::make($request->password);
+            $user->save();
+
+            $username = $user->nip ? $user->nip : $user->email;
+            $actor = Auth::user()->nip ? Auth::user()->nip : Auth::user()->email;
+
+            $this->logActivity->store("Password dari pengguna '$username' telah direset oleh '$actor'.");
+
+            $status = 'success';
+            $message = 'Berhasil mereset password';
+        } catch (\Exception $e) {
+            $status = 'error';
+            $message = 'Terjadi kesalahan. '.$e->getMessage();
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'error';
+            $message = 'Terjadi kesalahan pada database.';
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
         }
     }
 }
