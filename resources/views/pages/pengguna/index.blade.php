@@ -35,37 +35,39 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($data as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        {{-- <td>Antoni</td> --}}
-                                        <td>{{ $item->nip ? $item->nip : '-' }}</td>
-                                        <td>{{ $item->email ? $item->email : '-' }}</td>
-                                        <td>{{ $item->role }}</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
-                                                            data-id="{{ $item->id }}" data-nip="{{ $item->nip }}"
-                                                            data-email="{{ $item->email }}" data-role="{{ $item->role_id }}" href="#">Edit</a>
-                                                    <a class="dropdown-item deleteModal" data-toggle="modal" data-target="#deleteModal"
-                                                    data-id="{{ $item->id }}" href="#">Hapus</a>
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            {{-- <td>Antoni</td> --}}
+                                            <td>{{ $item->nip ? $item->nip : '-' }}</td>
+                                            <td>{{ $item->email ? $item->email : '-' }}</td>
+                                            <td>{{ $item->role }}</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                        data-toggle="dropdown" aria-expanded="false">
+                                                        Selengkapnya
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" data-toggle="modal"
+                                                            data-target="#editModal" data-id="{{ $item->id }}"
+                                                            data-nip="{{ $item->nip }}" data-email="{{ $item->email }}"
+                                                            data-role="{{ $item->role_id }}" href="#">Edit</a>
+                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
+                                                            data-target="#deleteModal" data-name="{{ $item->nip }}"
+                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
+                                                    </div>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Edit</a>
+                                                    </div>
                                                 </div>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
                                     @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center">
-                                            <span class="text-danger">Maaf data belum tersedia.</span>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td colspan="5" class="text-center">
+                                                <span class="text-danger">Maaf data belum tersedia.</span>
+                                            </td>
+                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -107,7 +109,8 @@
                                 <div class="col-sm-6">
                                     <div class="password">
                                         <label for="add-password">Password</label>
-                                        <input type="password" class="form-control" id="add-password" name="password" required>
+                                        <input type="password" class="form-control" id="add-password" name="password"
+                                            required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
@@ -166,7 +169,8 @@
                                 <div class="col-sm-6">
                                     <div class="password">
                                         <label for="edit-password">Password</label>
-                                        <input type="password" class="form-control" id="edit-password" name="password" required>
+                                        <input type="password" class="form-control" id="edit-password" name="password"
+                                            required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
@@ -196,14 +200,8 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                {{-- <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Hapus {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div> --}}
                 <div class="modal-body">
-                    <div class="form-group name">
+                    <div class="form-group name" id="konfirmasi">
                         Apakah Anda akan menghapus pengguna ini?
                     </div>
                     <div class="form-inline">
@@ -221,216 +219,227 @@
 
 
     @push('extraScript')
-    <script>
-        $('#add-button').click(function(e) {
-            e.preventDefault()
+        <script>
+            $('#add-button').click(function(e) {
+                e.preventDefault()
 
-            store();
-        })
-        
-        $('#edit-button').click(function(e) {
-            e.preventDefault()
-
-            update();
-        })
-
-        function store() {
-            const req_nip = document.getElementById('add-nip')
-            const req_email = document.getElementById('add-email')
-            const req_password = document.getElementById('add-password')
-            const req_role_id = document.getElementById('add-role')
-
-            if (req_password == '') {
-                showError(req_password, 'Password wajib diisi.');
-                return false;
-            }
-            if (req_role_id == '' || req_role_id == 0) {
-                showError(req_role_id, 'Role harus dipilih.');
-                return false;
-            }
-
-            $.ajax({
-                type:"POST",
-                url:"{{ route('pengguna.store') }}",
-                data:{
-                    _token : "{{csrf_token()}}",
-                    nip : req_nip.value,
-                    email : req_email.value,
-                    password : req_password.value,
-                    role_id : req_role_id.value,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
-                            
-                            if (message.toLowerCase().includes('nip'))
-                                showError(req_nip, message)
-                            if (message.toLowerCase().includes('email'))
-                                showError(req_email, message)
-                            if (message.toLowerCase().includes('password'))
-                                showError(req_password, message)
-                            if (message.toLowerCase().includes('role'))
-                                showError(req_role_id, message)
-                        }
-                    }
-                    else {
-                        if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
-                        }
-                        else {
-                            alert(data.message)
-                        }
-                        $('#addModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                }
-            });
-        }
-
-        function update() {
-            const req_id = document.getElementById('edit-id')
-            const req_nip = document.getElementById('edit-nip')
-            const req_email = document.getElementById('edit-email')
-            const req_password = document.getElementById('edit-password')
-            const req_role_id = document.getElementById('edit-role')
-
-            if (req_role_id == '' || req_role_id == 0) {
-                showError(req_role_id, 'Role harus dipilih.');
-                return false;
-            }
-
-            $.ajax({
-                type:"POST",
-                url:"{{ url('/master/pengguna') }}/"+req_id.value,
-                data:{
-                    _token : "{{csrf_token()}}",
-                    _method : 'PUT',
-                    nip : req_nip.value,
-                    email : req_email.value,
-                    password : req_password.value,
-                    role_id : req_role_id.value,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
-                            
-                            if (message.toLowerCase().includes('nip'))
-                                showError(req_nip, message)
-                            if (message.toLowerCase().includes('email'))
-                                showError(req_email, message)
-                            if (message.toLowerCase().includes('password'))
-                                showError(req_password, message)
-                            if (message.toLowerCase().includes('role'))
-                                showError(req_role_id, message)
-                        }
-                    }
-                    else {
-                        if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
-                        }
-                        else {
-                            alert(data.message)
-                        }
-                        $('#editModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                }
-            });
-        }
-
-        // Modal
-        $('#open-add-modal').click(function() {
-            $.ajax({
-                type:"GET",
-                url:"{{ route('role.list') }}",
-                success: function(data) {
-                    console.log(data)
-                    if (data)
-                    {
-                        for (i in data) {                        
-                            $("#add-role").append(`<option value="`+data[i].id+`">`+data[i].name+`</option>`);
-                        }
-                    }
-                }
+                store();
             })
 
-            $('#addModal').modal('show')
-        })
-        
-        $(document).ready(function() {
-            $('a[data-toggle=modal], button[data-toggle=modal]').click(function () {
-                var data_id = '';
-                var data_nip = '';
-                var data_email = '';
-                var data_password = '';
-                var data_role = '';
+            $('#edit-button').click(function(e) {
+                e.preventDefault()
 
-                if (typeof $(this).data('id') !== 'undefined') {
-                    data_id = $(this).data('id');
+                update();
+            })
+
+            function store() {
+                const req_nip = document.getElementById('add-nip')
+                const req_email = document.getElementById('add-email')
+                const req_password = document.getElementById('add-password')
+                const req_role_id = document.getElementById('add-role')
+
+                if (req_password == '') {
+                    showError(req_password, 'Password wajib diisi.');
+                    return false;
                 }
-                if (typeof $(this).data('nip') !== 'undefined') {
-                    data_nip = $(this).data('nip');
+                if (req_role_id == '' || req_role_id == 0) {
+                    showError(req_role_id, 'Role harus dipilih.');
+                    return false;
                 }
-                if (typeof $(this).data('email') !== 'undefined') {
-                    data_email = $(this).data('email');
-                }
-                if (typeof $(this).data('password') !== 'undefined') {
-                    data_password = $(this).data('password');
-                }
-                if (typeof $(this).data('role') !== 'undefined') {
-                    data_role_id = $(this).data('role');
-                }
-                $('#edit-id').val(data_id);
-                $('#edit-nip').val(data_nip);
-                $('#edit-email').val(data_email);
 
                 $.ajax({
-                    type:"GET",
-                    url:"{{ route('role.list') }}",
+                    type: "POST",
+                    url: "{{ route('pengguna.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        nip: req_nip.value,
+                        email: req_email.value,
+                        password: req_password.value,
+                        role_id: req_role_id.value,
+                    },
                     success: function(data) {
-                        if (data)
-                        {
-                            for (i in data) {                  
-                                if (data[i].id == data_role_id)      
-                                    $("#edit-role").append(`<option value="`+data[i].id+`" selected>`+data[i].name+`</option>`);
-                                else
-                                    $("#edit-role").append(`<option value="`+data[i].id+`">`+data[i].name+`</option>`);
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+
+                                if (message.toLowerCase().includes('nip'))
+                                    showError(req_nip, message)
+                                if (message.toLowerCase().includes('email'))
+                                    showError(req_email, message)
+                                if (message.toLowerCase().includes('password'))
+                                    showError(req_password, message)
+                                if (message.toLowerCase().includes('role'))
+                                    showError(req_role_id, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#addModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                });
+            }
+
+            function update() {
+                const req_id = document.getElementById('edit-id')
+                const req_nip = document.getElementById('edit-nip')
+                const req_email = document.getElementById('edit-email')
+                const req_password = document.getElementById('edit-password')
+                const req_role_id = document.getElementById('edit-role')
+
+                if (req_role_id == '' || req_role_id == 0) {
+                    showError(req_role_id, 'Role harus dipilih.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/master/pengguna') }}/" + req_id.value,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'PUT',
+                        nip: req_nip.value,
+                        email: req_email.value,
+                        password: req_password.value,
+                        role_id: req_role_id.value,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+
+                                if (message.toLowerCase().includes('nip'))
+                                    showError(req_nip, message)
+                                if (message.toLowerCase().includes('email'))
+                                    showError(req_email, message)
+                                if (message.toLowerCase().includes('password'))
+                                    showError(req_password, message)
+                                if (message.toLowerCase().includes('role'))
+                                    showError(req_role_id, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#editModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                });
+            }
+
+            // Modal
+            $('#open-add-modal').click(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('role.list') }}",
+                    success: function(data) {
+                        console.log(data)
+                        if (data) {
+                            for (i in data) {
+                                $("#add-role").append(`<option value="` + data[i].id + `">` + data[i].name +
+                                    `</option>`);
                             }
                         }
                     }
                 })
-                
-                var url = "{{ url('/master/pengguna') }}/"+data_id;
-                $('.edit-form').attr("action", url);   
+
+                $('#addModal').modal('show')
             })
-            
-        });
-        
-        function showError(input, message) {
-            const formGroup = input.parentElement;
-            const errorSpan = formGroup.querySelector('.error');
-            
-            formGroup.classList.add('has-error');
-            errorSpan.innerText = message;
-            input.focus();
-        }
-        
-        $(document).on("click", ".deleteModal", function () {
-            var data_id = $(this).data('id');
-            var url = "{{ url('/master/pengguna') }}/"+data_id;
-            console.log(url)
-            $('#delete-form').attr("action", url);   
-            
-            $('#deleteModal').modal('show');
-        });
-    </script>
+
+            $(document).ready(function() {
+                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
+                    var data_id = '';
+                    var data_nip = '';
+                    var data_email = '';
+                    var data_password = '';
+                    var data_role = '';
+
+                    if (typeof $(this).data('id') !== 'undefined') {
+                        data_id = $(this).data('id');
+                    }
+                    if (typeof $(this).data('nip') !== 'undefined') {
+                        data_nip = $(this).data('nip');
+                    }
+                    if (typeof $(this).data('email') !== 'undefined') {
+                        data_email = $(this).data('email');
+                    }
+                    if (typeof $(this).data('password') !== 'undefined') {
+                        data_password = $(this).data('password');
+                    }
+                    if (typeof $(this).data('role') !== 'undefined') {
+                        data_role_id = $(this).data('role');
+                    }
+                    $('#edit-id').val(data_id);
+                    $('#edit-nip').val(data_nip);
+                    $('#edit-email').val(data_email);
+
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ route('role.list') }}",
+                        success: function(data) {
+                            if (data) {
+                                for (i in data) {
+                                    if (data[i].id == data_role_id)
+                                        $("#edit-role").append(`<option value="` + data[i].id +
+                                            `" selected>` + data[i].name + `</option>`);
+                                    else
+                                        $("#edit-role").append(`<option value="` + data[i].id +
+                                            `">` + data[i].name + `</option>`);
+                                }
+                            }
+                        }
+                    })
+
+                    var url = "{{ url('/master/pengguna') }}/" + data_id;
+                    $('.edit-form').attr("action", url);
+                })
+
+            });
+
+            function showError(input, message) {
+                const formGroup = input.parentElement;
+                const errorSpan = formGroup.querySelector('.error');
+
+                formGroup.classList.add('has-error');
+                errorSpan.innerText = message;
+                input.focus();
+            }
+
+            function SuccessMessage(message) {
+                swal("Berhasil!", message, {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            }
+
+            $(document).on("click", ".deleteModal", function() {
+                var data_id = $(this).data('id');
+                var data_name = $(this).data('name');
+                var url = "{{ url('/master/pengguna') }}/" + data_id;
+                console.log(url)
+                $('#konfirmasi').text("Apakah Kamu Ingin Menghapus Pengguna Dengan NIP:" + data_name + "?");
+                $('#delete-form').attr("action", url);
+
+
+                $('#deleteModal').modal('show');
+            });
+        </script>
     @endpush
 @endsection

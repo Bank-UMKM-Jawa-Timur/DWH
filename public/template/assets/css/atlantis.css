@@ -1657,6 +1657,44 @@ body {
     align-items: center;
 }
 
+.paginated .page-item.active .page-link {
+    border-radius: 0;
+    background-color: #1F1D62;
+    width: 35px;
+    height: 35px;
+}
+
+.paginated .page-item.disabled .page-link {
+    border-radius: 0;
+    background-color: #EAEAEA;
+    cursor: not-allowed;
+    pointer-events: all !important;
+    width: 35px;
+    height: 35px;
+}
+
+.pagination>li>a,
+.pagination>li:first-child>a,
+.pagination>li:last-child>a,
+.pagination>li>span,
+.pagination>li:first-child>span,
+.pagination>li:last-child>span {
+    border-radius: 0px !important;
+    margin: 0 2px;
+    color: #777777;
+    border-color: #ddd;
+}
+
+.pagination>li>span {
+    border-radius: 0px !important;
+}
+
+.paginated .page-link {
+    background-color: #E4E4E4;
+    height: 35px;
+    width: 35px;
+}
+
 /*    sidebar minimized   */
 @media screen and (min-width: 991px) {
     .sidebar_minimize .main-panel {
@@ -7661,7 +7699,7 @@ label.error {
 .notif-box .notif-center a .notif-content,
 .messages-notif-box .notif-center a .notif-content {
     padding: 0px 0px 0px 20px;
-    border-bottom: 0.5px solid #1F1D62;
+    border-bottom: 0.3px solid #aeaeae;
 }
 
 .notif-box .notif-center a .message-content,
@@ -7694,6 +7732,7 @@ label.error {
 .messages-notif-box .notif-center a .notif-content .time {
     color: #7d8c95;
     font-size: 11px;
+    ;
     margin: 0;
 }
 
@@ -8993,7 +9032,7 @@ label.error {
 .pagination>li>span,
 .pagination>li:first-child>span,
 .pagination>li:last-child>span {
-    border-radius: 100px !important;
+    border-radius: 0px !important;
     margin: 0 2px;
     color: #777777;
     border-color: #ddd;
@@ -22737,5 +22776,14 @@ body[data-background-color="dark"] .board {
 
 .lead-notif {
     margin: 0;
+    font-size: 12px;
+}
+
+.modal-notifikasi .title {
+    font-weight: 800;
+    margin: 0;
+}
+
+.modal-notifikasi .time {
     font-size: 12px;
 }

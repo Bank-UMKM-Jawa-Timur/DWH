@@ -34,30 +34,33 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($data as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->name }}</td>
-                                        <td>{{ $item->address }}</td>
-                                        <td>{{ $item->phone }}</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
-                                                            data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                            data-phone="{{ $item->phone }}" data-address="{{ $item->address }}" data-cabang="{{ $item->cabang_id }}" href="#">Edit</a>
-                                                    <a class="dropdown-item deleteModal" data-toggle="modal" data-target="#deleteModal"
-                                                    data-id="{{ $item->id }}" href="#">Hapus</a>
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $item->name }}</td>
+                                            <td>{{ $item->address }}</td>
+                                            <td>{{ $item->phone }}</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                        data-toggle="dropdown" aria-expanded="false">
+                                                        Selengkapnya
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" data-toggle="modal"
+                                                            data-target="#editModal" data-id="{{ $item->id }}"
+                                                            data-name="{{ $item->name }}" data-phone="{{ $item->phone }}"
+                                                            data-address="{{ $item->address }}"
+                                                            data-cabang="{{ $item->cabang_id }}" href="#">Edit</a>
+                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
+                                                            data-target="#deleteModal" data-name="{{ $item->name }}"
+                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
+                                                    </div>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Edit</a>
+                                                    </div>
                                                 </div>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
                                     @empty
                                         <tr>
                                             <td colspan="5" class="text-center">
@@ -92,7 +95,8 @@
                                 <div class="col-sm-4">
                                     <div class="Nama">
                                         <label for="add-name">Nama</label>
-                                        <input autofocus type="text" class="form-control" id="add-name" name="nama" required>
+                                        <input autofocus type="text" class="form-control" id="add-name" name="nama"
+                                            required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
@@ -158,10 +162,11 @@
                                 <div class="col-sm-4">
                                     <div class="Phone">
                                         <label for="edit-phone">Nomor HP</label>
-                                        <input type="text" class="form-control" id="edit-phone" name="phone" required>
+                                        <input type="text" class="form-control" id="edit-phone" name="phone"
+                                            required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
-                                </div>                                
+                                </div>
                                 <div class="col-sm-4">
                                     <div class="role">
                                         <label for="edit-cabang">NIP Cabang</label>
@@ -202,7 +207,7 @@
                     </button>
                 </div> --}}
                 <div class="modal-body">
-                    <div class="form-group name">
+                    <div class="form-group name" id="konfirmasi">
                         Apakah Anda yakin akan menghapus vendor ini?
                     </div>
                     <div class="form-inline">
@@ -220,244 +225,254 @@
 
 
     @push('extraScript')
-    <script>
-        $('#add-button').click(function(e) {
-            e.preventDefault()
+        <script>
+            $('#add-button').click(function(e) {
+                e.preventDefault()
 
-            store();
-        })
-        
-        $('#edit-button').click(function(e) {
-            e.preventDefault()
-
-            update();
-        })
-
-        function store() {
-            const req_name = document.getElementById('add-name')
-            const req_phone = document.getElementById('add-phone')
-            const req_address = document.getElementById('add-address')
-            const req_cabang_id = document.getElementById('add-cabang')
-
-            if (req_name == '') {
-                showError(req_name, 'Nama harus diisi.');
-                return false;
-            }
-            if (req_phone == '') {
-                showError(req_phone, 'Nomor HP harus diisi.');
-                return false;
-            }
-            if (req_address == '') {
-                showError(req_address, 'Alamat harus diisi.');
-                return false;
-            }
-            if (req_cabang_id == '' || req_cabang_id == 0) {
-                showError(req_cabang_id, 'Role harus dipilih.');
-                return false;
-            }
-
-            $.ajax({
-                type:"POST",
-                url:"{{ route('vendor.store') }}",
-                data:{
-                    _token : "{{csrf_token()}}",
-                    name : req_name.value,
-                    phone : req_phone.value,
-                    address : req_address.value,
-                    cabang_id : req_cabang_id.value,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
-                            
-                            if (message.toLowerCase().includes('name'))
-                                showError(req_name, message)
-                            if (message.toLowerCase().includes('nomor'))
-                                showError(req_phone, message)
-                            if (message.toLowerCase().includes('address'))
-                                showError(req_address, message)
-                            if (message.toLowerCase().includes('cabang'))
-                                showError(req_cabang_id, message)
-                        }
-                    }
-                    else {
-                        if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
-                        }
-                        else {
-                            alert(data.message)
-                        }
-                        $('#addModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                },
-                error:function(e) {
-                    console.log(e)
-                }
-            });
-        }
-
-        function update() {
-            const req_id = document.getElementById('edit-id')
-            const req_name = document.getElementById('edit-name')
-            const req_phone = document.getElementById('edit-phone')
-            const req_address = document.getElementById('edit-address')
-            const req_cabang_id = document.getElementById('edit-cabang')
-
-            if (req_name == '') {
-                showError(req_name, 'Nama harus diisi.')
-                return false;
-            }
-            if (req_phone == '') {
-                showError(req_phone, 'Nomor HP harus diisi.')
-                return false;
-            }
-            if (req_address == '') {
-                showError(req_address, 'Alamat harus diisi.')
-                return false;
-            }
-            if (req_cabang_id == '' || req_cabang_id == 0) {
-                showError(req_cabang_id, 'NIP cabang harus dipilih.');
-                return false;
-            }
-
-            $.ajax({
-                type:"POST",
-                url:"{{ url('/master/vendor') }}/"+req_id.value,
-                data:{
-                    _token : "{{csrf_token()}}",
-                    _method : 'PUT',
-                    name : req_name.value,
-                    phone : req_phone.value,
-                    address : req_address.value,
-                    cabang_id : req_cabang_id.value,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
-                            
-                            if (message.toLowerCase().includes('name'))
-                                showError(req_name, message)
-                            if (message.toLowerCase().includes('nomor'))
-                                showError(req_phone, message)
-                            if (message.toLowerCase().includes('address'))
-                                showError(req_address, message)
-                            if (message.toLowerCase().includes('cabang'))
-                                showError(req_cabang_id, message)
-                        }
-                    }
-                    else {
-                        if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
-                        }
-                        else {
-                            alert(data.message)
-                        }
-                        $('#editModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                },
-                error:function(e) {
-                    console.log(e)
-                }
-            });
-        }
-
-        function showError(input, message) {
-            const formGroup = input.parentElement;
-            const errorSpan = formGroup.querySelector('.error');
-
-            formGroup.classList.add('has-error');
-            errorSpan.innerText = message;
-            input.focus();
-        }
-
-        // Modal
-        $('#open-add-modal').click(function() {
-            $.ajax({
-                type:"GET",
-                url:"{{ route('pengguna.list_cabang') }}",
-                success: function(data) {
-                    console.log(data)
-                    if (data)
-                    {
-                        for (i in data) {                        
-                            $("#add-cabang").append(`<option value="`+data[i].id+`">`+data[i].nip+`</option>`);
-                        }
-                    }
-                }
+                store();
             })
 
-            $('#addModal').modal('show')
-        })
+            $('#edit-button').click(function(e) {
+                e.preventDefault()
 
-        $(document).ready(function() {
-            $('a[data-toggle=modal], button[data-toggle=modal]').click(function () {
-                var data_id = '';
-                var data_name = '';
-                var data_phone = '';
-                var data_address = '';
-                var data_cabang = '';
+                update();
+            })
 
-                if (typeof $(this).data('id') !== 'undefined') {
-                    data_id = $(this).data('id');
+            function store() {
+                const req_name = document.getElementById('add-name')
+                const req_phone = document.getElementById('add-phone')
+                const req_address = document.getElementById('add-address')
+                const req_cabang_id = document.getElementById('add-cabang')
+
+                if (req_name == '') {
+                    showError(req_name, 'Nama harus diisi.');
+                    return false;
                 }
-                if (typeof $(this).data('name') !== 'undefined') {
-                    data_name = $(this).data('name');
+                if (req_phone == '') {
+                    showError(req_phone, 'Nomor HP harus diisi.');
+                    return false;
                 }
-                if (typeof $(this).data('phone') !== 'undefined') {
-                    data_phone = $(this).data('phone');
+                if (req_address == '') {
+                    showError(req_address, 'Alamat harus diisi.');
+                    return false;
                 }
-                if (typeof $(this).data('address') !== 'undefined') {
-                    data_address = $(this).data('address');
+                if (req_cabang_id == '' || req_cabang_id == 0) {
+                    showError(req_cabang_id, 'Role harus dipilih.');
+                    return false;
                 }
-                if (typeof $(this).data('cabang') !== 'undefined') {
-                    data_cabang = $(this).data('cabang');
-                }
-                $('#edit-id').val(data_id);
-                $('#edit-name').val(data_name);
-                $('#edit-phone').val(data_phone);
-                $('#edit-address').val(data_address);
-                $('#edit-cabang').val(data_cabang);
 
                 $.ajax({
-                    type:"GET",
-                    url:"{{ route('pengguna.list_cabang') }}",
+                    type: "POST",
+                    url: "{{ route('vendor.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: req_name.value,
+                        phone: req_phone.value,
+                        address: req_address.value,
+                        cabang_id: req_cabang_id.value,
+                    },
                     success: function(data) {
-                        if (data)
-                        {
-                            for (i in data) {                  
-                                if (data[i].id == data_cabang)      
-                                    $("#edit-cabang").append(`<option value="`+data[i].id+`" selected>`+data[i].nip+`</option>`);
-                                else
-                                    $("#edit-cabang").append(`<option value="`+data[i].id+`">`+data[i].nip+`</option>`);
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+
+                                if (message.toLowerCase().includes('name'))
+                                    showError(req_name, message)
+                                if (message.toLowerCase().includes('nomor'))
+                                    showError(req_phone, message)
+                                if (message.toLowerCase().includes('address'))
+                                    showError(req_address, message)
+                                if (message.toLowerCase().includes('cabang'))
+                                    showError(req_cabang_id, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#addModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                    }
+                });
+            }
+
+            function update() {
+                const req_id = document.getElementById('edit-id')
+                const req_name = document.getElementById('edit-name')
+                const req_phone = document.getElementById('edit-phone')
+                const req_address = document.getElementById('edit-address')
+                const req_cabang_id = document.getElementById('edit-cabang')
+
+                if (req_name == '') {
+                    showError(req_name, 'Nama harus diisi.')
+                    return false;
+                }
+                if (req_phone == '') {
+                    showError(req_phone, 'Nomor HP harus diisi.')
+                    return false;
+                }
+                if (req_address == '') {
+                    showError(req_address, 'Alamat harus diisi.')
+                    return false;
+                }
+                if (req_cabang_id == '' || req_cabang_id == 0) {
+                    showError(req_cabang_id, 'NIP cabang harus dipilih.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/master/vendor') }}/" + req_id.value,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'PUT',
+                        name: req_name.value,
+                        phone: req_phone.value,
+                        address: req_address.value,
+                        cabang_id: req_cabang_id.value,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+
+                                if (message.toLowerCase().includes('name'))
+                                    showError(req_name, message)
+                                if (message.toLowerCase().includes('nomor'))
+                                    showError(req_phone, message)
+                                if (message.toLowerCase().includes('address'))
+                                    showError(req_address, message)
+                                if (message.toLowerCase().includes('cabang'))
+                                    showError(req_cabang_id, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#editModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                    }
+                });
+            }
+
+            function showError(input, message) {
+                const formGroup = input.parentElement;
+                const errorSpan = formGroup.querySelector('.error');
+
+                formGroup.classList.add('has-error');
+                errorSpan.innerText = message;
+                input.focus();
+            }
+
+            function SuccessMessage(message) {
+                swal("Berhasil!", message, {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            }
+
+            // Modal
+            $('#open-add-modal').click(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('pengguna.list_cabang') }}",
+                    success: function(data) {
+                        console.log(data)
+                        if (data) {
+                            for (i in data) {
+                                $("#add-cabang").append(`<option value="` + data[i].id + `">` + data[i]
+                                    .nip + `</option>`);
                             }
                         }
                     }
                 })
-                
-                var url = "{{ url('/master/vendor') }}/"+data_id;
-                $('.edit-form').attr("action", url);   
-            })
-            
-        });
 
-        $(document).on("click", ".deleteModal", function () {
-            var data_id = $(this).data('id');
-            var url = "{{ url('/master/vendor') }}/"+data_id;
-            console.log(url)
-            $('#delete-form').attr("action", url);   
-            
-            $('#deleteModal').modal('show');
-        });
-    </script>
+                $('#addModal').modal('show')
+            })
+
+            $(document).ready(function() {
+                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
+                    var data_id = '';
+                    var data_name = '';
+                    var data_phone = '';
+                    var data_address = '';
+                    var data_cabang = '';
+
+                    if (typeof $(this).data('id') !== 'undefined') {
+                        data_id = $(this).data('id');
+                    }
+                    if (typeof $(this).data('name') !== 'undefined') {
+                        data_name = $(this).data('name');
+                    }
+                    if (typeof $(this).data('phone') !== 'undefined') {
+                        data_phone = $(this).data('phone');
+                    }
+                    if (typeof $(this).data('address') !== 'undefined') {
+                        data_address = $(this).data('address');
+                    }
+                    if (typeof $(this).data('cabang') !== 'undefined') {
+                        data_cabang = $(this).data('cabang');
+                    }
+                    $('#edit-id').val(data_id);
+                    $('#edit-name').val(data_name);
+                    $('#edit-phone').val(data_phone);
+                    $('#edit-address').val(data_address);
+                    $('#edit-cabang').val(data_cabang);
+
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ route('pengguna.list_cabang') }}",
+                        success: function(data) {
+                            if (data) {
+                                for (i in data) {
+                                    if (data[i].id == data_cabang)
+                                        $("#edit-cabang").append(`<option value="` + data[i].id +
+                                            `" selected>` + data[i].nip + `</option>`);
+                                    else
+                                        $("#edit-cabang").append(`<option value="` + data[i].id +
+                                            `">` + data[i].nip + `</option>`);
+                                }
+                            }
+                        }
+                    })
+
+                    var url = "{{ url('/master/vendor') }}/" + data_id;
+                    $('.edit-form').attr("action", url);
+                })
+
+            });
+
+            $(document).on("click", ".deleteModal", function() {
+                var data_id = $(this).data('id');
+                var data_name = $(this).data('name');
+                var url = "{{ url('/master/vendor') }}/" + data_id;
+                console.log(url)
+                $('#delete-form').attr("action", url);
+                $('#konfirmasi').text("Apakah Kamu Ingin Menghapus Data " + data_name + "?");
+
+                $('#deleteModal').modal('show');
+            });
+        </script>
     @endpush
 @endsection
