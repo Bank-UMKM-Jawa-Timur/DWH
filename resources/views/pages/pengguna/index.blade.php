@@ -35,33 +35,31 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($data as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            {{-- <td>Antoni</td> --}}
-                                            <td>{{ $item->nip ? $item->nip : '-' }}</td>
-                                            <td>{{ $item->email ? $item->email : '-' }}</td>
-                                            <td>{{ $item->role }}</td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-expanded="false">
-                                                        Selengkapnya
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" data-toggle="modal"
-                                                            data-target="#editModal" data-id="{{ $item->id }}"
-                                                            data-nip="{{ $item->nip }}" data-email="{{ $item->email }}"
-                                                            data-role="{{ $item->role_id }}" href="#">Edit</a>
-                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
-                                                            data-target="#deleteModal" data-name="{{ $item->nip }}"
-                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
-                                                    </div>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Edit</a>
-                                                    </div>
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        {{-- <td>Antoni</td> --}}
+                                        <td>{{ $item->nip ? $item->nip : '-' }}</td>
+                                        <td>{{ $item->email ? $item->email : '-' }}</td>
+                                        <td>{{ $item->role }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                    data-toggle="dropdown" aria-expanded="false">
+                                                    Selengkapnya
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
+                                                            data-id="{{ $item->id }}" data-nip="{{ $item->nip }}"
+                                                            data-email="{{ $item->email }}" data-role="{{ $item->role_id }}" href="#">Edit</a>
+                                                    <a class="dropdown-item deleteModal" data-toggle="modal" data-target="#deleteModal"
+                                                    data-id="{{ $item->id }}" href="#">Hapus</a>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @empty
                                         <tr>
                                             <td colspan="5" class="text-center">
@@ -195,6 +193,59 @@
         </div>
     </div>
 
+    <!-- Modal-reset password -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit {{ $pageTitle }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="modal-reset-password-form">
+                        <input type="hidden" name="reset_password_id" id="reset-password-id">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="name">
+                                        <label for="reset-password">Password</label>
+                                        <ul class="pl-3">
+                                            <li class="text-light text-info">Masukkan password atau gunakan password acak dengan menekan tombol dadu</li>
+                                            <li class="text-light text-info">Klik tombol papan klip untuk menyalin password.</li>
+                                            <li class="text-light text-info">Klik tombol simpan klip untuk menyimpan password.</li>
+                                        </ul>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder="Masukkan password" id="reset-password"
+                                            name="reset_password" autofocus required>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-black btn-border" type="button" id="button-generate">
+                                                    <span class="fas fa-dice-six" id="basic-addon2"></span>
+                                                </button>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-black btn-border" type="button" id="button-copy">
+                                                    <span class="fas fa-clipboard" id="basic-addon2"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-danger error"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button id="reset-password-button" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Modal Delete --}}
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -219,9 +270,9 @@
 
 
     @push('extraScript')
-        <script>
-            $('#add-button').click(function(e) {
-                e.preventDefault()
+    <script>
+        $('#add-button').click(function(e) {
+            e.preventDefault()
 
                 store();
             })
@@ -232,11 +283,11 @@
                 update();
             })
 
-            function store() {
-                const req_nip = document.getElementById('add-nip')
-                const req_email = document.getElementById('add-email')
-                const req_password = document.getElementById('add-password')
-                const req_role_id = document.getElementById('add-role')
+        function store() {
+            const req_nip = document.getElementById('add-nip')
+            const req_email = document.getElementById('add-email')
+            const req_password = document.getElementById('add-password')
+            const req_role_id = document.getElementById('add-role')
 
                 if (req_password == '') {
                     showError(req_password, 'Password wajib diisi.');
@@ -247,44 +298,47 @@
                     return false;
                 }
 
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('pengguna.store') }}",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        nip: req_nip.value,
-                        email: req_email.value,
-                        password: req_password.value,
-                        role_id: req_role_id.value,
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        if (Array.isArray(data.error)) {
-                            for (var i = 0; i < data.error.length; i++) {
-                                var message = data.error[i];
+            $.ajax({
+                type:"POST",
+                url:"{{ route('pengguna.store') }}",
+                data:{
+                    _token : "{{csrf_token()}}",
+                    nip : req_nip.value,
+                    email : req_email.value,
+                    password : req_password.value,
+                    role_id : req_role_id.value,
+                },
+                success:function(data){
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        for (var i=0; i < data.error.length; i++) {
+                            var message = data.error[i];
 
-                                if (message.toLowerCase().includes('nip'))
-                                    showError(req_nip, message)
-                                if (message.toLowerCase().includes('email'))
-                                    showError(req_email, message)
-                                if (message.toLowerCase().includes('password'))
-                                    showError(req_password, message)
-                                if (message.toLowerCase().includes('role'))
-                                    showError(req_role_id, message)
-                            }
-                        } else {
-                            if (data.status == 'success') {
-                                SuccessMessage(data.message);
-                            } else {
-                                alert(data.message)
-                            }
-                            $('#addModal').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
+                            if (message.toLowerCase().includes('nip'))
+                                showError(req_nip, message)
+                            if (message.toLowerCase().includes('email'))
+                                showError(req_email, message)
+                            if (message.toLowerCase().includes('password'))
+                                showError(req_password, message)
+                            if (message.toLowerCase().includes('role'))
+                                showError(req_role_id, message)
                         }
                     }
-                });
-            }
+                    else {
+                        if (data.status == 'success') {
+                            alert(data.message);
+                            location.reload();
+                        }
+                        else {
+                            alert(data.message)
+                        }
+                        $('#addModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                    }
+                }
+            });
+        }
 
             function update() {
                 const req_id = document.getElementById('edit-id')
@@ -298,72 +352,74 @@
                     return false;
                 }
 
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url('/master/pengguna') }}/" + req_id.value,
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: 'PUT',
-                        nip: req_nip.value,
-                        email: req_email.value,
-                        password: req_password.value,
-                        role_id: req_role_id.value,
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        if (Array.isArray(data.error)) {
-                            for (var i = 0; i < data.error.length; i++) {
-                                var message = data.error[i];
+            $.ajax({
+                type:"POST",
+                url:"{{ url('/master/pengguna') }}/"+req_id.value,
+                data:{
+                    _token : "{{csrf_token()}}",
+                    _method : 'PUT',
+                    nip : req_nip.value,
+                    email : req_email.value,
+                    password : req_password.value,
+                    role_id : req_role_id.value,
+                },
+                success:function(data){
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        for (var i=0; i < data.error.length; i++) {
+                            var message = data.error[i];
 
-                                if (message.toLowerCase().includes('nip'))
-                                    showError(req_nip, message)
-                                if (message.toLowerCase().includes('email'))
-                                    showError(req_email, message)
-                                if (message.toLowerCase().includes('password'))
-                                    showError(req_password, message)
-                                if (message.toLowerCase().includes('role'))
-                                    showError(req_role_id, message)
-                            }
-                        } else {
-                            if (data.status == 'success') {
-                                SuccessMessage(data.message);
-                            } else {
-                                alert(data.message)
-                            }
-                            $('#editModal').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
+                            if (message.toLowerCase().includes('nip'))
+                                showError(req_nip, message)
+                            if (message.toLowerCase().includes('email'))
+                                showError(req_email, message)
+                            if (message.toLowerCase().includes('password'))
+                                showError(req_password, message)
+                            if (message.toLowerCase().includes('role'))
+                                showError(req_role_id, message)
                         }
                     }
-                });
-            }
+                    else {
+                        if (data.status == 'success') {
+                            alert(data.message);
+                            location.reload();
+                        }
+                        else {
+                            alert(data.message)
+                        }
+                        $('#editModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                    }
+                }
+            });
+        }
 
-            // Modal
-            $('#open-add-modal').click(function() {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('role.list') }}",
-                    success: function(data) {
-                        console.log(data)
-                        if (data) {
-                            for (i in data) {
-                                $("#add-role").append(`<option value="` + data[i].id + `">` + data[i].name +
-                                    `</option>`);
-                            }
+        // Modal
+        $('#open-add-modal').click(function() {
+            $.ajax({
+                type:"GET",
+                url:"{{ route('role.list') }}",
+                success: function(data) {
+                    console.log(data)
+                    if (data)
+                    {
+                        for (i in data) {
+                            $("#add-role").append(`<option value="`+data[i].id+`">`+data[i].name+`</option>`);
                         }
                     }
                 })
 
-                $('#addModal').modal('show')
-            })
+            $('#addModal').modal('show')
+        })
 
-            $(document).ready(function() {
-                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
-                    var data_id = '';
-                    var data_nip = '';
-                    var data_email = '';
-                    var data_password = '';
-                    var data_role = '';
+        $(document).ready(function() {
+            $('a[data-toggle=modal], button[data-toggle=modal]').click(function () {
+                var data_id = '';
+                var data_nip = '';
+                var data_email = '';
+                var data_password = '';
+                var data_role = '';
 
                     if (typeof $(this).data('id') !== 'undefined') {
                         data_id = $(this).data('id');
@@ -399,47 +455,32 @@
                                 }
                             }
                         }
-                    })
-
-                    var url = "{{ url('/master/pengguna') }}/" + data_id;
-                    $('.edit-form').attr("action", url);
+                    }
                 })
 
-            });
+                var url = "{{ url('/master/pengguna') }}/"+data_id;
+                $('.edit-form').attr("action", url);
+            })
 
-            function showError(input, message) {
-                const formGroup = input.parentElement;
-                const errorSpan = formGroup.querySelector('.error');
+        });
 
-                formGroup.classList.add('has-error');
-                errorSpan.innerText = message;
-                input.focus();
-            }
+        function showError(input, message) {
+            const formGroup = input.parentElement;
+            const errorSpan = formGroup.querySelector('.error');
 
-            function SuccessMessage(message) {
-                swal("Berhasil!", message, {
-                    icon: "success",
-                    timer: 3000,
-                    closeOnClickOutside: false
-                }).then(() => {
-                    location.reload();
-                });
-                setTimeout(function() {
-                    location.reload();
-                }, 3000);
-            }
+            formGroup.classList.add('has-error');
+            errorSpan.innerText = message;
+            input.focus();
+        }
 
-            $(document).on("click", ".deleteModal", function() {
-                var data_id = $(this).data('id');
-                var data_name = $(this).data('name');
-                var url = "{{ url('/master/pengguna') }}/" + data_id;
-                console.log(url)
-                $('#konfirmasi').text("Apakah Kamu Ingin Menghapus Pengguna Dengan NIP:" + data_name + "?");
-                $('#delete-form').attr("action", url);
+        $(document).on("click", ".deleteModal", function () {
+            var data_id = $(this).data('id');
+            var url = "{{ url('/master/pengguna') }}/"+data_id;
+            console.log(url)
+            $('#delete-form').attr("action", url);
 
-
-                $('#deleteModal').modal('show');
-            });
-        </script>
+            $('#deleteModal').modal('show');
+        });
+    </script>
     @endpush
 @endsection

@@ -225,11 +225,218 @@
 
 
     @push('extraScript')
+    @if (session('status'))
         <script>
-            $('#add-button').click(function(e) {
-                e.preventDefault()
+            swal("Berhasil!", '{{ session('status') }}', {
+                icon: "success",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        </script>
+    @endif
+    <script>
+        $('#add-button').click(function(e) {
+            e.preventDefault()
 
-                store();
+            store();
+        })
+
+        $('#edit-button').click(function(e) {
+            e.preventDefault()
+
+            update();
+        })
+
+        function store() {
+            const req_name = document.getElementById('add-name')
+            const req_phone = document.getElementById('add-phone')
+            const req_address = document.getElementById('add-address')
+            const req_cabang_id = document.getElementById('add-cabang')
+
+            if (req_name == '') {
+                showError(req_name, 'Nama harus diisi.');
+                return false;
+            }
+            if (req_phone == '') {
+                showError(req_phone, 'Nomor HP harus diisi.');
+                return false;
+            }
+            if (req_address == '') {
+                showError(req_address, 'Alamat harus diisi.');
+                return false;
+            }
+            if (req_cabang_id == '' || req_cabang_id == 0) {
+                showError(req_cabang_id, 'Role harus dipilih.');
+                return false;
+            }
+
+            $.ajax({
+                type:"POST",
+                url:"{{ route('vendor.store') }}",
+                data:{
+                    _token : "{{csrf_token()}}",
+                    name : req_name.value,
+                    phone : req_phone.value,
+                    address : req_address.value,
+                    cabang_id : req_cabang_id.value,
+                },
+                success:function(data){
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        for (var i=0; i < data.error.length; i++) {
+                            var message = data.error[i];
+
+                            if (message.toLowerCase().includes('name'))
+                                showError(req_name, message)
+                            if (message.toLowerCase().includes('nomor'))
+                                showError(req_phone, message)
+                            if (message.toLowerCase().includes('address'))
+                                showError(req_address, message)
+                            if (message.toLowerCase().includes('cabang'))
+                                showError(req_cabang_id, message)
+                        }
+                    }
+                    else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        }
+                        else {
+                            ErrorMessage(data.message)
+                        }
+                        $('#addModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                    }
+                },
+                error:function(e) {
+                    console.log(e)
+                }
+            });
+        }
+
+        function update() {
+            const req_id = document.getElementById('edit-id')
+            const req_name = document.getElementById('edit-name')
+            const req_phone = document.getElementById('edit-phone')
+            const req_address = document.getElementById('edit-address')
+            const req_cabang_id = document.getElementById('edit-cabang')
+
+            if (req_name == '') {
+                showError(req_name, 'Nama harus diisi.')
+                return false;
+            }
+            if (req_phone == '') {
+                showError(req_phone, 'Nomor HP harus diisi.')
+                return false;
+            }
+            if (req_address == '') {
+                showError(req_address, 'Alamat harus diisi.')
+                return false;
+            }
+            if (req_cabang_id == '' || req_cabang_id == 0) {
+                showError(req_cabang_id, 'NIP cabang harus dipilih.');
+                return false;
+            }
+
+            $.ajax({
+                type:"POST",
+                url:"{{ url('/master/vendor') }}/"+req_id.value,
+                data:{
+                    _token : "{{csrf_token()}}",
+                    _method : 'PUT',
+                    name : req_name.value,
+                    phone : req_phone.value,
+                    address : req_address.value,
+                    cabang_id : req_cabang_id.value,
+                },
+                success:function(data){
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        for (var i=0; i < data.error.length; i++) {
+                            var message = data.error[i];
+
+                            if (message.toLowerCase().includes('name'))
+                                showError(req_name, message)
+                            if (message.toLowerCase().includes('nomor'))
+                                showError(req_phone, message)
+                            if (message.toLowerCase().includes('address'))
+                                showError(req_address, message)
+                            if (message.toLowerCase().includes('cabang'))
+                                showError(req_cabang_id, message)
+                        }
+                    }
+                    else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        }
+                        else {
+                            ErrorMessage(data.message)
+                        }
+                        $('#editModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                    }
+                },
+                error:function(e) {
+                    console.log(e)
+                }
+            });
+        }
+
+        function SuccessMessage(message) {
+            swal("Berhasil!", message, {
+                icon: "success",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        }
+
+        function ErrorMessage(message) {
+            swal("Gagal!", message, {
+                icon: "error",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        }
+
+        function showError(input, message) {
+            const formGroup = input.parentElement;
+            const errorSpan = formGroup.querySelector('.error');
+
+            formGroup.classList.add('has-error');
+            errorSpan.innerText = message;
+            input.focus();
+        }
+
+        // Modal
+        $('#open-add-modal').click(function() {
+            $.ajax({
+                type:"GET",
+                url:"{{ route('pengguna.list_cabang') }}",
+                success: function(data) {
+                    console.log(data)
+                    if (data)
+                    {
+                        for (i in data) {
+                            $("#add-cabang").append(`<option value="`+data[i].id+`">`+data[i].nip+`</option>`);
+                        }
+                    }
+                }
             })
 
             $('#edit-button').click(function(e) {
