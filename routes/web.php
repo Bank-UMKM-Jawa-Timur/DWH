@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KreditController;
 use App\Http\Controllers\LogActivitesController;
 use App\Http\Controllers\Master\DocumenCategoryController;
 use App\Http\Controllers\Master\NotificationTemplateController;
@@ -60,11 +61,8 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    Route::get('/kredit', function () {
-        $param['title'] = 'Kredit';
-        $param['pageTitle'] = 'Kredit';
-        return view('pages.kredit.index', $param);
-    });
+    Route::get('/kredit', [KreditController::class, 'index'])->name('kredit.index');
+    Route::post('/kredit/set-tgl-ketersediaan-unit', [KreditController::class, 'setTglKetersedianUnit'])->name('kredit.set_tgl_ketersediaan_unit');
 
 
 

@@ -27,20 +27,30 @@
                                         <th scope="col">PO</th>
                                         <th scope="col">Ketersediaan Unit</th>
                                         <th scope="col">Penyerahan Unit</th>
-                                        <th scope="col">STNK</th>
+                                        {{--  <th scope="col">STNK</th>
                                         <th scope="col">Polis</th>
-                                        <th scope="col">BPKB</th>
+                                        <th scope="col">BPKB</th>  --}}
+                                        @foreach ($documentCategories as $item)
+                                        <th scope="col">{{ $item->name }}</th>
+                                        @endforeach
                                         <th scope="col">Imbal Jasa</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @forelse ($data as $item)
                                     <tr>
-                                        <td>1</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>Rio Ardiansyah</td>
                                         <td class="link-po">2AFda12j7s</td>
-                                        <td>28 April 2023</td>
+                                        <td class="@if(!$item->tgl_ketersediaan_unit) link-po @endif">
+                                            @if ($item->tgl_ketersediaan_unit)
+                                                {{ $item->tgl_ketersediaan_unit }}
+                                            @else
+                                            <a data-toggle="modal" data-target="#tglModal" data-id_kkb="{{ $item->kkb_id }}" href="#">Atur</a>
+                                            @endif
+                                        </td>
                                         <td>29 April 2023</td>
                                         <td>1 Mei 2023</td>
                                         <td>5 Mei 2023</td>
@@ -59,54 +69,16 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Rio Ardiansyah</td>
-                                        <td class="link-po">2AFda12j7s</td>
-                                        <td>28 April 2023</td>
-                                        <td>29 April 2023</td>
-                                        <td>1 Mei 2023</td>
-                                        <td>5 Mei 2023</td>
-                                        <td>10 Mei 2023</td>
-                                        <td>Rp.5000</td>
-                                        <td class="text-success">Selesai</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Detai</a>
-                                                </div>
-                                            </div>
+                                    @empty
+                                        <td colspan="{{ 8 + count($documentCategories)}}" class="text-center">
+                                            <span class="text-danger">Maaf data belum tersedia.</span>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Rio Ardiansyah</td>
-                                        <td class="link-po">2AFda12j7s</td>
-                                        <td>28 April 2023</td>
-                                        <td>29 April 2023</td>
-                                        <td>1 Mei 2023</td>
-                                        <td>5 Mei 2023</td>
-                                        <td>10 Mei 2023</td>
-                                        <td>Rp.5000</td>
-                                        <td class="text-success">Selesai</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Detai</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="paginated">
+                            {{ $data->links('pagination::bootstrap-4') }}
                         </div>
                     </div>
                 </div>
@@ -141,30 +113,161 @@
         </div>
     </div>
 
+    <!-- Tanggal Ketersediaan Unit Modal -->
+    <div class="modal fade" id="tglModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-tgl-form">
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Tanggal Ketersediaan Unit</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="tgl_ketersediaan_unit" name="tgl_ketersediaan_unit">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-calendar-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    @push('extraScript')
+    @if (session('status'))
+        <script>
+            swal("Berhasil!", '{{ session('status') }}', {
+                icon: "success",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            swal("Gagal!", '{{ session('status') }}', {
+                icon: "error",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        </script>
+    @endif
+    <!-- DateTimePicker -->
+	<script src="{{ asset('template') }}/assets/js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
     <script>
-        const form = document.getElementById('modal-form');
-        form.addEventListener('submit', (event) => {
+        // Initial datepicker
+        $('#tgl_ketersediaan_unit').datetimepicker({
+            format: 'MM/DD/YYYY',
+        });
+        // End
+
+        $('#modal-tgl-form').on( "submit", function( event ) {
             event.preventDefault();
 
-            const nameInput = document.getElementById('name');
+            const req_id = document.getElementById('id_kkb')
+            const req_date = document.getElementById('tgl_ketersediaan_unit')
 
-            // Lakukan validasi pada data yang diterima dari form
-            if (nameInput.value === '') {
-                showError(nameInput, 'Nama Peran Wajib Diisi');
+            if (req_date == '') {
+                showError(req_date, 'Tanggal ketersediaan unit harus dipilih.');
                 return false;
             }
 
-            form.submit();
+            $.ajax({
+                type: "POST",
+                url: "{{ route('kredit.set_tgl_ketersediaan_unit') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id_kkb: req_id.value,
+                    date: req_date.value,
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        showError(req_date, data.error[0])
+                    } else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        } else {
+                            ErrorMessage(data.message)
+                        }
+                        $('#tglModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                    }
+                },
+                error: function(e){
+                    console.log(e)
+                    ErrorMessage('Terjadi kesalahan')
+                }
+            })
+        })
+        // Modal
+        $(document).ready(function() {
+            $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
+                var data_id_kkb = '';
+                if (typeof $(this).data('id_kkb') !== 'undefined') {
+                    data_id_kkb = $(this).data('id_kkb');
+                }
+                $('#id_kkb').val(data_id_kkb);
+            })
+
         });
 
+        function SuccessMessage(message) {
+            swal("Berhasil!", message, {
+                icon: "success",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        }
+
+        function ErrorMessage(message) {
+            swal("Gagal!", message, {
+                icon: "error",
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        }
+
         function showError(input, message) {
-            const formGroup = input.parentElement;
+            const inputGroup = input.parentElement;
+            const formGroup = inputGroup.parentElement;
             const errorSpan = formGroup.querySelector('.error');
 
             formGroup.classList.add('has-error');
             errorSpan.innerText = message;
             input.focus();
+            input.value = '';
         }
     </script>
+    @endpush
 @endsection
