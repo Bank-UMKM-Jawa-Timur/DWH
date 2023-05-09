@@ -24,4 +24,18 @@ class DashboardController extends Controller
 
         return view('pages.home', $param);
     }
+
+    public function getRoleName()
+    {
+        $user = User::select(
+            'users.id',
+            'users.role_id',
+            'r.name AS role_name',
+        )
+        ->join('roles AS r', 'r.id', 'users.role_id')
+        ->where('users.id', Auth::user()->id)
+        ->first();
+        
+        return $user->role_name;
+    }
 }

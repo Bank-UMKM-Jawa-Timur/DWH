@@ -13,24 +13,18 @@ use Illuminate\Support\Facades\Validator;
 class KreditController extends Controller
 {
     private $logActivity;
+    private $dashboardContoller;
     private $param;
 
     function __construct()
     {
         $this->logActivity = new LogActivitesController;
-        $user = User::select(
-            'users.id',
-            'users.role_id',
-            'r.name AS role_name',
-        )
-        ->join('roles AS r', 'r.id', 'users.role_id')
-        ->where('users.id', Auth::user()->id)
-        ->first();
-        $this->param['role'] = $user->role_name;
+        $this->dashboardContoller = new DashboardController;
     }
 
     public function index()
     {
+        $this->param['role'] = $this->dashboardContoller->getRoleName();
         $this->param['title'] = 'Kredit';
         $this->param['pageTitle'] = 'Kredit';
         $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->orderBy('name', 'DESC')->get();
