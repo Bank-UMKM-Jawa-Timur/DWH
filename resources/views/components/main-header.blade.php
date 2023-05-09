@@ -32,12 +32,12 @@
                         <span class="notification">1</span>
                     </a>
                     <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
-                        {{-- <li>
-                            <div class="dropdown-title">Kamu Mempunyai 1 Notifikasi Belum Dibaca</div>
-                        </li> --}}
+                        <li>
+                            <div class="dropdown-title"></div>
+                        </li>
                         <li>
                             <div class="notif-center">
-                                <a href="#">
+                                <a href="#" data-toggle="modal" data-target="#notif">
                                     <div class="notif-content reading">
                                         <span class="text-success alert-notif">Telah Dibaca</span>
                                         <span class="block">
@@ -95,7 +95,7 @@
                             </li>
                             <li>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ route('change_password') }}">Change Password</a>
+                                <a class="dropdown-item" href="{{ route('change_password') }}">Ubah Password</a>
                                 {{-- <a class="dropdown-item" href="#"></a> --}}
                                 {{-- <a class="dropdown-item" href="#">Inbox</a> --}}
                                 {{-- <div class="dropdown-divider"></div> --}}
@@ -128,6 +128,32 @@
                     @csrf
                     <button type="submit" class="btn btn-primary btn-sm">Logout</button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- modal notif --}}
+<div class="modal fade modal-notifikasi" id="notif" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            {{-- <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Notifikasi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div> --}}
+            <div class="modal-body">
+                <h3 class="title">Vendor dimohon untuk mengisikan Ketersediaan Unit</h3>
+                <span class="time">5 Menit Yang Lalu</span>
+                <hr>
+                <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer
+                    took a galley of type and scrambled it to make a type specimen book. It has survived not only five
+                    centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>

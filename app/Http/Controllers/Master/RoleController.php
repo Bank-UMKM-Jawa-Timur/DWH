@@ -25,7 +25,8 @@ class RoleController extends Controller
     {
         $param['title'] = 'Role/Peran';
         $param['pageTitle'] = 'Role/Peran';
-        $data = $this->list();
+        // $data = $this->list();
+        $data = $this->paginasi();
         $param['data'] = $data;
 
         return view('pages.role.index', $param);
@@ -34,6 +35,11 @@ class RoleController extends Controller
     public function list()
     {
         return Role::orderBy('name')->get();
+    }
+
+    public function paginasi()
+    {
+        return Role::orderBy('name')->paginate(5);
     }
 
     /**
@@ -76,7 +82,7 @@ class RoleController extends Controller
             $newRole = new Role();
             $newRole->name = $request->name;
             $newRole->save();
-            
+
             $this->logActivity->store('Membuat role '.$request->name.'.');
 
             $status = 'success';
@@ -168,7 +174,7 @@ class RoleController extends Controller
             if ($currentRole) {
                 $currentRole->delete();
                 $this->logActivity->store("Menghapus role $currentName.");
-                
+
                 $status = 'success';
                 $message = 'Berhasil menghapus data.';
             }

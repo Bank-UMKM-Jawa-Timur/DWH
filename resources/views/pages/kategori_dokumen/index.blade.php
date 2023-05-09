@@ -46,8 +46,8 @@
                                                             data-target="#editModal" data-id="{{ $item->id }}"
                                                             data-name="{{ $item->name }}" href="#">Edit</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
-                                                            data-target="#deleteModal" data-id="{{ $item->id }}"
-                                                            href="#">Hapus</a>
+                                                            data-target="#deleteModal" data-name="{{ $item->name }}"
+                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -128,7 +128,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
-                    <div class="form-group name">
+                    <div class="form-group name" id="konfirmasi">
                         Apakah Anda Ingin Menghapus {{ $title }}?
                     </div>
                     <div class="form-inline">
@@ -300,9 +300,10 @@
             });
             $(document).on("click", ".deleteModal", function() {
                 var data_id = $(this).data('id');
+                var data_name = $(this).data('name');
                 var url = "{{ url('/master/kategori-dokumen') }}/" + data_id;
                 $('#delete-form').attr("action", url);
-
+                $('#konfirmasi').text("Apakah Apakah Anda Ingin Menghapus Kategori Dokumen " + data_name + "?");
                 $('#deleteModal').modal('show');
             });
         </script>

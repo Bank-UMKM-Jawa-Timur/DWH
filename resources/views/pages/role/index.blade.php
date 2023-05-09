@@ -63,6 +63,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="paginated">
+                            {{ $data->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,7 +132,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
-                    <div class="form-group name">
+                    <div class="form-group name" id="konfirmasi">
                         Apakah Anda Ingin Menghapus Role?
                     </div>
                     <div class="form-inline">
@@ -289,8 +292,12 @@
             });
             $(document).on("click", ".deleteModal", function() {
                 var data_id = $(this).data('id');
+                var data_name = $(this).data('name');
                 var url = "{{ url('/master/role') }}/" + data_id;
-                console.log(url)
+                // console.log(url)
+                console.log(data_name);
+                // $(this).find('.modal-body .konfirmasi').text(data_name);
+                $('#konfirmasi').text("Apakah Kamu Ingin Menghapus Role " + data_name + "?");
                 $('#delete-form').attr("action", url);
 
                 $('#deleteModal').modal('show');
