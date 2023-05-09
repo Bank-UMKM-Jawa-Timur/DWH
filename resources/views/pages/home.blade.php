@@ -29,7 +29,8 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
+            @if (strtolower($role) != 'vendor')
+            <div class="col-sm">
                 <div class="card card-stats card-round">
                     <div class="card-body ">
                         <div class="row align-items-center">
@@ -48,7 +49,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            @endif
+            <div class="col-sm">
                 <div class="card card-stats card-round">
                     <div class="card-body ">
                         <div class="row align-items-center">
@@ -67,7 +69,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm">
                 <div class="card card-stats card-round">
                     <div class="card-body ">
                         <div class="row align-items-center">

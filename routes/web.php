@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LogActivitesController;
 use App\Http\Controllers\Master\DocumenCategoryController;
 use App\Http\Controllers\Master\NotificationTemplateController;
@@ -25,11 +26,8 @@ Route::get('/login', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        $param['title'] = 'Dashboard';
-        $param['pageTitle'] = 'Dashboard SuperAdmin';
-        return view('pages.home', $param);
-    });
+    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/change-password', [ProfileController::class, 'changePassword'])->name('change_password');
     Route::post('/change-password', [ProfileController::class, 'updatePassword'])->name('update_password');
@@ -49,11 +47,6 @@ Route::middleware('auth')->group(function () {
         $param['pageTitle'] = 'Target';
         return view('pages.target.index', $param);
     });
-    Route::get('/dashboard', function () {
-        $param['title'] = 'Dashboard';
-        $param['pageTitle'] = 'Dashboard SuperAdmin';
-        return view('pages.home', $param);
-    })->name('dashboard');
 
     Route::prefix('master')->group(function () {
         Route::resource('/role', RoleController::class);
