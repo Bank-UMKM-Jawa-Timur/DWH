@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/kredit', [KreditController::class, 'index'])->name('kredit.index');
     Route::post('/kredit/set-tgl-ketersediaan-unit', [KreditController::class, 'setTglKetersedianUnit'])->name('kredit.set_tgl_ketersediaan_unit');
+    Route::post('/kredit/set-tgl-penyerahan-unit', [KreditController::class, 'setPenyerahanUnit'])->name('kredit.set_tgl_penyerahan_unit');
 
 
 

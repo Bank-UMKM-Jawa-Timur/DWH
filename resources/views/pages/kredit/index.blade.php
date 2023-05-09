@@ -31,7 +31,7 @@
                                         <th scope="col">Polis</th>
                                         <th scope="col">BPKB</th>  --}}
                                         @foreach ($documentCategories as $item)
-                                        <th scope="col">{{ $item->name }}</th>
+                                            <th scope="col">{{ $item->name }}</th>
                                         @endforeach
                                         <th scope="col">Imbal Jasa</th>
                                         <th scope="col">Status</th>
@@ -40,37 +40,50 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($data as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>Rio Ardiansyah</td>
-                                        <td class="link-po">2AFda12j7s</td>
-                                        <td class="@if(!$item->tgl_ketersediaan_unit) link-po @endif">
-                                            @if ($item->tgl_ketersediaan_unit)
-                                                {{ $item->tgl_ketersediaan_unit }}
-                                            @else
-                                            <a data-toggle="modal" data-target="#tglModal" data-id_kkb="{{ $item->kkb_id }}" href="#">Atur</a>
-                                            @endif
-                                        </td>
-                                        <td>29 April 2023</td>
-                                        <td>1 Mei 2023</td>
-                                        <td>5 Mei 2023</td>
-                                        <td>10 Mei 2023</td>
-                                        <td>Rp.5000</td>
-                                        <td class="text-success">Selesai</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Detai</a>
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>Rio Ardiansyah</td>
+                                            <td class="link-po">2AFda12j7s</td>
+                                            <td class="@if (!$item->tgl_ketersediaan_unit) link-po @endif">
+                                                @if ($item->tgl_ketersediaan_unit)
+                                                    {{ $item->tgl_ketersediaan_unit }}
+                                                @else
+                                                    @if (Auth::user()->vendor_id == null)
+                                                        <a data-toggle="modal" data-target="#tglModal"
+                                                            data-id_kkb="{{ $item->kkb_id }}" href="#">Atur</a>
+                                                    @endif
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($item->tgl_ketersediaan_unit && Auth::user()->vendor_id == null)
+                                                    {{ \Carbon\Carbon::parse($item->tgl_ketersediaan_unit)->addMonth()->format('Y-m-d') }}
+                                                    <br>
+                                                @elseif(Auth::user()->vendor_id != null)
+                                                    <a data-toggle="modal" data-target="#tglModalPenyerahan"
+                                                        data-id_kkb="{{ $item->kkb_id }}" href="#"
+                                                        class="link-po">Atur</a>
+                                                @else
+                                                @endif
+                                            </td>
+                                            <td>1 Mei 2023</td>
+                                            <td>5 Mei 2023</td>
+                                            <td>10 Mei 2023</td>
+                                            <td>Rp.5000</td>
+                                            <td class="text-success">Selesai</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                        data-toggle="dropdown" aria-expanded="false">
+                                                        Selengkapnya
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Detai</a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
                                     @empty
-                                        <td colspan="{{ 8 + count($documentCategories)}}" class="text-center">
+                                        <td colspan="{{ 8 + count($documentCategories) }}" class="text-center">
                                             <span class="text-danger">Maaf data belum tersedia.</span>
                                         </td>
                                     @endforelse
@@ -124,7 +137,8 @@
                         <div class="form-group">
                             <label>Tanggal Ketersediaan Unit</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="tgl_ketersediaan_unit" name="tgl_ketersediaan_unit">
+                                <input type="text" class="form-control" id="tgl_ketersediaan_unit"
+                                    name="tgl_ketersediaan_unit">
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="fa fa-calendar-check"></i>
@@ -142,132 +156,231 @@
         </div>
     </div>
 
+    <!-- Tanggal Penyerahan Unit Modal -->
+    <div class="modal fade" id="tglModalPenyerahan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-tgl-penyerahan" enctype="multipart/form-data">
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Tanggal Pengiriman</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="tgl_pengiriman" name="tgl_pengiriman">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-calendar-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Foto Bukti Penyerahan Unit</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="upload_penyerahan_unit"
+                                    name="upload_penyerahan_unit">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-image"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('extraScript')
-    @if (session('status'))
+        @if (session('status'))
+            <script>
+                swal("Berhasil!", '{{ session('status') }}', {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            </script>
+        @endif
+        @if (session('error'))
+            <script>
+                swal("Gagal!", '{{ session('status') }}', {
+                    icon: "error",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            </script>
+        @endif
+        <!-- DateTimePicker -->
+        <script src="{{ asset('template') }}/assets/js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
         <script>
-            swal("Berhasil!", '{{ session('status') }}', {
-                icon: "success",
-                timer: 3000,
-                closeOnClickOutside: false
-            }).then(() => {
-                location.reload();
+            // Initial datepicker
+            $('#tgl_ketersediaan_unit').datetimepicker({
+                format: 'MM/DD/YYYY',
             });
-            setTimeout(function() {
-                location.reload();
-            }, 3000);
-        </script>
-    @endif
-    @if (session('error'))
-        <script>
-            swal("Gagal!", '{{ session('status') }}', {
-                icon: "error",
-                timer: 3000,
-                closeOnClickOutside: false
-            }).then(() => {
-                location.reload();
+            $('#tgl_pengiriman').datetimepicker({
+                format: 'MM/DD/YYYY',
             });
-            setTimeout(function() {
-                location.reload();
-            }, 3000);
-        </script>
-    @endif
-    <!-- DateTimePicker -->
-	<script src="{{ asset('template') }}/assets/js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
-    <script>
-        // Initial datepicker
-        $('#tgl_ketersediaan_unit').datetimepicker({
-            format: 'MM/DD/YYYY',
-        });
-        // End
+            // End
 
-        $('#modal-tgl-form').on( "submit", function( event ) {
-            event.preventDefault();
+            $('#modal-tgl-form').on("submit", function(event) {
+                event.preventDefault();
 
-            const req_id = document.getElementById('id_kkb')
-            const req_date = document.getElementById('tgl_ketersediaan_unit')
+                const req_id = document.getElementById('id_kkb')
+                const req_date = document.getElementById('tgl_ketersediaan_unit')
 
-            if (req_date == '') {
-                showError(req_date, 'Tanggal ketersediaan unit harus dipilih.');
-                return false;
+                if (req_date == '') {
+                    showError(req_date, 'Tanggal ketersediaan unit harus dipilih.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.set_tgl_ketersediaan_unit') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id_kkb: req_id.value,
+                        date: req_date.value,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            showError(req_date, data.error[0])
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#tglModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            $('#modal-tgl-penyerahan').on("submit", function(event) {
+                event.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_date = document.getElementById('tgl_pengiriman')
+                const req_image = document.getElementById('upload_penyerahan_unit')
+
+                if (req_date == '') {
+                    showError(req_date, 'Tanggal pengiriman unit harus diisi.');
+                    return false;
+                }
+                if (req_image.files[0].name.split('.').pop() != 'jpg' && req_image.files[0].name.split('.').pop() !=
+                    'png') {
+                    showError(req_image, 'Upload bukti penyerahan harus berupa jpg atau png.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.set_tgl_penyerahan_unit') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id_kkb: req_id.value,
+                        tgl_pengiriman: req_date.value,
+                        upload_penyerahan_unit: req_image.files[0].name,
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('tanggal'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('gambar'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#tglModalPenyerahan').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            // Modal
+            $(document).ready(function() {
+                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
+                    var data_id_kkb = '';
+                    if (typeof $(this).data('id_kkb') !== 'undefined') {
+                        data_id_kkb = $(this).data('id_kkb');
+                    }
+                    $('#id_kkb').val(data_id_kkb);
+                })
+
+            });
+
+            function SuccessMessage(message) {
+                swal("Berhasil!", message, {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
             }
 
-            $.ajax({
-                type: "POST",
-                url: "{{ route('kredit.set_tgl_ketersediaan_unit') }}",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    id_kkb: req_id.value,
-                    date: req_date.value,
-                },
-                success: function(data) {
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        showError(req_date, data.error[0])
-                    } else {
-                        if (data.status == 'success') {
-                            SuccessMessage(data.message);
-                        } else {
-                            ErrorMessage(data.message)
-                        }
-                        $('#tglModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                },
-                error: function(e){
-                    console.log(e)
-                    ErrorMessage('Terjadi kesalahan')
-                }
-            })
-        })
-        // Modal
-        $(document).ready(function() {
-            $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
-                var data_id_kkb = '';
-                if (typeof $(this).data('id_kkb') !== 'undefined') {
-                    data_id_kkb = $(this).data('id_kkb');
-                }
-                $('#id_kkb').val(data_id_kkb);
-            })
+            function ErrorMessage(message) {
+                swal("Gagal!", message, {
+                    icon: "error",
+                    // timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                // setTimeout(function() {
+                //     location.reload();
+                // }, 3000);
+            }
 
-        });
+            function showError(input, message) {
+                const inputGroup = input.parentElement;
+                const formGroup = inputGroup.parentElement;
+                const errorSpan = formGroup.querySelector('.error');
 
-        function SuccessMessage(message) {
-            swal("Berhasil!", message, {
-                icon: "success",
-                timer: 3000,
-                closeOnClickOutside: false
-            }).then(() => {
-                location.reload();
-            });
-            setTimeout(function() {
-                location.reload();
-            }, 3000);
-        }
-
-        function ErrorMessage(message) {
-            swal("Gagal!", message, {
-                icon: "error",
-                timer: 3000,
-                closeOnClickOutside: false
-            }).then(() => {
-                location.reload();
-            });
-            setTimeout(function() {
-                location.reload();
-            }, 3000);
-        }
-
-        function showError(input, message) {
-            const inputGroup = input.parentElement;
-            const formGroup = inputGroup.parentElement;
-            const errorSpan = formGroup.querySelector('.error');
-
-            formGroup.classList.add('has-error');
-            errorSpan.innerText = message;
-            input.focus();
-            input.value = '';
-        }
-    </script>
+                formGroup.classList.add('has-error');
+                errorSpan.innerText = message;
+                input.focus();
+                input.value = '';
+            }
+        </script>
     @endpush
 @endsection
