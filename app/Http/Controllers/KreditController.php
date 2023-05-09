@@ -5,24 +5,36 @@ namespace App\Http\Controllers;
 use App\Models\DocumentCategory;
 use App\Models\KKB;
 use App\Models\Kredit;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class KreditController extends Controller
 {
     private $logActivity;
+    private $param;
 
     function __construct()
     {
         $this->logActivity = new LogActivitesController;
+        $user = User::select(
+            'users.id',
+            'users.role_id',
+            'r.name AS role_name',
+        )
+        ->join('roles AS r', 'r.id', 'users.role_id')
+        ->where('users.id', Auth::user()->id)
+        ->first();
+        $this->param['role'] = $user->role_name;
     }
 
     public function index()
     {
-        $param['title'] = 'Kredit';
-        $param['pageTitle'] = 'Kredit';
-        $param['documentCategories'] = DocumentCategory::select('id', 'name')->orderBy('name', 'DESC')->get();
-        $param['data'] = Kredit::select(
+        $this->param['title'] = 'Kredit';
+        $this->param['pageTitle'] = 'Kredit';
+        $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->orderBy('name', 'DESC')->get();
+        $this->param['data'] = Kredit::select(
                             'kredits.*',
                             'kkb.id AS kkb_id',
                             'kkb.tgl_ketersediaan_unit',
@@ -32,7 +44,7 @@ class KreditController extends Controller
                         ->orderBy('kredits.id')
                         ->paginate(5);
 
-        return view('pages.kredit.index', $param);
+        return view('pages.kredit.index', $this->param);
     }
 
     public function setTglKetersedianUnit(Request $request)
@@ -61,7 +73,7 @@ class KreditController extends Controller
             $kkb->tgl_ketersediaan_unit = date('Y-m-d', strtotime($request->date));
             $kkb->save();
 
-            $this->logActivity->store('Membuat role '.$request->name.'.');
+            $this->logActivity->store('Pengguna '.$request->name.' mengatur tanggal penyerahan unit.');
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
