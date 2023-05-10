@@ -177,17 +177,83 @@ class KreditController extends Controller
         }
 
         try {
+            $stnkFile = Document::where('kredit_id', $request->id_kkb)->where('document_category_id', 1)->first();
+            $policeDate = date('Y-m-d', strtotime($stnkFile->date. ' +30 days'));
+
             $file = $request->file('police_scan');
             $file->storeAs('public/dokumentasi-police', $file->hashName());
             $document = new Document();
             $document->kredit_id = $request->id_kkb;
-            $document->date = date('Y-m-d');
+            $document->date = $policeDate;
             $document->text = $request->no_police;
             $document->file = $file->hashName();
             $document->document_category_id  = 2;
             $document->save();
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas nomor polisi.');
+
+            $status = 'success';
+            $message = 'Berhasil menyimpan data';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } catch (\Throwable $th) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $th;
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
+        }
+    }
+    
+
+    public function uploadBpkb(Request $request)
+    {
+        $status = '';
+        $message = '';
+
+        $validator = Validator::make($request->all(), [
+            'id_kkb' => 'required',
+            'no_bpkb' => 'required',
+            'bpkb_scan' => 'required|mimes:pdf|max:2048',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'mimes' => ':attribute harus berupa pdf',
+            'max' => ':attribute maksimal 2 Mb',
+        ], [
+            'id_kkb' => 'Kredit',
+            'no_bpkb' => 'Nomor',
+            'bpkb_scan' => 'Scan berkas BPKB',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+
+        try {
+            $policeFile = Document::where('kredit_id', $request->id_kkb)->where('document_category_id', 2)->first();
+            $bpkbDate = date('Y-m-d', strtotime($policeFile->date. ' +3 month'));
+
+            $file = $request->file('bpkb_scan');
+            $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
+            $document = new Document();
+            $document->kredit_id = $request->id_kkb;
+            $document->date = $bpkbDate;
+            $document->text = $request->no_bpkb;
+            $document->file = $file->hashName();
+            $document->document_category_id  = 3;
+            $document->save();
+
+            $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas BPKB.');
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';

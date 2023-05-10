@@ -74,7 +74,7 @@
                                                     $alreadySet = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 2)->first();
                                                 @endphp
                                                 @if ($alreadySet)
-                                                    {{$alreadySet->date}}
+                                                    <a href="/storage/dokumentasi-police/{{ $alreadySet->file }}" target="_blank">{{ $alreadySet->date }}</a>
                                                 @elseif(Auth::user()->vendor_id != null)
                                                     <a data-toggle="modal" data-target="#uploadPoliceModal"
                                                         data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
@@ -82,7 +82,19 @@
                                                 @else
                                                 @endif
                                             </td>
-                                            <td>10 Mei 2023</td>
+                                            <td>
+                                                @php
+                                                    $alreadySet = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 3)->first();
+                                                @endphp
+                                                @if ($alreadySet)
+                                                <a href="/storage/dokumentasi-bpkb/{{ $alreadySet->file }}" target="_blank">{{ $alreadySet->date }}</a>
+                                                @elseif(Auth::user()->vendor_id != null)
+                                                    <a data-toggle="modal" data-target="#uploadBpkbModal"
+                                                        data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
+                                                        onclick="uploadBpkb({{ $item->kkb_id }})">Atur</a>
+                                                @else
+                                                @endif
+                                            </td>
                                             <td>Rp.5000</td>
                                             <td class="text-success">Selesai</td>
                                             <td>
@@ -214,7 +226,7 @@
         </div>
     </div>
     
-    <!-- Tanggal Penyerahan Unit Modal -->
+    <!-- Upload Police Modal -->
     <div class="modal fade" id="uploadPoliceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -235,6 +247,44 @@
                             <div class="input-group">
                                 <input type="file" class="form-control" id="police_scan"
                                     name="police_scan"  accept="application/pdf" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-file"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Upload BKPB Modal -->
+    <div class="modal fade" id="uploadBpkbModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-bpkb" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Nomor</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="no_bpkb" name="no_bpkb" required>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Scan Berkas (pdf)</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="bpkb_scan"
+                                    name="bpkb_scan"  accept="application/pdf" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="fa fa-file"></i>
@@ -342,6 +392,10 @@
                 $('#modal-police #id_kkb').val(id);
             }
 
+            function uploadBpkb(id) {
+                $('#modal-bpkb #id_kkb').val(id);
+            }
+
             $('#modal-tgl-penyerahan').on("submit", function(event) {
                 event.preventDefault();
 
@@ -430,6 +484,54 @@
                                 ErrorMessage(data.message)
                             }
                             $('#uploadPoliceModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            
+            $('#modal-bpkb').on("submit", function(event) {
+                event.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_no = document.getElementById('no_bpkb')
+                const req_file = document.getElementById('bpkb_scan')
+                var formData = new FormData($(this)[0]);
+
+                if (req_no == '') {
+                    showError(req_no, 'Nomor harus diisi.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_bpkb') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('no_bpkb'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('bpkb_scan'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#uploadBpkbModal').modal().hide()
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                         }
