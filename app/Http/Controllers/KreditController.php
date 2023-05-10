@@ -99,10 +99,11 @@ class KreditController extends Controller
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',
             'tgl_pengiriman' => 'required',
-            'upload_penyerahan_unit' => 'required|mimes:png,jpg',
+            'upload_penyerahan_unit' => 'required|mimes:png,jpg|max:4096',
         ], [
             'required' => ':attribute harus diisi.',
             'mimes' => ':attribute harus berupa png,jpg',
+            'max' => ':attribute maksimal 4 Mb',
         ], [
             'id_kkb' => 'Kredit',
             'tgl_pengiriman' => 'Tanggal penyerahan unit',
