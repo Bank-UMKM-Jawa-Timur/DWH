@@ -122,13 +122,72 @@ class KreditController extends Controller
             $file->storeAs('public/dokumentasi-peyerahan', $file->hashName());
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
-            $document->date = $request->tgl_pengiriman;
+            $document->date = date('Y-m-d', strtotime($request->tgl_pengiriman));
             // $document->date = Carbon::now();
             $document->file = $file->hashName();
             $document->document_category_id  = 1;
             $document->save();
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
+
+            $status = 'success';
+            $message = 'Berhasil menyimpan data';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } catch (\Throwable $th) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $th;
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function uploadPolice(Request $request)
+    {
+        $status = '';
+        $message = '';
+
+        $validator = Validator::make($request->all(), [
+            'id_kkb' => 'required',
+            'no_police' => 'required',
+            'police_scan' => 'required|mimes:pdf|max:2048',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'mimes' => ':attribute harus berupa pdf',
+            'max' => ':attribute maksimal 2 Mb',
+        ], [
+            'id_kkb' => 'Kredit',
+            'no_police' => 'Nomor',
+            'police_scan' => 'Scan berkas polisi',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+
+        try {
+            $file = $request->file('police_scan');
+            $file->storeAs('public/dokumentasi-police', $file->hashName());
+            $document = new Document();
+            $document->kredit_id = $request->id_kkb;
+            $document->date = date('Y-m-d');
+            $document->text = $request->no_police;
+            $document->file = $file->hashName();
+            $document->document_category_id  = 2;
+            $document->save();
+
+            $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas nomor polisi.');
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';

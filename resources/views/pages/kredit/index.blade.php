@@ -55,8 +55,11 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($item->tgl_ketersediaan_unit && Auth::user()->vendor_id == null)
-                                                    {{ \Carbon\Carbon::parse($item->tgl_ketersediaan_unit)->addMonth()->format('Y-m-d') }}
+                                                @php
+                                                    $alreadySet = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 1)->first();
+                                                @endphp
+                                                @if ($alreadySet)
+                                                    {{ $alreadySet->date }}
                                                     <br>
                                                 @elseif(Auth::user()->vendor_id != null)
                                                     <a data-toggle="modal" data-target="#tglModalPenyerahan"
@@ -66,7 +69,19 @@
                                                 @endif
                                             </td>
                                             <td>1 Mei 2023</td>
-                                            <td>5 Mei 2023</td>
+                                            <td>
+                                                @php
+                                                    $alreadySet = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 2)->first();
+                                                @endphp
+                                                @if ($alreadySet)
+                                                    {{$alreadySet->date}}
+                                                @elseif(Auth::user()->vendor_id != null)
+                                                    <a data-toggle="modal" data-target="#uploadPoliceModal"
+                                                        data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
+                                                        onclick="uploadPolice({{ $item->kkb_id }})">Atur</a>
+                                                @else
+                                                @endif
+                                            </td>
                                             <td>10 Mei 2023</td>
                                             <td>Rp.5000</td>
                                             <td class="text-success">Selesai</td>
@@ -198,6 +213,44 @@
             </div>
         </div>
     </div>
+    
+    <!-- Tanggal Penyerahan Unit Modal -->
+    <div class="modal fade" id="uploadPoliceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-police" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Nomor</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="no_police" name="no_police" required>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Scan Berkas (pdf)</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="police_scan"
+                                    name="police_scan"  accept="application/pdf" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-file"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @push('extraScript')
         @if (session('status'))
@@ -285,6 +338,10 @@
                 $('#modal-tgl-penyerahan #id_kkb').val(id);
             }
 
+            function uploadPolice(id) {
+                $('#modal-police #id_kkb').val(id);
+            }
+
             $('#modal-tgl-penyerahan').on("submit", function(event) {
                 event.preventDefault();
 
@@ -326,6 +383,53 @@
                                 ErrorMessage(data.message)
                             }
                             $('#tglModalPenyerahan').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            $('#modal-police').on("submit", function(event) {
+                event.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_no = document.getElementById('no_police')
+                const req_file = document.getElementById('police_scan')
+                var formData = new FormData($(this)[0]);
+
+                if (req_no == '') {
+                    showError(req_no, 'Nomor harus diisi.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_police') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('no_police'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('police_scan'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#uploadPoliceModal').modal().hide()
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                         }
