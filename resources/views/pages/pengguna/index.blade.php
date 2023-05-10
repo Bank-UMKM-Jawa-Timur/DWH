@@ -4,11 +4,11 @@
 
 @section('content')
 
-    <div class="panel-header bg-primary-gradient">
+    <div class="panel-header">
         <div class="page-inner py-5">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                 <div>
-                    <h2 class="text-white pb-2 fw-bold">{{ $pageTitle }}</h2>
+                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
                 </div>
             </div>
         </div>
@@ -35,31 +35,33 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($data as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        {{-- <td>Antoni</td> --}}
-                                        <td>{{ $item->nip ? $item->nip : '-' }}</td>
-                                        <td>{{ $item->email ? $item->email : '-' }}</td>
-                                        <td>{{ $item->role }}</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
-                                                            data-id="{{ $item->id }}" data-nip="{{ $item->nip }}"
-                                                            data-email="{{ $item->email }}" data-role="{{ $item->role_id }}" href="#">Edit</a>
-                                                    <a class="dropdown-item deleteModal" data-toggle="modal" data-target="#deleteModal"
-                                                    data-id="{{ $item->id }}" href="#">Hapus</a>
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            {{-- <td>Antoni</td> --}}
+                                            <td>{{ $item->nip ? $item->nip : '-' }}</td>
+                                            <td>{{ $item->email ? $item->email : '-' }}</td>
+                                            <td>{{ $item->role }}</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                        data-toggle="dropdown" aria-expanded="false">
+                                                        Selengkapnya
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" data-toggle="modal"
+                                                            data-target="#editModal" data-id="{{ $item->id }}"
+                                                            data-nip="{{ $item->nip }}" data-email="{{ $item->email }}"
+                                                            data-role="{{ $item->role_id }}" href="#">Edit</a>
+                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
+                                                            data-target="#deleteModal" data-id="{{ $item->id }}"
+                                                            href="#">Hapus</a>
+                                                    </div>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Edit</a>
+                                                    </div>
                                                 </div>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
                                     @empty
                                         <tr>
                                             <td colspan="5" class="text-center">
@@ -213,15 +215,19 @@
                                     <div class="name">
                                         <label for="reset-password">Password</label>
                                         <ul class="pl-3">
-                                            <li class="text-light text-info">Masukkan password atau gunakan password acak dengan menekan tombol dadu</li>
-                                            <li class="text-light text-info">Klik tombol papan klip untuk menyalin password.</li>
-                                            <li class="text-light text-info">Klik tombol simpan klip untuk menyimpan password.</li>
+                                            <li class="text-light text-info">Masukkan password atau gunakan password acak
+                                                dengan menekan tombol dadu</li>
+                                            <li class="text-light text-info">Klik tombol papan klip untuk menyalin
+                                                password.</li>
+                                            <li class="text-light text-info">Klik tombol simpan klip untuk menyimpan
+                                                password.</li>
                                         </ul>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Masukkan password" id="reset-password"
-                                            name="reset_password" autofocus required>
+                                            <input type="text" class="form-control" placeholder="Masukkan password"
+                                                id="reset-password" name="reset_password" autofocus required>
                                             <div class="input-group-append">
-                                                <button class="btn btn-black btn-border" type="button" id="button-generate">
+                                                <button class="btn btn-black btn-border" type="button"
+                                                    id="button-generate">
                                                     <span class="fas fa-dice-six" id="basic-addon2"></span>
                                                 </button>
                                             </div>
@@ -270,9 +276,9 @@
 
 
     @push('extraScript')
-    <script>
-        $('#add-button').click(function(e) {
-            e.preventDefault()
+        <script>
+            $('#add-button').click(function(e) {
+                e.preventDefault()
 
                 store();
             })
@@ -283,11 +289,11 @@
                 update();
             })
 
-        function store() {
-            const req_nip = document.getElementById('add-nip')
-            const req_email = document.getElementById('add-email')
-            const req_password = document.getElementById('add-password')
-            const req_role_id = document.getElementById('add-role')
+            function store() {
+                const req_nip = document.getElementById('add-nip')
+                const req_email = document.getElementById('add-email')
+                const req_password = document.getElementById('add-password')
+                const req_role_id = document.getElementById('add-role')
 
                 if (req_password == '') {
                     showError(req_password, 'Password wajib diisi.');
@@ -298,47 +304,44 @@
                     return false;
                 }
 
-            $.ajax({
-                type:"POST",
-                url:"{{ route('pengguna.store') }}",
-                data:{
-                    _token : "{{csrf_token()}}",
-                    nip : req_nip.value,
-                    email : req_email.value,
-                    password : req_password.value,
-                    role_id : req_role_id.value,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('pengguna.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        nip: req_nip.value,
+                        email: req_email.value,
+                        password: req_password.value,
+                        role_id: req_role_id.value,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
 
-                            if (message.toLowerCase().includes('nip'))
-                                showError(req_nip, message)
-                            if (message.toLowerCase().includes('email'))
-                                showError(req_email, message)
-                            if (message.toLowerCase().includes('password'))
-                                showError(req_password, message)
-                            if (message.toLowerCase().includes('role'))
-                                showError(req_role_id, message)
+                                if (message.toLowerCase().includes('nip'))
+                                    showError(req_nip, message)
+                                if (message.toLowerCase().includes('email'))
+                                    showError(req_email, message)
+                                if (message.toLowerCase().includes('password'))
+                                    showError(req_password, message)
+                                if (message.toLowerCase().includes('role'))
+                                    showError(req_role_id, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#addModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
                         }
                     }
-                    else {
-                        if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
-                        }
-                        else {
-                            alert(data.message)
-                        }
-                        $('#addModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                }
-            });
-        }
+                });
+            }
 
             function update() {
                 const req_id = document.getElementById('edit-id')
@@ -352,135 +355,150 @@
                     return false;
                 }
 
-            $.ajax({
-                type:"POST",
-                url:"{{ url('/master/pengguna') }}/"+req_id.value,
-                data:{
-                    _token : "{{csrf_token()}}",
-                    _method : 'PUT',
-                    nip : req_nip.value,
-                    email : req_email.value,
-                    password : req_password.value,
-                    role_id : req_role_id.value,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/master/pengguna') }}/" + req_id.value,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'PUT',
+                        nip: req_nip.value,
+                        email: req_email.value,
+                        password: req_password.value,
+                        role_id: req_role_id.value,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
 
-                            if (message.toLowerCase().includes('nip'))
-                                showError(req_nip, message)
-                            if (message.toLowerCase().includes('email'))
-                                showError(req_email, message)
-                            if (message.toLowerCase().includes('password'))
-                                showError(req_password, message)
-                            if (message.toLowerCase().includes('role'))
-                                showError(req_role_id, message)
+                                if (message.toLowerCase().includes('nip'))
+                                    showError(req_nip, message)
+                                if (message.toLowerCase().includes('email'))
+                                    showError(req_email, message)
+                                if (message.toLowerCase().includes('password'))
+                                    showError(req_password, message)
+                                if (message.toLowerCase().includes('role'))
+                                    showError(req_role_id, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#editModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
                         }
                     }
-                    else {
-                        if (data.status == 'success') {
-                            alert(data.message);
-                            location.reload();
-                        }
-                        else {
-                            alert(data.message)
-                        }
-                        $('#editModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                }
-            });
-        }
+                });
+            }
 
-        // Modal
-        $('#open-add-modal').click(function() {
-            $.ajax({
-                type:"GET",
-                url:"{{ route('role.list') }}",
-                success: function(data) {
-                    console.log(data)
-                    if (data)
-                    {
-                        for (i in data) {
-                            $("#add-role").append(`<option value="`+data[i].id+`">`+data[i].name+`</option>`);
-                        }
-                    }
-                })
-
-            $('#addModal').modal('show')
-        })
-
-        $(document).ready(function() {
-            $('a[data-toggle=modal], button[data-toggle=modal]').click(function () {
-                var data_id = '';
-                var data_nip = '';
-                var data_email = '';
-                var data_password = '';
-                var data_role = '';
-
-                    if (typeof $(this).data('id') !== 'undefined') {
-                        data_id = $(this).data('id');
-                    }
-                    if (typeof $(this).data('nip') !== 'undefined') {
-                        data_nip = $(this).data('nip');
-                    }
-                    if (typeof $(this).data('email') !== 'undefined') {
-                        data_email = $(this).data('email');
-                    }
-                    if (typeof $(this).data('password') !== 'undefined') {
-                        data_password = $(this).data('password');
-                    }
-                    if (typeof $(this).data('role') !== 'undefined') {
-                        data_role_id = $(this).data('role');
-                    }
-                    $('#edit-id').val(data_id);
-                    $('#edit-nip').val(data_nip);
-                    $('#edit-email').val(data_email);
-
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('role.list') }}",
-                        success: function(data) {
-                            if (data) {
-                                for (i in data) {
-                                    if (data[i].id == data_role_id)
-                                        $("#edit-role").append(`<option value="` + data[i].id +
-                                            `" selected>` + data[i].name + `</option>`);
-                                    else
-                                        $("#edit-role").append(`<option value="` + data[i].id +
-                                            `">` + data[i].name + `</option>`);
-                                }
+            // Modal
+            $('#open-add-modal').click(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('role.list') }}",
+                    success: function(data) {
+                        console.log(data)
+                        if (data) {
+                            for (i in data) {
+                                $("#add-role").append(`<option value="` + data[i].id + `">` + data[i].name +
+                                    `</option>`);
                             }
                         }
                     }
+                });
+
+                $('#addModal').modal('show')
+
+                $(document).ready(function() {
+                    $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
+                        var data_id = '';
+                        var data_nip = '';
+                        var data_email = '';
+                        var data_password = '';
+                        var data_role = '';
+
+                        if (typeof $(this).data('id') !== 'undefined') {
+                            data_id = $(this).data('id');
+                        }
+                        if (typeof $(this).data('nip') !== 'undefined') {
+                            data_nip = $(this).data('nip');
+                        }
+                        if (typeof $(this).data('email') !== 'undefined') {
+                            data_email = $(this).data('email');
+                        }
+                        if (typeof $(this).data('password') !== 'undefined') {
+                            data_password = $(this).data('password');
+                        }
+                        if (typeof $(this).data('role') !== 'undefined') {
+                            data_role_id = $(this).data('role');
+                        }
+                        $('#edit-id').val(data_id);
+                        $('#edit-nip').val(data_nip);
+                        $('#edit-email').val(data_email);
+
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ route('role.list') }}",
+                            success: function(data) {
+                                if (data) {
+                                    for (i in data) {
+                                        if (data[i].id == data_role_id)
+                                            $("#edit-role").append(`<option value="` +
+                                                data[i].id +
+                                                `" selected>` + data[i].name +
+                                                `</option>`);
+                                        else
+                                            $("#edit-role").append(`<option value="` +
+                                                data[i].id +
+                                                `">` + data[i].name + `</option>`);
+                                    }
+                                }
+                            }
+                        });
+                    })
+
+                    var url = "{{ url('/master/pengguna') }}/" + data_id;
+                    $('.edit-form').attr(
+                        "action", url);
                 })
 
-                var url = "{{ url('/master/pengguna') }}/"+data_id;
-                $('.edit-form').attr("action", url);
-            })
+            });
 
-        });
 
-        function showError(input, message) {
-            const formGroup = input.parentElement;
-            const errorSpan = formGroup.querySelector('.error');
+            function showError(input, message) {
+                const formGroup = input.parentElement;
+                const errorSpan = formGroup.querySelector('.error');
 
-            formGroup.classList.add('has-error');
-            errorSpan.innerText = message;
-            input.focus();
-        }
+                formGroup.classList.add('has-error');
+                errorSpan.innerText = message;
+                input.focus();
+            }
 
-        $(document).on("click", ".deleteModal", function () {
-            var data_id = $(this).data('id');
-            var url = "{{ url('/master/pengguna') }}/"+data_id;
-            console.log(url)
-            $('#delete-form').attr("action", url);
+            function SuccessMessage(message) {
+                swal("Berhasil!", message, {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            }
 
-            $('#deleteModal').modal('show');
-        });
-    </script>
+            $(document).on("click", ".deleteModal", function() {
+                var data_id = $(this).data('id');
+                var url = "{{ url('/master/pengguna') }}/" + data_id;
+                console.log(url)
+                $('#delete-form').attr("action", url);
+
+                $('#deleteModal').modal('show');
+            });
+        </script>
     @endpush
 @endsection

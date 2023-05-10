@@ -4,11 +4,11 @@
 
 @section('content')
 
-    <div class="panel-header bg-primary-gradient">
+    <div class="panel-header">
         <div class="page-inner py-5">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                 <div>
-                    <h2 class="text-white pb-2 fw-bold">{{ $pageTitle }}</h2>
+                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
                 </div>
             </div>
         </div>
@@ -30,18 +30,18 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($data as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->nip ? $item->nip : $item->email }}</td>
-                                        <td>{{ $item->content }}</td>
-                                        <td>{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $item->nip ? $item->nip : $item->email }}</td>
+                                            <td>{{ $item->content }}</td>
+                                            <td>{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</td>
+                                        </tr>
                                     @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center">
-                                            <span class="text-danger">Maaf data belum tersedia.</span>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-center">
+                                                <span class="text-danger">Maaf data belum tersedia.</span>
+                                            </td>
+                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>

@@ -3,18 +3,18 @@
 @section('title', $title)
 
 @section('content')
-    <div class="panel-header bg-primary-gradient">
+    <div class="panel-header">
         <div class="page-inner py-5">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                 <div>
-                    <h2 class="text-white pb-2 fw-bold">{{ $pageTitle }}</h2>
-                    <h5 class="text-white op-7 mb-2">6819456 | Cabang Bondowoso</h5>
+                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
+                    <h5 class="text-primary op-7">6819456 | Cabang Bondowoso</h5>
                 </div>
             </div>
         </div>
     </div>
     <div class="page-inner mt--5">
-        <div class="card welcome">
+        {{-- <div class="card welcome">
             <div class="card-body ">
                 <div class="d-flex justify-content-start align-items-end">
                     <img src="{{ asset('template') }}/assets/img/flat_welcome.png" class="img-fluid img-welcome">
@@ -27,28 +27,28 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="row">
             @if (strtolower($role) != 'vendor')
-            <div class="col-sm">
-                <div class="card card-stats card-round">
-                    <div class="card-body ">
-                        <div class="row align-items-center">
-                            <div class="col-icon">
-                                <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                    <i class="icon-people"></i>
+                <div class="col-sm">
+                    <div class="card card-stats card-round">
+                        <div class="card-body ">
+                            <div class="row align-items-center">
+                                <div class="col-icon">
+                                    <div class="icon-big text-center icon-primary bubble-shadow-small">
+                                        <i class="icon-people"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col col-stats ml-3 ml-sm-0">
-                                <div class="numbers">
-                                    <p class="card-category">1020</p>
-                                    <h4 class="card-title">Pengguna</h4>
+                                <div class="col col-stats ml-3 ml-sm-0">
+                                    <div class="numbers">
+                                        <p class="card-category">1020</p>
+                                        <h4 class="card-title">Pengguna</h4>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             @endif
             <div class="col-sm">
                 <div class="card card-stats card-round">

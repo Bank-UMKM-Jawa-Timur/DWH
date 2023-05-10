@@ -8,7 +8,6 @@
                 <div class="info">
                     <a data-toggle="collapse">
                         <span>
-                            SuperAdmin
                             <span class="user-level">Data Warehouse</span>
                         </span>
                     </a>

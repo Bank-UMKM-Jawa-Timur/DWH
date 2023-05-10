@@ -4,11 +4,11 @@
 
 @section('content')
 
-    <div class="panel-header bg-primary-gradient">
+    <div class="panel-header">
         <div class="page-inner py-5">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                 <div>
-                    <h2 class="text-white pb-2 fw-bold">{{ $pageTitle }}</h2>
+                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
                 </div>
             </div>
         </div>
@@ -26,30 +26,36 @@
                                     <div class="col-sm-12">
                                         <div class="passwordLama">
                                             <label for="old_password">Password Lama</label>
-                                            <input autofocus type="password" class="form-control @if($errors->has('old_password')) is-invalid @endif" id="old_password"
-                                                name="old_password" required>
+                                            <input autofocus type="password"
+                                                class="form-control @if ($errors->has('old_password')) is-invalid @endif"
+                                                id="old_password" name="old_password" required>
                                             @if ($errors->has('old_password'))
-                                            <small class="form-text text-danger error">{{ $errors->first('old_password') }}</small>
+                                                <small
+                                                    class="form-text text-danger error">{{ $errors->first('old_password') }}</small>
                                             @endif
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="passwordBaru">
                                             <label for="password">Password Baru</label>
-                                            <input autofocus type="password" class="form-control @if($errors->has('password')) is-invalid @endif" id="password"
-                                                name="password" required>
+                                            <input autofocus type="password"
+                                                class="form-control @if ($errors->has('password')) is-invalid @endif"
+                                                id="password" name="password" required>
                                             @if ($errors->has('password'))
-                                            <small class="form-text text-danger error">{{ $errors->first('password') }}</small>
+                                                <small
+                                                    class="form-text text-danger error">{{ $errors->first('password') }}</small>
                                             @endif
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="konfirmasiPassword">
                                             <label for="password_confirmation">Konfirmasi Password</label>
-                                            <input autofocus type="password" class="form-control @if($errors->has('password_confirmation')) is-invalid @endif" id="password_confirmation"
-                                                name="password_confirmation" required>
+                                            <input autofocus type="password"
+                                                class="form-control @if ($errors->has('password_confirmation')) is-invalid @endif"
+                                                id="password_confirmation" name="password_confirmation" required>
                                             @if ($errors->has('password_confirmation'))
-                                            <small class="form-text text-danger error">{{ $errors->first('password_confirmation') }}</small>
+                                                <small
+                                                    class="form-text text-danger error">{{ $errors->first('password_confirmation') }}</small>
                                             @endif
                                         </div>
                                     </div>
