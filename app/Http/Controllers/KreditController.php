@@ -99,9 +99,10 @@ class KreditController extends Controller
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',
             'tgl_pengiriman' => 'required',
-            'upload_penyerahan_unit' => 'required',
+            'upload_penyerahan_unit' => 'required|mimes:png,jpg',
         ], [
             'required' => ':attribute harus diisi.',
+            'mimes' => ':attribute harus berupa png,jpg',
         ], [
             'id_kkb' => 'Kredit',
             'tgl_pengiriman' => 'Tanggal penyerahan unit',
@@ -115,26 +116,21 @@ class KreditController extends Controller
         }
 
         try {
-            if (pathinfo($request->upload_penyerahan_unit, PATHINFO_EXTENSION) == 'png' || pathinfo($request->upload_penyerahan_unit, PATHINFO_EXTENSION) == 'jpg') {
-                $kkb = KKB::where('id', $request->id_kkb)->first();
-                $image = Str::random(3) . time() . '.' . pathinfo($request->upload_penyerahan_unit, PATHINFO_EXTENSION);
-                $document = new Document();
-                $document->kredit_id = $kkb->kredit_id;
-                $document->date = Carbon::now();
-                $document->file = $image;
-                $document->document_category_id  = 1;
-                $document->save();
-                // Storage::putFileAs('penyerahan-unit', $request->upload_penyerahan_unit, $image);
-                $request->upload_penyerahan_unit->move(public_path('images'), $image);
+            $kkb = KKB::where('id', $request->id_kkb)->first();
+            $file = $request->file('upload_penyerahan_unit');
+            $file->storeAs('public/dokumentasi-peyerahan', $file->hashName());
+            $document = new Document();
+            $document->kredit_id = $kkb->kredit_id;
+            $document->date = $request->tgl_pengiriman;
+            // $document->date = Carbon::now();
+            $document->file = $file->hashName();
+            $document->document_category_id  = 1;
+            $document->save();
 
-                $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
+            $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
 
-                $status = 'success';
-                $message = 'Berhasil menyimpan data';
-            } else {
-                $status = 'failed';
-                $message = 'Upload bukti penyerahan harus berupa jpg atau png.';
-            }
+            $status = 'success';
+            $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
             $status = 'failed';
             $message = 'Terjadi kesalahan ' . $e;

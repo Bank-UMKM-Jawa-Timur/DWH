@@ -60,8 +60,8 @@
                                                     <br>
                                                 @elseif(Auth::user()->vendor_id != null)
                                                     <a data-toggle="modal" data-target="#tglModalPenyerahan"
-                                                        data-id_kkb="{{ $item->kkb_id }}" href="#"
-                                                        class="link-po">Atur</a>
+                                                        data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
+                                                        onclick="setPenyerahan({{ $item->kkb_id }})">Atur</a>
                                                 @else
                                                 @endif
                                             </td>
@@ -163,6 +163,7 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <form id="modal-tgl-penyerahan" enctype="multipart/form-data">
+                        @csrf
                         <input type="hidden" name="id_kkb" id="id_kkb">
                         <div class="form-group">
                             <label>Tanggal Pengiriman</label>
@@ -280,32 +281,35 @@
                 })
             })
 
+            function setPenyerahan(id) {
+                $('#modal-tgl-penyerahan #id_kkb').val(id);
+            }
+
             $('#modal-tgl-penyerahan').on("submit", function(event) {
                 event.preventDefault();
 
                 const req_id = document.getElementById('id_kkb')
                 const req_date = document.getElementById('tgl_pengiriman')
                 const req_image = document.getElementById('upload_penyerahan_unit')
+                var formData = new FormData($(this)[0]);
 
-                if (req_date == '') {
-                    showError(req_date, 'Tanggal pengiriman unit harus diisi.');
-                    return false;
-                }
-                if (req_image.files[0].name.split('.').pop() != 'jpg' && req_image.files[0].name.split('.').pop() !=
-                    'png') {
-                    showError(req_image, 'Upload bukti penyerahan harus berupa jpg atau png.');
-                    return false;
-                }
+                // if (req_date == '') {
+                //     showError(req_date, 'Tanggal pengiriman unit harus diisi.');
+                //     return false;
+                // }
+                // if (req_image.files[0].name.split('.').pop() != 'jpg' && req_image.files[0].name.split('.').pop() !=
+                //     'png') {
+                //     showError(req_image, 'Upload bukti penyerahan harus berupa jpg atau png.');
+                //     return false;
+                // }
 
                 $.ajax({
                     type: "POST",
                     url: "{{ route('kredit.set_tgl_penyerahan_unit') }}",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        id_kkb: req_id.value,
-                        tgl_pengiriman: req_date.value,
-                        upload_penyerahan_unit: req_image.files[0].name,
-                    },
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
                     success: function(data) {
                         if (Array.isArray(data.error)) {
                             for (var i = 0; i < data.error.length; i++) {
