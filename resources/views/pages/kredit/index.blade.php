@@ -56,10 +56,10 @@
                                             </td>
                                             <td>
                                                 @php
-                                                    $alreadySet = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 1)->first();
+                                                    $stnk = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 1)->first();
                                                 @endphp
-                                                @if ($alreadySet)
-                                                    {{ $alreadySet->date }}
+                                                @if ($stnk)
+                                                    {{ $stnk->date }}
                                                     <br>
                                                 @elseif(Auth::user()->vendor_id != null)
                                                     <a data-toggle="modal" data-target="#tglModalPenyerahan"
@@ -71,10 +71,10 @@
                                             <td>1 Mei 2023</td>
                                             <td>
                                                 @php
-                                                    $alreadySet = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 2)->first();
+                                                    $police = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 2)->first();
                                                 @endphp
-                                                @if ($alreadySet)
-                                                    <a href="/storage/dokumentasi-police/{{ $alreadySet->file }}" target="_blank">{{ $alreadySet->date }}</a>
+                                                @if ($police)
+                                                    <a href="/storage/dokumentasi-police/{{ $police->file }}" target="_blank">{{ $police->date }}</a>
                                                 @elseif(Auth::user()->vendor_id != null)
                                                     <a data-toggle="modal" data-target="#uploadPoliceModal"
                                                         data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
@@ -84,10 +84,10 @@
                                             </td>
                                             <td>
                                                 @php
-                                                    $alreadySet = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 3)->first();
+                                                    $bpkb = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 3)->first();
                                                 @endphp
-                                                @if ($alreadySet)
-                                                <a href="/storage/dokumentasi-bpkb/{{ $alreadySet->file }}" target="_blank">{{ $alreadySet->date }}</a>
+                                                @if ($bpkb)
+                                                <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}" target="_blank">{{ $bpkb->date }}</a>
                                                 @elseif(Auth::user()->vendor_id != null)
                                                     <a data-toggle="modal" data-target="#uploadBpkbModal"
                                                         data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
@@ -104,7 +104,27 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Detai</a>
+                                                        @if ($stnk)
+                                                            @if ($stnk->file && !$stnk->is_confirm)
+                                                                <a class="dropdown-item confirm-stnk" data-toggle="modal"
+                                                                data-id-category="1" data-id-doc="{{ $stnk ? $stnk->id : 0 }}" href="#confirmModal">Konfirmasi STNK</a>
+                                                            @endif
+                                                        @endif
+                                                        @if ($police)
+                                                            @if ($police->file && !$police->is_confirm)
+                                                                <a class="dropdown-item confirm-police" data-toggle="modal"
+                                                                data-id-category="2" data-id-doc="{{ $police ? $police->id : 0 }}" href="#confirmModal">Konfirmasi Polis</a>
+                                                            @endif
+                                                        @endif
+                                                        @if ($bpkb)
+                                                            @if ($bpkb->file && !$bpkb->is_confirm)
+                                                                <a class="dropdown-item confirm-bpkb" data-toggle="modal"
+                                                                data-id-category="3" data-id-doc="{{ $bpkb ? $bpkb->id : 0 }}" href="#confirmModal">Konfirmasi BPKB</a>
+                                                            @endif
+                                                        @endif
+                                                        <a class="dropdown-item confirm-all" data-toggle="modal"
+                                                        data-id="" href="#confirmModal">Konfirmasi Semua</a>
+                                                        <a class="dropdown-item" data-toggle="modal" href="#">Detail</a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -297,6 +317,28 @@
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Confirm --}}
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-group name" id="konfirmasi">
+                        Yakin ingin mengkonfirmasi data ini?
+                    </div>
+                    <div class="form-inline">
+                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
+                        <form id="confirm-form">
+                            <input type="hidden" name="confirm_id" id="confirm_id">
+                            <input type="hidden" name="confirm_id_category" id="confirm_id_category">
+                            <button type="submit" class="btn btn-primary">Ya</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -544,6 +586,51 @@
             })
 
             // Modal
+            $('body').on('click', '.confirm-police', function(e) {
+                const data_id = $(this).data('id-doc')
+                const data_category_doc_id = $(this).data('id-category')
+
+                $('#confirm_id').val(data_id)
+                $('#confirm_id_category').val(data_category_doc_id)
+            })
+
+            $('#confirm-form').on('submit', function(e) {
+                e.preventDefault()
+                const req_id = $('#confirm_id').val()
+                const req_category_doc_id = $('#confirm_id_category').val()
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.confirm_document') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: req_id,
+                        category_id: req_category_doc_id
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            console.log(data.error)
+                            /*for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('id'))
+                                    showError(req_id, message)
+                                if (message.toLowerCase().includes('category_id'))
+                                    showError(req_category_doc_id, message)
+                            }*/
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            // $('#uploadPoliceModal').modal().hide()
+                            // $('body').removeClass('modal-open');
+                            // $('.modal-backdrop').remove();
+                        }
+                    }
+                })
+            })
+            
             $(document).ready(function() {
                 $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
                     var data_id_kkb = '';

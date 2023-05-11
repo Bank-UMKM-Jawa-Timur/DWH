@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/kredit/set-tgl-penyerahan-unit', [KreditController::class, 'setPenyerahanUnit'])->name('kredit.set_tgl_penyerahan_unit');
     Route::post('/kredit/upload-police', [KreditController::class, 'uploadPolice'])->name('kredit.upload_police');
     Route::post('/kredit/upload-bpkb', [KreditController::class, 'uploadBpkb'])->name('kredit.upload_bpkb');
+    Route::post('/kredit/confirm-document', [KreditController::class, 'confirmDocument'])->name('kredit.confirm_document');
 
 
 

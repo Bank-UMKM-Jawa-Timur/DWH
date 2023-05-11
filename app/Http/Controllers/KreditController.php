@@ -275,4 +275,65 @@ class KreditController extends Controller
             return response()->json($response);
         }
     }
+
+    public function confirmDocument(Request $request)
+    {
+        $status = '';
+        $message = '';
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'category_id' => 'required',
+        ], [
+            'required' => ':attribute harus diisi.',
+        ], [
+            'id' => 'Id',
+            'category_id' => 'Kategori id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+
+        try {
+            if (Auth::user()->role_id == 2) {
+                // Cabang
+                $document = Document::find($request->id);
+                // $docCategory = DocumentCategory::select('name')->where('id', $request->category_id);
+                $docCategory = DocumentCategory::select('name')->find($request->category_id);
+    
+                $document->is_confirm = 1;
+                $document->confirm_at = date('Y-m-d');
+                $document->confirm_by = Auth::user()->id;
+                $document->save();
+    
+                $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas '.$docCategory->name.'.');
+    
+                $status = 'success';
+                $message = 'Berhasil mengkonfirmasi berkas';
+            }
+            else {
+                $status = 'failed';
+                $message = 'Hanya cabang yang bisa melakukan konfirmasi';
+            }
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } catch (\Throwable $th) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $th;
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
+        }
+    }
 }
