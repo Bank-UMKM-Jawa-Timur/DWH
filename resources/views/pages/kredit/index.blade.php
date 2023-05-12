@@ -129,7 +129,7 @@
                                                         @if ($stnk)
                                                             @if ($stnk->file && !$stnk->is_confirm)
                                                                 <a class="dropdown-item confirm-stnk" data-toggle="modal"
-                                                                    data-id-category="1"
+                                                                    data-id-category="4"
                                                                     data-id-doc="{{ $stnk ? $stnk->id : 0 }}"
                                                                     href="#confirmModal">Konfirmasi STNK</a>
                                                             @endif
@@ -517,16 +517,6 @@
                 const req_image = document.getElementById('upload_penyerahan_unit')
                 var formData = new FormData($(this)[0]);
 
-                // if (req_date == '') {
-                //     showError(req_date, 'Tanggal pengiriman unit harus diisi.');
-                //     return false;
-                // }
-                // if (req_image.files[0].name.split('.').pop() != 'jpg' && req_image.files[0].name.split('.').pop() !=
-                //     'png') {
-                //     showError(req_image, 'Upload bukti penyerahan harus berupa jpg atau png.');
-                //     return false;
-                // }
-
                 $.ajax({
                     type: "POST",
                     url: "{{ route('kredit.set_tgl_penyerahan_unit') }}",
@@ -607,8 +597,6 @@
                     }
                 })
             })
-
-
 
             $('#modal-stnk').on("submit", function(event) {
                 event.preventDefault();
@@ -706,6 +694,13 @@
 
             // Modal
             $('body').on('click', '.confirm-police', function(e) {
+                const data_id = $(this).data('id-doc')
+                const data_category_doc_id = $(this).data('id-category')
+
+                $('#confirm_id').val(data_id)
+                $('#confirm_id_category').val(data_category_doc_id)
+            })
+            $('body').on('click', '.confirm-stnk', function(e) {
                 const data_id = $(this).data('id-doc')
                 const data_category_doc_id = $(this).data('id-category')
 
