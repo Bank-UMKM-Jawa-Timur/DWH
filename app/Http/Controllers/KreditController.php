@@ -178,7 +178,7 @@ class KreditController extends Controller
 
         try {
             $stnkFile = Document::where('kredit_id', $request->id_kkb)->where('document_category_id', 1)->first();
-            $policeDate = date('Y-m-d', strtotime($stnkFile->date. ' +30 days'));
+            $policeDate = date('Y-m-d', strtotime($stnkFile->date . ' +30 days'));
 
             $file = $request->file('police_scan');
             $file->storeAs('public/dokumentasi-police', $file->hashName());
@@ -212,7 +212,7 @@ class KreditController extends Controller
             return response()->json($response);
         }
     }
-    
+
 
     public function uploadBpkb(Request $request)
     {
@@ -241,7 +241,7 @@ class KreditController extends Controller
 
         try {
             $policeFile = Document::where('kredit_id', $request->id_kkb)->where('document_category_id', 2)->first();
-            $bpkbDate = date('Y-m-d', strtotime($policeFile->date. ' +3 month'));
+            $bpkbDate = date('Y-m-d', strtotime($policeFile->date . ' +3 month'));
 
             $file = $request->file('bpkb_scan');
             $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
@@ -254,6 +254,68 @@ class KreditController extends Controller
             $document->save();
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas BPKB.');
+
+            $status = 'success';
+            $message = 'Berhasil menyimpan data';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } catch (\Throwable $th) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $th;
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function uploadStnk(Request $request)
+    {
+        $status = '';
+        $message = '';
+
+        $validator = Validator::make($request->all(), [
+            'id_kkb' => 'required',
+            'no_stnk' => 'required',
+            'stnk_scan' => 'required|mimes:pdf|max:2048',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'mimes' => ':attribute harus berupa pdf',
+            'max' => ':attribute maksimal 2 Mb',
+        ], [
+            'id_kkb' => 'Kredit',
+            'no_stnk' => 'Nomer STNK',
+            'stnk_scan' => 'Scan berkas STNK',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+
+        try {
+            $stnkFile = Document::where('kredit_id', $request->id_kkb)->where('document_category_id', 1)->first();
+            $stnkdate = date('Y-m-d', strtotime($stnkFile->date . ' +30 days'));
+
+            $kkb = KKB::where('id', $request->id_kkb)->first();
+            $file = $request->file('stnk_scan');
+            $file->storeAs('public/dokumentasi-stnk', $file->hashName());
+            $document = new Document();
+            $document->kredit_id = $kkb->kredit_id;
+            $document->date = $stnkdate;
+            $document->file = $file->hashName();
+            $document->document_category_id  = 4;
+            $document->save();
+
+            $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas STNK.');
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -303,18 +365,17 @@ class KreditController extends Controller
                 $document = Document::find($request->id);
                 // $docCategory = DocumentCategory::select('name')->where('id', $request->category_id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
-    
+
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = Auth::user()->id;
                 $document->save();
-    
-                $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas '.$docCategory->name.'.');
-    
+
+                $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
+
                 $status = 'success';
                 $message = 'Berhasil mengkonfirmasi berkas';
-            }
-            else {
+            } else {
                 $status = 'failed';
                 $message = 'Hanya cabang yang bisa melakukan konfirmasi';
             }

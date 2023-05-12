@@ -56,7 +56,9 @@
                                             </td>
                                             <td>
                                                 @php
-                                                    $stnk = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 1)->first();
+                                                    $stnk = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                                        ->where('document_category_id', 1)
+                                                        ->first();
                                                 @endphp
                                                 @if ($stnk)
                                                     {{ $stnk->date }}
@@ -68,13 +70,30 @@
                                                 @else
                                                 @endif
                                             </td>
-                                            <td>1 Mei 2023</td>
+                                            <td>@php
+                                                $stnk = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                                    ->where('document_category_id', 4)
+                                                    ->first();
+                                            @endphp
+                                                @if ($stnk)
+                                                    <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
+                                                        target="_blank">{{ $stnk->date }}</a>
+                                                @elseif(Auth::user()->vendor_id != null)
+                                                    <a data-toggle="modal" data-target="#uploadStnkModal"
+                                                        data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
+                                                        onclick="uploadStnk({{ $item->kkb_id }})">Atur</a>
+                                                @else
+                                                @endif
+                                            </td>
                                             <td>
                                                 @php
-                                                    $police = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 2)->first();
+                                                    $police = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                                        ->where('document_category_id', 2)
+                                                        ->first();
                                                 @endphp
                                                 @if ($police)
-                                                    <a href="/storage/dokumentasi-police/{{ $police->file }}" target="_blank">{{ $police->date }}</a>
+                                                    <a href="/storage/dokumentasi-police/{{ $police->file }}"
+                                                        target="_blank">{{ $police->date }}</a>
                                                 @elseif(Auth::user()->vendor_id != null)
                                                     <a data-toggle="modal" data-target="#uploadPoliceModal"
                                                         data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
@@ -84,10 +103,13 @@
                                             </td>
                                             <td>
                                                 @php
-                                                    $bpkb = \App\Models\Document::where('kredit_id', $item->kkb_id)->where('document_category_id', 3)->first();
+                                                    $bpkb = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                                        ->where('document_category_id', 3)
+                                                        ->first();
                                                 @endphp
                                                 @if ($bpkb)
-                                                <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}" target="_blank">{{ $bpkb->date }}</a>
+                                                    <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
+                                                        target="_blank">{{ $bpkb->date }}</a>
                                                 @elseif(Auth::user()->vendor_id != null)
                                                     <a data-toggle="modal" data-target="#uploadBpkbModal"
                                                         data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
@@ -107,24 +129,31 @@
                                                         @if ($stnk)
                                                             @if ($stnk->file && !$stnk->is_confirm)
                                                                 <a class="dropdown-item confirm-stnk" data-toggle="modal"
-                                                                data-id-category="1" data-id-doc="{{ $stnk ? $stnk->id : 0 }}" href="#confirmModal">Konfirmasi STNK</a>
+                                                                    data-id-category="1"
+                                                                    data-id-doc="{{ $stnk ? $stnk->id : 0 }}"
+                                                                    href="#confirmModal">Konfirmasi STNK</a>
                                                             @endif
                                                         @endif
                                                         @if ($police)
                                                             @if ($police->file && !$police->is_confirm)
                                                                 <a class="dropdown-item confirm-police" data-toggle="modal"
-                                                                data-id-category="2" data-id-doc="{{ $police ? $police->id : 0 }}" href="#confirmModal">Konfirmasi Polis</a>
+                                                                    data-id-category="2"
+                                                                    data-id-doc="{{ $police ? $police->id : 0 }}"
+                                                                    href="#confirmModal">Konfirmasi Polis</a>
                                                             @endif
                                                         @endif
                                                         @if ($bpkb)
                                                             @if ($bpkb->file && !$bpkb->is_confirm)
                                                                 <a class="dropdown-item confirm-bpkb" data-toggle="modal"
-                                                                data-id-category="3" data-id-doc="{{ $bpkb ? $bpkb->id : 0 }}" href="#confirmModal">Konfirmasi BPKB</a>
+                                                                    data-id-category="3"
+                                                                    data-id-doc="{{ $bpkb ? $bpkb->id : 0 }}"
+                                                                    href="#confirmModal">Konfirmasi BPKB</a>
                                                             @endif
                                                         @endif
                                                         <a class="dropdown-item confirm-all" data-toggle="modal"
-                                                        data-id="" href="#confirmModal">Konfirmasi Semua</a>
-                                                        <a class="dropdown-item" data-toggle="modal" href="#">Detail</a>
+                                                            data-id="" href="#confirmModal">Konfirmasi Semua</a>
+                                                        <a class="dropdown-item" data-toggle="modal"
+                                                            href="#">Detail</a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -245,7 +274,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Upload Police Modal -->
     <div class="modal fade" id="uploadPoliceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -265,8 +294,8 @@
                         <div class="form-group">
                             <label>Scan Berkas (pdf)</label>
                             <div class="input-group">
-                                <input type="file" class="form-control" id="police_scan"
-                                    name="police_scan"  accept="application/pdf" required>
+                                <input type="file" class="form-control" id="police_scan" name="police_scan"
+                                    accept="application/pdf" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="fa fa-file"></i>
@@ -283,7 +312,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Upload BKPB Modal -->
     <div class="modal fade" id="uploadBpkbModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -303,8 +332,46 @@
                         <div class="form-group">
                             <label>Scan Berkas (pdf)</label>
                             <div class="input-group">
-                                <input type="file" class="form-control" id="bpkb_scan"
-                                    name="bpkb_scan"  accept="application/pdf" required>
+                                <input type="file" class="form-control" id="bpkb_scan" name="bpkb_scan"
+                                    accept="application/pdf" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-file"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload STNK Modal -->
+    <div class="modal fade" id="uploadStnkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-stnk" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Nomor</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="no_stnk" name="no_stnk" required>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Scan Berkas (pdf)</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="stnk_scan" name="stnk_scan"
+                                    accept="application/pdf" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="fa fa-file"></i>
@@ -438,6 +505,10 @@
                 $('#modal-bpkb #id_kkb').val(id);
             }
 
+            function uploadStnk(id) {
+                $('#modal-stnk #id_kkb').val(id);
+            }
+
             $('#modal-tgl-penyerahan').on("submit", function(event) {
                 event.preventDefault();
 
@@ -537,8 +608,56 @@
                 })
             })
 
-            
-            $('#modal-bpkb').on("submit", function(event) {
+
+
+            $('#modal-stnk').on("submit", function(event) {
+                event.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_no = document.getElementById('no_stnk')
+                const req_file = document.getElementById('stnk_scan')
+                var formData = new FormData($(this)[0]);
+
+                if (req_no == '') {
+                    showError(req_no, 'Nomor harus diisi.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_stnk') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('no_stnk'))
+                                    showError(req_no, message)
+                                if (message.toLowerCase().includes('scan'))
+                                    showError(req_file, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#uploadStnkModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            $('#modal-stnkbpkb').on("submit", function(event) {
                 event.preventDefault();
 
                 const req_id = document.getElementById('id_kkb')
@@ -630,7 +749,7 @@
                     }
                 })
             })
-            
+
             $(document).ready(function() {
                 $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
                     var data_id_kkb = '';
@@ -658,14 +777,14 @@
             function ErrorMessage(message) {
                 swal("Gagal!", message, {
                     icon: "error",
-                    // timer: 3000,
+                    timer: 3000,
                     closeOnClickOutside: false
                 }).then(() => {
                     location.reload();
                 });
-                // setTimeout(function() {
-                //     location.reload();
-                // }, 3000);
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
             }
 
             function showError(input, message) {
