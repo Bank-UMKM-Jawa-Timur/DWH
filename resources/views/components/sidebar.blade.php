@@ -30,7 +30,7 @@
                 <li class="nav-item {{ request()->is('kredit') ? 'active' : '' }}">
                     <a href="/kredit">
                         <i class="icon-credit-card"></i>
-                        <p>Kredit</p>
+                        <p>KKB</p>
                     </a>
                 </li>
                 <li

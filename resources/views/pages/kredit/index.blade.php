@@ -43,46 +43,61 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>Rio Ardiansyah</td>
-                                            <td class="link-po">2AFda12j7s</td>
-                                            <td class="@if (!$item->tgl_ketersediaan_unit) link-po @endif">
-                                                @if ($item->tgl_ketersediaan_unit)
-                                                    {{ $item->tgl_ketersediaan_unit }}
+                                            <td class="link-po">
+                                                @php
+                                                $buktiPembayaran = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                                                    ->where('document_category_id', 1)
+                                                                    ->first();
+                                                @endphp
+                                                @if ($buktiPembayaran)
+                                                    2AFda12j7s
                                                 @else
-                                                    @if (Auth::user()->vendor_id == null)
-                                                        <a data-toggle="modal" data-target="#tglModal"
-                                                            data-id_kkb="{{ $item->kkb_id }}" href="#">Atur</a>
+                                                    <a data-toggle="modal" data-target="#buktiPembayaranModal"
+                                                        data-id_kkb="{{ $item->kkb_id }}" href="#" onclick="uploadBuktiPembayaran({{ $item->kkb_id }})">Atur</a>
+                                                @endif
+                                            </td>
+                                            <td class="">
+                                                @if ($buktiPembayaran)
+                                                    @if ($item->tgl_ketersediaan_unit)
+                                                        {{ $item->tgl_ketersediaan_unit }}
+                                                    @else
+                                                        @if (Auth::user()->vendor_id)
+                                                            <a data-toggle="modal" data-target="#tglModal"
+                                                                data-id_kkb="{{ $item->kkb_id }}" href="#">Atur</a>
+                                                        @endif
                                                     @endif
+                                                @else
+                                                <span class="text-danger">Menunggu upload bukti pembayaran</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($item->tgl_ketersediaan_unit)
+                                                    <a data-toggle="modal" data-target="#tglModalPenyerahan"
+                                                        data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
+                                                        onclick="setPenyerahan({{ $item->kkb_id }})">Atur</a>
+                                                @elseif(Auth::user()->vendor_id)
+                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                @else
                                                 @endif
                                             </td>
                                             <td>
                                                 @php
                                                     $stnk = \App\Models\Document::where('kredit_id', $item->kkb_id)
-                                                        ->where('document_category_id', 1)
+                                                        ->where('document_category_id', 4)
                                                         ->first();
                                                 @endphp
-                                                @if ($stnk)
-                                                    {{ $stnk->date }}
-                                                    <br>
-                                                @elseif(Auth::user()->vendor_id != null)
-                                                    <a data-toggle="modal" data-target="#tglModalPenyerahan"
-                                                        data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
-                                                        onclick="setPenyerahan({{ $item->kkb_id }})">Atur</a>
+                                                @if ($item->tgl_ketersediaan_unit)
+                                                    @if ($stnk)
+                                                        <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
+                                                            target="_blank">{{ $stnk->date }}</a>
+                                                    @elseif(Auth::user()->vendor_id != null)
+                                                        <a data-toggle="modal" data-target="#uploadStnkModal"
+                                                            data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
+                                                            onclick="uploadStnk({{ $item->kkb_id }})">Atur</a>
+                                                    @else
+                                                    @endif
                                                 @else
-                                                @endif
-                                            </td>
-                                            <td>@php
-                                                $stnk = \App\Models\Document::where('kredit_id', $item->kkb_id)
-                                                    ->where('document_category_id', 4)
-                                                    ->first();
-                                            @endphp
-                                                @if ($stnk)
-                                                    <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
-                                                        target="_blank">{{ $stnk->date }}</a>
-                                                @elseif(Auth::user()->vendor_id != null)
-                                                    <a data-toggle="modal" data-target="#uploadStnkModal"
-                                                        data-id_kkb="{{ $item->kkb_id }}" href="#" class="link-po"
-                                                        onclick="uploadStnk({{ $item->kkb_id }})">Atur</a>
-                                                @else
+                                                <span class="text-danger">Menunggu tanggal penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -218,6 +233,37 @@
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="fa fa-calendar-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Upload Bukti Pembayaran Modal -->
+    <div class="modal fade" id="buktiPembayaranModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-bukti-pembayaran" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Scan Bukti Pembayaran (pdf)</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="bukti_pembayaran_scan" name="bukti_pembayaran_scan"
+                                    accept="application/pdf" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-file"></i>
                                     </span>
                                 </div>
                             </div>
@@ -492,6 +538,10 @@
                     }
                 })
             })
+            
+            function uploadBuktiPembayaran(id) {
+                $('#modal-bukti-pembayaran #id_kkb').val(id);
+            }
 
             function setPenyerahan(id) {
                 $('#modal-tgl-penyerahan #id_kkb').val(id);
@@ -508,6 +558,46 @@
             function uploadStnk(id) {
                 $('#modal-stnk #id_kkb').val(id);
             }
+
+            $('#modal-bukti-pembayaran').on("submit", function(e) {
+                e.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_file = document.getElementById('bukti_pembayaran_scan')
+                var formData = new FormData($(this)[0]);
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_bukti_pembayaran') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        console.log(data)
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('bukti_pembayaran_scan'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#buktiPembayaranModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
 
             $('#modal-tgl-penyerahan').on("submit", function(event) {
                 event.preventDefault();

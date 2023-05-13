@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/kredit', [KreditController::class, 'index'])->name('kredit.index');
     Route::post('/kredit/set-tgl-ketersediaan-unit', [KreditController::class, 'setTglKetersedianUnit'])->name('kredit.set_tgl_ketersediaan_unit');
     Route::post('/kredit/set-tgl-penyerahan-unit', [KreditController::class, 'setPenyerahanUnit'])->name('kredit.set_tgl_penyerahan_unit');
+    Route::post('/kredit/upload-bukti-pembayaran', [KreditController::class, 'uploadBuktiPembayaran'])->name('kredit.upload_bukti_pembayaran');
     Route::post('/kredit/upload-police', [KreditController::class, 'uploadPolice'])->name('kredit.upload_police');
     Route::post('/kredit/upload-bpkb', [KreditController::class, 'uploadBpkb'])->name('kredit.upload_bpkb');
     Route::post('/kredit/upload-stnk', [KreditController::class, 'uploadStnk'])->name('kredit.upload_stnk');

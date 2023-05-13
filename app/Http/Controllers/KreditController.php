@@ -29,9 +29,9 @@ class KreditController extends Controller
     public function index()
     {
         $this->param['role'] = $this->dashboardContoller->getRoleName();
-        $this->param['title'] = 'Kredit';
-        $this->param['pageTitle'] = 'Kredit';
-        $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->orderBy('name', 'DESC')->get();
+        $this->param['title'] = 'KKB';
+        $this->param['pageTitle'] = 'KKB';
+        $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit'])->orderBy('name', 'DESC')->get();
         $this->param['data'] = Kredit::select(
             'kredits.*',
             'kkb.id AS kkb_id',
@@ -43,6 +43,62 @@ class KreditController extends Controller
             ->paginate(5);
 
         return view('pages.kredit.index', $this->param);
+    }
+
+    public function uploadBuktiPembayaran(Request $request)
+    {
+        $status = '';
+        $message = '';
+
+        $validator = Validator::make($request->all(), [
+            'id_kkb' => 'required',
+            'bukti_pembayaran_scan' => 'required|mimes:pdf|max:2048',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'mimes' => ':attribute harus berupa pdf',
+            'max' => ':attribute maksimal 2 Mb',
+        ], [
+            'id_kkb' => 'Kredit',
+            'bukti_pembayaran_scan' => 'Scan berkas polisi',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+
+        try {
+            $file = $request->file('bukti_pembayaran_scan');
+            $file->storeAs('public/dokumentasi-bukti-pembayaran', $file->hashName());
+            $document = new Document();
+            $document->kredit_id = $request->id_kkb;
+            $document->date = date('Y-m-d');
+            $document->file = $file->hashName();
+            $document->document_category_id  = 1;
+            $document->save();
+
+            $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas bukti pembayaran.');
+
+            $status = 'success';
+            $message = 'Berhasil menyimpan data';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } catch (\Throwable $th) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $th;
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
+        }
     }
 
     public function setTglKetersedianUnit(Request $request)
@@ -71,7 +127,7 @@ class KreditController extends Controller
             $kkb->tgl_ketersediaan_unit = date('Y-m-d', strtotime($request->date));
             $kkb->save();
 
-            $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
+            $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal ketersediaan unit.');
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
