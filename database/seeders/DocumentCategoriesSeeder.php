@@ -28,7 +28,7 @@ class DocumentCategoriesSeeder extends Seeder
         $newDoc->save();
 
         $newDoc = new DocumentCategory();
-        $newDoc->name = 'Police';
+        $newDoc->name = 'Polis';
         $newDoc->save();
 
         $newDoc = new DocumentCategory();
