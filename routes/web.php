@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KreditController;
 use App\Http\Controllers\LogActivitesController;
 use App\Http\Controllers\Master\DocumenCategoryController;
+use App\Http\Controllers\Master\ImbalJasaController;
 use App\Http\Controllers\Master\NotificationTemplateController;
 use App\Http\Controllers\Master\PenggunaController;
 use App\Http\Controllers\Master\RoleController;
@@ -58,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/vendor', VendorController::class);
         Route::resource('/kategori-dokumen', DocumenCategoryController::class);
         Route::resource('/template-notifikasi', NotificationTemplateController::class);
+        Route::resource('/imbal-jasa', ImbalJasaController::class);
     });
 
 

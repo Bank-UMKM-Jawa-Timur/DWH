@@ -34,7 +34,7 @@
                     </a>
                 </li>
                 <li
-                    class="nav-item {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*') ? 'active' : '' }}">
+                    class="nav-item {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*') ? 'active' : '' }}">
                     <a data-toggle="collapse" href="#base">
                         <i class="
                             icon-user-following"></i>
@@ -62,6 +62,11 @@
                             <li class="{{ request()->is('master/kategori-dokumen') ? 'active' : '' }}">
                                 <a href="/master/kategori-dokumen">
                                     <span class="sub-item">Kategori Dokumen</span>
+                                </a>
+                            </li>
+                            <li class="{{ request()->is('master/imbal-jasa') ? 'active' : '' }}">
+                                <a href="/master/imbal-jasa">
+                                    <span class="sub-item">Imbal Jasa</span>
                                 </a>
                             </li>
                             <li class="{{ request()->is('master/template-notifikasi') ? 'active' : '' }}">
