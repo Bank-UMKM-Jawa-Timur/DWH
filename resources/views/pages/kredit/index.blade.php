@@ -2,6 +2,12 @@
 
 @section('title', $title)
 
+@push('extraStyle')
+<style>
+    .pdfobject-container { height: 50rem; border: 1rem solid rgba(0,0,0,.1); }
+</style>
+@endpush
+
 @section('content')
 
     <div class="panel-header bg-primary-gradient">
@@ -232,14 +238,18 @@
                                                         @endif
                                                         @if (Auth::user()->role_id == 2)
                                                         {{--  Cabang  --}}
-                                                        <a data-toggle="modal" data-target="#uploadBerkasModal"
-                                                            data-id_kkb="{{ $item->kkb_id }}" data-id-stnk="@if($stnk){{$stnk->id}}@else-@endif"
-                                                            data-id-polis="@if($polis){{$polis->id}}@else-@endif" data-id-bpkb="@if($bpkb){{$bpkb->id}}@else-@endif" data-no-stnk="@isset($stnk->text){{$stnk->text}}@endisset"
-                                                            data-file-stnk="@isset($stnk->file){{$stnk->file}}@endisset" data-no-polis="@isset($polis->text){{$polis->text}}@endisset"
-                                                            data-file-polis="@isset($polis->file){{$polis->file}}@endisset" data-no-bpkb="@isset($bpkb->text){{$bpkb->text}}@endisset"
-                                                            data-file-bpkb="@isset($bpkb->file){{$bpkb->file}}@endisset" href="#" class="dropdown-item upload-berkas">
-                                                            Konfirmasi Berkas
-                                                        </a>
+                                                            @if ($stnk || $polis || $bpkb)
+                                                                @if (!$stnk->is_confirm || !$polis->is_confirm || !$bpkb->is_confirm)
+                                                                <a data-toggle="modal" data-target="#uploadBerkasModal"
+                                                                    data-id_kkb="{{ $item->kkb_id }}" data-id-stnk="@if($stnk){{$stnk->id}}@else-@endif"
+                                                                    data-id-polis="@if($polis){{$polis->id}}@else-@endif" data-id-bpkb="@if($bpkb){{$bpkb->id}}@else-@endif" data-no-stnk="@isset($stnk->text){{$stnk->text}}@endisset"
+                                                                    data-file-stnk="@isset($stnk->file){{$stnk->file}}@endisset" data-no-polis="@isset($polis->text){{$polis->text}}@endisset"
+                                                                    data-file-polis="@isset($polis->file){{$polis->file}}@endisset" data-no-bpkb="@isset($bpkb->text){{$bpkb->text}}@endisset"
+                                                                    data-file-bpkb="@isset($bpkb->file){{$bpkb->file}}@endisset" href="#" class="dropdown-item upload-berkas">
+                                                                    Konfirmasi Berkas
+                                                                </a>
+                                                                @endif
+                                                            @endif
                                                         @endif
                                                         <a class="dropdown-item" data-toggle="modal"
                                                             href="#">Detail</a>
@@ -398,7 +408,7 @@
     <!-- Upload Berkas Modal -->
     <div class="modal fade" id="uploadBerkasModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-body">
                     <form id="modal-berkas" enctype="multipart/form-data">
@@ -427,7 +437,7 @@
                                     <small class="form-text text-danger error"></small>
                                 </div>
                                 @if (Auth::user()->role_id == 2)
-                                    preview
+                                <div id="preview_stnk"></div>
                                 @endif
                                 @if (Auth::user()->role_id == 3)
                                 <div class="form-group">
@@ -445,7 +455,7 @@
                                 </div>
                                 @endif
                             </div>
-                            {{--  BPKB  --}}
+                            {{--  Polis  --}}
                             <div class="tab-pane fade" id="polis" role="tabpanel" aria-labelledby="polis-tab">
                                 <input type="hidden" name="id_polis" id="id_polis">
                                 <div class="form-group">
@@ -456,7 +466,7 @@
                                     <small class="form-text text-danger error"></small>
                                 </div>
                                 @if (Auth::user()->role_id == 2)
-                                    preview
+                                <div id="preview_polis"></div>
                                 @endif
                                 @if (Auth::user()->role_id == 3)
                                 <div class="form-group">
@@ -474,7 +484,7 @@
                                 </div>
                                 @endif
                             </div>
-                            {{--  Polis  --}}
+                            {{--  BPKB  --}}
                             <div class="tab-pane fade" id="bpkb" role="tabpanel" aria-labelledby="bpkb-tab">
                                 <input type="hidden" name="id_bpkb" id="id_bpkb">
                                 <div class="form-group">
@@ -485,7 +495,7 @@
                                     <small class="form-text text-danger error"></small>
                                 </div>
                                 @if (Auth::user()->role_id == 2)
-                                    preview
+                                <div id="preview_bpkb"></div>
                                 @endif
                                 @if (Auth::user()->role_id == 3)
                                 <div class="form-group">
@@ -641,6 +651,7 @@
     </div>
 
     @push('extraScript')
+    <script src="{{ asset('template') }}/assets/js/pdfobject.min.js"></script>
         @if (session('status'))
             <script>
                 swal("Berhasil!", '{{ session('status') }}', {
@@ -766,6 +777,13 @@
                 $('#modal-berkas #stnk_scan').val(file_stnk);
                 $('#modal-berkas #polis_scan').val(file_polis);
                 $('#modal-berkas #bpkb_scan').val(file_bpkb);
+                var path_stnk = "{{asset('storage')}}"+"/dokumentasi-bpkb/"+file_stnk;
+                var path_polis = "{{asset('storage')}}"+"/dokumentasi-bpkb/"+file_polis;
+                var path_bpkb = "{{asset('storage')}}"+"/dokumentasi-bpkb/"+file_bpkb;
+
+                PDFObject.embed(path_stnk, "#preview_stnk");
+                PDFObject.embed(path_polis, "#preview_polis");
+                PDFObject.embed(path_bpkb, "#preview_bpkb");
             })
 
             $('#modal-bukti-pembayaran').on("submit", function(e) {
