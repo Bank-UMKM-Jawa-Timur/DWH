@@ -152,7 +152,7 @@
                                                 @endif
                                             </td>
                                             <td>Rp.5000</td>
-                                            <td class="text-success">Selesai</td>
+                                            <td class="@if ($item->status == 'done') text-success @else text-info @endif">{{ $item->status }}</td>
                                             <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-info dropdown-toggle" type="button"

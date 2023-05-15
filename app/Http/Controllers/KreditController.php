@@ -39,9 +39,10 @@ class KreditController extends Controller
             'kredits.kode_cabang',
             'kkb.id AS kkb_id',
             'kkb.tgl_ketersediaan_unit',
-            'kkb.imbal_jasa',
-            \DB::raw('COUNT(d.id) AS total_file_uploaded'),
-            \DB::raw('SUM(d.is_confirm) AS total_file_confirmed')
+            'kkb.id_tenor_imbal_jasa',
+            \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+            \DB::raw('CAST(SUM(d.is_confirm) AS UNSIGNED) AS total_file_confirmed'),
+            \DB::raw("IF (COALESCE(SUM(d.is_confirm), 0) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status")
         )
             ->join('kkb', 'kkb.kredit_id', 'kredits.id')
             ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
@@ -49,7 +50,7 @@ class KreditController extends Controller
                 'kredits.id',
                 'kredits.pengajuan_id',
                 'kredits.kode_cabang',
-                'kkb.imbal_jasa',
+                'kkb.id_tenor_imbal_jasa',
                 'kkb.id',
                 'kkb.tgl_ketersediaan_unit',
                 ])
