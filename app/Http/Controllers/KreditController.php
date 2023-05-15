@@ -34,13 +34,27 @@ class KreditController extends Controller
         $this->param['pageTitle'] = 'KKB';
         $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit'])->orderBy('name', 'DESC')->get();
         $this->param['data'] = Kredit::select(
-            'kredits.*',
+            'kredits.id',
+            'kredits.pengajuan_id',
+            'kredits.kode_cabang',
             'kkb.id AS kkb_id',
             'kkb.tgl_ketersediaan_unit',
             'kkb.imbal_jasa',
+            \DB::raw('COUNT(d.id) AS total_file_uploaded'),
+            \DB::raw('SUM(d.is_confirm) AS total_file_confirmed')
         )
             ->join('kkb', 'kkb.kredit_id', 'kredits.id')
-            ->orderBy('kredits.id')
+            ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+            ->groupBy([
+                'kredits.id',
+                'kredits.pengajuan_id',
+                'kredits.kode_cabang',
+                'kkb.imbal_jasa',
+                'kkb.id',
+                'kkb.tgl_ketersediaan_unit',
+                ])
+            ->orderBy('total_file_uploaded')
+            ->orderBy('total_file_confirmed')
             ->paginate(5);
 
         return view('pages.kredit.index', $this->param);
