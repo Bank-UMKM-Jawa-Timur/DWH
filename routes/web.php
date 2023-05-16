@@ -10,6 +10,7 @@ use App\Http\Controllers\Master\PenggunaController;
 use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\VendorController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TargetController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,11 +45,8 @@ Route::middleware('auth')->group(function () {
         $param['pageTitle'] = 'Notifikasi';
         return view('pages.notifikasi.index', $param);
     });
-    Route::get('/target', function () {
-        $param['title'] = 'Target Cabang';
-        $param['pageTitle'] = 'Target';
-        return view('pages.target.index', $param);
-    });
+    Route::resource('/target', TargetController::class);
+    Route::put('/target-toggle/{id}', [TargetController::class, 'toggle'])->name('target.toggle');
 
     Route::prefix('master')->group(function () {
         Route::resource('/role', RoleController::class);
