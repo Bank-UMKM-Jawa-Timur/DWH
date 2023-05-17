@@ -18,31 +18,41 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
+                        <a href="{{ route('role.index') }}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-arrow-left"></i>
+                            Kembali
+                        </a>
                         <form action="{{ route('role.permission.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="role_id" value="{{explode('/',Request::url())[count(explode('/',Request::url()))-1]}}">
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                Simpan Hak Akses {{ $role }}
-                            </button>
                             <div class="table-responsive">
                                 <table class="table mt-2">
                                     <thead>
                                         <tr class="bg-danger text-light">
                                             <th scope="col">No</th>
                                             <th scope="col">Aksi</th>
-                                            <th scope="col">CheckBox</th>
+                                            <th scope="col">
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input name="check_all" id="check_all" class="form-check-input" type="checkbox">
+                                                        <span class="form-check-sign text-white" for="check_all">Pilih Semua</span>
+                                                    </label>
+                                                </div>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($data as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->name }}</td>
+                                            <td>
+                                                <label for="check_{{$item->id}}" style="cursor: pointer;">{{ $item->name }}</label>
+                                            </td>
                                             <td>
                                                 <div class="form-check">
                                                     <label class="form-check-label">
                                                         {{--  <input type="hidden" name="action_id[]" value="{{ $item->id }}">  --}}
-                                                        <input name="check[{{$item->id}}]" class="form-check-input" type="checkbox" @if ($item->role_id) checked @endif>
+                                                        <input id="check_{{$item->id}}" name="check[{{$item->id}}]" class="form-check-input check-item" type="checkbox" @if ($item->status == 'checked') checked @endif>
                                                         <span class="form-check-sign"></span>
                                                     </label>
                                                 </div>
@@ -56,6 +66,16 @@
                                         </tr>
                                         @endforelse
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="2"></th>
+                                            <th>
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                Simpan
+                                            </button>
+                                            </th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </form>
@@ -144,29 +164,11 @@
     </div>
 
 
-    <script>
-        const form = document.getElementById('modal-form');
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            const nameInput = document.getElementById('name');
-
-            // Lakukan validasi pada data yang diterima dari form
-            if (nameInput.value === '') {
-                showError(nameInput, 'Nama Peran Wajib Diisi');
-                return false;
-            }
-
-            form.submit();
-        });
-
-        function showError(input, message) {
-            const formGroup = input.parentElement;
-            const errorSpan = formGroup.querySelector('.error');
-
-            formGroup.classList.add('has-error');
-            errorSpan.innerText = message;
-            input.focus();
-        }
-    </script>
+    @push('extraScript')
+        <script>
+            $('#check_all').click(function() {
+                $('.check-item').prop('checked', this.checked)
+            })
+        </script>
+    @endpush
 @endsection

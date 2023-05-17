@@ -7,6 +7,7 @@ use App\Http\Controllers\LogActivitesController;
 use App\Models\Action;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -203,19 +204,18 @@ class RoleController extends Controller
     {
         try {
             $param['title'] = 'Hak Akses';
-            $param['pageTitle'] = 'Hak Akses';
-            $param['role'] = 'Cabang';
+            $param['role'] = Role::select('name')->where('id', $id)->first()->name;
+            $param['pageTitle'] = 'Hak Akses '. $param['role'];
             $data = Action::select(
                                 'actions.id',
                                 'actions.name',
-                                'p.role_id',
-                                // \DB::raw("IF(p.role_id = $id, 'checked', 'unchecked') AS status")
+                                \DB::raw("IF ((SELECT COUNT(action_id) FROM permissions WHERE action_id = actions.id AND role_id = $id) = 1, 'checked', 'uncheck'
+                                ) AS status")
                             )
-                            ->leftJoin('permissions AS p', 'p.action_id', 'actions.id')
-                            ->where('p.role_id', $id)
-                            ->orWhereNull('p.role_id')
                             ->orderBy('actions.id')
                             ->get();
+                            // return count($data);
+                            // return $data;
 
             $param['data'] = $data;
             

@@ -26,5 +26,9 @@ class RoleSeeder extends Seeder
         $pemasaran = new Role();
         $pemasaran->name = 'Vendor';
         $pemasaran->save();
+
+        $pemasaran = new Role();
+        $pemasaran->name = 'Superadmin';
+        $pemasaran->save();
     }
 }
