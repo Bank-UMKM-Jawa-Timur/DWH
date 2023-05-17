@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
+use App\Models\Action;
+use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
@@ -191,6 +195,73 @@ class RoleController extends Controller
             $message = 'Terjadi kesalahan pada database.';
         } finally {
             return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
+        }
+    }
+
+    // Permission
+    public function indexPermission($id)
+    {
+        try {
+            $param['title'] = 'Hak Akses';
+            $param['pageTitle'] = 'Hak Akses';
+            $param['role'] = 'Cabang';
+            $data = Action::select(
+                                'actions.id',
+                                'actions.name',
+                                'p.role_id',
+                                // \DB::raw("IF(p.role_id = $id, 'checked', 'unchecked') AS status")
+                            )
+                            ->leftJoin('permissions AS p', 'p.action_id', 'actions.id')
+                            ->where('p.role_id', $id)
+                            ->orWhereNull('p.role_id')
+                            ->orderBy('actions.id')
+                            ->get();
+
+            $param['data'] = $data;
+            
+            return view('pages.hak_akses.index', $param);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+            return back()->withError('Terjadi kesalahan');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return $e->getMessage();
+            return back()->withError('Terjadi kesalahan pada database');
+        }
+    }
+
+    public function storePermission(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $actions = Action::select('id', 'name')->orderBy('id')->get();
+            foreach ($actions as $key => $value) {
+                $permission = Permission::select('id')->where('role_id', $request->role_id)->where('action_id', $value->id)->first();
+                if (array_key_exists($value->id, $request->check)) {
+                    if (!$permission) {
+                        // Set a new permission
+                        $setPermissions = new Permission();
+                        $setPermissions->action_id = $value->id;
+                        $setPermissions->role_id = $request->role_id;
+                        $setPermissions->save();
+                    }
+                }
+                else {
+                    if ($permission)
+                        $permission->delete();
+                }
+            }
+            $username = Auth::user()->role_id == 3 ? Auth()->user()->email : Auth()->user()->nip;
+            $this->logActivity->store("Pengguna '$username' menyimpan pengaturan hak akses.");
+            DB::commit();
+
+            return back()->withStatus('Berhasil menyimpan hak akses');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->withError('Terjadi kesalahan');
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollback();
+            return back()->withError('Terjadi kesalahan pada database');
         }
     }
 }

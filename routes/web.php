@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('master')->group(function () {
         Route::resource('/role', RoleController::class);
         Route::get('/role-list', [RoleController::class, 'list'])->name('role.list');
+        Route::get('/role/hak-akses/{id}', [RoleController::class, 'indexPermission'])->name('role.permission.index');
+        Route::post('/role/hak-akses', [RoleController::class, 'storePermission'])->name('role.permission.store');
         Route::resource('/pengguna', PenggunaController::class);
         Route::get('/pengguna-list-cabang', [PenggunaController::class, 'listCabang'])->name('pengguna.list_cabang');
         Route::post('/pengguna/reset-password', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset_password');
@@ -72,15 +74,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/kredit/confirm-berkas', [KreditController::class, 'confirmBerkas'])->name('kredit.confirm_berkas');
     Route::post('/kredit/confirm-document', [KreditController::class, 'confirmDocumentCabang'])->name('kredit.confirm_document');
     Route::post('/kredit/confirm-document-vendor', [KreditController::class, 'confirmDocumentVendor'])->name('kredit.confirm_document_vendor');
-
-
-
-    Route::get('/hak_akses/1', function () {
-        $param['title'] = 'Hak Akses';
-        $param['pageTitle'] = 'Hak Akses';
-        $param['role'] = 'Cabang';
-        return view('pages.hak_akses.index', $param);
-    });
 
     Route::get('/log_aktivitas', [LogActivitesController::class, 'index']);
 });

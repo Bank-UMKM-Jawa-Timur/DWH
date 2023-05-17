@@ -18,34 +18,47 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <button type="button" class="btn btn-primary btn-sm">
-                            Simpan Hak Akses {{ $role }}
-                        </button>
-                        <div class="table-responsive">
-                            <table class="table mt-2">
-                                <thead>
-                                    <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Nama Fitur</th>
-                                        <th scope="col">CheckBox</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Dapat Melihat Menu Target</td>
-                                        <td>
-                                            <div class="form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="checkbox" value="">
-                                                    <span class="form-check-sign"></span>
-                                                </label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <form action="{{ route('role.permission.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="role_id" value="{{explode('/',Request::url())[count(explode('/',Request::url()))-1]}}">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                Simpan Hak Akses {{ $role }}
+                            </button>
+                            <div class="table-responsive">
+                                <table class="table mt-2">
+                                    <thead>
+                                        <tr class="bg-danger text-light">
+                                            <th scope="col">No</th>
+                                            <th scope="col">Aksi</th>
+                                            <th scope="col">CheckBox</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($data as $item)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $item->name }}</td>
+                                            <td>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        {{--  <input type="hidden" name="action_id[]" value="{{ $item->id }}">  --}}
+                                                        <input name="check[{{$item->id}}]" class="form-check-input" type="checkbox" @if ($item->role_id) checked @endif>
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center">
+                                                <span class="text-danger">Maaf, data belum tersedia.</span>
+                                            </td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
