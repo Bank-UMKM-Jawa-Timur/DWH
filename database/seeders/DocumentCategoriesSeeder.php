@@ -16,11 +16,19 @@ class DocumentCategoriesSeeder extends Seeder
     public function run()
     {
         $newDoc = new DocumentCategory();
+        $newDoc->name = 'Bukti Pembayaran';
+        $newDoc->save();
+
+        $newDoc = new DocumentCategory();
+        $newDoc->name = 'Penyerahan Unit';
+        $newDoc->save();
+
+        $newDoc = new DocumentCategory();
         $newDoc->name = 'STNK';
         $newDoc->save();
 
         $newDoc = new DocumentCategory();
-        $newDoc->name = 'Police';
+        $newDoc->name = 'Polis';
         $newDoc->save();
 
         $newDoc = new DocumentCategory();

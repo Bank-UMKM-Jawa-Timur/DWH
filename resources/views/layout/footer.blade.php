@@ -45,6 +45,61 @@
 </script>
 <!-- Sweet Alert -->
 <script src="{{ asset('template') }}/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
+@if (session('status'))
+    <script>
+        swal("Berhasil!", '{{ session('status') }}', {
+            icon: "success",
+            timer: 3000,
+            closeOnClickOutside: false
+        }).then(() => {
+            location.reload();
+        });
+        setTimeout(function() {
+            location.reload();
+        }, 3000);
+    </script>
+@endif
+@if (session('error'))
+    <script>
+        swal("Gagal!", '{{ session('error') }}', {
+            icon: "error",
+            timer: 3000,
+            closeOnClickOutside: false
+        }).then(() => {
+            location.reload();
+        });
+        setTimeout(function() {
+            location.reload();
+        }, 3000);
+    </script>
+@endif
+<script>
+    function SuccessMessage(message) {
+        swal("Berhasil!", message, {
+            icon: "success",
+            timer: 3000,
+            closeOnClickOutside: false
+        }).then(() => {
+            location.reload();
+        });
+        setTimeout(function() {
+            location.reload();
+        }, 3000);
+    }
+
+    function ErrorMessage(message) {
+        swal("Gagal!", message, {
+            icon: "error",
+            timer: 3000,
+            closeOnClickOutside: false
+        }).then(() => {
+            location.reload();
+        });
+        setTimeout(function() {
+            location.reload();
+        }, 3000);
+    }
+</script>
 @stack('extraScript')
 </body>
 

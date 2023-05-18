@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="{{ asset('template') }}/assets/css/atlantis.css">
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('template') }}/assets/css/demo.css">
+    @stack('extraStyle')
 </head>
 
 <body>

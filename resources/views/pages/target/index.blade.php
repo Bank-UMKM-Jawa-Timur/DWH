@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="card-body">
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#exampleModal">
+                            data-target="#addModal">
                             Tambah {{ $pageTitle }}
                         </button>
                         <div class="table-responsive">
@@ -27,63 +27,45 @@
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
-                                        {{-- <th scope="col">Nama</th> --}}
                                         <th scope="col">Nominal</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Rp.30.000.000</td>
-                                        <td>
-                                            <input type="checkbox" checked data-toggle="toggle" data-onstyle="primary"
-                                                data-style="btn-round">
-                                        </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#edit1"
-                                                        href="#">Edit</a>
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#hapus1"
-                                                        href="#">Hapus</a>
+                                    @forelse ($data as $item)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                                            <td>
+                                                <input type="checkbox" class="toggle-button" data-id="{{ $item->id }}" data-toggle="toggle" data-onstyle="primary"
+                                                    data-style="btn-round" @if ($item->is_active) checked @endif>
+                                            </td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                        data-toggle="dropdown" aria-expanded="false">
+                                                        Selengkapnya
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item edit" data-toggle="modal" data-target="#editModal"
+                                                            data-id="{{ $item->id }}" data-nominal="{{ $item->nominal }}" href="#">Edit</a>
+                                                        <a class="dropdown-item delete" data-toggle="modal" data-target="#deleteModal"
+                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
+                                                    </div>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Edit</a>
+                                                    </div>
                                                 </div>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Rp.50.000.000</td>
-                                        <td>
-                                            <input type="checkbox" data-toggle="toggle" data-onstyle="primary"
-                                                data-style="btn-round">
-                                        </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#edit1"
-                                                        href="#">Edit</a>
-                                                    <a class="dropdown-item" data-toggle="modal" data-target="#hapus1"
-                                                        href="#">Hapus</a>
-                                                </div>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center">
+                                                <span class="text-danger">Maaf data belum tersedia.</span>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -110,7 +92,7 @@
     </div>
 
     <!-- Modal-tambah -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -121,22 +103,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="#" id="modal-form">
+                    <form id="modal-add-form">
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="Nominal">
-                                        <label for="Nominal">Nominal</label>
-                                        <input autofocus type="text" class="form-control" id="Nominal"
-                                            name="Nominal">
+                                        <label for="nominal">Nominal</label>
+                                        <input autofocus type="number" class="form-control" id="nominal"
+                                            name="nominal" required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <button type="submit" class="btn btn-primary" id="add-button">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -145,7 +126,7 @@
     </div>
 
     <!-- Modal-edit -->
-    <div class="modal fade" id="edit1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -156,44 +137,20 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="#" id="modal-form">
+                    <form id="modal-edit-form">
+                        <input type="hidden" name="edit_id" id="edit_id">
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="name">
-                                        <label for="Nip">Nip</label>
-                                        <input autofocus type="text" class="form-control" id="Nip"
-                                            name="Nip">
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="email">
-                                        <label for="Email">Email</label>
-                                        <input type="email" class="form-control" id="Email" name="Email">
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="password">
-                                        <label for="Password">Password</label>
-                                        <input type="password" class="form-control" id="Password" name="Password">
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="role">
-                                        <label for="exampleFormControlSelect1">Role</label>
-                                        <select class="form-control" id="exampleFormControlSelect1">
-                                            <option>Cabang</option>
-                                            <option>Vendor</option>
-                                        </select>
+                                <div class="col-sm-12">
+                                    <div class="Nominal">
+                                        <label for="edit_nominal">Nominal</label>
+                                        <input autofocus type="number" class="form-control" id="edit_nominal"
+                                            name="edit_nominal" required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </div>
@@ -204,23 +161,21 @@
     </div>
 
     {{-- Modal Delete --}}
-    <div class="modal fade" id="hapus1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade " id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                {{-- <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Hapus {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div> --}}
                 <div class="modal-body">
                     <div class="form-group name">
-                        Apakah Anda Ingin Menghapus Role Cabang?
+                        Yakin akan menghapus data ini?
                     </div>
                     <div class="form-group">
                         <button data-dismiss="modal" class="btn btn-danger">Batal</button>
-                        <button type="submit" class="btn btn-primary">Hapus</button>
+                        <form id="delete-form" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-primary btn-delete">Hapus</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -228,20 +183,155 @@
     </div>
 
 
-    {{-- <script>
-        const form = document.getElementById('modal-form');
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
+    @push('extraScript')
+    <script>
 
-            const nameInput = document.getElementById('name');
+        $('#modal-add-form').on('submit', function(e) {
+            e.preventDefault()
 
-            // Lakukan validasi pada data yang diterima dari form
-            if (nameInput.value === '') {
-                showError(nameInput, 'Nama Peran Wajib Diisi');
+            const req_nominal = document.getElementById('nominal')
+
+            if (req_nominal == '') {
+                showError(req_nominal, 'Nominal harus diisi.');
                 return false;
             }
 
-            form.submit();
+            $.ajax({
+                type:"POST",
+                url:"{{ route('target.store') }}",
+                data:{
+                    _token : "{{csrf_token()}}",
+                    nominal : req_nominal.value,
+                },
+                success:function(data){
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        for (var i=0; i < data.error.length; i++) {
+                            var message = data.error[i];
+
+                            if (message.toLowerCase().includes('nominal'))
+                                showError(req_nominal, message)
+                        }
+                    }
+                    else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        }
+                        else {
+                            ErrorMessage(data.message)
+                        }
+                        $('#addModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                    }
+                },
+                error:function(e) {
+                    console.log(e)
+                }
+            })
+        })
+
+        $('#modal-edit-form').on('submit', function(e) {
+            e.preventDefault()
+
+            const req_id = document.getElementById('edit_id')
+            const req_nominal = document.getElementById('edit_nominal')
+
+            if (req_nominal == '') {
+                showError(req_nominal, 'Nominal harus diisi.');
+                return false;
+            }
+
+            $.ajax({
+                type:"POST",
+                url:"{{ url('/target') }}/"+req_id.value,
+                data:{
+                    _token : "{{csrf_token()}}",
+                    _method : "PUT",
+                    nominal : req_nominal.value,
+                },
+                success:function(data){
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        for (var i=0; i < data.error.length; i++) {
+                            var message = data.error[i];
+
+                            if (message.toLowerCase().includes('nominal'))
+                                showError(req_nominal, message)
+                        }
+                    }
+                    else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        }
+                        else {
+                            ErrorMessage(data.message)
+                        }
+                        $('#editModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                    }
+                },
+                error:function(e) {
+                    console.log(e)
+                }
+            })
+        })
+
+        $('.toggle-button').change(function() {
+            const data_id = $(this).data('id')
+            var checked = this.checked
+
+            $.ajax({
+                type:"POST",
+                url:"{{ url('/target-toggle') }}/"+data_id,
+                data:{
+                    _token : "{{csrf_token()}}",
+                    _method : "PUT",
+                    toggle : checked,
+                },
+                success:function(data){
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        /*for (var i=0; i < data.error.length; i++) {
+                            var message = data.error[i];
+
+                            if (message.toLowerCase().includes('nominal'))
+                                showError(req_nominal, message)
+                        }*/
+                    }
+                    else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        }
+                        else {
+                            ErrorMessage(data.message)
+                        }
+                    }
+                },
+                error:function(e) {
+                    console.log(e)
+                }
+            })
+        })
+
+        $(document).on("click", ".edit", function() {
+            var data_id = $(this).data('id');
+            var data_nominal = $(this).data('nominal');
+
+            $('#edit_id').val(data_id)
+            $('#edit_nominal').val(data_nominal)
+        });
+
+        $(document).on("click", ".delete", function() {
+            var data_id = $(this).data('id');
+            var url = "{{ route('target.destroy', "+data_id+") }}";
+            console.log(url)
+
+            $('#konfirmasi').text("Apakah yakin akan menghapus data?");
+            $('#delete-form').attr("action", url);
+
+            $('#deleteModal').modal('show');
         });
 
         function showError(input, message) {
@@ -252,5 +342,6 @@
             errorSpan.innerText = message;
             input.focus();
         }
-    </script> --}}
+    </script>
+    @endpush
 @endsection

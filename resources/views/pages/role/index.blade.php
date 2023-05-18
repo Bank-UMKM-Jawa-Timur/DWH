@@ -42,7 +42,7 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="/hak_akses/1">Hak Akses</a>
+                                                        <a class="dropdown-item" href="{{ route('role.permission.index', $item->id) }}">Hak Akses</a>
                                                         <a class="dropdown-item" data-toggle="modal"
                                                             data-target="#editModal" data-id="{{ $item->id }}"
                                                             data-name="{{ $item->name }}" href="#">Edit</a>
