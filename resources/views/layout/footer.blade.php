@@ -44,6 +44,7 @@
     });
 </script>
 <!-- Sweet Alert -->
+
 <script src="{{ asset('template') }}/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
 @if (session('status'))
     <script>

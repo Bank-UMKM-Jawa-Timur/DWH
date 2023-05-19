@@ -26,16 +26,28 @@ class PenggunaController extends Controller
     {
         $param['title'] = 'Pengguna';
         $param['pageTitle'] = 'Pengguna';
-        $data = User::select(
-                'users.*',
-                'r.name AS role',
-            )
-            ->join('roles AS r', 'r.id', 'users.role_id')
-            ->orderBy('users.id')
-            ->get();
+        // $data = User::select(
+        //         'users.*',
+        //         'r.name AS role',
+        //     )
+        //     ->join('roles AS r', 'r.id', 'users.role_id')
+        //     ->orderBy('users.id')
+        //     ->get();
+        $data = $this->paginasi();
         $param['data'] = $data;
 
         return view('pages.pengguna.index', $param);
+    }
+
+    public function paginasi()
+    {
+        return User::select(
+            'users.*',
+            'r.name AS role',
+        )
+        ->join('roles AS r', 'r.id', 'users.role_id')
+        ->orderBy('users.id')
+        ->paginate(10);
     }
 
     public function listCabang()
@@ -92,10 +104,10 @@ class PenggunaController extends Controller
             $newUser->password = $request->password;
             $newUser->role_id = $request->role_id;
             $newUser->save();
-            
+
             $title = $request->nip ? $request->nip : $request->email;
             $this->logActivity->store("Membuat data pengguna $title.");
-            
+
             $status = 'success';
             $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {

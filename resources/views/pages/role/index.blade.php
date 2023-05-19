@@ -17,12 +17,14 @@
         <div class="row mt--2">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
                             Tambah Peran
                         </button>
+                    </div>
+                    <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mt-2">
+                            <table class="table mt-2" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
@@ -30,7 +32,7 @@
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody">
                                     @forelse ($data as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
@@ -42,8 +44,10 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="{{ route('role.permission.index', $item->id) }}">Hak Akses</a>
-                                                        <a class="dropdown-item" data-toggle="modal"
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('role.permission.index', $item->id) }}">Hak
+                                                            Akses</a>
+                                                        <a class="dropdown-item editModal" data-toggle="modal"
                                                             data-target="#editModal" data-id="{{ $item->id }}"
                                                             data-name="{{ $item->name }}" href="#">Edit</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
@@ -63,9 +67,9 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="paginated">
+                        {{-- <div class="paginated">
                             {{ $data->links('pagination::bootstrap-4') }}
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -149,7 +153,10 @@
     </div>
 
     @push('extraScript')
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
+            $('#basic-datatables').DataTable({});
+
             // Form
             $('#add-button').click(function(e) {
                 e.preventDefault()
@@ -271,38 +278,105 @@
                 }, 3000);
             }
 
+            // search-data
+            // $('#search-data').on('keyup', function() {
+            //     var value = $(this).val();
+            //     $.ajax({
+            //         url: "{{ url('/master/role') }}",
+            //         type: "GET",
+            //         data: {
+            //             'search': value
+            //         },
+            //         success: function(datas) {
+            //             var result = datas.data;
+            //             console.log(result);
+            //             var html = '';
+            //             if (result.length > 0) {
+            //                 for (let i = 0; i < result.length; i++) {
+            //                     html += '<tr>';
+            //                     html += '<td>' +
+            //                         (i + 1).toString() +
+            //                         '</td>';
+            //                     html += '<td>' +
+            //                         result[i][
+            //                             'name'
+            //                         ] +
+            //                         '</td>';
+            //                     html +=
+            //                         '<td>\
+            //                                                                                                                             <div class="dropdown">\
+            //                                                                                                                                 <button class="btn btn-sm btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">\
+            //                                                                                                                                     Selengkapnya\
+            //                                                                                                                                 </button>\
+            //                                                                                                                                 <div class="dropdown-menu">\
+            //                                                                                                                                     <a class="dropdown-item" href="role/hak-akses/' +
+            //                         result[i][
+            //                             'id'
+            //                         ] +
+            //                         '">Hak Akses</a>\
+            //                                                                                                                                     <a class="dropdown-item editModal" data-toggle="modal"\
+            //                                                                                                                                         data-target="#editModal" data-id="' +
+            //                         result[i][
+            //                             'id'
+            //                         ] +
+            //                         '"\
+            //                                                                                                                                     data-name="' +
+            //                         result[
+            //                             i][
+            //                             'name'
+            //                         ] +
+            //                         '" href="#">Edit</a>\
+            //                                                                                                                                 <a class="dropdown-item deleteModal" data-toggle="modal"\
+            //                                                                                                                                     data-target="#deleteModal" data-name="' +
+            //                         result[i]
+            //                         [
+            //                             'name'
+            //                         ] +
+            //                         '"\
+            //                                                                                                                                             data-id="' +
+            //                         result[i][
+            //                             'id'
+            //                         ] +
+            //                         '" href="#">Hapus</a>\
+            //                                                                                                                                     </div>\
+            //                                                                                                                                 </div>\
+            //                                                                                                                         </td>'
+            //                 }
+            //             } else {
+            //                 console.log('tidak ada');
+            //                 html +=
+            //                     '<tr>\<td colspan="3">Tidak Ada Data</td>\<script /tr > '
+            //             }
+
+            //             $("#tbody").html(html);
+            //         }
+            //     })
+            // });
             // Modal
-            $(document).ready(function() {
-                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
-                    var data_id = '';
-                    var data_name = '';
-                    if (typeof $(this).data('id') !== 'undefined') {
-                        data_id = $(this).data('id');
-                    }
-                    if (typeof $(this).data('name') !== 'undefined') {
-                        data_name = $(this).data('name');
-                    }
-                    $('#edit-id').val(data_id);
-                    $('.edit-name').val(data_name);
+            $(document).on("click", ".editModal", function() {
+                var data_id = '';
+                var data_name = '';
+                if (typeof $(this).data('id') !== 'undefined') {
+                    data_id = $(this).data('id');
+                }
+                if (typeof $(this).data('name') !== 'undefined') {
+                    data_name = $(this).data('name');
+                }
+                $('#edit-id').val(data_id);
+                $('.edit-name').val(data_name);
 
-                    var url = "{{ url('/master/role') }}/" + data_id;
-                    $('.edit-form').attr("action", url);
-                })
-
+                var url = "{{ url('/master/role') }}/" + data_id;
+                $('.edit-form').attr("action", url);
+                // })
             });
             $(document).on("click", ".deleteModal", function() {
                 var data_id = $(this).data('id');
                 var data_name = $(this).data('name');
                 var url = "{{ url('/master/role') }}/" + data_id;
-                // console.log(url)
-                console.log(data_name);
-                // $(this).find('.modal-body .konfirmasi').text(data_name);
                 $('#konfirmasi').text("Apakah Kamu Ingin Menghapus Role " + data_name + "?");
                 $('#delete-form').attr("action", url);
-
-                $('#deleteModal').modal('show');
+                ("action", url);
             });
         </script>
-    @endpush
-
+    @endPush
 @endsection

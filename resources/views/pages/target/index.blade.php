@@ -17,13 +17,14 @@
         <div class="row mt--2">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-body">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#addModal">
+                    <div class="card-header">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
                             Tambah {{ $pageTitle }}
                         </button>
+                    </div>
+                    <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mt-2">
+                            <table id="basic-datatables" class="table mt-2">
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
@@ -38,8 +39,9 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
                                             <td>
-                                                <input type="checkbox" class="toggle-button" data-id="{{ $item->id }}" data-toggle="toggle" data-onstyle="primary"
-                                                    data-style="btn-round" @if ($item->is_active) checked @endif>
+                                                <input type="checkbox" class="toggle-button" data-id="{{ $item->id }}"
+                                                    data-toggle="toggle" data-onstyle="primary" data-style="btn-round"
+                                                    @if ($item->is_active) checked @endif>
                                             </td>
                                             <td>
                                                 <div class="dropdown">
@@ -48,10 +50,12 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item edit" data-toggle="modal" data-target="#editModal"
-                                                            data-id="{{ $item->id }}" data-nominal="{{ $item->nominal }}" href="#">Edit</a>
-                                                        <a class="dropdown-item delete" data-toggle="modal" data-target="#deleteModal"
-                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
+                                                        <a class="dropdown-item edit" data-toggle="modal"
+                                                            data-target="#editModal" data-id="{{ $item->id }}"
+                                                            data-nominal="{{ $item->nominal }}" href="#">Edit</a>
+                                                        <a class="dropdown-item delete" data-toggle="modal"
+                                                            data-target="#deleteModal" data-id="{{ $item->id }}"
+                                                            href="#">Hapus</a>
                                                     </div>
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item" href="#">Edit</a>
@@ -109,8 +113,8 @@
                                 <div class="col-sm-12">
                                     <div class="Nominal">
                                         <label for="nominal">Nominal</label>
-                                        <input autofocus type="number" class="form-control" id="nominal"
-                                            name="nominal" required>
+                                        <input autofocus type="number" class="form-control" id="nominal" name="nominal"
+                                            required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
@@ -169,8 +173,8 @@
                     <div class="form-group name">
                         Yakin akan menghapus data ini?
                     </div>
-                    <div class="form-group">
-                        <button data-dismiss="modal" class="btn btn-danger">Batal</button>
+                    <div class="form-inline">
+                        <button data-dismiss="modal" class="btn btn-danger mr-2">Batal</button>
                         <form id="delete-form" method="post">
                             @csrf
                             @method('DELETE')
@@ -184,164 +188,162 @@
 
 
     @push('extraScript')
-    <script>
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
 
-        $('#modal-add-form').on('submit', function(e) {
-            e.preventDefault()
+        <script>
+            $('#modal-add-form').on('submit', function(e) {
+                console.log("helloworld");
+                e.preventDefault()
 
-            const req_nominal = document.getElementById('nominal')
+                const req_nominal = document.getElementById('nominal')
 
-            if (req_nominal == '') {
-                showError(req_nominal, 'Nominal harus diisi.');
-                return false;
+                if (req_nominal == '') {
+                    showError(req_nominal, 'Nominal harus diisi.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('target.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        nominal: req_nominal.value,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+
+                                if (message.toLowerCase().includes('nominal'))
+                                    showError(req_nominal, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#addModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                    }
+                })
+            })
+
+            $('#modal-edit-form').on('submit', function(e) {
+                e.preventDefault()
+
+                const req_id = document.getElementById('edit_id')
+                const req_nominal = document.getElementById('edit_nominal')
+
+                if (req_nominal == '') {
+                    showError(req_nominal, 'Nominal harus diisi.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/target') }}/" + req_id.value,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: "PUT",
+                        nominal: req_nominal.value,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+
+                                if (message.toLowerCase().includes('nominal'))
+                                    showError(req_nominal, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#editModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                    }
+                })
+            })
+
+            $('.toggle-button').change(function() {
+                const data_id = $(this).data('id')
+                var checked = this.checked
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/target-toggle') }}/" + data_id,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: "PUT",
+                        toggle: checked,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            /*for (var i=0; i < data.error.length; i++) {
+                                var message = data.error[i];
+
+                                if (message.toLowerCase().includes('nominal'))
+                                    showError(req_nominal, message)
+                            }*/
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                    }
+                })
+            })
+
+            $(document).on("click", ".edit", function() {
+                var data_id = $(this).data('id');
+                var data_nominal = $(this).data('nominal');
+
+                $('#edit_id').val(data_id)
+                $('#edit_nominal').val(data_nominal)
+            });
+
+            $(document).on("click", ".delete", function() {
+                var data_id = $(this).data('id');
+                var url = "{{ route('target.destroy', '+data_id+') }}";
+                console.log(url)
+
+                $('#konfirmasi').text("Apakah yakin akan menghapus data?");
+                $('#delete-form').attr("action", url);
+
+                $('#deleteModal').modal('show');
+            });
+
+            function showError(input, message) {
+                const formGroup = input.parentElement;
+                const errorSpan = formGroup.querySelector('.error');
+
+                formGroup.classList.add('has-error');
+                errorSpan.innerText = message;
+                input.focus();
             }
 
-            $.ajax({
-                type:"POST",
-                url:"{{ route('target.store') }}",
-                data:{
-                    _token : "{{csrf_token()}}",
-                    nominal : req_nominal.value,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
-
-                            if (message.toLowerCase().includes('nominal'))
-                                showError(req_nominal, message)
-                        }
-                    }
-                    else {
-                        if (data.status == 'success') {
-                            SuccessMessage(data.message);
-                        }
-                        else {
-                            ErrorMessage(data.message)
-                        }
-                        $('#addModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                },
-                error:function(e) {
-                    console.log(e)
-                }
-            })
-        })
-
-        $('#modal-edit-form').on('submit', function(e) {
-            e.preventDefault()
-
-            const req_id = document.getElementById('edit_id')
-            const req_nominal = document.getElementById('edit_nominal')
-
-            if (req_nominal == '') {
-                showError(req_nominal, 'Nominal harus diisi.');
-                return false;
-            }
-
-            $.ajax({
-                type:"POST",
-                url:"{{ url('/target') }}/"+req_id.value,
-                data:{
-                    _token : "{{csrf_token()}}",
-                    _method : "PUT",
-                    nominal : req_nominal.value,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
-
-                            if (message.toLowerCase().includes('nominal'))
-                                showError(req_nominal, message)
-                        }
-                    }
-                    else {
-                        if (data.status == 'success') {
-                            SuccessMessage(data.message);
-                        }
-                        else {
-                            ErrorMessage(data.message)
-                        }
-                        $('#editModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                    }
-                },
-                error:function(e) {
-                    console.log(e)
-                }
-            })
-        })
-
-        $('.toggle-button').change(function() {
-            const data_id = $(this).data('id')
-            var checked = this.checked
-
-            $.ajax({
-                type:"POST",
-                url:"{{ url('/target-toggle') }}/"+data_id,
-                data:{
-                    _token : "{{csrf_token()}}",
-                    _method : "PUT",
-                    toggle : checked,
-                },
-                success:function(data){
-                    console.log(data);
-                    if (Array.isArray(data.error)) {
-                        /*for (var i=0; i < data.error.length; i++) {
-                            var message = data.error[i];
-
-                            if (message.toLowerCase().includes('nominal'))
-                                showError(req_nominal, message)
-                        }*/
-                    }
-                    else {
-                        if (data.status == 'success') {
-                            SuccessMessage(data.message);
-                        }
-                        else {
-                            ErrorMessage(data.message)
-                        }
-                    }
-                },
-                error:function(e) {
-                    console.log(e)
-                }
-            })
-        })
-
-        $(document).on("click", ".edit", function() {
-            var data_id = $(this).data('id');
-            var data_nominal = $(this).data('nominal');
-
-            $('#edit_id').val(data_id)
-            $('#edit_nominal').val(data_nominal)
-        });
-
-        $(document).on("click", ".delete", function() {
-            var data_id = $(this).data('id');
-            var url = "{{ route('target.destroy', "+data_id+") }}";
-            console.log(url)
-
-            $('#konfirmasi').text("Apakah yakin akan menghapus data?");
-            $('#delete-form').attr("action", url);
-
-            $('#deleteModal').modal('show');
-        });
-
-        function showError(input, message) {
-            const formGroup = input.parentElement;
-            const errorSpan = formGroup.querySelector('.error');
-
-            formGroup.classList.add('has-error');
-            errorSpan.innerText = message;
-            input.focus();
-        }
-    </script>
+            $('#basic-datatables').DataTable({});
+        </script>
     @endpush
 @endsection
