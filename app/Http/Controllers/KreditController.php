@@ -6,8 +6,6 @@ use App\Models\Document;
 use App\Models\DocumentCategory;
 use App\Models\KKB;
 use App\Models\Kredit;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,12 +17,14 @@ class KreditController extends Controller
 {
     private $logActivity;
     private $dashboardContoller;
+    private $notificationController;
     private $param;
 
     function __construct()
     {
         $this->logActivity = new LogActivitesController;
         $this->dashboardContoller = new DashboardController;
+        $this->notificationController = new NotificationController;
     }
 
     public function index()
@@ -121,6 +121,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
+        $action_id = 5;
 
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',
@@ -139,18 +140,27 @@ class KreditController extends Controller
         }
 
         try {
+            DB::beginTransaction();
+
             $kkb = KKB::where('id', $request->id_kkb)->first();
             $kkb->tgl_ketersediaan_unit = date('Y-m-d', strtotime($request->date));
             $kkb->save();
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal ketersediaan unit.');
 
+            // send notification
+            $this->notificationController->send($action_id);
+            
+            DB::commit();
+
             $status = 'success';
             $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
+            DB::rollBack();
             $status = 'failed';
-            $message = 'Terjadi kesalahan';
+            $message = 'Terjadi kesalahan : '.$e->getMessage();
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database';
         } finally {
@@ -167,6 +177,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
+        $action_id = 6;
 
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',
@@ -202,6 +213,9 @@ class KreditController extends Controller
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
 
+            // send notification
+            $this->notificationController->send($action_id);
+
             $status = 'success';
             $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
@@ -227,6 +241,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
+        $action_id = 8;
 
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',
@@ -264,6 +279,9 @@ class KreditController extends Controller
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas nomor polisi.');
 
+            // send notification
+            $this->notificationController->send($action_id);
+
             $status = 'success';
             $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
@@ -290,6 +308,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
+        $action_id = 9;
 
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',
@@ -352,6 +371,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
+        $action_id = 7;
 
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',
@@ -388,6 +408,9 @@ class KreditController extends Controller
             $document->save();
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas STNK.');
+
+            // send notification
+            $this->notificationController->send($action_id);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -448,40 +471,55 @@ class KreditController extends Controller
             
             $kkb = KKB::where('id', $request->id_kkb)->first();
             // stnk
-            $file = $request->file('stnk_scan');
-            $file->storeAs('public/dokumentasi-stnk', $file->hashName());
+            if ($request->file('stnk_scan')) {
+                $file = $request->file('stnk_scan');
+                $file->storeAs('public/dokumentasi-stnk', $file->hashName());
 
-            $document = new Document();
-            $document->kredit_id = $kkb->kredit_id;
-            $document->text = $request->no_stnk;
-            $document->date = date('Y-m-d');
-            $document->file = $file->hashName();
-            $document->document_category_id  = 3;
-            $document->save();
+                $document = new Document();
+                $document->kredit_id = $kkb->kredit_id;
+                $document->text = $request->no_stnk;
+                $document->date = date('Y-m-d');
+                $document->file = $file->hashName();
+                $document->document_category_id  = 3;
+                $document->save();
+
+                // send notification
+                $this->notificationController->send(7);
+            }
 
             // polis
-            $file = $request->file('polis_scan');
-            $file->storeAs('public/dokumentasi-polis', $file->hashName());
-
-            $document = new Document();
-            $document->kredit_id = $kkb->kredit_id;
-            $document->text = $request->no_polis;
-            $document->date = date('Y-m-d');
-            $document->file = $file->hashName();
-            $document->document_category_id  = 4;
-            $document->save();
+            if ($request->file('polis_scan')) {
+                $file = $request->file('polis_scan');
+                $file->storeAs('public/dokumentasi-polis', $file->hashName());
+    
+                $document = new Document();
+                $document->kredit_id = $kkb->kredit_id;
+                $document->text = $request->no_polis;
+                $document->date = date('Y-m-d');
+                $document->file = $file->hashName();
+                $document->document_category_id  = 4;
+                $document->save();
+    
+                // send notification
+                $this->notificationController->send(8);
+            }
 
             // bpkb
-            $file = $request->file('bpkb_scan');
-            $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
+            if ($request->file('bpkb_scan')) {
+                $file = $request->file('bpkb_scan');
+                $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
+    
+                $document = new Document();
+                $document->kredit_id = $kkb->kredit_id;
+                $document->text = $request->no_bpkb;
+                $document->date = date('Y-m-d');
+                $document->file = $file->hashName();
+                $document->document_category_id  = 5;
+                $document->save();
 
-            $document = new Document();
-            $document->kredit_id = $kkb->kredit_id;
-            $document->text = $request->no_bpkb;
-            $document->date = date('Y-m-d');
-            $document->file = $file->hashName();
-            $document->document_category_id  = 5;
-            $document->save();
+                // send notification
+                $this->notificationController->send(9);
+            }
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
 
@@ -527,6 +565,9 @@ class KreditController extends Controller
                     $stnk->confirm_at = date('Y-m-d');
                     $stnk->confirm_by = Auth::user()->id;
                     $stnk->save();
+                    
+                    // send notification
+                    $this->notificationController->send(10);
                 }
 
                 // polis
@@ -538,6 +579,9 @@ class KreditController extends Controller
                     $polis->confirm_at = date('Y-m-d');
                     $polis->confirm_by = Auth::user()->id;
                     $polis->save();
+                    
+                    // send notification
+                    $this->notificationController->send(11);
                 }
 
                 // bpkb
@@ -549,6 +593,9 @@ class KreditController extends Controller
                     $bpkb->confirm_at = date('Y-m-d');
                     $bpkb->confirm_by = Auth::user()->id;
                     $bpkb->save();
+                    
+                    // send notification
+                    $this->notificationController->send(12);
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
@@ -611,6 +658,16 @@ class KreditController extends Controller
                 $document->confirm_by = Auth::user()->id;
                 $document->save();
 
+                if ($request->category_id == 3)
+                    $action_id = 10;
+                elseif ($request->category_id == 4)
+                    $action_id = 11;
+                elseif ($request->category_id == 5)
+                    $action_id = 12;
+
+                // send notification
+                $this->notificationController->send($action_id);
+
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
 
                 $status = 'success';
@@ -669,6 +726,11 @@ class KreditController extends Controller
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = Auth::user()->id;
                 $document->save();
+
+                if ($request->category_id == 1) {
+                    // send notification
+                    $this->notificationController->send(4);
+                }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
 
