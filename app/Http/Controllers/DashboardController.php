@@ -11,7 +11,7 @@ class DashboardController extends Controller
     public function index()
     {
         $param['title'] = 'Dashboard';
-        $param['pageTitle'] = 'Dashboard SuperAdmin';
+        $param['pageTitle'] = 'Dashboard';
         $user = User::select(
                     'users.id',
                     'users.role_id',
@@ -35,7 +35,7 @@ class DashboardController extends Controller
         ->join('roles AS r', 'r.id', 'users.role_id')
         ->where('users.id', Auth::user()->id)
         ->first();
-        
+
         return $user->role_name;
     }
 }

@@ -7,8 +7,8 @@
         <div class="page-inner py-5">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                 <div>
-                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                    <h5 class="text-primary op-7">6819456 | Cabang Bondowoso</h5>
+                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }} {{ $role }}</h2>
+                    {{-- <h5 class="text-primary op-7">6819456 | Cabang Bondowoso</h5> --}}
                 </div>
             </div>
         </div>
@@ -89,9 +89,38 @@
                 </div>
             </div>
         </div>
+        @if (strtolower($role) == 'cabang')
+            {{-- <div class="col-sm-12"> --}}
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Chart Data Realisasi
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartCabang" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- </div> --}}
+        @endif
+        @if (strtolower($role) == 'pemasaran')
+            <div class="card">
+                <div class="card-header">
+                    Chart Target Pencapaian
+                </div>
+                <div class="card-body">
+                    <canvas id="chart" height="100"></canvas>
+                </div>
+            </div>
+        @endif
         <div class="row mt--2">
             <div class="col-md-12">
                 <div class="card">
+                    <div class="card-header">
+                        Data KKB
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table mt-3">
@@ -188,4 +217,83 @@
             </div>
         </div>
     </div>
+
+
+    @push('extraScript')
+        <!-- Chart JS -->
+        <script src="{{ asset('template') }}/assets/js/plugin/chart.js/chart.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                const ctx = document.getElementById('chart').getContext('2d');
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Cabang A', 'Cabang B', 'Cabang C', 'Cabang D', 'Cabang E', 'Cabang F',
+                            'Cabang G', 'Cabang H'
+                        ],
+                        datasets: [{
+                            label: 'Data Set',
+                            data: [10, 20, 30, 40, 50, 35, 65, 75, 32],
+                            backgroundColor: [
+                                'rgba(255, 99, 132)',
+                                'rgba(255, 159, 64)',
+                                'rgba(255, 205, 86)',
+                                'rgba(75, 192, 192)',
+                                'rgba(54, 162, 235)',
+                                'rgba(153, 102, 255)',
+                                'rgba(201, 203, 207)'
+                            ],
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        maintainAspectRatio: true,
+                    }
+                });
+            });
+
+            $(document).ready(function() {
+                var doughnutChart = document.getElementById('chartCabang').getContext('2d');
+
+                var myDoughnutChart = new Chart(doughnutChart, {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [15, 5, 10],
+                            backgroundColor: ['#146C94', '#19A7CE', '#AFD3E2']
+                        }],
+
+                        labels: [
+                            'Realisasi',
+                            'Belum Realisasi',
+                            'Target',
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        legend: {
+                            position: 'right'
+                        },
+                        layout: {
+                            padding: {
+                                // left: 20,
+                                // right: 20,
+                                // top: 20,
+                                // bottom: 20
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

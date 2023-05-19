@@ -26,20 +26,29 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $param['title'] = 'Role/Peran';
         $param['pageTitle'] = 'Role/Peran';
-        // $data = $this->list();
-        $data = $this->paginasi();
-        $param['data'] = $data;
-
-        return view('pages.role.index', $param);
+        if($request->ajax()){
+            $data =$this->search($request->search);
+            return response()->json(['data'=>$data]);
+        }else{
+            $data = $this->list();
+            $param['data'] = $data;
+            return view('pages.role.index', $param);
+        }
     }
 
     public function list()
     {
         return Role::orderBy('name')->get();
+    }
+
+    public function search($req){
+        return Role::orderBy('name')
+            ->where('name','LIKE','%'.$req.'%')
+            ->get();
     }
 
     public function paginasi()
@@ -218,7 +227,7 @@ class RoleController extends Controller
                             // return $data;
 
             $param['data'] = $data;
-            
+
             return view('pages.hak_akses.index', $param);
         } catch (\Exception $e) {
             return $e->getMessage();

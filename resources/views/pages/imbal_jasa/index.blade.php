@@ -17,25 +17,26 @@
         <div class="row mt--2">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
                             Tambah {{ $title }}
                         </button>
+                    </div>
+                    <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mt-2" style="border-collapse: separate">
+                            <table id="basic-datatables" class="table mt-2" style="border-collapse: separate">
                                 <thead>
                                     <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Plafond</th>
+                                        <th rowspan="2" scope="col">No</th>
+                                        <th rowspan="2" scope="col">Plafond</th>
                                         <th scope="col" style="text-align: center" colspan="3">Imbal Jasa</th>
-                                        <th scope="col">Aksi</th>
+                                        <th rowspan="2" scope="col">Aksi</th>
                                     </tr>
                                     <tr class="bg-danger text-light">
-                                        <th colspan="2"></th>
+                                        {{-- <th colspan="2"></th> --}}
                                         <th>12</th>
                                         <th>24</th>
                                         <th>36 s/d 60</th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -162,8 +163,8 @@
                                                 name="tenor[]" value="12" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control add-imbal-jasa" id="add-imbal-jasa12"
-                                                name="imbaljasa[]" value="" required>
+                                            <input type="number" class="form-control add-imbal-jasa"
+                                                id="add-imbal-jasa12" name="imbaljasa[]" value="" required>
                                             <small class="form-text text-danger error"></small>
                                         </td>
                                     </tr>
@@ -320,6 +321,10 @@
     </div>
 
     @push('extraScript')
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
+        <script>
+            $('#basic-datatables').DataTable({});
+        </script>
         @if (session('status'))
             <script>
                 swal("Berhasil!", '{{ session('status') }}', {

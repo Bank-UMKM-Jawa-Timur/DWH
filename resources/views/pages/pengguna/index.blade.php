@@ -17,12 +17,14 @@
         <div class="row mt--2">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
                         <button type="button" class="btn btn-primary btn-sm" id="open-add-modal">
                             Tambah {{ $pageTitle }}
                         </button>
+                    </div>
+                    <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mt-2">
+                            <table class="table mt-2" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
@@ -49,8 +51,14 @@
                                                     </button>
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item" data-toggle="modal"
-                                                            data-target="#editModal" data-id="{{ $item->id }}"
+                                                            data-target="#resetPasswordModal" data-id="{{ $item->id }}"
                                                             data-nip="{{ $item->nip }}" data-email="{{ $item->email }}"
+                                                            data-role="{{ $item->role_id }}" href="#">Reset
+                                                            Password</a>
+                                                        <a class="dropdown-item editModal" data-toggle="modal"
+                                                            data-target="#editModal" data-id="{{ $item->id }}"
+                                                            data-nip="{{ $item->nip }}"
+                                                            data-email="{{ $item->email }}"
                                                             data-role="{{ $item->role_id }}" href="#">Edit</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
                                                             data-target="#deleteModal" data-id="{{ $item->id }}"
@@ -276,7 +284,9 @@
 
 
     @push('extraScript')
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
+            $('#basic-datatables').DataTable({});
             $('#add-button').click(function(e) {
                 e.preventDefault()
 
@@ -491,10 +501,42 @@
                 }, 3000);
             }
 
+            $(document).on("click", ".editModal", function() {
+                var data_id = $(this).data('id');
+                var nip = $(this).data('nip');
+                var email = $(this).data('email');
+                var data_role_id = $(this).data('role');
+
+                $('#edit-id').val(data_id);
+                $('#edit-nip').val(nip);
+                $('#edit-email').val(email);
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('role.list') }}",
+                    success: function(data) {
+                        if (data) {
+                            for (i in data) {
+                                if (data[i].id == data_role_id)
+                                    $("#edit-role").append(`<option value="` +
+                                        data[i].id +
+                                        `" selected>` + data[i].name +
+                                        `</option>`);
+                                else
+                                    $("#edit-role").append(`<option value="` +
+                                        data[i].id +
+                                        `">` + data[i].name + `</option>`);
+                            }
+                        }
+                    }
+                });
+
+                $('#editModal').modal('show');
+            });
+
             $(document).on("click", ".deleteModal", function() {
                 var data_id = $(this).data('id');
                 var url = "{{ url('/master/pengguna') }}/" + data_id;
-                console.log(url)
                 $('#delete-form').attr("action", url);
 
                 $('#deleteModal').modal('show');

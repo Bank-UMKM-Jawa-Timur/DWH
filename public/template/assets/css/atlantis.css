@@ -22787,3 +22787,7 @@ body[data-background-color="dark"] .board {
 .modal-notifikasi .time {
     font-size: 12px;
 }
+
+.search-data {
+    width: 300px;
+}

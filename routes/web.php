@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('master')->group(function () {
         Route::resource('/role', RoleController::class);
+        Route::get('/role-search', [RoleController::class, 'search'])->name('role.search');
         Route::get('/role-list', [RoleController::class, 'list'])->name('role.list');
         Route::get('/role/hak-akses/{id}', [RoleController::class, 'indexPermission'])->name('role.permission.index');
         Route::post('/role/hak-akses', [RoleController::class, 'storePermission'])->name('role.permission.store');

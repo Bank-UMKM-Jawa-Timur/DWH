@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mt-2">
+                            <table class="table mt-2" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
@@ -51,4 +51,10 @@
             </div>
         </div>
     </div>
+    @push('extraScript')
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
+        <script>
+            $('#basic-datatables').DataTable({});
+        </script>
+    @endpush
 @endsection

@@ -17,12 +17,14 @@
         <div class="row mt--2">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
                             Tambah {{ $title }}
                         </button>
+                    </div>
+                    <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mt-2">
+                            <table class="table mt-2" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
@@ -145,6 +147,10 @@
     </div>
 
     @push('extraScript')
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
+        <script>
+            $('#basic-datatables').DataTable({});
+        </script>
         @if (session('status'))
             <script>
                 swal("Berhasil!", '{{ session('status') }}', {
