@@ -9,6 +9,7 @@ use App\Http\Controllers\Master\NotificationTemplateController;
 use App\Http\Controllers\Master\PenggunaController;
 use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\VendorController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TargetController;
 use Illuminate\Support\Facades\Route;
@@ -40,11 +41,7 @@ Route::middleware('auth')->group(function () {
         $param['pageTitle'] = 'Reset Password';
         return view('pages.reset_password.index', $param);
     });
-    Route::get('/notifikasi', function () {
-        $param['title'] = 'Notifikasi';
-        $param['pageTitle'] = 'Notifikasi';
-        return view('pages.notifikasi.index', $param);
-    });
+    Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notification.index');
     Route::resource('/target', TargetController::class);
     Route::put('/target-toggle/{id}', [TargetController::class, 'toggle'])->name('target.toggle');
 

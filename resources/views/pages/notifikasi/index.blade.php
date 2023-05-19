@@ -9,7 +9,7 @@
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                 <div>
                     <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                    <h5 class="text-primary mb-2">Kamu Mempunyai 1 Notifikasi Belum Dibaca</h5>
+                    <h5 class="text-primary mb-2">Kamu mempunyai {{ $total_belum_dibaca }} notifikasi belum dibaca</h5>
                 </div>
             </div>
         </div>
@@ -25,33 +25,22 @@
                 </div> --}}
 
                 {{-- foreach notif --}}
+                @forelse ($data as $item)
                 <div class="card card-notif">
-                    <div class="card-body reading">
+                    <div class="card-body @if ($item->read) reading @endif">
                         <div class="notif ">
-                            <span class="alert-notif text-success">Sudah Dibaca</span>
-                            <h4>vendor dimohon untuk mengisikan Ketersediaan Unit Melalui Form Yang...</h4>
-                            <p class="lead-notif">1 Menit Yang Lalu</p>
+                            <span class="alert-notif text-success">@if ($item->read) Sudah Dibaca @else Belum Dibaca @endif</span>
+                            <h4>
+                                {{ $item->title }} - 
+                                {{ strlen($item->content) >= 100 ? substr($item->content,0,100).'...' : $item->content }}
+                            </h4>
+                            <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p>
                         </div>
                     </div>
                 </div>
-                <div class="card card-notif ">
-                    <div class="card-body">
-                        <div class="notif ">
-                            <span class="alert-notif text-danger">Belum Dibaca</span>
-                            <h4>vendor dimohon untuk mengisikan Ketersediaan Unit Melalui Form Yang...</h4>
-                            <p class="lead-notif">1 Jam Yang Lalu</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card card-notif ">
-                    <div class="card-body reading">
-                        <div class="notif">
-                            <span class="alert-notif text-success">Sudah Dibaca</span>
-                            <h4>vendor dimohon untuk mengisikan Ketersediaan Unit Melalui Form Yang...</h4>
-                            <p class="lead-notif">1 Jam Yang Lalu</p>
-                        </div>
-                    </div>
-                </div>
+                @empty
+                    <p>Belum ada notifikasi.</p>
+                @endforelse
             </div>
         </div>
     </div>

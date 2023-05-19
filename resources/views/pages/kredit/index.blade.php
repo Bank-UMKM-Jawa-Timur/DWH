@@ -73,7 +73,7 @@
                                                 @if ($buktiPembayaran)
                                                     2AFda12j7s
                                                 @else
-                                                    <a data-toggle="modal" data-target="#buktiPembayaranModal"
+                                                    <a style="text-decoration: underline;" data-toggle="modal" data-target="#buktiPembayaranModal"
                                                         data-id_kkb="{{ $item->kkb_id }}" href="#"
                                                         onclick="uploadBuktiPembayaran({{ $item->kkb_id }})">Atur</a>
                                                 @endif
