@@ -94,7 +94,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($buktiPembayaran)
+                                                {{--  @if ($buktiPembayaran)
                                                     @if ($buktiPembayaran->is_confirm)
                                                         @if ($item->tgl_ketersediaan_unit)
                                                             {{ $item->tgl_ketersediaan_unit }}
@@ -114,6 +114,20 @@
                                                     @endif
                                                 @else
                                                     <span class="text-danger">Menunggu upload bukti pembayaran</span>
+                                                @endif  --}}
+                                                @if (Auth::user()->vendor_id)
+                                                    @if (!$item->tgl_ketersediaan_unit)
+                                                    <a style="text-decoration: underline;" data-toggle="modal"
+                                                        data-target="#tglModal"
+                                                        data-id_kkb="{{ $item->kkb_id }}"
+                                                        href="#">Atur</a>
+                                                    @else
+                                                    {{ $item->tgl_ketersediaan_unit }}
+                                                    @endif
+                                                @elseif ($item->tgl_ketersediaan_unit)
+                                                    {{ $item->tgl_ketersediaan_unit }}
+                                                @else
+                                                <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -179,7 +193,13 @@
                                                     <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
                                                 @endif
                                             </td>
-                                            <td>{{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}</td>
+                                            <td>
+                                                @if ($setImbalJasa)
+                                                {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
+                                                @else
+                                                -
+                                                @endif
+                                            </td>
                                             <td
                                                 class="@if ($item->status == 'done') text-success @else text-info @endif">
                                                 {{ $item->status }}</td>
@@ -190,7 +210,7 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        @if (!$buktiPembayaran && Auth::user()->role_id == 2)
+                                                        @if (!$buktiPembayaran && $item->tgl_ketersediaan_unit && Auth::user()->role_id == 2)
                                                             <a class="dropdown-item" data-toggle="modal"
                                                                 data-target="#buktiPembayaranModal"
                                                                 data-id_kkb="{{ $item->id }}" href="#"
@@ -207,7 +227,7 @@
                                                             @endif
                                                         @endif
                                                         @if ($item->tgl_ketersediaan_unit)
-                                                            @if (!$penyerahanUnit)
+                                                            @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && Auth::user()->vendor_id)
                                                                 <a data-toggle="modal" data-target="#tglModalPenyerahan"
                                                                     data-id_kkb="{{ $item->kkb_id }}" href="#"
                                                                     class="dropdown-item"
