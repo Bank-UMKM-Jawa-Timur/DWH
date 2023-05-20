@@ -28,7 +28,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mt-3">
+                            <table class="table mt-3" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
@@ -50,32 +50,40 @@
                                 <tbody>
                                     @forelse ($data as $item)
                                         @php
-                                            $buktiPembayaran = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                            $buktiPembayaran = \App\Models\Document::where('kredit_id', $item->id)
                                                 ->where('document_category_id', 1)
                                                 ->first();
-                                            $penyerahanUnit = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                            $penyerahanUnit = \App\Models\Document::where('kredit_id', $item->id)
                                                 ->where('document_category_id', 2)
                                                 ->first();
-                                            $stnk = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                            $stnk = \App\Models\Document::where('kredit_id', $item->id)
                                                 ->where('document_category_id', 3)
                                                 ->first();
-                                            $polis = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                            $polis = \App\Models\Document::where('kredit_id', $item->id)
                                                 ->where('document_category_id', 4)
                                                 ->first();
-                                            $bpkb = \App\Models\Document::where('kredit_id', $item->kkb_id)
+                                            $bpkb = \App\Models\Document::where('kredit_id', $item->id)
                                                 ->where('document_category_id', 5)
                                                 ->first();
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>Rio Ardiansyah</td>
-                                            <td class="@if (!$buktiPembayaran) link-po @endif}">
+                                            <td class="link-po">
                                                 @if ($buktiPembayaran)
-                                                    2AFda12j7s
+                                                    <a data-toggle="modal" data-target="#detailPO" data-nomorPo="2AFda12j7s"
+                                                        data-tanggalPo="20 April 2023"
+                                                        data-filePo="https://www.africau.edu/images/default/sample.pdf">
+                                                        2AFda12j7s</a>
                                                 @else
-                                                    <a style="text-decoration: underline;" data-toggle="modal" data-target="#buktiPembayaranModal"
-                                                        data-id_kkb="{{ $item->kkb_id }}" href="#"
-                                                        onclick="uploadBuktiPembayaran({{ $item->kkb_id }})">Atur</a>
+                                                    <a data-toggle="modal" data-target="#detailPO" data-nomorPo="2AFda12j7s"
+                                                        data-tanggalPo="20 April 2023"
+                                                        data-filePo="https://www.africau.edu/images/default/sample.pdf">
+                                                        2AFda12j7s</a>
+                                                    {{-- <a style="text-decoration: underline;" data-toggle="modal"
+                                                        data-target="#buktiPembayaranModal"
+                                                        data-id_kkb="{{ $item->id }}" href="#"
+                                                        onclick="uploadBuktiPembayaran({{ $item->id }})">123123</a> --}}
                                                 @endif
                                             </td>
                                             <td>
@@ -85,9 +93,12 @@
                                                             {{ $item->tgl_ketersediaan_unit }}
                                                         @else
                                                             @if (Auth::user()->vendor_id)
-                                                                <a data-toggle="modal" data-target="#tglModal"
+                                                                <a style="text-decoration: underline;" data-toggle="modal"
+                                                                    data-target="#tglModal"
                                                                     data-id_kkb="{{ $item->kkb_id }}"
                                                                     href="#">Atur</a>
+                                                            @else
+                                                                <span class="text-danger">Menunggu ketersediaan unit</span>
                                                             @endif
                                                         @endif
                                                     @else
@@ -172,15 +183,15 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        @if (!$buktiPembayaran)
+                                                        @if (!$buktiPembayaran && Auth::user()->role_id == 2)
                                                             <a class="dropdown-item" data-toggle="modal"
                                                                 data-target="#buktiPembayaranModal"
-                                                                data-id_kkb="{{ $item->kkb_id }}" href="#"
-                                                                onclick="uploadBuktiPembayaran({{ $item->kkb_id }})">Upload
+                                                                data-id_kkb="{{ $item->id }}" href="#"
+                                                                onclick="uploadBuktiPembayaran({{ $item->id }})">Upload
                                                                 Bukti Pembayaran</a>
                                                         @endif
                                                         @if ($buktiPembayaran)
-                                                            @if ($buktiPembayaran->file && !$buktiPembayaran->is_confirm)
+                                                            @if ($buktiPembayaran->file && !$buktiPembayaran->is_confirm && Auth::user()->role_id == 3)
                                                                 <a class="dropdown-item confirm-stnk" data-toggle="modal"
                                                                     data-id-category="4"
                                                                     data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
@@ -244,7 +255,7 @@
                                                         @endif  --}}
                                                         {{--  End BPKB  --}}
                                                         {{--  Upload Berkas  --}}
-                                                        @if (Auth::user()->role_id == 3)
+                                                        @if (Auth::user()->role_id == 3 && $penyerahanUnit)
                                                             {{--  Vendor  --}}
                                                             <a data-toggle="modal" data-target="#uploadBerkasModal"
                                                                 data-id_kkb="{{ $item->kkb_id }}"
@@ -273,7 +284,8 @@
                                                                         data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
                                                                         data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
                                                                         data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
-                                                                        href="#" class="dropdown-item upload-berkas">
+                                                                        href="#"
+                                                                        class="dropdown-item upload-berkas">
                                                                         Konfirmasi Berkas
                                                                     </a>
                                                                 @endif
@@ -324,6 +336,37 @@
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Detail PO --}}
+    <div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row container">
+                        <div class="col-sm-6">
+                            <h5 class="title-po">Nomor PO</h5>
+                            <b class="content-po" id="nomorPo">12345678</b>
+                        </div>
+                        <div class="col-sm-6">
+                            <h5 class="title-po">Tanggal PO</h5>
+                            <b class="content-po" id="tanggalPo">21 Maret 2023</b>
+                        </div>
+                        <div class="col-sm-12 mt-4">
+                            <h5 class="title-po">File PO</h5>
+                            <div class="form-inline mt-1">
+                                <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File PO</button>
+                                <button onclick="printPDF()" class="btn btn-info btn-sm" id="printfile">Print File
+                                    PO</button>
+                                <iframe id="filePo"
+                                    src="C:\Users\iqbalronii\Downloads\REv 16 Jan_Jadwal Genap 2023.pdf" class="mt-2"
+                                    width="100%" height="500"></iframe>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -464,8 +507,7 @@
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="no_stnk" name="no_stnk"
-                                            required>
+                                        <input type="text" class="form-control" id="no_stnk" name="no_stnk">
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -477,7 +519,7 @@
                                         <label>Scan Berkas (pdf)</label>
                                         <div class="input-group">
                                             <input type="file" class="form-control" id="stnk_scan" name="stnk_scan"
-                                                accept="application/pdf" required>
+                                                accept="application/pdf">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">
                                                     <i class="fa fa-file"></i>
@@ -494,8 +536,7 @@
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="no_polis" name="no_polis"
-                                            required>
+                                        <input type="text" class="form-control" id="no_polis" name="no_polis">
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -507,7 +548,7 @@
                                         <label>Scan Berkas (pdf)</label>
                                         <div class="input-group">
                                             <input type="file" class="form-control" id="polis_scan" name="polis_scan"
-                                                accept="application/pdf" required>
+                                                accept="application/pdf">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">
                                                     <i class="fa fa-file"></i>
@@ -524,8 +565,7 @@
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="no_bpkb" name="no_bpkb"
-                                            required>
+                                        <input type="text" class="form-control" id="no_bpkb" name="no_bpkb">
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -537,7 +577,7 @@
                                         <label>Scan Berkas (pdf)</label>
                                         <div class="input-group">
                                             <input type="file" class="form-control" id="bpkb_scan" name="bpkb_scan"
-                                                accept="application/pdf" required>
+                                                accept="application/pdf">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">
                                                     <i class="fa fa-file"></i>
@@ -687,6 +727,28 @@
 
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/pdfobject.min.js"></script>
+
+        <script>
+            function printPDF() {
+                const pdfURL = 'https://www.africau.edu/images/default/sample.pdf';
+                const pdfWindow = window.open(pdfURL, '_blank');
+
+                pdfWindow.onload = function() {
+                    pdfWindow.print();
+                };
+            }
+
+            $(document).on("click", ".link-po", function() {
+                var nomorPo = $(this).data('nomorpo');
+                var tanggalPo = $(this).data('tanggalpo');
+                var filePo = $(this).data('filepo') + "#toolbar=0";
+
+                $("#nomorPo").text(nomorPo);
+                $("#tanggalPo").text(tanggalPo);
+                $("#filePo").attr("src", filePo);
+            });
+        </script>
+
         @if (session('status'))
             <script>
                 swal("Berhasil!", '{{ session('status') }}', {
@@ -717,7 +779,9 @@
         @endif
         <!-- DateTimePicker -->
         <script src="{{ asset('template') }}/assets/js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
+            $('#basic-datatables').DataTable({});
             // Initial datepicker
             $('#tgl_ketersediaan_unit').datetimepicker({
                 format: 'MM/DD/YYYY',
@@ -1213,14 +1277,14 @@
             function ErrorMessage(message) {
                 swal("Gagal!", message, {
                     icon: "error",
-                    timer: 3000,
+                    // timer: 3000,
                     closeOnClickOutside: false
                 }).then(() => {
                     location.reload();
                 });
-                setTimeout(function() {
-                    location.reload();
-                }, 3000);
+                // setTimeout(function() {
+                //     location.reload();
+                // }, 3000);
             }
 
             function showError(input, message) {

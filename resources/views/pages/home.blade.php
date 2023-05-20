@@ -123,7 +123,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table mt-3">
+                            <table class="table mt-3" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
@@ -143,7 +143,10 @@
                                     <tr>
                                         <td>1</td>
                                         <td>Rio Ardiansyah</td>
-                                        <td class="link-po">2AFda12j7s</td>
+                                        <td class="link-po" data-toggle="modal" data-target="#detailPO"
+                                            data-nomorPo="2AFda12j7s" data-tanggalPo="20 April 2023"
+                                            data-filePo="https://www.africau.edu/images/default/sample.pdf">
+                                            2AFda12j7s</td>
                                         <td>28 April 2023</td>
                                         <td>29 April 2023</td>
                                         <td>1 Mei 2023</td>
@@ -166,7 +169,9 @@
                                     <tr>
                                         <td>1</td>
                                         <td>Rio Ardiansyah</td>
-                                        <td class="link-po">2AFda12j7s</td>
+                                        <td class="link-po" data-toggle="modal" data-target="#detailPO"
+                                            data-nomorPo="2AFda12j7s" data-tanggalPo="20 April 2023" data-filePo="data.pdf">
+                                            2AFda12j7s</td>
                                         <td>28 April 2023</td>
                                         <td>29 April 2023</td>
                                         <td>1 Mei 2023</td>
@@ -189,7 +194,10 @@
                                     <tr>
                                         <td>1</td>
                                         <td>Rio Ardiansyah</td>
-                                        <td class="link-po">2AFda12j7s</td>
+                                        <td class="link-po" data-toggle="modal" data-target="#detailPO"
+                                            data-nomorPo="2AFda12j7s" data-tanggalPo="20 April 2023"
+                                            data-filePo="data.pdf">
+                                            2AFda12j7s</td>
                                         <td>28 April 2023</td>
                                         <td>29 April 2023</td>
                                         <td>1 Mei 2023</td>
@@ -219,11 +227,58 @@
     </div>
 
 
+    <!-- Modal -->
+    <div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row container">
+                        <div class="col-sm-6">
+                            <h5 class="title-po">Nomor PO</h5>
+                            <b class="content-po" id="nomorPo">12345678</b>
+                        </div>
+                        <div class="col-sm-6">
+                            <h5 class="title-po">Tanggal PO</h5>
+                            <b class="content-po" id="tanggalPo">21 Maret 2023</b>
+                        </div>
+                        <div class="col-sm-12 mt-4">
+                            <h5 class="title-po">File PO</h5>
+                            <div class="form-inline mt-1">
+                                <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File PO</button>
+                                <button onclick="printPDF()" class="btn btn-info btn-sm" id="printfile">Print File
+                                    PO</button>
+                                <iframe id="filePo"
+                                    src="C:\Users\iqbalronii\Downloads\REv 16 Jan_Jadwal Genap 2023.pdf" class="mt-2"
+                                    width="100%" height="500"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary">Konfirmasi</button>
+                </div> --}}
+            </div>
+        </div>
+    </div>
+
+
     @push('extraScript')
         <!-- Chart JS -->
         <script src="{{ asset('template') }}/assets/js/plugin/chart.js/chart.min.js"></script>
 
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
+            function printPDF() {
+                const pdfURL = 'https://www.africau.edu/images/default/sample.pdf';
+                const pdfWindow = window.open(pdfURL, '_blank');
+
+                pdfWindow.onload = function() {
+                    pdfWindow.print();
+                };
+            }
+
+            $('#basic-datatables').DataTable({});
             $(document).ready(function() {
                 const ctx = document.getElementById('chart').getContext('2d');
 
@@ -258,6 +313,16 @@
                         maintainAspectRatio: true,
                     }
                 });
+            });
+
+            $(document).on("click", ".link-po", function() {
+                var nomorPo = $(this).data('nomorpo');
+                var tanggalPo = $(this).data('tanggalpo');
+                var filePo = $(this).data('filepo') + "#toolbar=0";
+
+                $("#nomorPo").text(nomorPo);
+                $("#tanggalPo").text(tanggalPo);
+                $("#filePo").attr("src", filePo);
             });
 
             $(document).ready(function() {

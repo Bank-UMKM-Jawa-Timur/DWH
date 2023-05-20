@@ -150,7 +150,7 @@ class KreditController extends Controller
 
             // send notification
             $this->notificationController->send($action_id);
-            
+
             DB::commit();
 
             $status = 'success';
@@ -468,7 +468,7 @@ class KreditController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             $kkb = KKB::where('id', $request->id_kkb)->first();
             // stnk
             if ($request->file('stnk_scan')) {
@@ -491,7 +491,7 @@ class KreditController extends Controller
             if ($request->file('polis_scan')) {
                 $file = $request->file('polis_scan');
                 $file->storeAs('public/dokumentasi-polis', $file->hashName());
-    
+
                 $document = new Document();
                 $document->kredit_id = $kkb->kredit_id;
                 $document->text = $request->no_polis;
@@ -499,7 +499,7 @@ class KreditController extends Controller
                 $document->file = $file->hashName();
                 $document->document_category_id  = 4;
                 $document->save();
-    
+
                 // send notification
                 $this->notificationController->send(8);
             }
@@ -508,7 +508,7 @@ class KreditController extends Controller
             if ($request->file('bpkb_scan')) {
                 $file = $request->file('bpkb_scan');
                 $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
-    
+
                 $document = new Document();
                 $document->kredit_id = $kkb->kredit_id;
                 $document->text = $request->no_bpkb;
@@ -560,12 +560,12 @@ class KreditController extends Controller
                 if ($request->id_stnk) {
                     $stnk = Document::find($request->id_stnk);
                     $docCategory = DocumentCategory::select('name')->find($stnk->document_category_id);
-    
+
                     $stnk->is_confirm = 1;
                     $stnk->confirm_at = date('Y-m-d');
                     $stnk->confirm_by = Auth::user()->id;
                     $stnk->save();
-                    
+
                     // send notification
                     $this->notificationController->send(10);
                 }
@@ -574,12 +574,12 @@ class KreditController extends Controller
                 if ($request->id_polis) {
                     $polis = Document::find($request->id_polis);
                     $docCategory = DocumentCategory::select('name')->find($polis->document_category_id);
-    
+
                     $polis->is_confirm = 1;
                     $polis->confirm_at = date('Y-m-d');
                     $polis->confirm_by = Auth::user()->id;
                     $polis->save();
-                    
+
                     // send notification
                     $this->notificationController->send(11);
                 }
@@ -588,12 +588,12 @@ class KreditController extends Controller
                 if ($request->id_bpkb) {
                     $bpkb = Document::find($request->id_bpkb);
                     $docCategory = DocumentCategory::select('name')->find($bpkb->document_category_id);
-    
+
                     $bpkb->is_confirm = 1;
                     $bpkb->confirm_at = date('Y-m-d');
                     $bpkb->confirm_by = Auth::user()->id;
                     $bpkb->save();
-                    
+
                     // send notification
                     $this->notificationController->send(12);
                 }

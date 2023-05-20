@@ -2,7 +2,7 @@
     <!-- Logo Header -->
     <div class="logo-header" data-background-color="blue">
 
-        <a href="../index.html" class="logo">
+        <a href="#" class="logo">
             <img src="{{ asset('template') }}/assets/img/logo.png" alt="navbar brand" class="navbar-brand">
         </a>
         <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
@@ -37,7 +37,8 @@
                         </li>
                         <li>
                             <div class="notif-center">
-                                <a href="#" data-toggle="modal" data-target="#notif">
+                                <a href="#" data-toggle="modal" class="notif-modal" data-target="#notif"
+                                    data-title="tes-1" data-timer="5 Menit Yang Lalu" data-content="lorem ipsum">
                                     <div class="notif-content reading">
                                         <span class="text-success alert-notif">Telah Dibaca</span>
                                         <span class="block">
@@ -46,7 +47,8 @@
                                         <span class="time">5 menit yang lalu</span>
                                     </div>
                                 </a>
-                                <a href="#">
+                                <a href="#" data-toggle="modal" class="notif-modal" data-target="#notif"
+                                    data-title="tes-2" data-timer="5 Menit Yang Lalu" data-content="lorem ipsum">
                                     <div class="notif-content reading">
                                         <span class="text-success alert-notif">Telah Dibaca</span>
                                         <span class="block">
@@ -55,7 +57,8 @@
                                         <span class="time">5 menit yang lalu</span>
                                     </div>
                                 </a>
-                                <a href="#">
+                                <a href="#" data-toggle="modal" class="notif-modal" data-target="#notif"
+                                    data-title="tes-3" data-timer="5 Menit Yang Lalu" data-content="lorem ipsum">
                                     <div class="notif-content">
                                         <span class="text-danger alert-notif">Belum Dibaca</span>
                                         <span class="block">
@@ -138,19 +141,11 @@
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
-            {{-- <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Notifikasi</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div> --}}
             <div class="modal-body">
-                <h3 class="title">Vendor dimohon untuk mengisikan Ketersediaan Unit</h3>
-                <span class="time">5 Menit Yang Lalu</span>
+                <h3 class="title" id="title-notif"> - </h3>
+                <span class="time" id="timer"> - </span>
                 <hr>
-                <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer
-                    took a galley of type and scrambled it to make a type specimen book. It has survived not only five
-                    centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                <p id="content-notif"</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
@@ -158,3 +153,19 @@
         </div>
     </div>
 </div>
+
+@push('extraScript')
+    <script>
+        $(document).on("click", ".notif-modal", function() {
+            var title = $(this).data('title');
+            var time = $(this).data('timer');
+            var content = $(this).data('content');
+
+            $("#title-notif").text(title);
+            $("#timer").text(time);
+            $("#content-notif").text(content);
+
+            // alert(title);
+        });
+    </script>
+@endpush

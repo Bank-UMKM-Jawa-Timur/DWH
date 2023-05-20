@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Kredit;
 
 class DashboardController extends Controller
 {
@@ -20,6 +21,30 @@ class DashboardController extends Controller
                 ->join('roles AS r', 'r.id', 'users.role_id')
                 ->where('users.id', Auth::user()->id)
                 ->first();
+        $param['data'] = Kredit::select(
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.kode_cabang',
+                    'kkb.id AS kkb_id',
+                    'kkb.tgl_ketersediaan_unit',
+                    'kkb.id_tenor_imbal_jasa',
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(SUM(d.is_confirm) AS UNSIGNED) AS total_file_confirmed'),
+                    \DB::raw("IF (COALESCE(SUM(d.is_confirm), 0) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status")
+                )
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                        ])
+                    ->orderBy('total_file_uploaded')
+                    ->orderBy('total_file_confirmed')
+                    ->paginate(5);
         $param['role'] = $user->role_name;
 
         return view('pages.home', $param);
