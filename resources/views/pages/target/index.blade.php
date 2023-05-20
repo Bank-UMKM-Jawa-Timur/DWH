@@ -28,7 +28,7 @@
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th scope="col">No</th>
-                                        <th scope="col">Nominal</th>
+                                        <th scope="col">Total Unit</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
@@ -37,7 +37,8 @@
                                     @forelse ($data as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                                            {{--  <td>Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>  --}}
+                                            <td>{{ $item->total_unit }}</td>
                                             <td>
                                                 <input type="checkbox" class="toggle-button" data-id="{{ $item->id }}"
                                                     data-toggle="toggle" data-onstyle="primary" data-style="btn-round"
@@ -52,7 +53,7 @@
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item edit" data-toggle="modal"
                                                             data-target="#editModal" data-id="{{ $item->id }}"
-                                                            data-nominal="{{ $item->nominal }}" href="#">Edit</a>
+                                                            /*data-nominal="{{ $item->nominal }}"*/ data-total_unit="{{ $item->total_unit }}" href="#">Edit</a>
                                                         <a class="dropdown-item delete" data-toggle="modal"
                                                             data-target="#deleteModal" data-id="{{ $item->id }}"
                                                             href="#">Hapus</a>
@@ -111,9 +112,15 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="Nominal">
+                                    {{--  <div class="Nominal">
                                         <label for="nominal">Nominal</label>
                                         <input autofocus type="number" class="form-control" id="nominal" name="nominal"
+                                            required>
+                                        <small class="form-text text-danger error"></small>
+                                    </div>  --}}
+                                    <div class="TotalUnit">
+                                        <label for="total_unit">Total Unit</label>
+                                        <input autofocus type="number" class="form-control" id="total_unit" name="total_unit"
                                             required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
@@ -146,10 +153,16 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="Nominal">
+                                    {{--  <div class="Nominal">
                                         <label for="edit_nominal">Nominal</label>
                                         <input autofocus type="number" class="form-control" id="edit_nominal"
                                             name="edit_nominal" required>
+                                        <small class="form-text text-danger error"></small>
+                                    </div>  --}}
+                                    <div class="TotalUnit">
+                                        <label for="edit_total_unit">Total Unit</label>
+                                        <input autofocus type="number" class="form-control" id="edit_total_unit"
+                                            name="edit_total_unit" required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
@@ -192,13 +205,18 @@
 
         <script>
             $('#modal-add-form').on('submit', function(e) {
-                console.log("helloworld");
                 e.preventDefault()
 
-                const req_nominal = document.getElementById('nominal')
-
-                if (req_nominal == '') {
+                // const req_nominal = document.getElementById('nominal')
+                /*if (req_nominal == '') {
                     showError(req_nominal, 'Nominal harus diisi.');
+                    return false;
+                }*/
+
+                const req_total_unit = document.getElementById('total_unit')
+
+                if (req_total_unit == '') {
+                    showError(req_total_unit, 'Total unit harus diisi.');
                     return false;
                 }
 
@@ -207,7 +225,8 @@
                     url: "{{ route('target.store') }}",
                     data: {
                         _token: "{{ csrf_token() }}",
-                        nominal: req_nominal.value,
+                        // nominal: req_nominal.value,
+                        total_unit: req_total_unit.value,
                     },
                     success: function(data) {
                         console.log(data);
@@ -216,7 +235,7 @@
                                 var message = data.error[i];
 
                                 if (message.toLowerCase().includes('nominal'))
-                                    showError(req_nominal, message)
+                                    showError(req_total_unit, message)
                             }
                         } else {
                             if (data.status == 'success') {
@@ -239,12 +258,18 @@
                 e.preventDefault()
 
                 const req_id = document.getElementById('edit_id')
-                const req_nominal = document.getElementById('edit_nominal')
+                const req_total_unit = document.getElementById('edit_total_unit')
+
+                if (req_total_unit == '') {
+                    showError(req_total_unit, 'Total unit harus diisi.');
+                    return false;
+                }
+                /*const req_nominal = document.getElementById('edit_nominal')
 
                 if (req_nominal == '') {
                     showError(req_nominal, 'Nominal harus diisi.');
                     return false;
-                }
+                }*/
 
                 $.ajax({
                     type: "POST",
@@ -252,7 +277,8 @@
                     data: {
                         _token: "{{ csrf_token() }}",
                         _method: "PUT",
-                        nominal: req_nominal.value,
+                        // nominal: req_nominal.value,
+                        total_unit: req_total_unit.value,
                     },
                     success: function(data) {
                         console.log(data);
@@ -261,7 +287,7 @@
                                 var message = data.error[i];
 
                                 if (message.toLowerCase().includes('nominal'))
-                                    showError(req_nominal, message)
+                                    showError(req_total_unit, message)
                             }
                         } else {
                             if (data.status == 'success') {
@@ -317,16 +343,17 @@
 
             $(document).on("click", ".edit", function() {
                 var data_id = $(this).data('id');
-                var data_nominal = $(this).data('nominal');
+                // var data_nominal = $(this).data('nominal');
+                var data_total_unit = $(this).data('total_unit');
 
                 $('#edit_id').val(data_id)
-                $('#edit_nominal').val(data_nominal)
+                // $('#edit_nominal').val(data_total_unit)
+                $('#edit_total_unit').val(data_total_unit)
             });
 
             $(document).on("click", ".delete", function() {
                 var data_id = $(this).data('id');
                 var url = "{{ route('target.destroy', '+data_id+') }}";
-                console.log(url)
 
                 $('#konfirmasi').text("Apakah yakin akan menghapus data?");
                 $('#delete-form').attr("action", url);
