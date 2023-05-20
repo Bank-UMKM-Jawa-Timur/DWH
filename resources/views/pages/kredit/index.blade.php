@@ -65,6 +65,13 @@
                                             $bpkb = \App\Models\Document::where('kredit_id', $item->id)
                                                 ->where('document_category_id', 5)
                                                 ->first();
+                                            $setImbalJasa = DB::table('imbal_jasas')
+                                                ->join('tenor_imbal_jasas as ti', 'ti.imbaljasa_id', 'imbal_jasas.id')
+                                                ->select('ti.*')
+                                                ->where('plafond1', '>', 1200000)
+                                                ->where('plafond2', '>', 1200000)
+                                                ->where('tenor', 24)
+                                                ->first();
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
@@ -172,7 +179,7 @@
                                                     <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
                                                 @endif
                                             </td>
-                                            <td>Rp.5000</td>
+                                            <td>{{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}</td>
                                             <td
                                                 class="@if ($item->status == 'done') text-success @else text-info @endif">
                                                 {{ $item->status }}</td>
