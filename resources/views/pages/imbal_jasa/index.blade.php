@@ -43,7 +43,8 @@
                                     @forelse ($data as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->plafond1 == 0 ? '' : $item->plafond1 }} s/d {{ $item->plafond2 }}
+                                            <td>{{ $item->plafond1 == 0 ? '' : number_format($item->plafond1, 0, '', '.') }}
+                                                s/d {{ number_format($item->plafond2, 0, '', '.') }}
                                             </td>
                                             @php
                                                 $imbaljasa = DB::table('tenor_imbal_jasas')
@@ -69,7 +70,7 @@
                                                         $id36 = $i->id;
                                                     }
                                                 @endphp
-                                                <td>{{ $i->imbaljasa }}</td>
+                                                <td>{{ number_format($i->imbaljasa, 0, '', '.') }}</td>
                                                 {{-- @empty --}}
                                                 {{-- <td colspan="3"><span class="text-danger">Maaf data belum
                                                         tersedia.</span></td> --}}
@@ -83,11 +84,11 @@
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item" data-toggle="modal"
                                                             data-target="#editModal" data-id="{{ $item->id }}"
-                                                            data-plafond1="{{ $item->plafond1 }}"
-                                                            data-plafond2="{{ $item->plafond2 }}"
-                                                            data-imbaljasa12="{{ $tenor12 }}"
-                                                            data-imbaljasa24="{{ $tenor24 }}"
-                                                            data-imbaljasa36="{{ $tenor36 }}"
+                                                            data-plafond1="{{ number_format($item->plafond1, 0, '', '.') }}"
+                                                            data-plafond2="{{ number_format($item->plafond2, 0, '', '.') }}"
+                                                            data-imbaljasa12="{{ number_format($tenor12, 0, '', '.') }}"
+                                                            data-imbaljasa24="{{ number_format($tenor24, 0, '', '.') }}"
+                                                            data-imbaljasa36="{{ number_format($tenor36, 0, '', '.') }}"
                                                             data-idimbaljasa12="{{ $id12 }}"
                                                             data-idimbaljasa24="{{ $id24 }}"
                                                             data-idimbaljasa36="{{ $id36 }}"
@@ -131,7 +132,7 @@
                             <div class="col-md-5">
                                 <div class="form-group plafond1">
                                     <label for="add-plafond1">Plafond</label>
-                                    <input type="number" class="form-control add-plafond1" id="add-plafond1"
+                                    <input type="text" class="form-control add-plafond1" id="add-plafond1"
                                         name="plafond1" required>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -142,7 +143,7 @@
                             <div class="col-md-5">
                                 <div class="form-group plafond2">
                                     <label for=""></label>
-                                    <input type="number" class="form-control add-plafond2" id="add-plafond2"
+                                    <input type="text" class="form-control add-plafond2" id="add-plafond2"
                                         name="plafond2" style="margin-top:7px;" required>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -163,7 +164,7 @@
                                                 name="tenor[]" value="12" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control add-imbal-jasa"
+                                            <input type="text" class="form-control add-imbal-jasa"
                                                 id="add-imbal-jasa12" name="imbaljasa[]" value="" required>
                                             <small class="form-text text-danger error"></small>
                                         </td>
@@ -174,7 +175,7 @@
                                                 name="tenor[]" value="24" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control add-imbal-jasa"
+                                            <input type="text" class="form-control add-imbal-jasa"
                                                 id="add-imbal-jasa24" name="imbaljasa[]" value="" required>
                                             <small class="form-text text-danger error"></small>
                                         </td>
@@ -185,7 +186,7 @@
                                                 name="tenor[]" value="36" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control add-imbal-jasa"
+                                            <input type="text" class="form-control add-imbal-jasa"
                                                 id="add-imbal-jasa36" name="imbaljasa[]" value="" required>
                                             <small class="form-text text-danger error"></small>
                                         </td>
@@ -219,7 +220,7 @@
                             <div class="col-md-5">
                                 <div class="form-group plafond1">
                                     <label for="edit-plafond1">Plafond</label>
-                                    <input type="number" class="form-control edit-plafond1" id="edit-plafond1"
+                                    <input type="text" class="form-control edit-plafond1" id="edit-plafond1"
                                         name="plafond1" required>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -230,7 +231,7 @@
                             <div class="col-md-5">
                                 <div class="form-group plafond2">
                                     <label for=""></label>
-                                    <input type="number" class="form-control edit-plafond2" id="edit-plafond2"
+                                    <input type="text" class="form-control edit-plafond2" id="edit-plafond2"
                                         name="plafond2" style="margin-top:7px;" required>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -247,26 +248,26 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <input type="number" class="form-control edit-id12" id="edit-id12"
+                                            <input type="hidden" class="form-control edit-id12" id="edit-id12"
                                                 name="idtenor[]"readonly>
                                             <input type="number" class="form-control edit-tenor12" id="edit-tenor12"
                                                 name="tenor[]" value="12" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control edit-imbal-jasa12"
+                                            <input type="text" class="form-control edit-imbal-jasa12"
                                                 id="edit-imbal-jasa12" name="imbaljasa[]" value="" required>
                                             <small class="form-text text-danger error"></small>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <input type="number" class="form-control edit-id24" id="edit-id24"
+                                            <input type="hidden" class="form-control edit-id24" id="edit-id24"
                                                 name="idtenor[]"readonly>
                                             <input type="number" class="form-control edit-tenor24" id="edit-tenor24"
                                                 name="tenor[]" value="24" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control edit-imbal-jasa24"
+                                            <input type="text" class="form-control edit-imbal-jasa24"
                                                 id="edit-imbal-jasa24" name="imbaljasa[]" value="" required>
                                             <small class="form-text text-danger error"></small>
                                         </td>
@@ -274,13 +275,13 @@
                                     <tr>
                                         <td>
 
-                                            <input type="number" class="form-control edit-id36" id="edit-id36"
+                                            <input type="hidden" class="form-control edit-id36" id="edit-id36"
                                                 name="idtenor[]"readonly>
                                             <input type="number" class="form-control edit-tenor36" id="edit-tenor36"
                                                 name="tenor[]" value="36" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control edit-imbal-jasa36"
+                                            <input type="text" class="form-control edit-imbal-jasa36"
                                                 id="edit-imbal-jasa36" name="imbaljasa[]" value="" required>
                                             <small class="form-text text-danger error"></small>
                                         </td>
@@ -324,6 +325,66 @@
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
             $('#basic-datatables').DataTable({});
+            var plafond1 = document.getElementById('add-plafond1');
+            plafond1.addEventListener('keyup', function(e) {
+                plafond1.value = formatRupiah(this.value);
+            });
+            var plafond2 = document.getElementById('add-plafond2');
+            plafond2.addEventListener('keyup', function(e) {
+                plafond2.value = formatRupiah(this.value);
+            });
+            var imbalJasa12 = document.getElementById('add-imbal-jasa12');
+            imbalJasa12.addEventListener('keyup', function(e) {
+                imbalJasa12.value = formatRupiah(this.value);
+            });
+            var imbalJasa24 = document.getElementById('add-imbal-jasa24');
+            imbalJasa24.addEventListener('keyup', function(e) {
+                imbalJasa24.value = formatRupiah(this.value);
+            });
+            var imbalJasa36 = document.getElementById('add-imbal-jasa36');
+            imbalJasa36.addEventListener('keyup', function(e) {
+                imbalJasa36.value = formatRupiah(this.value);
+            });
+
+            // Edit
+            var editPlafond1 = document.getElementById('edit-plafond1');
+            editPlafond1.addEventListener('keyup', function(e) {
+                editPlafond1.value = formatRupiah(this.value);
+            });
+            var editPlafond2 = document.getElementById('edit-plafond2');
+            editPlafond2.addEventListener('keyup', function(e) {
+                editPlafond2.value = formatRupiah(this.value);
+            });
+            var editImbalJasa12 = document.getElementById('edit-imbal-jasa12');
+            editImbalJasa12.addEventListener('keyup', function(e) {
+                editImbalJasa12.value = formatRupiah(this.value);
+            });
+            var editImbalJasa24 = document.getElementById('edit-imbal-jasa24');
+            editImbalJasa24.addEventListener('keyup', function(e) {
+                editImbalJasa24.value = formatRupiah(this.value);
+            });
+            var editImbalJasa36 = document.getElementById('edit-imbal-jasa36');
+            editImbalJasa36.addEventListener('keyup', function(e) {
+                editImbalJasa36.value = formatRupiah(this.value);
+            });
+
+            /* Fungsi formatRupiah */
+            function formatRupiah(angka) {
+                var number_string = angka.replace(/[^,\d]/g, '').toString(),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                // tambahkan titik jika yang di input sudah menjadi angka ribuan
+                if (ribuan) {
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+                return rupiah;
+            }
         </script>
         @if (session('status'))
             <script>

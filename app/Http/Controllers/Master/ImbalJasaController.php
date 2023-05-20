@@ -76,15 +76,15 @@ class ImbalJasaController extends Controller
 
         try {
             $model = new ImbalJasa();
-            $model->plafond1 = $request->plafond1;
-            $model->plafond2 = $request->plafond2;
+            $model->plafond1 = str_replace('.','',$request->plafond1);
+            $model->plafond2 = str_replace('.','',$request->plafond2);
             $model->save();
 
             foreach ($request->tenor as $key => $value) {
                 $modelDetail = new TenorImbalJasa();
                 $modelDetail->imbaljasa_id = $model->id;
                 $modelDetail->tenor = $value;
-                $modelDetail->imbaljasa = $request->imbaljasa[$key];
+                $modelDetail->imbaljasa = str_replace('.','',$request->imbaljasa[$key]);
                 $modelDetail->save();
             }
 
@@ -159,14 +159,14 @@ class ImbalJasaController extends Controller
         }
 
         try {
-            $imbalJasa->plafond1 = $request->plafond1;
-            $imbalJasa->plafond2 = $request->plafond2;
+            $imbalJasa->plafond1 = str_replace('.','',$request->plafond1);
+            $imbalJasa->plafond2 = str_replace('.','',$request->plafond2);
             $imbalJasa->save();
 
             foreach ($request->id_imbaljasa as $key => $value) {
                 // if ($value != null || $value != '' || !empty($value)) {
                 $modelDetail = TenorImbalJasa::find($value);
-                $modelDetail->imbaljasa = $request->imbaljasa[$key];
+                $modelDetail->imbaljasa = str_replace('.','',$request->imbaljasa[$key]);
                 $modelDetail->save();
                 // } else {
                 //     $modelDetail = new TenorImbalJasa();
