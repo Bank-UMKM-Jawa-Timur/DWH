@@ -24,7 +24,7 @@ class TargetController extends Controller
     {
         $this->param['title'] = 'Target Cabang';
         $this->param['pageTitle'] = 'Target';
-        $this->param['data'] = Target::select('id', 'nominal', 'is_active')->orderBy('is_active', 'desc')->paginate(5);
+        $this->param['data'] = Target::select('id', 'total_unit', 'is_active')->orderBy('is_active', 'desc')->paginate(5);
 
         return view('pages.target.index', $this->param);
     }
@@ -51,12 +51,12 @@ class TargetController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
-            'nominal' => 'required|unique:target,nominal'
+            'total_unit' => 'required|unique:target,total_unit'
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
         ], [
-            'nominal' => 'Nominal',
+            'total_unit' => 'Total unit',
         ]);
 
         if ($validator->fails()) {
@@ -67,10 +67,12 @@ class TargetController extends Controller
 
         try {
             $newRole = new Target();
-            $newRole->nominal = $request->nominal;
+            // $newRole->nominal = $request->nominal;
+            $newRole->total_unit = $request->total_unit;
             $newRole->save();
 
-            $this->logActivity->store('Membuat target sebesar Rp. '.number_format($request->nominal, 0, ',', '.').'.');
+            // $this->logActivity->store('Membuat target sebesar Rp. '.number_format($request->nominal, 0, ',', '.').'.');
+            $this->logActivity->store('Membuat target sebanayak '.$request->total_unit.' unit.');
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -125,15 +127,16 @@ class TargetController extends Controller
         $message = '';
 
         $currentData = Target::find($id);
-        $isUnique = $request->nominal && $request->nominal != $currentData->nominal ? '|unique:target,nominal' : '';
+        // $isUnique = $request->nominal && $request->nominal != $currentData->nominal ? '|unique:target,nominal' : '';
+        $isUnique = $request->total_unit && $request->total_unit != $currentData->total_unit ? '|unique:target,total_unit' : '';
 
         $validator = Validator::make($request->all(), [
-            'nominal' => 'required'.$isUnique,
+            'total_unit' => 'required'.$isUnique,
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
         ], [
-            'nominal' => 'Nominal',
+            'total_unit' => 'Total unit',
         ]);
 
         if ($validator->fails()) {
@@ -143,10 +146,12 @@ class TargetController extends Controller
         }
 
         try {
-            $currentData->nominal = $request->nominal;
+            // $currentData->nominal = $request->nominal;
+            $currentData->total_unit = $request->total_unit;
             $currentData->save();
 
-            $this->logActivity->store("Memperbarui target dari ".number_format($currentData->nominal, 0, ',', '.')." menjadi ".number_format($request->nominal, 0, ',', '.').".");
+            // $this->logActivity->store("Memperbarui target dari ".number_format($currentData->nominal, 0, ',', '.')." menjadi ".number_format($request->nominal, 0, ',', '.').".");
+            $this->logActivity->store("Memperbarui target dari ".$currentData->total_unit." menjadi ".$request->total_unit." unit.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
@@ -179,10 +184,12 @@ class TargetController extends Controller
 
         try {
             $currentData = Target::findOrFail($id);
-            $currentNominal = $currentData->nominal;
+            // $currentNominal = $currentData->nominal;
+            $currentTotalUnit = $currentData->total_unit;
             if ($currentData) {
                 $currentData->delete();
-                $this->logActivity->store("Menghapus target yang bernilai ".number_format($currentNominal, 0, ',', '.').".");
+                // $this->logActivity->store("Menghapus target yang bernilai ".number_format($currentNominal, 0, ',', '.').".");
+                $this->logActivity->store("Menghapus target ".$currentTotalUnit.' unit.');
 
                 $status = 'success';
                 $message = 'Berhasil menghapus data.';
@@ -217,7 +224,8 @@ class TargetController extends Controller
                     $currentData->save();
                     Target::whereNot('id', $id)->update(['is_active' => 0]);
 
-                    $this->logActivity->store("Mengaktifkan target yang bernilai ".number_format($currentData->nominal, 0, ',', '.').".");
+                    // $this->logActivity->store("Mengaktifkan target yang bernilai ".number_format($currentData->nominal, 0, ',', '.').".");
+                    $this->logActivity->store("Mengaktifkan target ".$currentData->total_unit." unit.");
 
                     $status = 'success';
                     $message = 'Berhasil mengaktifkan target.';

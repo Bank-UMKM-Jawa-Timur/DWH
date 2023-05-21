@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
+use App\Models\KKB;
 use App\Models\Kredit;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -18,23 +19,38 @@ class KreditController extends Controller
         $status = '';
         $req_status = 0;
         $message = '';
+        $isUnique = '';
 
         DB::beginTransaction();
         try {
             $req = $request->all();
+            if ($request->pengajuan_id && $request->kode_cabang) {
+                $kredit = Kredit::where('pengajuan_id', $request->pengajuan_id)->where('kode_cabang', $request->kode_cabang)->first();
+                if ($kredit)
+                    $isUnique = 'unique:kredits,pengajuan_id';
+            }
+
             $fields = Validator::make($req, [
-                'pengajuan_id' => ['required'],
+                'pengajuan_id' => ['required', $isUnique],
                 'kode_cabang' => ['required'],
+            ], [
+                'required' => 'Atribut ini harus diisi.',
+                'unique' => 'Atribut ini telah digunakan.',
             ]);
+
             if ($fields->fails()) {
                 $req_status = HttpFoundationResponse::HTTP_UNPROCESSABLE_ENTITY;
                 $status = 'failed';
                 $message = $fields->errors();
-            } else {
+            } else {                
                 $model = new Kredit();
                 $model->pengajuan_id = $request->pengajuan_id;
                 $model->kode_cabang = $request->kode_cabang;
                 $model->save();
+
+                $createKKB = new KKB();
+                $createKKB->kredit_id = $model->id;
+                $createKKB->save();
 
                 $req_status = HttpFoundationResponse::HTTP_OK;
                 $status = 'success';
