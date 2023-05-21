@@ -75,7 +75,7 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>Rio Ardiansyah</td>
+                                            <td>{{ $item->id.'-'.$item->kode_cabang }}</td>
                                             <td class="link-po">
                                                 @if ($buktiPembayaran)
                                                     <a data-toggle="modal" data-target="#detailPO" data-nomorPo="2AFda12j7s"
@@ -227,12 +227,14 @@
                                                             @endif
                                                         @endif
                                                         @if ($item->tgl_ketersediaan_unit)
-                                                            @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && Auth::user()->vendor_id)
-                                                                <a data-toggle="modal" data-target="#tglModalPenyerahan"
-                                                                    data-id_kkb="{{ $item->kkb_id }}" href="#"
-                                                                    class="dropdown-item"
-                                                                    onclick="setPenyerahan({{ $item->kkb_id }})">Kirim
-                                                                    Unit</a>
+                                                            @if ($buktiPembayaran)
+                                                                @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && Auth::user()->vendor_id)
+                                                                    <a data-toggle="modal" data-target="#tglModalPenyerahan"
+                                                                        data-id_kkb="{{ $item->kkb_id }}" href="#"
+                                                                        class="dropdown-item"
+                                                                        onclick="setPenyerahan({{ $item->kkb_id }})">Kirim
+                                                                        Unit</a>
+                                                                @endif
                                                             @endif
                                                         @endif
                                                         {{--  STNK  --}}
@@ -283,6 +285,7 @@
                                                         {{--  End BPKB  --}}
                                                         {{--  Upload Berkas  --}}
                                                         @if (Auth::user()->role_id == 3 && $penyerahanUnit)
+                                                            @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
                                                             {{--  Vendor  --}}
                                                             <a data-toggle="modal" data-target="#uploadBerkasModal"
                                                                 data-id_kkb="{{ $item->kkb_id }}"
@@ -295,6 +298,7 @@
                                                                 href="#" class="dropdown-item upload-berkas">
                                                                 Upload Berkas
                                                             </a>
+                                                            @endif
                                                         @endif
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
@@ -881,7 +885,6 @@
 
             $('.upload-berkas').on('click', function(e) {
                 e.preventDefault()
-                console.log('upload berkas');
                 var id = $(this).data('id_kkb')
                 var id_stnk = $(this).data('id-stnk') ? $(this).data('id-stnk') : '';
                 var id_polis = $(this).data('id-polis') ? $(this).data('id-polis') : '';
@@ -903,8 +906,8 @@
                 $('#modal-berkas #stnk_scan').val(file_stnk);
                 $('#modal-berkas #polis_scan').val(file_polis);
                 $('#modal-berkas #bpkb_scan').val(file_bpkb);
-                var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_stnk;
-                var path_polis = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_polis;
+                var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk;
+                var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis;
                 var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
 
                 PDFObject.embed(path_stnk, "#preview_stnk");

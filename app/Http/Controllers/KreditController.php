@@ -34,16 +34,18 @@ class KreditController extends Controller
         $this->param['pageTitle'] = 'KKB';
         $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit'])->orderBy('name', 'DESC')->get();
         $this->param['data'] = Kredit::select(
-            'kredits.id',
-            'kredits.pengajuan_id',
-            'kredits.kode_cabang',
-            'kkb.id AS kkb_id',
-            'kkb.tgl_ketersediaan_unit',
-            'kkb.id_tenor_imbal_jasa',
-            \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-            \DB::raw('CAST(SUM(d.is_confirm) AS UNSIGNED) AS total_file_confirmed'),
-            \DB::raw("IF (COALESCE(SUM(d.is_confirm), 0) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status")
-        )
+                'kredits.id',
+                'kredits.pengajuan_id',
+                'kredits.kode_cabang',
+                'kkb.id AS kkb_id',
+                'kkb.tgl_ketersediaan_unit',
+                'kkb.id_tenor_imbal_jasa',
+                \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
+                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'process', 'done') AS status"),
+            )
             ->join('kkb', 'kkb.kredit_id', 'kredits.id')
             ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
             ->groupBy([
