@@ -213,11 +213,11 @@
                                                         @endif
                                                         @if ($buktiPembayaran)
                                                             @if ($buktiPembayaran->file && !$buktiPembayaran->is_confirm && Auth::user()->role_id == 3)
-                                                                <a class="dropdown-item confirm-stnk" data-toggle="modal"
-                                                                    data-id-category="4"
+                                                                <a class="dropdown-item confirm-bukti-pembayaran" data-toggle="modal"
+                                                                    data-id-category="1"
                                                                     data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
-                                                                    href="#confirmModalVendor">Konfirmasi Bukti
-                                                                    Pembayaran</a>
+                                                                    data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
+                                                                    href="#confirmModalVendor">Konfirmasi Bukti Pembayaran</a>
                                                             @endif
                                                         @endif
                                                         @if ($item->tgl_ketersediaan_unit)
@@ -231,67 +231,36 @@
                                                                 @endif
                                                             @endif
                                                         @endif
-                                                        {{--  STNK  --}}
-                                                        {{--  @if ($stnk)
-                                                            @if ($stnk->file && !$stnk->is_confirm && Auth::user()->role_id == 2)
-                                                                <a class="dropdown-item confirm-stnk" data-toggle="modal"
-                                                                    data-id-category="4"
-                                                                    data-id-doc="{{ $stnk ? $stnk->id : 0 }}"
-                                                                    href="#confirmModal">Konfirmasi STNK</a>
-                                                            @else
-                                                                <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
-                                                                    target="_blank">{{ $stnk->date }}</a>
-                                                            @endif
-                                                        @elseif(!$stnk && Auth::user()->vendor_id != null)
-                                                            <a data-toggle="modal" data-target="#uploadStnkModal"
-                                                                data-id_kkb="{{ $item->kkb_id }}" href="#" class="dropdown-item"
-                                                                onclick="uploadStnk({{ $item->kkb_id }})">Upload STNK</a>
-                                                        @else
-                                                        @endif  --}}
-                                                        {{--  End STNK  --}}
-                                                        {{--  Polis  --}}
-                                                        {{--  @if ($polis)
-                                                            @if ($polis->file && !$polis->is_confirm)
-                                                                <a class="dropdown-item confirm-police" data-toggle="modal"
-                                                                    data-id-category="2"
-                                                                    data-id-doc="{{ $polis ? $polis->id : 0 }}"
-                                                                    href="#confirmModal">Konfirmasi Polis</a>
-                                                            @endif
-                                                        @else
-                                                        <a data-toggle="modal" data-target="#uploadPolisModal"
-                                                                data-id_kkb="{{ $item->kkb_id }}" href="#" class="dropdown-item"
-                                                                onclick="uploadPolis({{ $item->kkb_id }})">Upload Polis</a>
-                                                        @endif  --}}
-                                                        {{--  End Polis  --}}
-                                                        {{--  BPKB  --}}
-                                                        {{--  @if ($bpkb)
-                                                            @if ($bpkb->file && !$bpkb->is_confirm)
-                                                                <a class="dropdown-item confirm-bpkb" data-toggle="modal"
-                                                                    data-id-category="3"
-                                                                    data-id-doc="{{ $bpkb ? $bpkb->id : 0 }}"
-                                                                    href="#confirmModal">Konfirmasi BPKB</a>
-                                                            @endif
-                                                        @else
-                                                        <a data-toggle="modal" data-target="#uploadPolisModal"
-                                                            data-id_kkb="{{ $item->kkb_id }}" href="#" class="dropdown-item"
-                                                            onclick="uploadPolis({{ $item->kkb_id }})">Upload BPKB</a>
-                                                        @endif  --}}
-                                                        {{--  End BPKB  --}}
                                                         {{--  Upload Berkas  --}}
                                                         @if (Auth::user()->role_id == 3 && $penyerahanUnit)
-                                                            @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
-                                                            {{--  Vendor  --}}
-                                                            <a data-toggle="modal" data-target="#uploadBerkasModal"
-                                                                data-id_kkb="{{ $item->kkb_id }}"
-                                                                data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
-                                                                data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
-                                                                data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
-                                                                data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
-                                                                data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
-                                                                data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
-                                                                href="#" class="dropdown-item upload-berkas">
-                                                                Upload Berkas
-                                                            </a>
+                                                            @if ($penyerahanUnit->is_confirm)
+                                                                @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
+                                                                {{--  Vendor  --}}
+                                                                <a data-toggle="modal" data-target="#uploadBerkasModal"
+                                                                    data-id_kkb="{{ $item->kkb_id }}"
+                                                                    data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
+                                                                    data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
+                                                                    data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
+                                                                    data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
+                                                                    data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
+                                                                    data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
+                                                                    href="#" class="dropdown-item upload-berkas">
+                                                                    Upload Berkas
+                                                                </a>
+                                                                @endif
+                                                            @endif
+                                                        @endif
+                                                        {{--  Konfirmasi penyerahan unit (Cabang)  --}}
+                                                        @if (Auth::user()->role_id == 2 && $penyerahanUnit)
+                                                            @if (!$penyerahanUnit->is_confirm)
+                                                                @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
+                                                                {{--  Vendor  --}}
+                                                                <a class="dropdown-item confirm-penyerahan-unit" data-toggle="modal"
+                                                                    data-id-category="2"
+                                                                    data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                                    data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                                    href="#confirmModalPenyerahanUnit">Konfirmasi Penyerahan Unit</a>
+                                                                @endif
                                                             @endif
                                                         @endif
                                                         @if (Auth::user()->role_id == 2)
@@ -737,9 +706,39 @@
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
                     </div>
+                    @if (Auth::user()->role_id == 3)
+                        <iframe id="preview_bukti_tf" class="mt-2"
+                            width="100%" height="500"></iframe>
+                    @endif
                     <div class="form-inline">
                         <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
                         <form id="confirm-form-vendor">
+                            <input type="hidden" name="confirm_id" id="confirm_id">
+                            <input type="hidden" name="confirm_id_category" id="confirm_id_category">
+                            <button type="submit" class="btn btn-primary">Ya</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Confirm Penyerahan Unit --}}
+    <div class="modal fade" id="confirmModalPenyerahanUnit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-group name" id="konfirmasi">
+                        Yakin ingin mengkonfirmasi data ini?
+                    </div>
+                    @if (Auth::user()->role_id == 2)
+                        <img id="preview_penyerahan_unit" class="mt-2"
+                            width="100%" height="500"></img>
+                    @endif
+                    <div class="form-inline">
+                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
+                        <form id="confirm-form-penyerahan-unit">
                             <input type="hidden" name="confirm_id" id="confirm_id">
                             <input type="hidden" name="confirm_id_category" id="confirm_id_category">
                             <button type="submit" class="btn btn-primary">Ya</button>
@@ -1196,7 +1195,27 @@
             $('body').on('click', '.confirm-stnk', function(e) {
                 const data_id = $(this).data('id-doc')
                 const data_category_doc_id = $(this).data('id-category')
+                
+                $('#confirm_id').val(data_id)
+                $('#confirm_id_category').val(data_category_doc_id)
+            })
+            
+            $('.confirm-bukti-pembayaran').on('click', function(e) {
+                const data_id = $(this).data('id-doc')
+                const data_category_doc_id = $(this).data('id-category')
+                const file_bukti = $(this).data('file') ? $(this).data('file') : ''
+                var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file_bukti+"#toolbar=0";
+                $("#preview_bukti_tf").attr("src", path_file);
+                $('#confirm_id').val(data_id)
+                $('#confirm_id_category').val(data_category_doc_id)
+            })
 
+            $('.confirm-penyerahan-unit').on('click', function(e) {
+                const data_id = $(this).data('id-doc')
+                const data_category_doc_id = $(this).data('id-category')
+                const file_bukti = $(this).data('file') ? $(this).data('file') : ''
+                var path_file = "{{ asset('storage') }}" + "/dokumentasi-peyerahan/" + file_bukti;
+                $("#preview_penyerahan_unit").attr("src", path_file);
                 $('#confirm_id').val(data_id)
                 $('#confirm_id_category').val(data_category_doc_id)
             })
@@ -1248,6 +1267,41 @@
                 $.ajax({
                     type: "POST",
                     url: "{{ route('kredit.confirm_document_vendor') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: req_id,
+                        category_id: req_category_doc_id
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            console.log(data.error)
+                            /*for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('id'))
+                                    showError(req_id, message)
+                                if (message.toLowerCase().includes('category_id'))
+                                    showError(req_category_doc_id, message)
+                            }*/
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                        }
+                    }
+                })
+            })
+
+            // Cabang - Confirm penyerahan unit
+            $('#confirm-form-penyerahan-unit').on('submit', function(e) {
+                e.preventDefault()
+                const req_id = $('#confirm_id').val()
+                const req_category_doc_id = $('#confirm_id_category').val()
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.confirm_penyerahan_unit') }}",
                     data: {
                         _token: "{{ csrf_token() }}",
                         id: req_id,
