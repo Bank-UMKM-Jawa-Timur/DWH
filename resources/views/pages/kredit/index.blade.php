@@ -75,22 +75,18 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>Rio Ardiansyah</td>
+                                            <td>{{ $item->detail['nama'] }}</td>
                                             <td class="link-po">
                                                 @if ($buktiPembayaran)
-                                                    <a data-toggle="modal" data-target="#detailPO" data-nomorPo="2AFda12j7s"
+                                                    <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
                                                         data-tanggalPo="20 April 2023"
-                                                        data-filePo="https://www.africau.edu/images/default/sample.pdf">
-                                                        2AFda12j7s</a>
+                                                        data-filePo="{{config('global.los_host').$item->detail['po']}}">
+                                                        {{$item->detail['nama']}}</a>
                                                 @else
-                                                    <a data-toggle="modal" data-target="#detailPO" data-nomorPo="2AFda12j7s"
+                                                    <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
                                                         data-tanggalPo="20 April 2023"
-                                                        data-filePo="https://www.africau.edu/images/default/sample.pdf">
-                                                        2AFda12j7s</a>
-                                                    {{-- <a style="text-decoration: underline;" data-toggle="modal"
-                                                        data-target="#buktiPembayaranModal"
-                                                        data-id_kkb="{{ $item->id }}" href="#"
-                                                        onclick="uploadBuktiPembayaran({{ $item->id }})">123123</a> --}}
+                                                        data-filePo="{{config('global.los_host').$item->detail['po']}}">
+                                                        {{$item->detail['no_po']}}</a>
                                                 @endif
                                             </td>
                                             <td>
@@ -179,7 +175,11 @@
                                                     <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
                                                 @endif
                                             </td>
-                                            <td>{{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}</td>
+                                            <td>
+                                                @isset($setImbalJasa)
+                                                {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
+                                                @endisset
+                                            </td>
                                             <td
                                                 class="@if ($item->status == 'done') text-success @else text-info @endif">
                                                 {{ $item->status }}</td>
