@@ -78,15 +78,19 @@
                                             <td>{{ $item->id.'-'.$item->kode_cabang }}</td>
                                             <td class="link-po">
                                                 @if ($buktiPembayaran)
+                                                    @isset($item->detail)
                                                     <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
                                                         data-tanggalPo="20 April 2023"
                                                         data-filePo="{{config('global.los_host').$item->detail['po']}}">
                                                         {{$item->detail['nama']}}</a>
+                                                    @endisset
                                                 @else
+                                                    @isset($item->detail)
                                                     <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
                                                         data-tanggalPo="20 April 2023"
                                                         data-filePo="{{config('global.los_host').$item->detail['po']}}">
                                                         {{$item->detail['no_po']}}</a>
+                                                    @endisset
                                                 @endif
                                             </td>
                                             <td>

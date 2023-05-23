@@ -68,11 +68,11 @@
                                     <span class="sub-item">Imbal Jasa</span>
                                 </a>
                             </li>
-                            <li class="{{ request()->is('master/template-notifikasi') ? 'active' : '' }}">
+                            {{--  <li class="{{ request()->is('master/template-notifikasi') ? 'active' : '' }}">
                                 <a href="/master/template-notifikasi">
                                     <span class="sub-item">Template Notifikasi</span>
                                 </a>
-                            </li>
+                            </li>  --}}
                         </ul>
                     </div>
                 </li>

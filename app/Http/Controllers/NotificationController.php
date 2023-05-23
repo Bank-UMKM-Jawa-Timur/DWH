@@ -6,6 +6,7 @@ use App\Models\Notification;
 use App\Models\NotificationTemplate;
 use App\Models\Role;
 use App\Models\User;
+use finfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ class NotificationController extends Controller
             $param['data'] = Notification::select(
                                     'notifications.id',
                                     'notifications.user_id',
+                                    'notifications.extra',
                                     'notifications.read',
                                     'notifications.created_at',
                                     'notifications.updated_at',
@@ -31,11 +33,13 @@ class NotificationController extends Controller
                                 )
                                 ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
                                 ->where('notifications.user_id', Auth::user()->id)
+                                ->orderBy('notifications.read')
                                 ->orderBy('notifications.created_at', 'DESC')
                                 ->get();
             $param['total_belum_dibaca'] = Notification::select('notifications.id')
                                             ->join('users AS u', 'u.id', 'notifications.user_id')
                                             ->where('u.id', Auth::user()->id)
+                                            ->where('notifications.read', false)
                                             ->count();
 
             return view('pages.notifikasi.index', $param);
@@ -43,6 +47,108 @@ class NotificationController extends Controller
             return back()->withError('Terjadi kesalahan');
         } catch (\Illuminate\Database\QueryException $e) {
             return back()->withError('Terjadi kesalahan pada database');
+        }
+    }
+
+    public function listJson()
+    {
+        $status = '';
+        $message = '';
+        $data = [];
+
+        try {
+            $data = Notification::select(
+                                    'notifications.id',
+                                    'notifications.user_id',
+                                    'notifications.extra',
+                                    'notifications.read',
+                                    'notifications.created_at',
+                                    'notifications.updated_at',
+                                    'nt.title',
+                                    'nt.content',
+                                    'nt.action_id',
+                                    'nt.role_id',
+                                )
+                                ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
+                                ->where('notifications.user_id', Auth::user()->id)
+                                ->where('notifications.read', false)
+                                ->orderBy('notifications.read')
+                                ->orderBy('notifications.created_at', 'DESC')
+                                ->get();
+
+            $status = 'success';
+            $message = 'Berhasil mengambil data';
+            } catch (\Exception $e) {
+                $status = 'failed';
+                $message = 'Terjadi kesalahan ' . $e;
+            } catch (\Illuminate\Database\QueryException $e) {
+                $status = 'failed';
+                $message = 'Terjadi kesalahan pada database';
+            } catch (\Throwable $th) {
+                $status = 'failed';
+                $message = 'Terjadi kesalahan ' . $th;
+            }  finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+                'data' => $data,
+            ];
+
+            return response()->json($response);
+        }
+    }
+
+    public function detail($id)
+    {
+        $status = '';
+        $message = '';
+        $data = [];
+        $total_belum_dibaca = null;
+
+        try {
+            $data = Notification::select(
+                                    'notifications.id',
+                                    'notifications.user_id',
+                                    'notifications.extra',
+                                    'notifications.read',
+                                    'notifications.created_at',
+                                    'notifications.updated_at',
+                                    'nt.title',
+                                    'nt.content',
+                                    'nt.action_id',
+                                    'nt.role_id',
+                                )
+                                ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
+                                ->where('notifications.id', $id)
+                                ->first();
+            $data->read = 1;
+            $data->save();
+            $total_belum_dibaca = Notification::select('notifications.id')
+                                            ->join('users AS u', 'u.id', 'notifications.user_id')
+                                            ->where('u.id', Auth::user()->id)
+                                            ->where('notifications.read', false)
+                                            ->count();
+
+            $status = 'success';
+            $message = 'Berhasil mengambil data';
+            } catch (\Exception $e) {
+                $status = 'failed';
+                $message = 'Terjadi kesalahan ' . $e;
+            } catch (\Illuminate\Database\QueryException $e) {
+                $status = 'failed';
+                $message = 'Terjadi kesalahan pada database';
+            } catch (\Throwable $th) {
+                $status = 'failed';
+                $message = 'Terjadi kesalahan ' . $th;
+            }  finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+                'data' => $data,
+                'total_belum_dibaca' => $total_belum_dibaca,
+            ];
+
+            return response()->json($response);
         }
     }
 

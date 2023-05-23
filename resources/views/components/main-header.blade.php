@@ -1,3 +1,6 @@
+@php
+    $total_notifications = \App\Models\Notification::where('user_id', Auth::user()->id)->where('read', false)->count();
+@endphp
 <div class="main-header">
     <!-- Logo Header -->
     <div class="logo-header" data-background-color="blue">
@@ -22,14 +25,13 @@
 
     <!-- Navbar Header -->
     <nav class="navbar navbar-header navbar-expand-lg" data-background-color="blue2">
-
         <div class="container-fluid">
             <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                 <li class="nav-item dropdown hidden-caret">
                     <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-bell"></i>
-                        <span class="notification">1</span>
+                        <span class="notification">{{$total_notifications}}</span>
                     </a>
                     <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
                         <li>
@@ -37,7 +39,7 @@
                         </li>
                         <li>
                             <div class="notif-center">
-                                <a href="#" data-toggle="modal" class="notif-modal" data-target="#notif"
+                                {{--  <a href="#" data-toggle="modal" class="notif-modal" data-target="#notif"
                                     data-title="tes-1" data-timer="5 Menit Yang Lalu" data-content="lorem ipsum">
                                     <div class="notif-content reading">
                                         <span class="text-success alert-notif">Telah Dibaca</span>
@@ -59,18 +61,18 @@
                                 </a>
                                 <a href="#" data-toggle="modal" class="notif-modal" data-target="#notif"
                                     data-title="tes-3" data-timer="5 Menit Yang Lalu" data-content="lorem ipsum">
-                                    <div class="notif-content">
+                                    <div class="notif-content w-100">
                                         <span class="text-danger alert-notif">Belum Dibaca</span>
                                         <span class="block">
                                             vendor dimohon untuk mengisikan Ketersediaan Unit...
                                         </span>
                                         <span class="time">5 menit yang lalu</span>
                                     </div>
-                                </a>
+                                </a>  --}}
                             </div>
                         </li>
                         <li>
-                            <a class="see-all" href="/notifikasi">Tampilkan Semua<i class="fa fa-angle-right"></i>
+                            <a class="see-all" href="{{route('notification.index')}}">Tampilkan Semua<i class="fa fa-angle-right"></i>
                             </a>
                         </li>
                     </ul>
@@ -91,19 +93,12 @@
                                     <div class="u-text">
                                         <h4>{{ Auth::user()->nip }}</h4>
                                         <p class="text-muted">{{ Auth::user()->email }}</p>
-                                        {{-- <a href="profile.html"
-                                            class="btn btn-xs btn-secondary btn-sm">View Profile</a> --}}
                                     </div>
                                 </div>
                             </li>
                             <li>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ route('change_password') }}">Ubah Password</a>
-                                {{-- <a class="dropdown-item" href="#"></a> --}}
-                                {{-- <a class="dropdown-item" href="#">Inbox</a> --}}
-                                {{-- <div class="dropdown-divider"></div> --}}
-                                {{-- <a class="dropdown-item" href="#">Account Setting</a> --}}
-                                {{-- <div class="dropdown-divider"></div> --}}
                                 <button type="submit" class="dropdown-item" style="cursor: pointer;"
                                     data-toggle="modal" data-target="#logout">Logout</button>
                             </li>
@@ -136,36 +131,96 @@
     </div>
 </div>
 
-{{-- modal notif --}}
-<div class="modal fade modal-notifikasi" id="notif" data-backdrop="static" data-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h3 class="title" id="title-notif"> - </h3>
-                <span class="time" id="timer"> - </span>
-                <hr>
-                <p id="content-notif"</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @push('extraScript')
     <script>
-        $(document).on("click", ".notif-modal", function() {
-            var title = $(this).data('title');
-            var time = $(this).data('timer');
-            var content = $(this).data('content');
+        $(document).ready(function() {
+            $('#notifDropdown').on('click', function(e) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{url('/notifikasi/json')}}",
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            $('.notif-center').empty()
+                            const notifications = response.data
+                            if (notifications.length > 0) {
+                                for(var i=0;i<notifications.length;i++) {
+                                    const notifId = notifications[i].id
+                                    const notifTime = notifications[i].created_at.replace("T", " ").substring(0,16)
+                                    const notifContent = notifications[i].content
+                                    const notifWidget = `<a href="#" id="top-notification" class="top-notification-click" data-id="${notifId}"><div class="notif-content w-100"><span class="text-success alert-notif">Belum Dibaca</span><span class="block">${notifContent}</span><span class="time">${notifTime}</span></div></a>`
+                                    $('.notif-center').append(notifWidget)
+                                }
+                            }
+                            else {
+                                $('.notif-center').html(`<span class="px-3 py-2">Belum ada notifikasi.</span>`)
+                            }
+                        }
+                        else {
+                            ErrorMessage('Terjadi kesalahan')
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            })
 
-            $("#title-notif").text(title);
-            $("#timer").text(time);
-            $("#content-notif").text(content);
+            $('#top-notification').on('click', function(e) {
+                console.log('asd')
+                const data_id = $(this).data('id');
+                console.log("notification id :"+data_id+";")
+                
+                /*$.ajax({
+                    type: "GET",
+                    url: "{{url('/notifikasi')}}/"+data_id,
+                    success: function(response) {
+                        console.log(response)
+                        if (response.status == 'success') {
+                            const notif = response.data
+                            var datetime = notif.created_at.replace("T", " ").substring(0,16)
+                            $('#title-notif').html(notif.title)
+                            $('#time-notif').html(datetime)
+                            $('#content-notif').html(notif.content)
+                            if (notif.extra) {
+                                $('.extra-notif').empty()
+                                var extra = `<div class="row">
+                                    <div class="col-12">
+                                        ${notif.extra}
+                                    </div>
+                                </div>`;
+                                $('.extra-notif').append(extra)
+                            }
+                            if (notif.read) {
+                                $('.modal-notifikasi').show()
+                                $('.notification-click').find('.notif-body-card-'+data_id).addClass('reading')
+                                $('.notification-click').find('span').html('Sudah Dibaca')
+                            }
+                            else {
+                                ErrorMessage('Tidak dapat membuka notifikasi')
+                            }
+                        }
+                        else {
+                            ErrorMessage('Terjadi kesalahan')
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })*/
+            })
+        })
 
-            // alert(title);
-        });
+        function ErrorMessage(message) {
+            swal("Gagal!", message, {
+                icon: "error",
+                // timer: 3000,
+                closeOnClickOutside: false
+            }).then(() => {
+                location.reload();
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        }
     </script>
 @endpush

@@ -149,4 +149,5 @@
             </div>
         </div>
     </div>
+    @include('notifications.modal-notif')
     @include('layout.footer')

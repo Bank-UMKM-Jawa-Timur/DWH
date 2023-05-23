@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
         return view('pages.reset_password.index', $param);
     });
     Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notification.index');
+    Route::get('/notifikasi/json', [NotificationController::class, 'listJson'])->name('notification.json');
+    Route::get('/notifikasi/{id}', [NotificationController::class, 'detail'])->name('notification.detail');
     Route::resource('/target', TargetController::class);
     Route::put('/target-toggle/{id}', [TargetController::class, 'toggle'])->name('target.toggle');
 
