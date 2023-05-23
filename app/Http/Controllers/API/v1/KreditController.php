@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\NotificationController;
 use App\Models\KKB;
 use App\Models\Kredit;
 use Exception;
@@ -14,6 +15,12 @@ use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 class KreditController extends Controller
 {
+    private $notificationController;
+
+    function __construct() {
+        $this->notificationController = new NotificationController;
+    }
+    
     public function store(Request $request)
     {
         $status = '';
@@ -51,6 +58,10 @@ class KreditController extends Controller
                 $createKKB = new KKB();
                 $createKKB->kredit_id = $model->id;
                 $createKKB->save();
+
+                // send notification
+                $extraMessage = view('notifications.detail-notif')->render();
+                $this->notificationController->sendWithExtra(2, $extraMessage);
 
                 $req_status = HttpFoundationResponse::HTTP_OK;
                 $status = 'success';

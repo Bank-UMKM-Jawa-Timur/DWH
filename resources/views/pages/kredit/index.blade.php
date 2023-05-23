@@ -90,27 +90,6 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                {{--  @if ($buktiPembayaran)
-                                                    @if ($buktiPembayaran->is_confirm)
-                                                        @if ($item->tgl_ketersediaan_unit)
-                                                            {{ $item->tgl_ketersediaan_unit }}
-                                                        @else
-                                                            @if (Auth::user()->vendor_id)
-                                                                <a style="text-decoration: underline;" data-toggle="modal"
-                                                                    data-target="#tglModal"
-                                                                    data-id_kkb="{{ $item->kkb_id }}"
-                                                                    href="#">Atur</a>
-                                                            @else
-                                                                <span class="text-danger">Menunggu ketersediaan unit</span>
-                                                            @endif
-                                                        @endif
-                                                    @else
-                                                        <span class="text-danger">Menunggu konfirmasi bukti
-                                                            pembayaran</span>
-                                                    @endif
-                                                @else
-                                                    <span class="text-danger">Menunggu upload bukti pembayaran</span>
-                                                @endif  --}}
                                                 @if (Auth::user()->vendor_id)
                                                     @if (!$item->tgl_ketersediaan_unit)
                                                     <a style="text-decoration: underline;" data-toggle="modal"
@@ -195,8 +174,12 @@
                                                 @endisset
                                             </td>
                                             <td
-                                                class="@if ($item->status == 'done') text-success @else text-info @endif">
+                                                class="@if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
+                                                @if ($setImbalJasa)
                                                 {{ $item->status }}</td>
+                                                @else
+                                                progress
+                                                @endif
                                             <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-info dropdown-toggle" type="button"

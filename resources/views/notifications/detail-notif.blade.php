@@ -1,0 +1,1 @@
+<li><a href="{{route('kredit.index')}}">nomor</a></li>

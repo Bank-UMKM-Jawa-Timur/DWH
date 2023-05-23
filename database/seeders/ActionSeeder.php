@@ -17,11 +17,13 @@ class ActionSeeder extends Seeder
     {
         $actions = [
             'Dashboard',
+            'KKB-data pengajuan baru',
             'KKB-List',
             'KKB-upload bukti pembayaran',
             'KKB-konfirmasi bukti pembayaran',
             'KKB-atur tanggal ketersediaan unit',
             'KKB-atur tanggal penyerahan unit',
+            'KKB-konfirmasi penyerahan unit',
             'KKB-upload berkas STNK',
             'KKB-upload berkas Polis',
             'KKB-upload berkas BPKB',

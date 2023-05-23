@@ -1,5 +1,4 @@
 <!--   Core JS Files   -->
-<script src="{{ asset('template') }}/assets/js/core/jquery.3.2.1.min.js"></script>
 <script src="{{ asset('template') }}/assets/js/core/popper.min.js"></script>
 <script src="{{ asset('template') }}/assets/js/core/bootstrap.min.js"></script>
 <!-- jQuery UI -->

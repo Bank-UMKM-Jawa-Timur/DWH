@@ -30,6 +30,7 @@
                                         <th scope="col">No</th>
                                         <th scope="col">Judul</th>
                                         <th scope="col">Konten</th>
+                                        <th scope="col">Role / Peran</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
@@ -39,6 +40,17 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->title }}</td>
                                             <td>{{ $item->content }}</td>
+                                            <td>
+                                                @if (!$item->role_id && $item->all_role)
+                                                    <p>Semua</p>
+                                                @else
+                                                    @forelse ($item->role as $role)
+                                                        <p>{{$role->name}}</p>
+                                                    @empty
+                                                        <p>Role tidak dipilih</p>
+                                                    @endforelse
+                                                @endif
+                                            </td>
                                             <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-info dropdown-toggle" type="button"
@@ -51,6 +63,7 @@
                                                             data-title="{{ $item->title }}"
                                                             data-content="{{ $item->content }}"
                                                             data-role="{{ $item->role_id }}"
+                                                            data-all-role="{{$item->all_role}}"
                                                             data-action="{{ $item->action_id }}" href="#">Edit</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
                                                             data-target="#deleteModal" data-id="{{ $item->id }}"
@@ -87,6 +100,16 @@
                 </div>
                 <div class="modal-body">
                     <form id="modal-form">
+                        <div class="form-group action">
+                            <label for="add-action">Aksi</label>
+                            <select name="action" id="add-action" class="form-control select2 add-action">
+                                <option value="">---Pilih Aksi---</option>
+                                @foreach ($actions as $action)
+                                    <option value="{{ $action->id }}">{{ $action->name }}</option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-danger error"></small>
+                        </div>
                         <div class="form-group title">
                             <label for="add-title">Judul</label>
                             <input type="text" class="form-control add-title" id="add-title" name="title">
@@ -99,22 +122,17 @@
                         </div>
                         <div class="form-group role">
                             <label for="add-role">Role / Peran</label>
-                            <select name="role" id="add-role" class="form-control select2 add-role">
-                                <option value="">---Pilih Role / Peran---</option>
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group action">
-                            <label for="add-action">Aksi</label>
-                            <select name="action" id="add-action" class="form-control select2 add-action">
-                                <option value="">---Pilih Aksi---</option>
-                                @foreach ($actions as $action)
-                                    <option value="{{ $action->id }}">{{ $action->name }}</option>
-                                @endforeach
-                            </select>
+                            <br>
+                            <div class="w-100">
+                                <select name="role" id="add-role" class="form-control select-role add-role" multiple="multiple" style="width: 100%">
+                                    <option value="">---Pilih Role / Peran---</option>
+                                    <option value="0">Semua</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
                             <small class="form-text text-danger error"></small>
                         </div>
                         <div class="form-group">
@@ -155,6 +173,7 @@
                             <label for="edit-role">Role / Peran</label>
                             <select name="role" id="edit-role" class="form-control select2 edit-role">
                                 <option value="">---Pilih Role / Peran---</option>
+                                <option value="0">Semua</option>
                                 @foreach ($roles as $role)
                                     <option value="{{ $role->id }}">{{ $role->name }}</option>
                                 @endforeach
@@ -205,6 +224,10 @@
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
+            // In your Javascript (external .js resource or <script> tag)
+            $(document).ready(function() {
+                $('.select-role').select2();
+            });
             $('#basic-datatables').DataTable({});
         </script>
         @if (session('status'))
@@ -248,10 +271,11 @@
                         _token: "{{ csrf_token() }}",
                         title: req_title.value,
                         content: req_content.value,
-                        role: req_role.value,
+                        role: $('#add-role').val().toString(),
                         action: req_action.value,
                     },
                     success: function(data) {
+                        //console.log(data)
                         if (Array.isArray(data.error)) {
                             for (var i = 0; i < data.error.length; i++) {
                                 var message = data.error[i];
@@ -345,6 +369,7 @@
                     var data_title = '';
                     var data_content = '';
                     var data_role = '';
+                    var data_all_role = '';
                     var data_action = '';
                     if (typeof $(this).data('id') !== 'undefined') {
                         data_id = $(this).data('id');
@@ -358,13 +383,19 @@
                     if (typeof $(this).data('role') !== 'undefined') {
                         data_role = $(this).data('role');
                     }
+                    if (typeof $(this).data('all-role') !== 'undefined') {
+                        data_all_role = $(this).data('all-role');
+                    }
                     if (typeof $(this).data('action') !== 'undefined') {
                         data_action = $(this).data('action');
                     }
                     $('#edit-id').val(data_id);
                     $('.edit-title').val(data_title);
                     $('.edit-content').val(data_content);
-                    $('.edit-role').val(data_role);
+                    if (data_all_role == 1)
+                        $('.edit-role').val(0)
+                    else
+                        $('.edit-role').val(data_role);
                     $('.edit-action').val(data_action);
 
                     var url = "{{ url('/master/template-notifikasi') }}/" + data_id;

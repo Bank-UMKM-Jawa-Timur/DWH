@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             VendorSeeder::class,
             DocumentCategoriesSeeder::class,
+            ActionSeeder::class,
+            NotificationTemplatesSeeder::class,
         ]);
     }
 }

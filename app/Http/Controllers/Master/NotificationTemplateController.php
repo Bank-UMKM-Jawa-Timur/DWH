@@ -36,7 +36,14 @@ class NotificationTemplateController extends Controller
 
     public function list()
     {
-        return NotificationTemplate::orderBy('id')->get();
+        $data = NotificationTemplate::orderBy('notification_templates.id')->get();
+
+        foreach ($data as $key => $value) {
+            $roles = Role::select('id', 'name')->where('id', $value->role_id)->orderBy('name')->get();
+            $value->role = $roles;
+        }
+
+        return $data;
     }
 
     /**
@@ -59,7 +66,7 @@ class NotificationTemplateController extends Controller
     {
         $status = '';
         $message = '';
-
+        
         $validator = Validator::make($request->all(), [
             'title' => 'required|unique:notification_templates,title',
             'content' => 'required',
@@ -80,12 +87,15 @@ class NotificationTemplateController extends Controller
                 'error' => $validator->errors()->all()
             ]);
         }
-
+        
         try {
             $model = new NotificationTemplate();
             $model->title = $request->title;
             $model->content = $request->content;
-            $model->role_id = $request->role;
+            if (str_contains($request->role, '0'))
+                $model->all_role = 1;
+            else
+                $model->role_id = $request->role;
             $model->action_id = $request->action;
             $model->save();
 
@@ -170,7 +180,14 @@ class NotificationTemplateController extends Controller
         try {
             $model->title = $request->title;
             $model->content = $request->content;
-            $model->role_id = $request->role;
+            if ($request->role == 0) {
+                $model->role_id = null;
+                $model->all_role = 1;
+            }
+            else {
+                $model->role_id = $request->role;
+                $model->all_role = 0;
+            }
             $model->action_id = $request->action;
             $model->save();
 

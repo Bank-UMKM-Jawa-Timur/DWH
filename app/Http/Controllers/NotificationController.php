@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\NotificationTemplate;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,16 +52,62 @@ class NotificationController extends Controller
             DB::beginTransaction();
 
             // get notification template
-            $notif = NotificationTemplate::where('action_id', $action_id)->get();
+            $template = NotificationTemplate::where('action_id', $action_id)->get();
 
+            // get roles
+            $roles = Role::pluck('id');
+            
             // get user who will be sended the notification
-            foreach ($notif as $key => $value) {
+            foreach ($template as $key => $value) {
                 // get kode cabang
-                $user = User::where('role_id', $value->role_id)->get();
+                if (!$value->role_id && $value->all_role) {
+                    $user = User::whereIn('role_id', $roles)->get();
+                }
+                else {
+                    $arrRole = explode(',', $value->role_id);
+                    $user = User::whereIn('role_id', $arrRole)->get();
+                }
                 foreach ($user as $key => $item) {
                     $createNotification = new Notification();
                     $createNotification->template_id = $value->id;
                     $createNotification->user_id = $item->id;
+                    $createNotification->save();
+                }
+            }
+            DB::commit();
+        } catch(\Exception $e) {
+            DB::rollBack();
+        } catch(\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+        }
+    }
+
+    public function sendWithExtra($action_id, $extra)
+    {
+        try {
+            DB::beginTransaction();
+
+            // get notification template
+            $template = NotificationTemplate::where('action_id', $action_id)->get();
+
+            // get roles
+            $roles = Role::pluck('id');
+            
+            // get user who will be sended the notification
+            foreach ($template as $key => $value) {
+                // get kode cabang
+                if (!$value->role_id && $value->all_role) {
+                    $user = User::whereIn('role_id', $roles)->get();
+                }
+                else {
+                    $arrRole = explode(',', $value->role_id);
+                    $user = User::whereIn('role_id', $arrRole)->get();
+                }
+                foreach ($user as $key => $item) {
+                    $createNotification = new Notification();
+                    $createNotification->template_id = $value->id;
+                    $createNotification->user_id = $item->id;
+                    $createNotification->extra = $extra;
                     $createNotification->save();
                 }
             }
