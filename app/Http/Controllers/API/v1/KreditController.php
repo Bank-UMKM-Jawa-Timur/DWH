@@ -60,7 +60,6 @@ class KreditController extends Controller
                 $createKKB->kredit_id = $model->id;
                 $createKKB->save();
 
-                DB::commit();
                 // send notification
                 $extraMessage = view('notifications.detail-notif')->with('nomor', $request->nomor)->render();
                 $this->notificationController->sendWithExtra(2, $model->id, $extraMessage);
@@ -80,6 +79,7 @@ class KreditController extends Controller
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database: ' . $e->getMessage();
         } finally {
+            DB::commit();
             return response()->json([
                 'status' => $status,
                 'message' => $message,
