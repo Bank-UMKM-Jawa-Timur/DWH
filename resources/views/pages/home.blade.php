@@ -102,6 +102,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Notifikasi
+                        </div>
+                        <div class="card-body">
+                            <div class="notif-app">
+                                <span class="alert-notif text-success">Sudah Dibaca</span>
+                                <h4>
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    {{-- {{ strlen($item->content) >= 100 ? substr($item->content,0,100).'...' : $item->content }} --}}
+                                </h4>
+                                <p class="lead-notif">21 April 2023</p>
+                                {{-- <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p> --}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             {{-- </div> --}}
         @endif

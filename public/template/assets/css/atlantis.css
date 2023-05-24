@@ -22763,6 +22763,25 @@ body[data-background-color="dark"] .board {
     margin-bottom: 15px;
 }
 
+.notif-app {
+    border-bottom: 1px solid #C1D0B5;
+    border-top: 1px solid #C1D0B5;
+    margin-bottom: 15px;
+    padding-bottom: 13px;
+    padding-top: 10px;
+}
+
+.notif-app .alert-notif {
+    font-size: 13px;
+}
+
+.notif-app h4 {
+    color: #1F1D62;
+    font-weight: 700;
+    margin: 0;
+}
+
+
 .card-notif .reading {
     border-radius: 0.25rem;
     background-color: #F1F3F4;
