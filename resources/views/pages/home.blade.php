@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="col col-stats ml-3 ml-sm-0">
                                     <div class="numbers">
-                                        <p class="card-category">1020</p>
+                                        <p class="card-category">{{$total_pengguna}}</p>
                                         <h4 class="card-title">Pengguna</h4>
                                     </div>
                                 </div>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="col col-stats ml-3 ml-sm-0">
                                 <div class="numbers">
-                                    <p class="card-category">1320</p>
+                                    <p class="card-category">{{$total_vendor}}</p>
                                     <h4 class="card-title">Vendor</h4>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                             </div>
                             <div class="col col-stats ml-3 ml-sm-0">
                                 <div class="numbers">
-                                    <p class="card-category">320</p>
+                                    <p class="card-category">{{$total_cabang}}</p>
                                     <h4 class="card-title">Cabang</h4>
                                 </div>
                             </div>
@@ -131,94 +131,165 @@
                                         <th scope="col">PO</th>
                                         <th scope="col">Ketersediaan Unit</th>
                                         <th scope="col">Penyerahan Unit</th>
-                                        <th scope="col">STNK</th>
+                                        {{--  <th scope="col">STNK</th>
                                         <th scope="col">Polis</th>
-                                        <th scope="col">BPKB</th>
+                                        <th scope="col">BPKB</th>  --}}
+                                        @foreach ($documentCategories as $item)
+                                            <th scope="col">{{ $item->name }}</th>
+                                        @endforeach
                                         <th scope="col">Imbal Jasa</th>
                                         <th scope="col">Status</th>
-                                        <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Rio Ardiansyah</td>
-                                        <td class="link-po" data-toggle="modal" data-target="#detailPO"
-                                            data-nomorPo="2AFda12j7s" data-tanggalPo="20 April 2023"
-                                            data-filePo="https://www.africau.edu/images/default/sample.pdf">
-                                            2AFda12j7s</td>
-                                        <td>28 April 2023</td>
-                                        <td>29 April 2023</td>
-                                        <td>1 Mei 2023</td>
-                                        <td>5 Mei 2023</td>
-                                        <td>10 Mei 2023</td>
-                                        <td>Rp.5000</td>
-                                        <td class="text-success">Selesai</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Detai</a>
-                                                </div>
-                                            </div>
+                                    @forelse ($data as $item)
+                                        @php
+                                            $buktiPembayaran = \App\Models\Document::where('kredit_id', $item->id)
+                                                ->where('document_category_id', 1)
+                                                ->first();
+                                            $penyerahanUnit = \App\Models\Document::where('kredit_id', $item->id)
+                                                ->where('document_category_id', 2)
+                                                ->first();
+                                            $stnk = \App\Models\Document::where('kredit_id', $item->id)
+                                                ->where('document_category_id', 3)
+                                                ->first();
+                                            $polis = \App\Models\Document::where('kredit_id', $item->id)
+                                                ->where('document_category_id', 4)
+                                                ->first();
+                                            $bpkb = \App\Models\Document::where('kredit_id', $item->id)
+                                                ->where('document_category_id', 5)
+                                                ->first();
+                                            $setImbalJasa = DB::table('imbal_jasas')
+                                                ->join('tenor_imbal_jasas as ti', 'ti.imbaljasa_id', 'imbal_jasas.id')
+                                                ->select('ti.*')
+                                                ->where('plafond1', '>', 1200000)
+                                                ->where('plafond2', '>', 1200000)
+                                                ->where('tenor', 24)
+                                                ->first();
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $item->id.'-'.$item->kode_cabang }}</td>
+                                            <td class="link-po">
+                                                @if ($buktiPembayaran)
+                                                    @isset($item->detail)
+                                                    <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
+                                                        data-tanggalPo="20 April 2023"
+                                                        data-filePo="{{config('global.los_host').$item->detail['po']}}">
+                                                        {{$item->detail['nama']}}</a>
+                                                    @endisset
+                                                @else
+                                                    @isset($item->detail)
+                                                    <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
+                                                        data-tanggalPo="20 April 2023"
+                                                        data-filePo="{{config('global.los_host').$item->detail['po']}}">
+                                                        {{$item->detail['no_po']}}</a>
+                                                    @endisset
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (Auth::user()->vendor_id)
+                                                    @if (!$item->tgl_ketersediaan_unit)
+                                                    <a style="text-decoration: underline;" data-toggle="modal"
+                                                        data-target="#tglModal"
+                                                        data-id_kkb="{{ $item->kkb_id }}"
+                                                        href="#">Atur</a>
+                                                    @else
+                                                    {{ $item->tgl_ketersediaan_unit }}
+                                                    @endif
+                                                @elseif ($item->tgl_ketersediaan_unit)
+                                                    {{ $item->tgl_ketersediaan_unit }}
+                                                @else
+                                                <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($item->tgl_ketersediaan_unit)
+                                                    @if ($penyerahanUnit)
+                                                        {{ $penyerahanUnit->date }}
+                                                    @else
+                                                        <span class="text-info">Maksimal tanggal penyerahan unit
+                                                            {{ date('Y-m-d', strtotime($item->tgl_ketersediaan_unit . ' +1 days')) }}</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($penyerahanUnit)
+                                                    @if ($stnk)
+                                                        @if ($stnk->file && $stnk->is_confirm)
+                                                            <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
+                                                                target="_blank">{{ $stnk->date }}</a>
+                                                        @else
+                                                            <span class="text-warning">Menunggu konfirmasi</span>
+                                                        @endif
+                                                    @else
+                                                        <span class="text-info">Maksimal tanggal upload STNK
+                                                            {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($penyerahanUnit)
+                                                    @if ($polis)
+                                                        @if ($polis->file && $polis->is_confirm)
+                                                            <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
+                                                                target="_blank">{{ $polis->date }}</a>
+                                                        @else
+                                                            <span class="text-warning">Menunggu konfirmasi</span>
+                                                        @endif
+                                                    @else
+                                                        <span class="text-info">Maksimal tanggal upload Polis
+                                                            {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($penyerahanUnit)
+                                                    @if ($bpkb)
+                                                        @if ($polis->file && $polis->is_confirm)
+                                                            <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
+                                                                target="_blank">{{ $bpkb->date }}</a>
+                                                        @else
+                                                            <span class="text-warning">Menunggu konfirmasi</span>
+                                                        @endif
+                                                    @else
+                                                        <span class="text-info">Maksimal tanggal upload Polis
+                                                            {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +3 month')) }}</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @isset($setImbalJasa)
+                                                {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
+                                                @endisset
+                                            </td>
+                                            <td
+                                                class="@if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
+                                                @if ($setImbalJasa)
+                                                {{ $item->status }}
+                                                @else
+                                                progress
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <td colspan="{{ 8 + count($documentCategories) }}" class="text-center">
+                                            <span class="text-danger">Maaf data belum tersedia.</span>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Rio Ardiansyah</td>
-                                        <td class="link-po" data-toggle="modal" data-target="#detailPO"
-                                            data-nomorPo="2AFda12j7s" data-tanggalPo="20 April 2023" data-filePo="data.pdf">
-                                            2AFda12j7s</td>
-                                        <td>28 April 2023</td>
-                                        <td>29 April 2023</td>
-                                        <td>1 Mei 2023</td>
-                                        <td>5 Mei 2023</td>
-                                        <td>10 Mei 2023</td>
-                                        <td>Rp.5000</td>
-                                        <td class="text-success">Selesai</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Detai</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Rio Ardiansyah</td>
-                                        <td class="link-po" data-toggle="modal" data-target="#detailPO"
-                                            data-nomorPo="2AFda12j7s" data-tanggalPo="20 April 2023"
-                                            data-filePo="data.pdf">
-                                            2AFda12j7s</td>
-                                        <td>28 April 2023</td>
-                                        <td>29 April 2023</td>
-                                        <td>1 Mei 2023</td>
-                                        <td>5 Mei 2023</td>
-                                        <td>10 Mei 2023</td>
-                                        <td>Rp.5000</td>
-                                        <td class="text-success">Selesai</td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Selengkapnya
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Detai</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="paginated">
+                            {{ $data->links('pagination::bootstrap-4') }}
                         </div>
                     </div>
                 </div>

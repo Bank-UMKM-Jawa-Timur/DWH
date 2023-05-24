@@ -39,6 +39,7 @@ class KreditController extends Controller
 
             $fields = Validator::make($req, [
                 'pengajuan_id' => ['required', $isUnique],
+                'nomor_pengajuan' => ['required'],
                 'kode_cabang' => ['required'],
             ], [
                 'required' => 'Atribut ini harus diisi.',
@@ -59,9 +60,10 @@ class KreditController extends Controller
                 $createKKB->kredit_id = $model->id;
                 $createKKB->save();
 
+                DB::commit();
                 // send notification
-                $extraMessage = view('notifications.detail-notif')->render();
-                $this->notificationController->sendWithExtra(2, $extraMessage);
+                $extraMessage = view('notifications.detail-notif')->with('nomor', $request->nomor)->render();
+                $this->notificationController->sendWithExtra(2, $model->id, $extraMessage);
 
                 $req_status = HttpFoundationResponse::HTTP_OK;
                 $status = 'success';
@@ -78,7 +80,6 @@ class KreditController extends Controller
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database: ' . $e->getMessage();
         } finally {
-            DB::commit();
             return response()->json([
                 'status' => $status,
                 'message' => $message,

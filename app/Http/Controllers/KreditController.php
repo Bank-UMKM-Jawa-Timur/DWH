@@ -116,7 +116,7 @@ class KreditController extends Controller
             $document->save();
 
             // send notif
-            $this->notificationController->send($action_id);
+            $this->notificationController->send($action_id, $request->id_kkb);
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas bukti pembayaran.');
 
@@ -173,7 +173,7 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal ketersediaan unit.');
 
             // send notification
-            $this->notificationController->send($action_id);
+            $this->notificationController->send($action_id, $kkb->kredit_id);
 
             DB::commit();
 
@@ -238,7 +238,7 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
 
             // send notification
-            $this->notificationController->send($action_id);
+            $this->notificationController->send($action_id, $kkb->kredit_id);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -304,7 +304,7 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas nomor polisi.');
 
             // send notification
-            $this->notificationController->send($action_id);
+            $this->notificationController->send($action_id, $request->id_kkb);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -371,7 +371,7 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas BPKB.');
 
             // send notif
-            $this->notificationController->send($action_id);
+            $this->notificationController->send($action_id, $request->id_kkb);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -437,7 +437,7 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas STNK.');
 
             // send notification
-            $this->notificationController->send($action_id);
+            $this->notificationController->send($action_id, $request->id_kkb);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -511,7 +511,7 @@ class KreditController extends Controller
                 $document->save();
 
                 // send notification
-                $this->notificationController->send(9);
+                $this->notificationController->send(9, $kkb->kredit_id);
             }
 
             // polis
@@ -528,7 +528,7 @@ class KreditController extends Controller
                 $document->save();
 
                 // send notification
-                $this->notificationController->send(10);
+                $this->notificationController->send(10, $kkb->kredit_id);
             }
 
             // bpkb
@@ -545,7 +545,7 @@ class KreditController extends Controller
                 $document->save();
 
                 // send notification
-                $this->notificationController->send(11);
+                $this->notificationController->send(11, $kkb->kredit_id);
             }
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
@@ -594,7 +594,7 @@ class KreditController extends Controller
                     $stnk->save();
 
                     // send notification
-                    $this->notificationController->send(12);
+                    $this->notificationController->send(12, $stnk->kredit_id);
                 }
 
                 // polis
@@ -608,7 +608,7 @@ class KreditController extends Controller
                     $polis->save();
 
                     // send notification
-                    $this->notificationController->send(13);
+                    $this->notificationController->send(13, $polis->kredit_id);
                 }
 
                 // bpkb
@@ -622,7 +622,7 @@ class KreditController extends Controller
                     $bpkb->save();
 
                     // send notification
-                    $this->notificationController->send(14);
+                    $this->notificationController->send(14, $bpkb->kredit_id);
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
@@ -693,7 +693,7 @@ class KreditController extends Controller
                     $action_id = 14;
 
                 // send notification
-                $this->notificationController->send($action_id);
+                $this->notificationController->send($action_id, $document->kredit_id);
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
 
@@ -756,7 +756,7 @@ class KreditController extends Controller
 
                 if ($request->category_id == 1) {
                     // send notification
-                    $this->notificationController->send(5);
+                    $this->notificationController->send(5, $document->kredit_id);
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
@@ -820,7 +820,7 @@ class KreditController extends Controller
 
                 if ($request->category_id == 2) {
                     // send notification
-                    $this->notificationController->send(8);
+                    $this->notificationController->send(8, $document->kredit_id);
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
