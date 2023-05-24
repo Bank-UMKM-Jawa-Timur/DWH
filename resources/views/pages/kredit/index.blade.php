@@ -180,10 +180,11 @@
                                             <td
                                                 class="@if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
                                                 @if ($setImbalJasa)
-                                                {{ $item->status }}</td>
+                                                {{ $item->status }}
                                                 @else
                                                 progress
                                                 @endif
+                                            </td>
                                             <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-info dropdown-toggle" type="button"

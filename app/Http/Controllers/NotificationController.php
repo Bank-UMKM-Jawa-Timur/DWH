@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kredit;
 use App\Models\Notification;
 use App\Models\NotificationTemplate;
 use App\Models\Role;
@@ -152,7 +153,7 @@ class NotificationController extends Controller
         }
     }
 
-    public function send($action_id)
+    public function send($action_id, $kreditId)
     {
         try {
             DB::beginTransaction();
@@ -163,18 +164,22 @@ class NotificationController extends Controller
             // get roles
             $roles = Role::pluck('id');
             
+            // get kredit
+            $kredit = Kredit::find($kreditId);
+            
             // get user who will be sended the notification
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
-                    $user = User::whereIn('role_id', $roles)->get();
+                    $user = User::where('kode_cabang', $kredit->kode_cabang)->whereIn('role_id', $roles)->get();
                 }
                 else {
                     $arrRole = explode(',', $value->role_id);
-                    $user = User::whereIn('role_id', $arrRole)->get();
+                    $user = User::where('kode_cabang', $kredit->kode_cabang)->whereIn('role_id', $arrRole)->get();
                 }
                 foreach ($user as $key => $item) {
                     $createNotification = new Notification();
+                    $createNotification->kredit_id = $kreditId;
                     $createNotification->template_id = $value->id;
                     $createNotification->user_id = $item->id;
                     $createNotification->save();
@@ -188,7 +193,7 @@ class NotificationController extends Controller
         }
     }
 
-    public function sendWithExtra($action_id, $extra)
+    public function sendWithExtra($action_id, $kreditId, $extra)
     {
         try {
             DB::beginTransaction();
@@ -199,18 +204,22 @@ class NotificationController extends Controller
             // get roles
             $roles = Role::pluck('id');
             
+            // get kredit
+            $kredit = Kredit::find($kreditId);
+
             // get user who will be sended the notification
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
-                    $user = User::whereIn('role_id', $roles)->get();
+                    $user = User::where('kode_cabang', $kredit->kode_cabang)->whereIn('role_id', $roles)->get();
                 }
                 else {
                     $arrRole = explode(',', $value->role_id);
-                    $user = User::whereIn('role_id', $arrRole)->get();
+                    $user = User::where('kode_cabang', $kredit->kode_cabang)->whereIn('role_id', $arrRole)->get();
                 }
                 foreach ($user as $key => $item) {
                     $createNotification = new Notification();
+                    $createNotification->kredit_id = $kreditId;
                     $createNotification->template_id = $value->id;
                     $createNotification->user_id = $item->id;
                     $createNotification->extra = $extra;
