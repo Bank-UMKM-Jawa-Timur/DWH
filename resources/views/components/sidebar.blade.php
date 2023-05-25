@@ -32,6 +32,7 @@
                         <p>KKB</p>
                     </a>
                 </li>
+                @if (Auth::user()->role_id == 4)
                 <li
                     class="nav-item {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'active' : '' }}">
                     <a data-toggle="collapse" href="#base">
@@ -76,24 +77,29 @@
                         </ul>
                     </div>
                 </li>
+                @endif
+                @if (Auth::user()->role_id == 4)
                 <li class="nav-item {{ request()->is('log_aktivitas') ? 'active' : '' }}">
                     <a href="/log_aktivitas">
                         <i class="icon-clock"></i>
                         <p>Log Aktivitas</p>
                     </a>
                 </li>
+                @endif
                 <li class="nav-item">
                     <a href="/laporan">
                         <i class="icon-printer"></i>
                         <p>Laporan</p>
                     </a>
                 </li>
+                @if (Auth::user()->role_id == 4)
                 <li class="nav-item {{ request()->is('target') ? 'active' : '' }}">
                     <a href="/target">
                         <i class="icon-graph"></i>
                         <p>Target</p>
                     </a>
                 </li>
+                @endif
                 {{-- <li class="nav-section">
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>

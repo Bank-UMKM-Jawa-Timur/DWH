@@ -47,12 +47,14 @@
                                                         <a class="dropdown-item"
                                                             href="{{ route('role.permission.index', $item->id) }}">Hak
                                                             Akses</a>
+                                                        @if ($item->id > 4)
                                                         <a class="dropdown-item editModal" data-toggle="modal"
                                                             data-target="#editModal" data-id="{{ $item->id }}"
                                                             data-name="{{ $item->name }}" href="#">Edit</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
                                                             data-target="#deleteModal" data-name="{{ $item->name }}"
                                                             data-id="{{ $item->id }}" href="#">Hapus</a>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </td>
