@@ -98,6 +98,7 @@
                             Chart Data Realisasi
                         </div>
                         <div class="card-body">
+                            <span>Target : {{$target}}</span>
                             <canvas id="chartCabang" height="100"></canvas>
                         </div>
                     </div>
@@ -417,18 +418,21 @@
             $(document).ready(function() {
                 var doughnutChart = document.getElementById('chartCabang').getContext('2d');
 
+                const target = parseInt("{{$target}}");
+                const done = parseInt("{{$total_kkb_done}}");
+                const undone = target - done;
+
                 var myDoughnutChart = new Chart(doughnutChart, {
                     type: 'doughnut',
                     data: {
                         datasets: [{
-                            data: [15, 5, 10],
-                            backgroundColor: ['#146C94', '#19A7CE', '#AFD3E2']
+                            data: [undone, done],
+                            backgroundColor: ['#AFD3E2', '#19A7CE']
                         }],
 
                         labels: [
-                            'Realisasi',
-                            'Belum Realisasi',
-                            'Target',
+                            'Belum Terealisasi',
+                            'Sudah Terealisasi',
                         ]
                     },
                     options: {

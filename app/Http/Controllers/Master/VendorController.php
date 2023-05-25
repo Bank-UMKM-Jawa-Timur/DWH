@@ -95,6 +95,7 @@ class VendorController extends Controller
             $newUser->email = $request->email;
             $newUser->vendor_id = $newVendor->id;
             $newUser->role_id = 3;
+            $newUser->password = \Hash::make('12345678');
             $newUser->save();
 
             $this->logActivity->store("Membuat data vendor $request->name.");

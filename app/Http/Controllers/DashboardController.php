@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Kredit;
+use App\Models\Target;
 
 class DashboardController extends Controller
 {
@@ -54,6 +55,14 @@ class DashboardController extends Controller
             $param['role'] = $user->role_name;
             $param['total_cabang'] = User::where('role_id', 2)->count();
             $param['total_vendor'] = User::where('role_id', 3)->count();
+            $target = Target::where('is_active', 1)->pluck('total_unit');
+            $param['target'] = count($target) ? $target->first() : 0;
+            if (Auth::user()->role_id != 3) {
+                $param['total_kkb_done'] = Kredit::join('documents AS d', 'd.kredit_id', 'kredits.id')
+                                        ->where('d.document_category_id', 2)
+                                        ->count();
+            }
+
             if (Auth::user()->role_id != 3)
                 $param['total_pengguna'] = User::count();
 
