@@ -409,7 +409,7 @@
             $('#open-add-modal').click(function() {
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('role.list') }}",
+                    url: "{{ route('role.list_options') }}",
                     success: function(data) {
                         console.log(data)
                         if (data) {
@@ -452,7 +452,7 @@
 
                         $.ajax({
                             type: "GET",
-                            url: "{{ route('role.list') }}",
+                            url: "{{ route('role.list_options') }}",
                             success: function(data) {
                                 if (data) {
                                     for (i in data) {
@@ -513,7 +513,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('role.list') }}",
+                    url: "{{ route('role.list_options') }}",
                     success: function(data) {
                         if (data) {
                             for (i in data) {

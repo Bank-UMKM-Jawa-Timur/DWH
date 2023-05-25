@@ -20,11 +20,17 @@ class UserSeeder extends Seeder
         $pemasaran->password = \Hash::make('12345678');
         $pemasaran->role_id = 1;
         $pemasaran->save();
+        
+        $pemasaran = new User();
+        $pemasaran->nip = 123456789012345676;
+        $pemasaran->password = \Hash::make('12345678');
+        $pemasaran->role_id = 2;
+        $pemasaran->save();
 
         $cabang = new User();
-        $cabang->nip = 123456789012345677;
+        $cabang->nip = 123456789012345675;
         $cabang->password = \Hash::make('12345678');
-        $cabang->role_id = 2;
+        $cabang->role_id = 4; // superadmin
         $cabang->save();
     }
 }

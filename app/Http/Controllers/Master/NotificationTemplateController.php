@@ -29,7 +29,12 @@ class NotificationTemplateController extends Controller
         $param['pageTitle'] = 'Notifikasi Template';
         $param['data'] = $this->list();
         $param['roles'] = Role::orderBy('name', 'ASC')->get();
-        $param['actions'] = DB::table('actions')->orderBy('name', 'ASC')->get();
+        $param['actions'] = DB::table('actions')
+                                ->where('name', 'like', '%KKB-%')
+                                ->where('name', '!=', 'KKB-List')
+                                ->where('name', '!=', 'KKB-detail data')
+                                ->orderBy('name', 'ASC')
+                                ->get();
 
         return view('pages.notifikasi_template.index', $param);
     }
