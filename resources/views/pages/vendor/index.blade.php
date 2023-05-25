@@ -110,6 +110,13 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
+                                    <div class="Email">
+                                        <label for="add-email">Email</label>
+                                        <input type="email" class="form-control" id="add-email" name="email" required>
+                                        <small class="form-text text-danger error"></small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
                                     <div class="role">
                                         <label for="add-cabang">NIP Cabang</label>
                                         <select class="form-control" id="add-cabang">
@@ -165,6 +172,14 @@
                                     <div class="Phone">
                                         <label for="edit-phone">Nomor HP</label>
                                         <input type="text" class="form-control" id="edit-phone" name="phone"
+                                            required>
+                                        <small class="form-text text-danger error"></small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="Email">
+                                        <label for="edit-email">Email</label>
+                                        <input type="email" class="form-control" id="edit-email" name="email"
                                             required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
@@ -261,6 +276,7 @@
             function store() {
                 const req_name = document.getElementById('add-name')
                 const req_phone = document.getElementById('add-phone')
+                const req_email = document.getElementById('add-email')
                 const req_address = document.getElementById('add-address')
                 const req_cabang_id = document.getElementById('add-cabang')
 
@@ -270,6 +286,10 @@
                 }
                 if (req_phone == '') {
                     showError(req_phone, 'Nomor HP harus diisi.');
+                    return false;
+                }
+                if (req_email == '') {
+                    showError(req_email, 'Email harus diisi.');
                     return false;
                 }
                 if (req_address == '') {
@@ -288,6 +308,7 @@
                         _token: "{{ csrf_token() }}",
                         name: req_name.value,
                         phone: req_phone.value,
+                        email: req_email.value,
                         address: req_address.value,
                         cabang_id: req_cabang_id.value,
                     },
@@ -301,6 +322,8 @@
                                     showError(req_name, message)
                                 if (message.toLowerCase().includes('nomor'))
                                     showError(req_phone, message)
+                                if (message.toLowerCase().includes('email'))
+                                    showError(req_email, message)
                                 if (message.toLowerCase().includes('address'))
                                     showError(req_address, message)
                                 if (message.toLowerCase().includes('cabang'))
@@ -327,6 +350,7 @@
                 const req_id = document.getElementById('edit-id')
                 const req_name = document.getElementById('edit-name')
                 const req_phone = document.getElementById('edit-phone')
+                const req_email = document.getElementById('edit-email')
                 const req_address = document.getElementById('edit-address')
                 const req_cabang_id = document.getElementById('edit-cabang')
 
@@ -336,6 +360,10 @@
                 }
                 if (req_phone == '') {
                     showError(req_phone, 'Nomor HP harus diisi.')
+                    return false;
+                }
+                if (req_email == '') {
+                    showError(req_email, 'Email harus diisi.')
                     return false;
                 }
                 if (req_address == '') {
@@ -355,6 +383,7 @@
                         _method: 'PUT',
                         name: req_name.value,
                         phone: req_phone.value,
+                        email: req_email.value,
                         address: req_address.value,
                         cabang_id: req_cabang_id.value,
                     },
@@ -368,6 +397,8 @@
                                     showError(req_name, message)
                                 if (message.toLowerCase().includes('nomor'))
                                     showError(req_phone, message)
+                                if (message.toLowerCase().includes('email'))
+                                    showError(req_email, message)
                                 if (message.toLowerCase().includes('address'))
                                     showError(req_address, message)
                                 if (message.toLowerCase().includes('cabang'))

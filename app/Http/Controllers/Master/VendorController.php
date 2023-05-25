@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
+use App\Models\User;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -59,6 +60,7 @@ class VendorController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:vendors,name',
             'phone' => 'required|unique:vendors,phone',
+            'email' => 'required|unique:users,email',
             'cabang_id' => 'not_in:0',
             'address' => 'required',
         ], [
@@ -68,6 +70,7 @@ class VendorController extends Controller
         ], [
             'name' => 'Nama',
             'phone' => 'Nomor HP',
+            'email' => 'Email',
             'cabang_id' => 'NIP Cabang',
             'address' => 'Alamat',
         ]);
@@ -79,6 +82,8 @@ class VendorController extends Controller
         }
 
         try {
+            \DB::beginTransaction();
+            
             $newVendor = new Vendor();
             $newVendor->name = $request->name;
             $newVendor->phone = $request->phone;
@@ -86,17 +91,26 @@ class VendorController extends Controller
             $newVendor->address = $request->address;
             $newVendor->save();
 
+            $newUser = new User();
+            $newUser->email = $request->email;
+            $newUser->vendor_id = $newVendor->id;
+            $newUser->role_id = 3;
+            $newUser->save();
+
             $this->logActivity->store("Membuat data vendor $request->name.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
+            \DB::rollBack();
             $status = 'failed';
             $message = 'Terjadi kesalahan';
         } catch (\Illuminate\Database\QueryException $e) {
+            \DB::rollBack();
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database';
         } finally {
+            \DB::commit();
             $response = [
                 'status' => $status,
                 'message' => $message,
@@ -121,10 +135,12 @@ class VendorController extends Controller
         $currentVendor = Vendor::find($id);
         $isUniqueName = $request->name && $request->name != $currentVendor->name ? '|unique:vendors,name' : '';
         $isUniquePhone = $request->phone && $request->phone != $currentVendor->phone ? '|unique:vendors,phone' : '';
+        $isUniqueEmail = $request->email && $request->email != $currentVendor->email ? '|unique:users,email' : '';
 
         $validator = Validator::make($request->all(), [
             'name' => 'required'.$isUniqueName,
             'phone' => 'required'.$isUniquePhone,
+            'email' => 'required'.$isUniqueEmail,
             'address' => 'required',
             'cabang_id' => 'not_in:0'
         ], [
@@ -134,6 +150,7 @@ class VendorController extends Controller
         ], [
             'name' => 'Nama',
             'phone' => 'Nomor HP',
+            'email' => 'Email',
             'address' => 'Alamat',
             'cabang_id' => 'NIP Cabang'
         ]);
@@ -145,23 +162,32 @@ class VendorController extends Controller
         }
 
         try {
+            \DB::beginTransaction();
+            
             $currentVendor->name = $request->name;
             $currentVendor->phone = $request->phone;
             $currentVendor->address = $request->address;
             $currentVendor->cabang_id = $request->cabang_id;
             $currentVendor->save();
 
+            $user = User::where('vendor_id', $id)->first();
+            $user->email = $request->email;
+            $user->save();
+
             $this->logActivity->store("Memperbarui data vendor.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
         } catch (\Exception $e) {
+            \DB::rollBack();
             $status = 'failed';
             $message = 'Terjadi kesalahan';
         } catch (\Illuminate\Database\QueryException $e) {
+            \DB::rollBack();
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database';
         } finally {
+            \DB::commit();
             $response = [
                 'status' => $status,
                 'message' => $message,
@@ -183,10 +209,13 @@ class VendorController extends Controller
         $message = '';
 
         try {
+            \DB::beginTransaction();
+
             $currentVendor = Vendor::findOrFail($id);
             $currentName = $currentVendor->name;
             if ($currentVendor) {
                 $currentVendor->delete();
+                User::where('vendor_id', $id)->delete();
                 $this->logActivity->store("Menghapus data vendor '$currentName'.");
                 
                 $status = 'success';
@@ -197,13 +226,16 @@ class VendorController extends Controller
                 $message = 'Data tidak ditemukan.';
             }
         } catch (\Exception $e) {
+            \DB::rollBack();
             $status = 'error';
             $message = 'Terjadi kesalahan.';
 
         } catch (\Illuminate\Database\QueryException $e) {
+            \DB::rollBack();
             $status = 'error';
             $message = 'Terjadi kesalahan pada database.';
         } finally {
+            \DB::commit();
             return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
         }
     }

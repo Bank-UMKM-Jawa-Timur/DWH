@@ -45,6 +45,11 @@ class RoleController extends Controller
         return Role::orderBy('name')->get();
     }
 
+    public function listOptions()
+    {
+        return Role::where('name', '!=', 'Vendor')->orderBy('name')->get();
+    }
+
     public function search($req){
         return Role::orderBy('name')
             ->where('name','LIKE','%'.$req.'%')
