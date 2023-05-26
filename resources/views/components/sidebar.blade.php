@@ -86,12 +86,14 @@
                     </a>
                 </li>
                 @endif
+                @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 4)
                 <li class="nav-item">
                     <a href="/laporan">
                         <i class="icon-printer"></i>
                         <p>Laporan</p>
                     </a>
                 </li>
+                @endif
                 @if (Auth::user()->role_id == 4)
                 <li class="nav-item {{ request()->is('target') ? 'active' : '' }}">
                     <a href="/target">

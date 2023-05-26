@@ -109,15 +109,18 @@
                             Notifikasi
                         </div>
                         <div class="card-body">
+                            @forelse ($notification as $item)
                             <div class="notif-app">
-                                <span class="alert-notif text-success">Sudah Dibaca</span>
+                                <span class="alert-notif text-success notif-status-{{$item->id}}">@if ($item->read) Sudah Dibaca @else Belum Dibaca @endif</span>
                                 <h4>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    {{-- {{ strlen($item->content) >= 100 ? substr($item->content,0,100).'...' : $item->content }} --}}
+                                    {{ $item->title }} - 
+                                    {{ strlen($item->content) >= 100 ? substr($item->content,0,100).'...' : $item->content }}
                                 </h4>
-                                <p class="lead-notif">21 April 2023</p>
-                                {{-- <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p> --}}
+                                <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p>
                             </div>
+                            @empty
+                                <span>Belum ada notifikasi.</span>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -414,44 +417,47 @@
                 $("#tanggalPo").text(tanggalPo);
                 $("#filePo").attr("src", filePo);
             });
-
-            $(document).ready(function() {
-                var doughnutChart = document.getElementById('chartCabang').getContext('2d');
-
-                const target = parseInt("{{$target}}");
-                const done = parseInt("{{$total_kkb_done}}");
-                const undone = target - done;
-
-                var myDoughnutChart = new Chart(doughnutChart, {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: [undone, done],
-                            backgroundColor: ['#AFD3E2', '#19A7CE']
-                        }],
-
-                        labels: [
-                            'Belum Terealisasi',
-                            'Sudah Terealisasi',
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        legend: {
-                            position: 'right'
+        </script>
+        @if (Auth::user()->role_id != 3)
+            <script>
+                $(document).ready(function() {
+                    var doughnutChart = document.getElementById('chartCabang').getContext('2d');
+    
+                    const target = parseInt("{{$target}}");
+                    const done = parseInt("{{$total_kkb_done}}");
+                    const undone = target - done;
+    
+                    var myDoughnutChart = new Chart(doughnutChart, {
+                        type: 'doughnut',
+                        data: {
+                            datasets: [{
+                                data: [undone, done],
+                                backgroundColor: ['#AFD3E2', '#19A7CE']
+                            }],
+    
+                            labels: [
+                                'Belum Terealisasi',
+                                'Sudah Terealisasi',
+                            ]
                         },
-                        layout: {
-                            padding: {
-                                // left: 20,
-                                // right: 20,
-                                // top: 20,
-                                // bottom: 20
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            legend: {
+                                position: 'right'
+                            },
+                            layout: {
+                                padding: {
+                                    // left: 20,
+                                    // right: 20,
+                                    // top: 20,
+                                    // bottom: 20
+                                }
                             }
                         }
-                    }
+                    });
                 });
-            });
-        </script>
+            </script>
+        @endif
     @endpush
 @endsection
