@@ -44,8 +44,17 @@
                                                 @if (!$item->role_id && $item->all_role)
                                                     <p>Semua</p>
                                                 @else
-                                                    @forelse ($item->role as $role)
-                                                        <p>{{$role->name}}</p>
+                                                    @php
+                                                        $exRole = explode(',', $item->role_id);
+                                                    @endphp
+                                                    @forelse ($exRole as $v)
+                                                        @php
+                                                            $getRole = \App\Models\Role::select('id', 'name')
+                                                                ->where('id', $v)
+                                                                ->orderBy('name')
+                                                                ->first();
+                                                        @endphp
+                                                        {{ $getRole->name }}
                                                     @empty
                                                         <p>Role tidak dipilih</p>
                                                     @endforelse
@@ -58,13 +67,14 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" data-toggle="modal"
-                                                            data-target="#editModal" data-id="{{ $item->id }}"
-                                                            data-title="{{ $item->title }}"
+                                                        <a class="dropdown-item" id="modalEdit{{ $item->id }}"
+                                                            data-toggle="modal" data-target="#editModal"
+                                                            data-id="{{ $item->id }}" data-title="{{ $item->title }}"
                                                             data-content="{{ $item->content }}"
                                                             data-role="{{ $item->role_id }}"
-                                                            data-all-role="{{$item->all_role}}"
-                                                            data-action="{{ $item->action_id }}" href="#">Edit</a>
+                                                            data-all-role="{{ $item->all_role }}"
+                                                            data-action="{{ $item->action_id }}" href="#"
+                                                            onclick="edit({{ $item->id }})">Edit</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
                                                             data-target="#deleteModal" data-id="{{ $item->id }}"
                                                             href="#">Hapus</a>
@@ -124,7 +134,8 @@
                             <label for="add-role">Role / Peran</label>
                             <br>
                             <div class="w-100">
-                                <select name="role" id="add-role" class="form-control select-role add-role" multiple="multiple" style="width: 100%">
+                                <select name="role" id="add-role" class="form-control select-role add-role"
+                                    multiple="multiple" style="width: 100%">
                                     <option value="">---Pilih Role / Peran---</option>
                                     <option value="0">Semua</option>
                                     @foreach ($roles as $role)
@@ -157,29 +168,6 @@
                 <div class="modal-body">
                     <form id="modal-edit-form" class="edit-form">
                         <input type="hidden" name="edit_id" id="edit-id">
-                        <div class="form-group title">
-                            <label for="edit-title">{{ old('title') }}</label>
-                            <input type="text" class="form-control edit-title" id="edit-title" name="title"
-                                value="{{ old('title') }}">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group content">
-                            <label for="edit-content">Konten</label>
-                            <input type="text" class="form-control edit-content" id="edit-content" name="content"
-                                {{ old('content') }}>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group role">
-                            <label for="edit-role">Role / Peran</label>
-                            <select name="role" id="edit-role" class="form-control select2 edit-role">
-                                <option value="">---Pilih Role / Peran---</option>
-                                <option value="0">Semua</option>
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-danger error"></small>
-                        </div>
                         <div class="form-group action">
                             <label for="edit-action">Aksi</label>
                             <select name="action" id="edit-action" class="form-control select2 edit-action">
@@ -188,6 +176,32 @@
                                     <option value="{{ $action->id }}">{{ $action->name }}</option>
                                 @endforeach
                             </select>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group title">
+                            <label for="edit-title">Judul</label>
+                            <input type="text" class="form-control edit-title" id="edit-title" name="title">
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group content">
+                            <label for="edit-content">Konten</label>
+                            <input type="text" class="form-control edit-content" id="edit-content" name="content">
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group role">
+                            <label for="edit-role">Role / Peran</label>
+                            <br>
+                            <div class="w-100">
+                                <select name="role" id="edit-role" class="form-control select-role edit-role"
+                                    multiple="multiple" style="width: 100%">
+                                    <option value="">---Pilih Role / Peran---</option>
+                                    <option value="0">Semua</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
                             <small class="form-text text-danger error"></small>
                         </div>
                         <div class="form-group">
@@ -318,7 +332,7 @@
                         _method: 'PUT',
                         title: req_title.value,
                         content: req_content.value,
-                        role: req_role.value,
+                        role: $('#edit-role').val().toString(),
                         action: req_action.value,
                     },
                     success: function(data) {
@@ -363,46 +377,54 @@
             }
 
             // Modal
-            $(document).ready(function() {
-                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
-                    var data_id = '';
-                    var data_title = '';
-                    var data_content = '';
-                    var data_role = '';
-                    var data_all_role = '';
-                    var data_action = '';
-                    if (typeof $(this).data('id') !== 'undefined') {
-                        data_id = $(this).data('id');
-                    }
-                    if (typeof $(this).data('title') !== 'undefined') {
-                        data_title = $(this).data('title');
-                    }
-                    if (typeof $(this).data('content') !== 'undefined') {
-                        data_content = $(this).data('content');
-                    }
-                    if (typeof $(this).data('role') !== 'undefined') {
-                        data_role = $(this).data('role');
-                    }
-                    if (typeof $(this).data('all-role') !== 'undefined') {
-                        data_all_role = $(this).data('all-role');
-                    }
-                    if (typeof $(this).data('action') !== 'undefined') {
-                        data_action = $(this).data('action');
-                    }
-                    $('#edit-id').val(data_id);
-                    $('.edit-title').val(data_title);
-                    $('.edit-content').val(data_content);
-                    if (data_all_role == 1)
-                        $('.edit-role').val(0)
-                    else
-                        $('.edit-role').val(data_role);
-                    $('.edit-action').val(data_action);
+            function edit(id) {
+                var selector = '#modalEdit' + id
+                var arrayRole = [];
+                var data_id = '';
+                var data_title = '';
+                var data_content = '';
+                var data_role = '';
+                var data_all_role = '';
+                var data_action = '';
+                if (typeof $(selector).data('id') !== 'undefined') {
+                    data_id = $(selector).data('id');
+                }
+                if (typeof $(selector).data('title') !== 'undefined') {
+                    data_title = $(selector).data('title');
+                }
+                if (typeof $(selector).data('content') !== 'undefined') {
+                    data_content = $(selector).data('content');
+                }
+                if (typeof $(selector).data('role') !== 'undefined') {
+                    data_role = $(selector).data('role');
+                }
+                if (typeof $(selector).data('all-role') !== 'undefined') {
+                    data_all_role = $(selector).data('all-role');
+                }
+                if (typeof $(selector).data('action') !== 'undefined') {
+                    data_action = $(selector).data('action');
+                }
+                var checkArray = data_role.toString();
+                console.log(data_role);
+                $('#edit-id').val(data_id);
+                $('.edit-title').val(data_title);
+                $('.edit-content').val(data_content);
+                $('.edit-action').val(data_action);
+                if (data_all_role == 1)
+                    $('.edit-role').val(0).change()
+                else
+                if (checkArray.includes(",") == true) {
+                    $.each(data_role.split(","), function(i, v) {
+                        arrayRole.push(parseInt(v));
+                    });
+                    $('.edit-role').val(arrayRole).change();
+                } else {
+                    $('.edit-role').val(data_role).change();
+                }
 
-                    var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
-                    $('.edit-form').attr("action", url);
-                })
-
-            });
+                var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
+                $('.edit-form').attr("action", url);
+            }
             $(document).on("click", ".deleteModal", function() {
                 var data_id = $(this).data('id');
                 var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
