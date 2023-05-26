@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="col col-stats ml-3 ml-sm-0">
                                     <div class="numbers">
-                                        <p class="card-category">{{$total_pengguna}}</p>
+                                        <p class="card-category">{{ $total_pengguna }}</p>
                                         <h4 class="card-title">Pengguna</h4>
                                     </div>
                                 </div>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="col col-stats ml-3 ml-sm-0">
                                 <div class="numbers">
-                                    <p class="card-category">{{$total_vendor}}</p>
+                                    <p class="card-category">{{ $total_vendor }}</p>
                                     <h4 class="card-title">Vendor</h4>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                             </div>
                             <div class="col col-stats ml-3 ml-sm-0">
                                 <div class="numbers">
-                                    <p class="card-category">{{$total_cabang}}</p>
+                                    <p class="card-category">{{ $total_cabang }}</p>
                                     <h4 class="card-title">Cabang</h4>
                                 </div>
                             </div>
@@ -98,7 +98,7 @@
                             Chart Data Realisasi
                         </div>
                         <div class="card-body">
-                            <span>Target : {{$target}}</span>
+                            <span>Target : {{ $target }}</span>
                             <canvas id="chartCabang" height="100"></canvas>
                         </div>
                     </div>
@@ -110,14 +110,20 @@
                         </div>
                         <div class="card-body">
                             @forelse ($notification as $item)
-                            <div class="notif-app">
-                                <span class="alert-notif text-success notif-status-{{$item->id}}">@if ($item->read) Sudah Dibaca @else Belum Dibaca @endif</span>
-                                <h4>
-                                    {{ $item->title }} - 
-                                    {{ strlen($item->content) >= 100 ? substr($item->content,0,100).'...' : $item->content }}
-                                </h4>
-                                <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p>
-                            </div>
+                                <div class="notif-app">
+                                    <span class="alert-notif text-success notif-status-{{ $item->id }}">
+                                        @if ($item->read)
+                                            Sudah Dibaca
+                                        @else
+                                            Belum Dibaca
+                                        @endif
+                                    </span>
+                                    <h4>
+                                        {{ $item->title }} -
+                                        {{ strlen($item->content) >= 100 ? substr($item->content, 0, 100) . '...' : $item->content }}
+                                    </h4>
+                                    <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p>
+                                </div>
                             @empty
                                 <span>Belum ada notifikasi.</span>
                             @endforelse
@@ -191,38 +197,39 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->id.'-'.$item->kode_cabang }}</td>
+                                            <td>{{ $item->id . '-' . $item->kode_cabang }}</td>
                                             <td class="link-po">
                                                 @if ($buktiPembayaran)
                                                     @isset($item->detail)
-                                                    <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
-                                                        data-tanggalPo="20 April 2023"
-                                                        data-filePo="{{config('global.los_host').$item->detail['po']}}">
-                                                        {{$item->detail['nama']}}</a>
+                                                        <a class="open-po" data-toggle="modal" data-target="#detailPO"
+                                                            data-nomorPo="{{ $item->detail['no_po'] }}"
+                                                            data-tanggalPo="20 April 2023"
+                                                            data-filePo="{{ config('global.los_host') . $item->detail['po'] }}">
+                                                            {{ $item->detail['nama'] }}</a>
                                                     @endisset
                                                 @else
                                                     @isset($item->detail)
-                                                    <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
-                                                        data-tanggalPo="20 April 2023"
-                                                        data-filePo="{{config('global.los_host').$item->detail['po']}}">
-                                                        {{$item->detail['no_po']}}</a>
+                                                        <a class="open-po" data-toggle="modal" data-target="#detailPO"
+                                                            data-nomorPo="{{ $item->detail['no_po'] }}"
+                                                            data-tanggalPo="20 April 2023"
+                                                            data-filePo="{{ config('global.los_host') . $item->detail['po'] }}">
+                                                            {{ $item->detail['no_po'] }}</a>
                                                     @endisset
                                                 @endif
                                             </td>
                                             <td>
                                                 @if (Auth::user()->vendor_id)
                                                     @if (!$item->tgl_ketersediaan_unit)
-                                                    <a style="text-decoration: underline;" data-toggle="modal"
-                                                        data-target="#tglModal"
-                                                        data-id_kkb="{{ $item->kkb_id }}"
-                                                        href="#">Atur</a>
+                                                        <a style="text-decoration: underline;" data-toggle="modal"
+                                                            data-target="#tglModal" data-id_kkb="{{ $item->kkb_id }}"
+                                                            href="#">Atur</a>
                                                     @else
-                                                    {{ $item->tgl_ketersediaan_unit }}
+                                                        {{ $item->tgl_ketersediaan_unit }}
                                                     @endif
                                                 @elseif ($item->tgl_ketersediaan_unit)
                                                     {{ $item->tgl_ketersediaan_unit }}
                                                 @else
-                                                <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -290,15 +297,15 @@
                                             </td>
                                             <td>
                                                 @isset($setImbalJasa)
-                                                {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
+                                                    {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
                                                 @endisset
                                             </td>
                                             <td
                                                 class="@if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
                                                 @if ($setImbalJasa)
-                                                {{ $item->status }}
+                                                    {{ $item->status }}
                                                 @else
-                                                progress
+                                                    progress
                                                 @endif
                                             </td>
                                         </tr>
@@ -372,6 +379,8 @@
             }
 
             $('#basic-datatables').DataTable({});
+        </script>
+        <script>
             $(document).ready(function() {
                 const ctx = document.getElementById('chart').getContext('2d');
 
@@ -422,11 +431,11 @@
             <script>
                 $(document).ready(function() {
                     var doughnutChart = document.getElementById('chartCabang').getContext('2d');
-    
-                    const target = parseInt("{{$target}}");
-                    const done = parseInt("{{$total_kkb_done}}");
+
+                    const target = parseInt("{{ $target }}");
+                    const done = parseInt("{{ $total_kkb_done }}");
                     const undone = target - done;
-    
+
                     var myDoughnutChart = new Chart(doughnutChart, {
                         type: 'doughnut',
                         data: {
@@ -434,7 +443,7 @@
                                 data: [undone, done],
                                 backgroundColor: ['#AFD3E2', '#19A7CE']
                             }],
-    
+
                             labels: [
                                 'Belum Terealisasi',
                                 'Sudah Terealisasi',
