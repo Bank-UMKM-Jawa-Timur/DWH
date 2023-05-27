@@ -381,18 +381,20 @@
             $('#basic-datatables').DataTable({});
         </script>
         <script>
+            var label = {{ Js::from($barChartLabel) }};
+            var data = {{ Js::from($barChartData) }};
+            console.log(data);
             $(document).ready(function() {
                 const ctx = document.getElementById('chart').getContext('2d');
 
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ['Cabang A', 'Cabang B', 'Cabang C', 'Cabang D', 'Cabang E', 'Cabang F',
-                            'Cabang G', 'Cabang H'
-                        ],
+                        labels: label,
                         datasets: [{
                             label: 'Data Set',
-                            data: [10, 20, 30, 40, 50, 35, 65, 75, 32],
+                            data: data,
+                            fill: false,
                             backgroundColor: [
                                 'rgba(255, 99, 132)',
                                 'rgba(255, 159, 64)',
@@ -408,11 +410,12 @@
                     },
                     options: {
                         scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        },
-                        maintainAspectRatio: true,
+                            yAxes: [{
+                                ticks: {
+                                    min: 0,
+                                }
+                            }]
+                        }
                     }
                 });
             });

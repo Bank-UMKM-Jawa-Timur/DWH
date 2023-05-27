@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Kredit;
 use App\Models\Notification;
 use App\Models\Target;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -18,41 +19,41 @@ class DashboardController extends Controller
             $param['title'] = 'Dashboard';
             $param['pageTitle'] = 'Dashboard';
             $user = User::select(
-                        'users.id',
-                        'users.role_id',
-                        'r.name AS role_name',
-                    )
-                    ->join('roles AS r', 'r.id', 'users.role_id')
-                    ->where('users.id', Auth::user()->id)
-                    ->first();
+                'users.id',
+                'users.role_id',
+                'r.name AS role_name',
+            )
+                ->join('roles AS r', 'r.id', 'users.role_id')
+                ->where('users.id', Auth::user()->id)
+                ->first();
             $param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit'])->orderBy('name', 'DESC')->get();
             $param['data'] = Kredit::select(
-                        'kredits.id',
-                        'kredits.pengajuan_id',
-                        'kredits.kode_cabang',
-                        'kkb.id AS kkb_id',
-                        'kkb.tgl_ketersediaan_unit',
-                        'kkb.id_tenor_imbal_jasa',
-                        \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
-                        \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-                        \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                        // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
-                        \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'process', 'done') AS status"),
-                    )
-                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
-                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
-                    ->groupBy([
-                        'kredits.id',
-                        'kredits.pengajuan_id',
-                        'kredits.kode_cabang',
-                        'kkb.id_tenor_imbal_jasa',
-                        'kkb.id',
-                        'kkb.tgl_ketersediaan_unit',
-                        ])
-                        ->orderBy('total_file_uploaded')
-                        ->orderBy('total_file_confirmed')
-                        ->paginate(5);
-                        
+                'kredits.id',
+                'kredits.pengajuan_id',
+                'kredits.kode_cabang',
+                'kkb.id AS kkb_id',
+                'kkb.tgl_ketersediaan_unit',
+                'kkb.id_tenor_imbal_jasa',
+                \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
+                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'process', 'done') AS status"),
+            )
+                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                ->groupBy([
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.kode_cabang',
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.id',
+                    'kkb.tgl_ketersediaan_unit',
+                ])
+                ->orderBy('total_file_uploaded')
+                ->orderBy('total_file_confirmed')
+                ->paginate(5);
+
             $param['role'] = $user->role_name;
             $param['total_cabang'] = User::where('role_id', 2)->count();
             $param['total_vendor'] = User::where('role_id', 3)->count();
@@ -60,8 +61,8 @@ class DashboardController extends Controller
             $param['target'] = count($target) ? $target->first() : 0;
             if (Auth::user()->role_id != 3) {
                 $param['total_kkb_done'] = Kredit::join('documents AS d', 'd.kredit_id', 'kredits.id')
-                                        ->where('d.document_category_id', 2)
-                                        ->count();
+                    ->where('d.document_category_id', 2)
+                    ->count();
                 $param['total_pengguna'] = User::count();
             }
 
@@ -78,14 +79,23 @@ class DashboardController extends Controller
                     'nt.action_id',
                     'nt.role_id',
                 )
-                ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
-                ->where('notifications.user_id', Auth::user()->id)
-                ->where('notifications.read', false)
-                ->orderBy('notifications.read')
-                ->orderBy('notifications.created_at', 'DESC')
-                ->get();
+                    ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
+                    ->where('notifications.user_id', Auth::user()->id)
+                    ->where('notifications.read', false)
+                    ->orderBy('notifications.read')
+                    ->orderBy('notifications.created_at', 'DESC')
+                    ->get();
             }
 
+            $arrLabelChartLabel = [];
+            $arrBarChartData = [];
+            $barChart = DB::select('SELECT COUNT(*) as total, k.kode_cabang FROM documents as d JOIN kredits as k ON k.id = d.kredit_id WHERE d.document_category_id = 1 AND d.is_confirm = true GROUP BY k.kode_cabang');
+            foreach ($barChart as $k => $v) {
+                array_push($arrLabelChartLabel, $v->kode_cabang);
+                array_push($arrBarChartData, $v->total);
+            }
+            $param['barChartData'] = $arrBarChartData;
+            $param['barChartLabel'] = $arrLabelChartLabel;
             return view('pages.home', $param);
         } catch (\Exception $e) {
             return redirect('/dashboard')->withError('Terjadi kesalahan');
@@ -101,9 +111,9 @@ class DashboardController extends Controller
             'users.role_id',
             'r.name AS role_name',
         )
-        ->join('roles AS r', 'r.id', 'users.role_id')
-        ->where('users.id', Auth::user()->id)
-        ->first();
+            ->join('roles AS r', 'r.id', 'users.role_id')
+            ->where('users.id', Auth::user()->id)
+            ->first();
 
         return $user->role_name;
     }
