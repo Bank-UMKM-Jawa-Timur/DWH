@@ -7,6 +7,7 @@ use App\Http\Controllers\LogActivitesController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class PenggunaController extends Controller
@@ -98,9 +99,29 @@ class PenggunaController extends Controller
         }
 
         try {
+            // retrieve kode_cabang from api
+            $kode_cabang = '';
+            $host = config('global.los_api_host');
+            $apiURL = $host.'/kkb/get-data-users/'.$request->nip;
+    
+            $headers = [
+                'token' => config('global.los_api_token')
+            ];
+    
+            try {
+                $response = Http::withHeaders($headers)->get($apiURL);
+    
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+
+                $kode_cabang = $responseBody['kode_cabang'];
+            } catch(\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
             $newUser = new User();
             $newUser->nip = $request->nip;
             $newUser->email = $request->email;
+            $newUser->kode_cabang = $kode_cabang;
             $newUser->password = $request->password;
             $newUser->role_id = $request->role_id;
             $newUser->save();
