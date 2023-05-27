@@ -71,6 +71,31 @@ class KreditController extends Controller
                     ->orderBy('total_file_confirmed')
                 ->paginate(5);
 
+            foreach ($data as $key => $value) {
+                // retrieve from api
+                $host = config('global.los_api_host');
+                $apiURL = $host.'/kkb/get-data-pengajuan/'.$value->pengajuan_id;
+        
+                $headers = [
+                    'token' => config('global.los_api_token')
+                ];
+        
+                try {
+                    $response = Http::withHeaders($headers)->get($apiURL);
+        
+                    $statusCode = $response->status();
+                    $responseBody = json_decode($response->getBody(), true);
+                    // input file path
+                    $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/".$responseBody['sppk'];
+                    $responseBody['po'] = "/upload/$value->pengajuan_id/po/".$responseBody['po'];
+                    $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/".$responseBody['pk'];
+
+                    // insert response to object
+                    $value->detail = $responseBody;
+                } catch(\Illuminate\Http\Client\ConnectionException $e) {
+                    // return $e->getMessage();
+                }
+            }
             $this->param['data'] = $data;
 
             return view('pages.kredit.index', $this->param);

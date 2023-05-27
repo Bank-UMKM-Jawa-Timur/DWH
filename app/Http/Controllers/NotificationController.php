@@ -171,7 +171,7 @@ class NotificationController extends Controller
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
-                    $user = User::where('kode_cabang', $kredit->kode_cabang)->whereIn('role_id', $roles)->get();
+                    $user = User::get();
                 }
                 else {
                     $arrRole = explode(',', $value->role_id);
@@ -211,7 +211,7 @@ class NotificationController extends Controller
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
-                    $user = User::where('kode_cabang', $kredit->kode_cabang)->whereIn('role_id', $roles)->get();
+                    $user = User::get();
                 }
                 else {
                     $arrRole = explode(',', $value->role_id);

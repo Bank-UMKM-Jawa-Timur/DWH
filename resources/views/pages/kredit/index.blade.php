@@ -75,7 +75,7 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->id.'-'.$item->kode_cabang }}</td>
+                                            <td>{{ $item->kode_cabang }}</td>
                                             <td class="link-po">
                                                 @if ($buktiPembayaran)
                                                     @isset($item->detail)
