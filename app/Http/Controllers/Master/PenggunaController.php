@@ -122,7 +122,7 @@ class PenggunaController extends Controller
             $newUser->nip = $request->nip;
             $newUser->email = $request->email;
             $newUser->kode_cabang = $kode_cabang;
-            $newUser->password = $request->password;
+            $newUser->password = \Hash::make($request->password);
             $newUser->role_id = $request->role_id;
             $newUser->save();
 
