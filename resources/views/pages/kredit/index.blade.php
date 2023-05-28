@@ -81,14 +81,14 @@
                                                     @isset($item->detail)
                                                     <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
                                                         data-tanggalPo="20 April 2023"
-                                                        data-filePo="{{config('global.los_host').$item->detail['po']}}">
+                                                        data-filepo="{{config('global.los_host').$item->detail['po']}}">
                                                         {{$item->detail['nama']}}</a>
                                                     @endisset
                                                 @else
                                                     @isset($item->detail)
                                                     <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
                                                         data-tanggalPo="20 April 2023"
-                                                        data-filePo="{{config('global.los_host').$item->detail['po']}}">
+                                                        data-filepo="{{config('global.los_host').$item->detail['po']}}">
                                                         {{$item->detail['no_po']}}</a>
                                                     @endisset
                                                 @endif
@@ -118,7 +118,7 @@
                                                             {{ date('Y-m-d', strtotime($item->tgl_ketersediaan_unit . ' +1 days')) }}</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -135,7 +135,7 @@
                                                             {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -152,7 +152,7 @@
                                                             {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -169,13 +169,15 @@
                                                             {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +3 month')) }}</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                @isset($setImbalJasa)
+                                                @if($setImbalJasa)
                                                 {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
-                                                @endisset
+                                                @else
+                                                -
+                                                @endif
                                             </td>
                                             <td
                                                 class="@if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
@@ -254,7 +256,7 @@
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
-                                                                @if (!$stnk->is_confirm || !$polis->is_confirm || !$bpkb->is_confirm)
+                                                                @if (isset($stnk->is_confirm) || isset($polis->is_confirm) || isset($bpkb->is_confirm))
                                                                     <a data-toggle="modal" data-target="#uploadBerkasModal"
                                                                         data-id_kkb="{{ $item->kkb_id }}"
                                                                         data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
@@ -343,8 +345,8 @@
                                 <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File PO</button>
                                 <button onclick="printPDF()" class="btn btn-info btn-sm" id="printfile">Print File
                                     PO</button>
-                                <iframe id="filePo"
-                                    src="C:\Users\iqbalronii\Downloads\REv 16 Jan_Jadwal Genap 2023.pdf" class="mt-2"
+                                <iframe id="filepo"
+                                    src="" class="mt-2"
                                     width="100%" height="500"></iframe>
                             </div>
                         </div>
@@ -493,9 +495,7 @@
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
-                                @if (Auth::user()->role_id == 2)
-                                    <div id="preview_stnk"></div>
-                                @endif
+                                <iframe id="preview_stnk" src="" width="100%" height="500px"></iframe>
                                 @if (Auth::user()->role_id == 3)
                                     <div class="form-group">
                                         <label>Scan Berkas (pdf)</label>
@@ -522,9 +522,7 @@
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
-                                @if (Auth::user()->role_id == 2)
-                                    <div id="preview_polis"></div>
-                                @endif
+                                <iframe id="preview_polis" src="" width="100%"></iframe>
                                 @if (Auth::user()->role_id == 3)
                                     <div class="form-group">
                                         <label>Scan Berkas (pdf)</label>
@@ -551,9 +549,7 @@
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
-                                @if (Auth::user()->role_id == 2)
-                                    <div id="preview_bpkb"></div>
-                                @endif
+                                <iframe id="preview_bpkb" src="" width="100%"></iframe>
                                 @if (Auth::user()->role_id == 3)
                                     <div class="form-group">
                                         <label>Scan Berkas (pdf)</label>
@@ -750,14 +746,14 @@
                 };
             }
 
-            $(document).on("click", ".link-po", function() {
+            $(document).on("click", ".open-po", function() {
                 var nomorPo = $(this).data('nomorpo');
                 var tanggalPo = $(this).data('tanggalpo');
                 var filePo = $(this).data('filepo') + "#toolbar=0";
-
+                console.log("file : "+filePo)
                 $("#nomorPo").text(nomorPo);
                 $("#tanggalPo").text(tanggalPo);
-                $("#filePo").attr("src", filePo);
+                $("#filepo").attr("src", filePo);
             });
         </script>
 
@@ -876,24 +872,32 @@
                 var file_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
                 var file_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
                 var file_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
-
-                $('#modal-berkas #id_kkb').val(id);
-                $('#modal-berkas #id_stnk').val(id_stnk);
-                $('#modal-berkas #id_polis').val(id_polis);
-                $('#modal-berkas #id_bpkb').val(id_bpkb);
-                $('#modal-berkas #no_stnk').val(no_stnk);
-                $('#modal-berkas #no_polis').val(no_polis);
-                $('#modal-berkas #no_bpkb').val(no_bpkb);
-                $('#modal-berkas #stnk_scan').val(file_stnk);
-                $('#modal-berkas #polis_scan').val(file_polis);
-                $('#modal-berkas #bpkb_scan').val(file_bpkb);
+                
+                try {
+                    $('#modal-berkas #id_kkb').val(id);
+                    $('#modal-berkas #id_stnk').val(id_stnk);
+                    $('#modal-berkas #id_polis').val(id_polis);
+                    $('#modal-berkas #id_bpkb').val(id_bpkb);
+                    $('#modal-berkas #no_stnk').val(no_stnk);
+                    $('#modal-berkas #no_polis').val(no_polis);
+                    $('#modal-berkas #no_bpkb').val(no_bpkb);
+                    $('#modal-berkas #stnk_scan').val(file_stnk);
+                    $('#modal-berkas #polis_scan').val(file_polis);
+                    $('#modal-berkas #bpkb_scan').val(file_bpkb);
+                }
+                catch(e) {
+                    console.log('error')
+                }
                 var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk;
                 var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis;
                 var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
 
-                PDFObject.embed(path_stnk, "#preview_stnk");
-                PDFObject.embed(path_polis, "#preview_polis");
-                PDFObject.embed(path_bpkb, "#preview_bpkb");
+                // PDFObject.embed(path_stnk, "#preview_stnk");
+                // PDFObject.embed(path_polis, "#preview_polis");
+                // PDFObject.embed(path_bpkb, "#preview_bpkb");
+                $("#preview_stnk").attr("src", path_stnk);
+                $("#preview_polis").attr("src", path_polis);
+                $("#preview_bpkb").attr("src", path_bpkb);
             })
 
             $('#modal-bukti-pembayaran').on("submit", function(e) {

@@ -97,6 +97,7 @@ class KreditController extends Controller
                 }
             }
             $this->param['data'] = $data;
+            // return $data;
 
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {

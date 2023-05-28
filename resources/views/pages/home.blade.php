@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div> --}}
-        <div class="row">
+        {{--  <div class="row">
             @if (strtolower($role) != 'vendor')
                 <div class="col-sm">
                     <div class="card card-stats card-round">
@@ -88,7 +88,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>  --}}
         @if (strtolower($role) == 'cabang')
             {{-- <div class="col-sm-12"> --}}
             <div class="row">
