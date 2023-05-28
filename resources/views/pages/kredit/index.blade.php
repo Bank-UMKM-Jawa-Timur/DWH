@@ -300,7 +300,10 @@
                                                                 @endif
                                                             @endif
                                                         @endif
-                                                        <a class="dropdown-item" data-toggle="modal"
+                                                        <a class="dropdown-item detail-link"
+                                                            data-toggle="modal"
+                                                            data-target="#detailModal"
+                                                            data-id="{{$item->id}}" 
                                                             href="#">Detail</a>
                                                     </div>
                                                 </div>
@@ -755,6 +758,8 @@
             </div>
         </div>
     </div>
+
+    @include('pages.kredit.detail-modal')
 
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/pdfobject.min.js"></script>

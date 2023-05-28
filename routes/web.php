@@ -12,6 +12,7 @@ use App\Http\Controllers\Master\VendorController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TargetController;
+use App\Models\Kredit;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -76,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/kredit/confirm-document', [KreditController::class, 'confirmDocumentCabang'])->name('kredit.confirm_document');
     Route::post('/kredit/confirm-document-vendor', [KreditController::class, 'confirmDocumentVendor'])->name('kredit.confirm_document_vendor');
     Route::post('/kredit/confirm-penyerahan-unit', [KreditController::class, 'confirmPenyerahanUnit'])->name('kredit.confirm_penyerahan_unit');
+    Route::get('/kredit/{id}', [KreditController::class, 'show'])->name('kredit.show');
 
     Route::get('/log_aktivitas', [LogActivitesController::class, 'index']);
 });

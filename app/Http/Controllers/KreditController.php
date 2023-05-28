@@ -879,4 +879,65 @@ class KreditController extends Controller
             return response()->json($response);
         }
     }
+
+    public function show($id)
+    {
+        $status = '';
+        $message = '';
+        $data = null;
+
+        try {
+            $data = DocumentCategory::select(
+                                'd.id',
+                                'd.file',
+                                'document_categories.name AS category',
+                                'd.text'
+                            )
+                            ->leftJoin('documents AS d', 'd.document_category_id', 'document_categories.id')
+                            ->where('d.kredit_id', $id)
+                            ->orWhereNull('d.kredit_id')
+                            ->get();
+            foreach ($data as $key => $value) {
+                switch ($value->category) {
+                    case "Bukti Pembayaran":
+                        $value->file_path = asset('storage')."/dokumentasi-bukti-pembayaran/".$value->file;
+                        break;
+                    case "Penyerahan Unit":
+                        $value->file_path = asset('storage')."/dokumentasi-peyerahan/".$value->file;
+                        break;
+                    case "BPKB":
+                        $value->file_path = asset('storage')."/dokumentasi-bpkb/".$value->file;
+                        break;
+                    case "Polis":
+                        $value->file_path = asset('storage')."/dokumentasi-polis/".$value->file;
+                        break;
+                    case "STNK":
+                        $value->file_path = asset('storage')."/dokumentasi-stnk/".$value->file;
+                        break;
+                    default:
+                        $value->file_path = 'not found';
+                        break;
+                }
+            }
+            $status = 'success';
+            $message = 'Berhasil mengambil data';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } catch (\Throwable $th) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $th;
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+                'data' => $data,
+            ];
+
+            return response()->json($response);
+        }
+    }
 }
