@@ -50,15 +50,13 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" data-toggle="modal"
+                                                        <a class="dropdown-item buttonresetpassword" data-toggle="modal"
                                                             data-target="#resetPasswordModal" data-id="{{ $item->id }}"
-                                                            data-nip="{{ $item->nip }}" data-email="{{ $item->email }}"
-                                                            data-role="{{ $item->role_id }}" href="#">Reset
+                                                            href="#" id="buttonresetpassword">Reset
                                                             Password</a>
                                                         <a class="dropdown-item editModal" data-toggle="modal"
                                                             data-target="#editModal" data-id="{{ $item->id }}"
-                                                            data-nip="{{ $item->nip }}"
-                                                            data-email="{{ $item->email }}"
+                                                            data-nip="{{ $item->nip }}" data-email="{{ $item->email }}"
                                                             data-role="{{ $item->role_id }}" href="#">Edit</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
                                                             data-target="#deleteModal" data-id="{{ $item->id }}"
@@ -215,6 +213,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="alert alert-success copyPesan" role="alert">
+                    </div>
                     <form id="modal-reset-password-form">
                         <input type="hidden" name="reset_password_id" id="reset-password-id">
                         <div class="form-group">
@@ -240,7 +240,8 @@
                                                 </button>
                                             </div>
                                             <div class="input-group-append">
-                                                <button class="btn btn-black btn-border" type="button" id="button-copy">
+                                                <button onclick="copyToClipboard()" class="btn btn-black btn-border"
+                                                    type="button" id="button-copy">
                                                     <span class="fas fa-clipboard" id="basic-addon2"></span>
                                                 </button>
                                             </div>
@@ -252,7 +253,7 @@
                         </div>
 
                         <div class="form-group">
-                            <button id="reset-password-button" class="btn btn-primary">Simpan</button>
+                            <button type="submit" id="reset-password-button" class="btn btn-primary">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -298,6 +299,70 @@
 
                 update();
             })
+
+
+
+
+            $("#button-generate").click(function(e) {
+                var characters = "abcdefghijklmnopqrstuvwxyz";
+                var randomCharacter = '';
+                var number = 8;
+                for (let i = 0; i < number; i++) {
+                    var randomIndex = Math.floor(Math.random() * characters.length);
+                    randomCharacter += characters.charAt(randomIndex);
+                }
+                $("#reset-password").val(randomCharacter);
+            })
+
+            $(".buttonresetpassword").click(function(e) {
+                var id = $(this).data('id');
+                $(".copyPesan").hide();
+                $("#reset-password-id").val(id);
+            });
+
+            function copyToClipboard() {
+                var pw = $("#reset-password").val();
+
+                if (pw != '') {
+                    navigator.clipboard.writeText(pw)
+                        .then(function() {
+                            // $("#copy-pesan").prop("hidden", true);
+                            $(".copyPesan").show();
+                            $(".copyPesan").html(pw + " Berhasil Di Copy");
+                        })
+                        .catch(function(error) {
+                            console.error("Failed to copy text to clipboard:", error);
+                        });
+                }
+            }
+
+
+            $("#modal-reset-password-form").on('submit', function(e) {
+                e.preventDefault();
+                var form = $(this).serialize();
+                var id = $("#reset-password-id").val();
+                var password = $("#reset-password").val();
+                $.ajax({
+                    url: `{{ route('pengguna.reset_password') }}`,
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: id,
+                        password: password
+                    },
+                    success: function(i) {
+                        // console.log(i);
+                        $('#resetPasswordModal').modal().hide();
+                        $('body').removeClass('modal-open');
+                        SuccessMessage("Password Berhasil Diubah");
+                    },
+                    error: function(e) {
+                        console.log(e);
+                    }
+                })
+            })
+
+
 
             function store() {
                 const req_nip = document.getElementById('add-nip')

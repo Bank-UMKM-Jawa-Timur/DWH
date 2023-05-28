@@ -254,8 +254,12 @@
                                                             <span class="text-warning">Menunggu konfirmasi</span>
                                                         @endif
                                                     @else
-                                                        <span class="text-info">Maksimal tanggal upload STNK
-                                                            {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                        @if (Auth::user()->role_id == 3)
+                                                            <span class="text-info">Maksimal tanggal upload STNK
+                                                                {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                        @else
+                                                            <span class="text-warning">Menunggu Penyerahan STNK</span>
+                                                        @endif
                                                     @endif
                                                 @else
                                                     <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
@@ -271,8 +275,12 @@
                                                             <span class="text-warning">Menunggu konfirmasi</span>
                                                         @endif
                                                     @else
-                                                        <span class="text-info">Maksimal tanggal upload Polis
-                                                            {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                        @if (Auth::user()->role_id == 3)
+                                                            <span class="text-info">Maksimal tanggal upload Polis
+                                                                {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                        @else
+                                                            <span class="text-warning">Menunggu Penyerahan Polis</span>
+                                                        @endif
                                                     @endif
                                                 @else
                                                     <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
@@ -288,8 +296,12 @@
                                                             <span class="text-warning">Menunggu konfirmasi</span>
                                                         @endif
                                                     @else
-                                                        <span class="text-info">Maksimal tanggal upload Polis
-                                                            {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +3 month')) }}</span>
+                                                        @if (Auth::user()->role_id == 3)
+                                                            <span class="text-info">Maksimal tanggal upload BPKB
+                                                                {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                        @else
+                                                            <span class="text-warning">Menunggu Penyerahan BPKB</span>
+                                                        @endif
                                                     @endif
                                                 @else
                                                     <span class="text-danger">Menunggu tanggal ketersediaan unit</span>

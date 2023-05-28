@@ -250,8 +250,7 @@ class PenggunaController extends Controller
     public function resetPassword(Request $request)
     {
         $status = '';
-        $message = '';
-
+        $message = $request->all();
         $validator = Validator::make($request->all(), [
             'password' => 'required|min:8',
         ], [
