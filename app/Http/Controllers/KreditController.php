@@ -6,6 +6,10 @@ use App\Models\Document;
 use App\Models\DocumentCategory;
 use App\Models\KKB;
 use App\Models\Kredit;
+use App\Models\Notification;
+use App\Models\NotificationTemplate;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +75,7 @@ class KreditController extends Controller
                     ->orderBy('total_file_confirmed')
                 ->paginate(5);
 
-            foreach ($data as $key => $value) {
+            /*foreach ($data as $key => $value) {
                 // retrieve from api
                 $host = config('global.los_api_host');
                 $apiURL = $host.'/kkb/get-data-pengajuan/'.$value->pengajuan_id;
@@ -95,7 +99,7 @@ class KreditController extends Controller
                 } catch(\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
-            }
+            }*/
             $this->param['data'] = $data;
             // return $data;
 
@@ -172,7 +176,7 @@ class KreditController extends Controller
         $status = '';
         $message = '';
         $action_id = 6;
-
+        
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',
             'date' => 'required',

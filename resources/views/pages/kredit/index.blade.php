@@ -76,21 +76,25 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->kode_cabang }}</td>
-                                            <td class="link-po">
+                                            <td class="@if($item->detail) link-po @endif">
                                                 @if ($buktiPembayaran)
-                                                    @isset($item->detail)
+                                                    @if($item->detail)
                                                     <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
                                                         data-tanggalPo="20 April 2023"
                                                         data-filepo="{{config('global.los_host').$item->detail['po']}}">
                                                         {{$item->detail['nama']}}</a>
-                                                    @endisset
+                                                    @else
+                                                    -
+                                                    @endif
                                                 @else
-                                                    @isset($item->detail)
+                                                    @if($item->detail)
                                                     <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
                                                         data-tanggalPo="20 April 2023"
                                                         data-filepo="{{config('global.los_host').$item->detail['po']}}">
                                                         {{$item->detail['no_po']}}</a>
-                                                    @endisset
+                                                    @else
+                                                    -
+                                                    @endif
                                                 @endif
                                             </td>
                                             <td>
@@ -127,18 +131,22 @@
                                                             <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
                                                                 target="_blank">{{ $stnk->date }}</a>
                                                         @else
-                                                            <span class="text-warning">Menunggu konfirmasi</span>
+                                                            <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
                                                         @endif
                                                     @else
                                                         @if (Auth::user()->role_id == 3)
                                                             <span class="text-info">Maksimal tanggal upload STNK
                                                                 {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
                                                         @else
-                                                            <span class="text-warning">Menunggu Penyerahan STNK</span>
+                                                            <span class="text-danger">Menunggu penyerahan STNK</span>
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
+                                                    @if (Auth::user()->role_id == 3)
+                                                    <span class="text-danger">Menunggu penyerahan unit</span>
+                                                    @else
+                                                    <span class="text-danger">Menunggu penyerahan unit</span>
+                                                    @endif
                                                 @endif
                                             </td>
                                             <td>
@@ -148,7 +156,11 @@
                                                             <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
                                                                 target="_blank">{{ $polis->date }}</a>
                                                         @else
-                                                            <span class="text-warning">Menunggu konfirmasi</span>
+                                                            @if (Auth::user()->role_id == 3)
+                                                            <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
+                                                            @else
+                                                            <span class="text-danger">Menunggu penyerahan polis</span>
+                                                            @endif
                                                         @endif
                                                     @else
                                                         @if (Auth::user()->role_id == 3)

@@ -175,7 +175,10 @@ class NotificationController extends Controller
                 }
                 else {
                     $arrRole = explode(',', $value->role_id);
-                    $user = User::where('kode_cabang', $kredit->kode_cabang)->whereIn('role_id', $arrRole)->get();
+                    $user = User::where('kode_cabang', $kredit->kode_cabang)
+                                ->whereIn('role_id', $arrRole)
+                                ->orWhereIn('role_id', $arrRole)
+                                ->get();
                 }
                 foreach ($user as $key => $item) {
                     $createNotification = new Notification();
@@ -215,7 +218,10 @@ class NotificationController extends Controller
                 }
                 else {
                     $arrRole = explode(',', $value->role_id);
-                    $user = User::where('kode_cabang', $kredit->kode_cabang)->whereIn('role_id', $arrRole)->get();
+                    $user = User::where('kode_cabang', $kredit->kode_cabang)
+                                ->whereIn('role_id', $arrRole)
+                                ->orWhereIn('role_id', $arrRole)
+                                ->get();
                 }
                 foreach ($user as $key => $item) {
                     $createNotification = new Notification();

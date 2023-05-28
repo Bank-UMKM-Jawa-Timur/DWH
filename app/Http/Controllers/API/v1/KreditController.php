@@ -61,7 +61,7 @@ class KreditController extends Controller
                 $createKKB->save();
 
                 // send notification
-                $extraMessage = view('notifications.detail-notif')->with('nomor', $request->nomor)->render();
+                $extraMessage = view('notifications.detail-notif')->with('nomor', $request->nomor_pengajuan)->render();
                 $this->notificationController->sendWithExtra(2, $model->id, $extraMessage);
 
                 $req_status = HttpFoundationResponse::HTTP_OK;
