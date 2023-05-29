@@ -22823,3 +22823,37 @@ body[data-background-color="dark"] .board {
     font-weight: 600;
     margin: 0;
 }
+
+.modal .img-detailpo {
+    padding: 0;
+}
+
+.modal .title-detailpo {
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.modal .form-detailpo {
+    background-color: #EEEEEE;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.modaldetailpo .nav-link {
+    margin-right: 5px;
+    background-color: #F3F3F4;
+    border-top: 0.2px solid #EEEEEE;
+    border-left: 0.2px solid #EEEEEE;
+    border-right: 0.2px solid #EEEEEE;
+    /* border-radius: 10px; */
+}
+
+/* .modaldetailpo .nav-tabs {
+    border: 0;
+}
+
+/* .modaldetailpo .nav-link.active {
+    background-color: #1F1D62;
+    border-radius: 10px;
+    color: #fff;
+} */
