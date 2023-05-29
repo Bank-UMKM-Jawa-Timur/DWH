@@ -13,14 +13,15 @@
                     <div class="col">
                         @if (Auth::user()->role_id != 3)
                         <h4 class="m-0">Data Pengajuan</h4>
-                        <p class="m-0">Nomor : 23894723</p>
-                        <p class="m-0">Nama : Ahmad Riyanto</p>
+                        <p class="m-0" id="detail_nama_pengaju">Nama : Ahmad Riyanto</p>
                         <hr>
                         @endif
                         <h4 class="m-0">Data PO</h4>
-                        <p class="m-0">Nomor : 12398123</p>
-                        <p class="m-0">Kendaraan : Honda Beat</p>
-                        <p class="m-0">Jumlah Pemesanan : 2</p>
+                        <p class="m-0" id="detail_no_po">Nomor : 12398123</p>
+                        <p class="m-0" id="detail_kendaraan">Kendaraan : Honda Beat</p>
+                        <p class="m-0" id="detail_tahun">Tahun : -</p>
+                        <p class="m-0" id="detail_harga">Harga : -</p>
+                        <p class="m-0" id="detail_jumlah_pesanan">Jumlah Pemesanan : -</p>
                     </div>
                     <div class="col">
                         <img class="img img-thumbnail" src="https://penjualmobil.com/wp-content/uploads/2022/02/Foto-Penyerahan-Unit-Adrian-3.jpeg" alt="bukti penyerahan unit">
@@ -49,7 +50,7 @@
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_stnk" name="no_stnk">
+                                        <input type="text" class="form-control" id="detail_no_stnk" name="no_stnk" readonly>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -61,7 +62,7 @@
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_polis" name="no_polis">
+                                        <input type="text" class="form-control" id="detail_no_polis" name="no_polis" readonly>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -73,7 +74,7 @@
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_bpkb" name="no_bpkb">
+                                        <input type="text" class="form-control" id="detail_no_bpkb" name="no_bpkb" readonly>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -97,23 +98,23 @@
             url: "{{url('/kredit')}}/"+id,
             method: "GET",
             success: function(response) {
-                for(var i = 0; i < response.data.length; i++) {
+                for(var i = 0; i < response.data.documents.length; i++) {
                     var content = '';
-                    if (response.data[i].file != "") {
-                        switch(response.data[i].category) {
+                    if (response.data.documents[i].file != "") {
+                        switch(response.data.documents[i].category) {
                             case 'STNK':
-                                $('#detail_no_stnk').val(response.data[i].text)
-                                $('#detail_preview_stnk').attr('src', response.data[i].file_path+"#toolbar=0")
+                                $('#detail_no_stnk').val(response.data.documents[i].text)
+                                $('#detail_preview_stnk').attr('src', response.data.documents[i].file_path+"#toolbar=0")
                                 $('#detail_ket_stnk').css('display', 'none')
                                 break;
                             case 'Polis':
-                                $('#detail_no_polis').val(response.data[i].text)
-                                $('#detail_preview_polis').attr('src', response.data[i].file_path+"#toolbar=0")
+                                $('#detail_no_polis').val(response.data.documents[i].text)
+                                $('#detail_preview_polis').attr('src', response.data.documents[i].file_path+"#toolbar=0")
                                 $('#detail_ket_polis').css('display', 'none')
                                 break;
                             case 'BPKB':
-                                $('#detail_no_bpkb').val(response.data[i].text)
-                                $('#detail_preview_bpkb').attr('src', response.data[i].file_path+"#toolbar=0")
+                                $('#detail_no_bpkb').val(response.data.documents[i].text)
+                                $('#detail_preview_bpkb').attr('src', response.data.documents[i].file_path+"#toolbar=0")
                                 $('#detail_ket_bpkb').css('display', 'none')
                                 break;
                             default:
@@ -121,7 +122,7 @@
                         }
                     }
                     else {
-                        switch(response.data[i].category) {
+                        switch(response.data.documents[i].category) {
                             case 'STNK':
                                 $('#detail_no_stnk').css('display', 'none')
                                 $('#detail_preview_stnk').css('display', 'none')
@@ -141,10 +142,19 @@
                                 break;
                         }
                     }
+                    if (response.data.pengajuan) {
+                        var data = response.data.pengajuan;
+                        $('#detail_nama_pengaju').html('Nama : '+data.nama);
+                        $('#detail_no_po').html('Nomor : '+data.no_po);
+                        $('#detail_kendaraan').html('Kendaraan : '+data.kendaraan);
+                        $('#detail_tahun').html('Tahun : '+data.tahun_kendaraan);
+                        $('#detail_harga').html('Harga : '+'Rp '+formatMoney(data.harga_kendaraan, 0, ',', '.'));
+                        $('#detail_jumlah_pesanan').html('Jumlah Pemesanan : '+data.jumlah_kendaraan);
+                    }
                 }
             },
             error: function(error) {
-                console.log(error)
+                ErrorMessage('Terjadi kesalahan')
             }
         })
     })

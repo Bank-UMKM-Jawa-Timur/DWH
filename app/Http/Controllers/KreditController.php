@@ -887,7 +887,8 @@ class KreditController extends Controller
         $data = null;
 
         try {
-            $data = DocumentCategory::select(
+            $kredit = Kredit::find($id);
+            $document = DocumentCategory::select(
                                 'd.id',
                                 'd.file',
                                 'document_categories.name AS category',
@@ -897,7 +898,7 @@ class KreditController extends Controller
                             ->where('d.kredit_id', $id)
                             ->orWhereNull('d.kredit_id')
                             ->get();
-            foreach ($data as $key => $value) {
+            foreach ($document as $key => $value) {
                 switch ($value->category) {
                     case "Bukti Pembayaran":
                         $value->file_path = asset('storage')."/dokumentasi-bukti-pembayaran/".$value->file;
@@ -919,6 +920,34 @@ class KreditController extends Controller
                         break;
                 }
             }
+
+            // retrieve from api
+            $host = config('global.los_api_host');
+            $apiURL = $host.'/kkb/get-data-pengajuan/'.$kredit->pengajuan_id;
+    
+            $headers = [
+                'token' => config('global.los_api_token')
+            ];
+    
+            $responseBody = null;
+
+            try {
+                $response = Http::withHeaders($headers)->get($apiURL);
+    
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+                // input file path
+                $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/".$responseBody['sppk'];
+                $responseBody['po'] = "/upload/$value->pengajuan_id/po/".$responseBody['po'];
+                $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/".$responseBody['pk'];
+            } catch(\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
+
+            $data = [
+                'documents' => $document,
+                'pengajuan' => $responseBody,
+            ];
             $status = 'success';
             $message = 'Berhasil mengambil data';
         } catch (\Exception $e) {
