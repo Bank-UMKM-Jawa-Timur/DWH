@@ -28,11 +28,7 @@
                 </div>
             </div>
         </div> --}}
-<<<<<<< Updated upstream
-        {{--  <div class="row">
-=======
         {{-- <div class="row">
->>>>>>> Stashed changes
             @if (strtolower($role) != 'vendor')
                 <div class="col-sm">
                     <div class="card card-stats card-round">
@@ -92,11 +88,7 @@
                     </div>
                 </div>
             </div>
-<<<<<<< Updated upstream
-        </div>  --}}
-=======
         </div> --}}
->>>>>>> Stashed changes
         @if (strtolower($role) == 'cabang')
             {{-- <div class="col-sm-12"> --}}
             <div class="row">

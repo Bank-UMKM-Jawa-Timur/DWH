@@ -138,7 +138,7 @@
                 <div></div>
                 <h1>404</h1>
             </div>
-            <h2>Sedang Perbaikan</h2>
+            <h2>Halaman Tidak Ditemukan</h2>
             <p>Halaman yang Anda cari mungkin telah dihapus jika namanya diubah atau untuk sementara tidak tersedia.</p>
             <a href="{{ URL::previous() }}">Kembali</a>
         </div>
