@@ -172,14 +172,14 @@
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                {{-- <div class="col-sm-6">
                                     <div class="password">
                                         <label for="edit-password">Password</label>
                                         <input type="password" class="form-control" id="edit-password" name="password"
                                             required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-sm-6">
                                     <div class="role">
                                         <label for="exampleFormControlSelect1">Role</label>
@@ -207,7 +207,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit {{ $pageTitle }}</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Reset Password {{ $pageTitle }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
