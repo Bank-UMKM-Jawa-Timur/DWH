@@ -7,26 +7,6 @@
                 Detail
             </div>
             <div class="modal-body">
-                <div class="detail-content">
-                </div>
-                <div class="row">
-                    <div class="col">
-                        @if (Auth::user()->role_id != 3)
-                        <h4 class="m-0">Data Pengajuan</h4>
-                        <p class="m-0" id="detail_nama_pengaju">Nama : Ahmad Riyanto</p>
-                        <hr>
-                        @endif
-                        <h4 class="m-0">Data PO</h4>
-                        <p class="m-0" id="detail_no_po">Nomor : 12398123</p>
-                        <p class="m-0" id="detail_kendaraan">Kendaraan : Honda Beat</p>
-                        <p class="m-0" id="detail_tahun">Tahun : -</p>
-                        <p class="m-0" id="detail_harga">Harga : -</p>
-                        <p class="m-0" id="detail_jumlah_pesanan">Jumlah Pemesanan : -</p>
-                    </div>
-                    <div class="col">
-                        <img class="img img-thumbnail" src="https://penjualmobil.com/wp-content/uploads/2022/02/Foto-Penyerahan-Unit-Adrian-3.jpeg" alt="bukti penyerahan unit">
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col-12">
                         <ul class="nav nav-tabs" id="detail_myTab" role="tablist">
@@ -55,23 +35,20 @@
                                     <div class="row">
                                         <div class="col">
                                             @if (Auth::user()->role_id != 3)
-                                                <div class="form-detailpo">
-                                                    <h4 class="m-0 title-detailpo">Data Pengajuan</h4>
-                                                    <p class="m-0">Nomor : 23894723</p>
-                                                    <p class="m-0">Nama : Ahmad Riyanto</p>
-                                                </div>
+                                            <h4 class="m-0">Data Pengajuan</h4>
+                                            <p class="m-0" id="detail_nama_pengaju">Nama : Ahmad Riyanto</p>
+                                            <hr>
                                             @endif
-                                            <div class="form-detailpo mt-2">
-                                                <h4 class="m-0 title-detailpo">Data PO</h4>
-                                                <p class="m-0">Nomor : 12398123</p>
-                                                <p class="m-0">Kendaraan : Honda Beat</p>
-                                                <p class="m-0">Jumlah Pemesanan : 2</p>
-                                            </div>
-
+                                            <h4 class="m-0">Data PO</h4>
+                                            <p class="m-0" id="detail_no_po">Nomor : 12398123</p>
+                                            <p class="m-0" id="detail_kendaraan">Kendaraan : Honda Beat</p>
+                                            <p class="m-0" id="detail_tahun">Tahun : -</p>
+                                            <p class="m-0" id="detail_harga">Harga : -</p>
+                                            <p class="m-0" id="detail_jumlah_pesanan">Jumlah Pemesanan : -</p>
                                         </div>
                                         <div class="col">
                                             <img class="img img-thumbnail img-detailpo"
-                                                src="https://penjualmobil.com/wp-content/uploads/2022/02/Foto-Penyerahan-Unit-Adrian-3.jpeg"
+                                                src=""
                                                 alt="bukti penyerahan unit">
                                         </div>
                                     </div>
@@ -134,68 +111,73 @@
         $('.detail-link').on('click', function(e) {
             const id = $(this).data('id');
 
-        $.ajax({
-            url: "{{url('/kredit')}}/"+id,
-            method: "GET",
-            success: function(response) {
-                for(var i = 0; i < response.data.documents.length; i++) {
-                    var content = '';
-                    if (response.data.documents[i].file != "") {
-                        switch(response.data.documents[i].category) {
-                            case 'STNK':
-                                $('#detail_no_stnk').val(response.data.documents[i].text)
-                                $('#detail_preview_stnk').attr('src', response.data.documents[i].file_path+"#toolbar=0")
-                                $('#detail_ket_stnk').css('display', 'none')
-                                break;
-                            case 'Polis':
-                                $('#detail_no_polis').val(response.data.documents[i].text)
-                                $('#detail_preview_polis').attr('src', response.data.documents[i].file_path+"#toolbar=0")
-                                $('#detail_ket_polis').css('display', 'none')
-                                break;
-                            case 'BPKB':
-                                $('#detail_no_bpkb').val(response.data.documents[i].text)
-                                $('#detail_preview_bpkb').attr('src', response.data.documents[i].file_path+"#toolbar=0")
-                                $('#detail_ket_bpkb').css('display', 'none')
-                                break;
-                            default:
-                                break;
+            $.ajax({
+                url: "{{url('/kredit')}}/"+id,
+                method: "GET",
+                success: function(response) {
+                    for(var i = 0; i < response.data.documents.length; i++) {
+                        var content = '';
+                        if (response.data.documents[i].category == "Penyerahan Unit") {
+                            if (response.data.documents[i].file != "")
+                                $(".img-detailpo").attr('src', response.data.documents[i].file_path)
+                        }
+                        if (response.data.documents[i].file != "") {
+                            switch(response.data.documents[i].category) {
+                                case 'STNK':
+                                    $('#detail_no_stnk').val(response.data.documents[i].text)
+                                    $('#detail_preview_stnk').attr('src', response.data.documents[i].file_path+"#toolbar=0")
+                                    $('#detail_ket_stnk').css('display', 'none')
+                                    break;
+                                case 'Polis':
+                                    $('#detail_no_polis').val(response.data.documents[i].text)
+                                    $('#detail_preview_polis').attr('src', response.data.documents[i].file_path+"#toolbar=0")
+                                    $('#detail_ket_polis').css('display', 'none')
+                                    break;
+                                case 'BPKB':
+                                    $('#detail_no_bpkb').val(response.data.documents[i].text)
+                                    $('#detail_preview_bpkb').attr('src', response.data.documents[i].file_path+"#toolbar=0")
+                                    $('#detail_ket_bpkb').css('display', 'none')
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else {
+                            switch(response.data.documents[i].category) {
+                                case 'STNK':
+                                    $('#detail_no_stnk').css('display', 'none')
+                                    $('#detail_preview_stnk').css('display', 'none')
+                                    $('#detail_ket_stnk').css('display', 'block')
+                                    break;
+                                case 'Polis':
+                                    $('#detail_no_polis').css('display', 'none !important')
+                                    $('#detail_preview_polis').css('display', 'none')
+                                    $('#detail_ket_polis').css('display', 'block')
+                                    break;
+                                case 'BPKB':
+                                    $('#detail_no_bpkb').css('display', 'none !important')
+                                    $('#detail_preview_bpkb').css('display', 'none')
+                                    $('#detail_ket_bpkb').css('display', 'block')
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        if (response.data.pengajuan) {
+                            var data = response.data.pengajuan;
+                            $('#detail_nama_pengaju').html('Nama : '+data.nama);
+                            $('#detail_no_po').html('Nomor : '+data.no_po);
+                            $('#detail_kendaraan').html('Kendaraan : '+data.kendaraan);
+                            $('#detail_tahun').html('Tahun : '+data.tahun_kendaraan);
+                            $('#detail_harga').html('Harga : '+'Rp '+formatMoney(data.harga_kendaraan, 0, ',', '.'));
+                            $('#detail_jumlah_pesanan').html('Jumlah Pemesanan : '+data.jumlah_kendaraan);
                         }
                     }
-                    else {
-                        switch(response.data.documents[i].category) {
-                            case 'STNK':
-                                $('#detail_no_stnk').css('display', 'none')
-                                $('#detail_preview_stnk').css('display', 'none')
-                                $('#detail_ket_stnk').css('display', 'block')
-                                break;
-                            case 'Polis':
-                                $('#detail_no_polis').css('display', 'none !important')
-                                $('#detail_preview_polis').css('display', 'none')
-                                $('#detail_ket_polis').css('display', 'block')
-                                break;
-                            case 'BPKB':
-                                $('#detail_no_bpkb').css('display', 'none !important')
-                                $('#detail_preview_bpkb').css('display', 'none')
-                                $('#detail_ket_bpkb').css('display', 'block')
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    if (response.data.pengajuan) {
-                        var data = response.data.pengajuan;
-                        $('#detail_nama_pengaju').html('Nama : '+data.nama);
-                        $('#detail_no_po').html('Nomor : '+data.no_po);
-                        $('#detail_kendaraan').html('Kendaraan : '+data.kendaraan);
-                        $('#detail_tahun').html('Tahun : '+data.tahun_kendaraan);
-                        $('#detail_harga').html('Harga : '+'Rp '+formatMoney(data.harga_kendaraan, 0, ',', '.'));
-                        $('#detail_jumlah_pesanan').html('Jumlah Pemesanan : '+data.jumlah_kendaraan);
-                    }
+                },
+                error: function(error) {
+                    ErrorMessage('Terjadi kesalahan')
                 }
-            },
-            error: function(error) {
-                ErrorMessage('Terjadi kesalahan')
-            }
+            })
         })
     </script>
 @endpush
