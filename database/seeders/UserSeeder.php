@@ -25,6 +25,7 @@ class UserSeeder extends Seeder
         $pemasaran->nip = 123456789012345676;
         $pemasaran->password = \Hash::make('12345678');
         $pemasaran->role_id = 2;
+        $pemasaran->kode_cabang = '001';
         $pemasaran->save();
 
         $cabang = new User();

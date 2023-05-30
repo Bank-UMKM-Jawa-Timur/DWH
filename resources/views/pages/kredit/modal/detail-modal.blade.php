@@ -5,6 +5,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 Detail
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -39,11 +42,11 @@
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <h5 class="title-po">Nomor PO</h5>
-                                            <b class="content-po" id="nomorPo">12345678</b>
+                                            <b class="content-po" id="detail_nomorPo">undifined</b>
                                         </div>
                                         <div class="col-sm-6">
                                             <h5 class="title-po">Tanggal PO</h5>
-                                            <b class="content-po" id="tanggalPo">21 Maret 2023</b>
+                                            <b class="content-po" id="detail_tanggalPo">undifined</b>
                                         </div>
                                         <div class="col-sm-12 mt-4">
                                             <h5 class="title-po">File PO</h5>
@@ -53,8 +56,8 @@
                                                 <button onclick="printPDF()" class="btn btn-info btn-sm"
                                                     id="printfile">Print File
                                                     PO</button>
-                                                <iframe id="filepo" src="" class="mt-2" width="100%"
-                                                    height="500"></iframe>
+                                                <iframe id="detail_filepo" src="" class="mt-2" width="100%"
+                                                height="500"></iframe>
                                             </div>
                                         </div>
                                     </div>
@@ -70,7 +73,8 @@
                                                 <h4 class="m-0 title-detailpo">Data Pengajuan</h4>
                                                 <tr>
                                                     <td>Nama</td>
-                                                    <td id="detail_nama_pengaju">: Ahmad Riyanto</td>
+                                                    <td>:</td>
+                                                    <td id="detail_nama_pengaju">undifined</td>
                                                 </tr>
                                                 <hr>
                                             @endif
@@ -79,17 +83,17 @@
                                                 <tr>
                                                     <td>Nomor</td>
                                                     <td> :</td>
-                                                    <td id="detail_no_po">12398123</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Kendaraan</td>
-                                                    <td> :</td>
-                                                    <td id="detail_kendaraan">Sepeda Motor</td>
+                                                    <td id="detail_no_po">undifined</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Merk</td>
                                                     <td> :</td>
-                                                    <td id="detail_kendaraan">Honda Beat</td>
+                                                    <td id="detail_merk">undifined</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Merk</td>
+                                                    <td> :</td>
+                                                    <td id="detail_tipe">undifined</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Tahun</td>
@@ -109,7 +113,7 @@
                                             </table>
                                         </div>
                                         <div class="col">
-                                            <img class="img img-thumbnail img-detailpo" src=""
+                                            <img class="img img-thumbnail img-detailpo" src="{{asset('template/assets/img/img-not-found.jpg')}}"
                                                 alt="bukti penyerahan unit">
                                         </div>
                                     </div>
@@ -182,7 +186,7 @@
                     for (var i = 0; i < response.data.documents.length; i++) {
                         var content = '';
                         if (response.data.documents[i].category == "Penyerahan Unit") {
-                            if (response.data.documents[i].file != "")
+                            if (response.data.documents[i].file)
                                 $(".img-detailpo").attr('src', response.data.documents[i].file_path)
                         }
                         if (response.data.documents[i].file != "") {
@@ -231,14 +235,20 @@
                         }
                         if (response.data.pengajuan) {
                             var data = response.data.pengajuan;
-                            $('#detail_nama_pengaju').html('Nama : ' + data.nama);
-                            $('#detail_no_po').html('Nomor : ' + data.no_po);
-                            $('#detail_kendaraan').html('Kendaraan : ' + data.kendaraan);
-                            $('#detail_tahun').html('Tahun : ' + data.tahun_kendaraan);
-                            $('#detail_harga').html('Harga : ' + 'Rp ' + formatMoney(data
+                            $('#detail_nama_pengaju').html(data.nama);
+                            $('#detail_no_po').html(data.no_po);
+                            $('#detail_merk').html(data.merk);
+                            $('#detail_tipe').html(data.tipe);
+                            $('#detail_tahun').html(data.tahun_kendaraan);
+                            $('#detail_harga').html('Rp ' + formatMoney(data
                                 .harga_kendaraan, 0, ',', '.'));
-                            $('#detail_jumlah_pesanan').html('Jumlah Pemesanan : ' + data
+                            $('#detail_jumlah_pesanan').html(data
                                 .jumlah_kendaraan);
+                            const file_po_path = "{{config('global.los_host')}}"+data.po+"#toolbar=0";
+                            console.log(file_po_path)
+                            $("#detail_filepo").attr("src", file_po_path)
+                            $("#detail_nomorPo").html(data.no_po)
+                            $("#detail_tanggalPo").html(data.tanggal)
                         }
                     }
                 },

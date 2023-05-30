@@ -75,7 +75,7 @@ class KreditController extends Controller
                     ->orderBy('total_file_confirmed')
                 ->paginate(5);
 
-            /*foreach ($data as $key => $value) {
+            foreach ($data as $key => $value) {
                 // retrieve from api
                 $host = config('global.los_api_host');
                 $apiURL = $host.'/kkb/get-data-pengajuan/'.$value->pengajuan_id;
@@ -99,9 +99,8 @@ class KreditController extends Controller
                 } catch(\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
-            }*/
+            }
             $this->param['data'] = $data;
-            // return $data;
 
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {
@@ -937,9 +936,9 @@ class KreditController extends Controller
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
                 // input file path
-                $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/".$responseBody['sppk'];
-                $responseBody['po'] = "/upload/$value->pengajuan_id/po/".$responseBody['po'];
-                $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/".$responseBody['pk'];
+                $responseBody['sppk'] = "/upload/$kredit->pengajuan_id/sppk/".$responseBody['sppk'];
+                $responseBody['po'] = "/upload/$kredit->pengajuan_id/po/".$responseBody['po'];
+                $responseBody['pk'] = "/upload/$kredit->pengajuan_id/pk/".$responseBody['pk'];
             } catch(\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
             }

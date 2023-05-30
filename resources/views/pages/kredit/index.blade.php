@@ -80,7 +80,7 @@
                                                 @if ($buktiPembayaran)
                                                     @if($item->detail)
                                                     <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
-                                                        data-tanggalPo="20 April 2023"
+                                                        data-tanggalPo="{{$item->detail['tanggal']}}"
                                                         data-filepo="{{config('global.los_host').$item->detail['po']}}">
                                                         {{$item->detail['nama']}}</a>
                                                     @else
@@ -131,21 +131,21 @@
                                                             <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
                                                                 target="_blank">{{ $stnk->date }}</a>
                                                         @else
-                                                            <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
+                                                            <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
                                                         @endif
                                                     @else
                                                         @if (Auth::user()->role_id == 3)
                                                             <span class="text-info">Maksimal tanggal upload STNK
                                                                 {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
                                                         @else
-                                                            <span class="text-danger">Menunggu penyerahan STNK</span>
+                                                            <span class="text-warning">Menunggu penyerahan STNK</span>
                                                         @endif
                                                     @endif
                                                 @else
                                                     @if (Auth::user()->role_id == 3)
-                                                    <span class="text-danger">Menunggu penyerahan unit</span>
+                                                    <span class="text-warning">Menunggu penyerahan unit</span>
                                                     @else
-                                                    <span class="text-danger">Menunggu penyerahan unit</span>
+                                                    <span class="text-warning">Menunggu penyerahan unit</span>
                                                     @endif
                                                 @endif
                                             </td>
@@ -157,9 +157,9 @@
                                                                 target="_blank">{{ $polis->date }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
-                                                            <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
+                                                            <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
                                                             @else
-                                                            <span class="text-danger">Menunggu penyerahan polis</span>
+                                                            <span class="text-warning">Menunggu penyerahan polis</span>
                                                             @endif
                                                         @endif
                                                     @else
@@ -171,7 +171,7 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
+                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -192,7 +192,7 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
+                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -282,21 +282,23 @@
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
                                                                 @if (isset($stnk->is_confirm) || isset($polis->is_confirm) || isset($bpkb->is_confirm))
-                                                                    <a data-toggle="modal" data-target="#uploadBerkasModal"
-                                                                        data-id_kkb="{{ $item->kkb_id }}"
-                                                                        data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
-                                                                        data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"
-                                                                        data-id-bpkb="@if ($bpkb) {{ $bpkb->id }}@else- @endif"
-                                                                        data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
-                                                                        data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
-                                                                        data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
-                                                                        data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
-                                                                        data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
-                                                                        data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
-                                                                        href="#"
-                                                                        class="dropdown-item upload-berkas">
-                                                                        Konfirmasi Berkas
-                                                                    </a>
+                                                                    @if (!$stnk->is_confirm || !$polis->is_confirm || !$bpkb->is_confirm)
+                                                                        <a data-toggle="modal" data-target="#uploadBerkasModal"
+                                                                            data-id_kkb="{{ $item->kkb_id }}"
+                                                                            data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
+                                                                            data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"
+                                                                            data-id-bpkb="@if ($bpkb) {{ $bpkb->id }}@else- @endif"
+                                                                            data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
+                                                                            data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
+                                                                            data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
+                                                                            data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
+                                                                            data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
+                                                                            data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
+                                                                            href="#"
+                                                                            class="dropdown-item upload-berkas">
+                                                                            Konfirmasi Berkas
+                                                                        </a>
+                                                                    @endif
                                                                 @endif
                                                             @endif
                                                         @endif
@@ -354,35 +356,7 @@
     </div>
 
     {{-- Detail PO --}}
-    <div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row container">
-                        <div class="col-sm-6">
-                            <h5 class="title-po">Nomor PO</h5>
-                            <b class="content-po" id="nomorPo">12345678</b>
-                        </div>
-                        <div class="col-sm-6">
-                            <h5 class="title-po">Tanggal PO</h5>
-                            <b class="content-po" id="tanggalPo">21 Maret 2023</b>
-                        </div>
-                        <div class="col-sm-12 mt-4">
-                            <h5 class="title-po">File PO</h5>
-                            <div class="form-inline mt-1">
-                                <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File PO</button>
-                                <button onclick="printPDF()" class="btn btn-info btn-sm" id="printfile">Print File
-                                    PO</button>
-                                <iframe id="filepo"
-                                    src="" class="mt-2"
-                                    width="100%" height="500"></iframe>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('pages.kredit.modal.detail-po')
 
     <!-- Tanggal Ketersediaan Unit Modal -->
     <div class="modal fade" id="tglModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -489,127 +463,7 @@
     </div>
 
     <!-- Upload Berkas Modal -->
-    <div class="modal fade" id="uploadBerkasModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <form id="modal-berkas" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="id_kkb" id="id_kkb">
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="stnk-tab" data-toggle="tab" href="#stnk"
-                                    role="tab" aria-controls="stnk" aria-selected="true">STNK</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="polis-tab" data-toggle="tab" href="#polis" role="tab"
-                                    aria-controls="polis" aria-selected="false">Polis</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="bpkb-tab" data-toggle="tab" href="#bpkb" role="tab"
-                                    aria-controls="bpkb" aria-selected="false">BPKB</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="myTabContent">
-                            {{--  STNK  --}}
-                            <div class="tab-pane fade show active" id="stnk" role="tabpanel"
-                                aria-labelledby="stnk-tab">
-                                <input type="hidden" name="id_stnk" id="id_stnk">
-                                <div class="form-group">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="no_stnk" name="no_stnk">
-                                    </div>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
-                                <iframe id="preview_stnk" src="" width="100%" height="500px"></iframe>
-                                @if (Auth::user()->role_id == 3)
-                                    <div class="form-group">
-                                        <label>Scan Berkas (pdf)</label>
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" id="stnk_scan" name="stnk_scan"
-                                                accept="application/pdf">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    <i class="fa fa-file"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                @endif
-                            </div>
-                            {{--  Polis  --}}
-                            <div class="tab-pane fade" id="polis" role="tabpanel" aria-labelledby="polis-tab">
-                                <input type="hidden" name="id_polis" id="id_polis">
-                                <div class="form-group">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="no_polis" name="no_polis">
-                                    </div>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
-                                <iframe id="preview_polis" src="" width="100%"></iframe>
-                                @if (Auth::user()->role_id == 3)
-                                    <div class="form-group">
-                                        <label>Scan Berkas (pdf)</label>
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" id="polis_scan" name="polis_scan"
-                                                accept="application/pdf">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    <i class="fa fa-file"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                @endif
-                            </div>
-                            {{--  BPKB  --}}
-                            <div class="tab-pane fade" id="bpkb" role="tabpanel" aria-labelledby="bpkb-tab">
-                                <input type="hidden" name="id_bpkb" id="id_bpkb">
-                                <div class="form-group">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="no_bpkb" name="no_bpkb">
-                                    </div>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
-                                <iframe id="preview_bpkb" src="" width="100%"></iframe>
-                                @if (Auth::user()->role_id == 3)
-                                    <div class="form-group">
-                                        <label>Scan Berkas (pdf)</label>
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" id="bpkb_scan" name="bpkb_scan"
-                                                accept="application/pdf">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    <i class="fa fa-file"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">
-                                @if (Auth::user()->role_id == 2)
-                                    Konfirmasi
-                                @endif
-                                @if (Auth::user()->role_id == 3)
-                                    Kirim
-                                @endif
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('pages.kredit.modal.upload-berkas-modal')
 
     <!-- Upload BKPB Modal -->
     <div class="modal fade" id="uploadBpkbModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -759,7 +613,7 @@
         </div>
     </div>
 
-    @include('pages.kredit.detail-modal')
+    @include('pages.kredit.modal.detail-modal')
 
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/pdfobject.min.js"></script>
@@ -773,16 +627,6 @@
                     pdfWindow.print();
                 };
             }
-
-            $(document).on("click", ".open-po", function() {
-                var nomorPo = $(this).data('nomorpo');
-                var tanggalPo = $(this).data('tanggalpo');
-                var filePo = $(this).data('filepo') + "#toolbar=0";
-                console.log("file : "+filePo)
-                $("#nomorPo").text(nomorPo);
-                $("#tanggalPo").text(tanggalPo);
-                $("#filepo").attr("src", filePo);
-            });
         </script>
 
         @if (session('status'))
@@ -900,7 +744,7 @@
                 var file_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
                 var file_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
                 var file_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
-                
+
                 try {
                     $('#modal-berkas #id_kkb').val(id);
                     $('#modal-berkas #id_stnk').val(id_stnk);
@@ -916,16 +760,32 @@
                 catch(e) {
                     console.log('error')
                 }
-                var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk;
                 var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis;
                 var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
+                
+                if (file_stnk) {
+                    var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk+"#toolbar=0";
+                    $("#preview_stnk").attr("src", path_stnk);
+                }
+                else {
+                    $("#preview_stnk").css("display", 'none');
+                }
 
-                // PDFObject.embed(path_stnk, "#preview_stnk");
-                // PDFObject.embed(path_polis, "#preview_polis");
-                // PDFObject.embed(path_bpkb, "#preview_bpkb");
-                $("#preview_stnk").attr("src", path_stnk);
-                $("#preview_polis").attr("src", path_polis);
-                $("#preview_bpkb").attr("src", path_bpkb);
+                if (file_polis) {
+                    var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis+"#toolbar=0";
+                    $("#preview_polis").attr("src", path_polis);
+                }
+                else {
+                    $("#preview_polis").css("display", 'none');
+                }
+
+                if (file_bpkb) {
+                    var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb+"#toolbar=0";
+                    $("#preview_bpkb").attr("src", path_bpkb);
+                }
+                else {
+                    $("#preview_bpkb").css("display", 'none');
+                }
             })
 
             $('#modal-bukti-pembayaran').on("submit", function(e) {
