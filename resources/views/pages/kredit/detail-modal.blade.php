@@ -12,6 +12,10 @@
                         <ul class="nav nav-tabs" id="detail_myTab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="stnk-tab" data-toggle="tab" href="#po"
+                                    role="tab" aria-controls="stnk" aria-selected="true">File PO</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="stnk-tab" data-toggle="tab" href="#datapengajuan"
                                     role="tab" aria-controls="stnk" aria-selected="true">Data Pengajuan</a>
                             </li>
                             <li class="nav-item">
@@ -28,39 +32,97 @@
                             </li>
                         </ul>
                         <div class="tab-content pt-3" id="myTabContent">
-                            {{--  PO  --}}
+                            {{--  Data pengajuan  --}}
                             <div class="tab-pane fade show active" id="po" role="tabpanel"
+                                aria-labelledby="detail-stnk-tab">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <h5 class="title-po">Nomor PO</h5>
+                                            <b class="content-po" id="nomorPo">12345678</b>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h5 class="title-po">Tanggal PO</h5>
+                                            <b class="content-po" id="tanggalPo">21 Maret 2023</b>
+                                        </div>
+                                        <div class="col-sm-12 mt-4">
+                                            <h5 class="title-po">File PO</h5>
+                                            <div class="form-inline mt-1">
+                                                <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File
+                                                    PO</button>
+                                                <button onclick="printPDF()" class="btn btn-info btn-sm"
+                                                    id="printfile">Print File
+                                                    PO</button>
+                                                <iframe id="filepo" src="" class="mt-2" width="100%"
+                                                    height="500"></iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{--  Data pengajuan  --}}
+                            <div class="tab-pane fade" id="datapengajuan" role="tabpanel"
                                 aria-labelledby="detail-stnk-tab">
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col">
                                             @if (Auth::user()->role_id != 3)
-                                            <h4 class="m-0">Data Pengajuan</h4>
-                                            <p class="m-0" id="detail_nama_pengaju">Nama : Ahmad Riyanto</p>
-                                            <hr>
+                                                <h4 class="m-0 title-detailpo">Data Pengajuan</h4>
+                                                <tr>
+                                                    <td>Nama</td>
+                                                    <td id="detail_nama_pengaju">: Ahmad Riyanto</td>
+                                                </tr>
+                                                <hr>
                                             @endif
-                                            <h4 class="m-0">Data PO</h4>
-                                            <p class="m-0" id="detail_no_po">Nomor : 12398123</p>
-                                            <p class="m-0" id="detail_kendaraan">Kendaraan : Honda Beat</p>
-                                            <p class="m-0" id="detail_tahun">Tahun : -</p>
-                                            <p class="m-0" id="detail_harga">Harga : -</p>
-                                            <p class="m-0" id="detail_jumlah_pesanan">Jumlah Pemesanan : -</p>
+                                            <h4 class="m-0 title-detailpo">Data PO</h4>
+                                            <table>
+                                                <tr>
+                                                    <td>Nomor</td>
+                                                    <td> :</td>
+                                                    <td id="detail_no_po">12398123</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Kendaraan</td>
+                                                    <td> :</td>
+                                                    <td id="detail_kendaraan">Sepeda Motor</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Merk</td>
+                                                    <td> :</td>
+                                                    <td id="detail_kendaraan">Honda Beat</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tahun</td>
+                                                    <td> :</td>
+                                                    <td id="detail_tahun">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Harga</td>
+                                                    <td> :</td>
+                                                    <td id="detail_harga">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Jumlah Pemesanan</td>
+                                                    <td> :</td>
+                                                    <td id="detail_jumlah_pesanan">-</td>
+                                                </tr>
+                                            </table>
                                         </div>
                                         <div class="col">
-                                            <img class="img img-thumbnail img-detailpo"
-                                                src=""
+                                            <img class="img img-thumbnail img-detailpo" src=""
                                                 alt="bukti penyerahan unit">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             {{--  STNK  --}}
-                            <div class="tab-pane fade show" id="detail_stnk" role="tabpanel"
+                            <div class="tab-pane fade" id="detail_stnk" role="tabpanel"
                                 aria-labelledby="detail-stnk-tab">
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_stnk" name="no_stnk" readonly>
+                                        <input type="text" class="form-control" id="detail_no_stnk"
+                                            name="no_stnk" readonly>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_stnk" src="" width="100%"
@@ -75,7 +137,8 @@
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_polis" name="no_polis" readonly>
+                                        <input type="text" class="form-control" id="detail_no_polis"
+                                            name="no_polis" readonly>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_polis" src="" width="100%"
@@ -89,7 +152,8 @@
                                 <div class="form-group">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_bpkb" name="no_bpkb" readonly>
+                                        <input type="text" class="form-control" id="detail_no_bpkb"
+                                            name="no_bpkb" readonly>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_bpkb" src="" width="100%"
@@ -112,38 +176,40 @@
             const id = $(this).data('id');
 
             $.ajax({
-                url: "{{url('/kredit')}}/"+id,
+                url: "{{ url('/kredit') }}/" + id,
                 method: "GET",
                 success: function(response) {
-                    for(var i = 0; i < response.data.documents.length; i++) {
+                    for (var i = 0; i < response.data.documents.length; i++) {
                         var content = '';
                         if (response.data.documents[i].category == "Penyerahan Unit") {
                             if (response.data.documents[i].file != "")
                                 $(".img-detailpo").attr('src', response.data.documents[i].file_path)
                         }
                         if (response.data.documents[i].file != "") {
-                            switch(response.data.documents[i].category) {
+                            switch (response.data.documents[i].category) {
                                 case 'STNK':
                                     $('#detail_no_stnk').val(response.data.documents[i].text)
-                                    $('#detail_preview_stnk').attr('src', response.data.documents[i].file_path+"#toolbar=0")
+                                    $('#detail_preview_stnk').attr('src', response.data.documents[i]
+                                        .file_path + "#toolbar=0")
                                     $('#detail_ket_stnk').css('display', 'none')
                                     break;
                                 case 'Polis':
                                     $('#detail_no_polis').val(response.data.documents[i].text)
-                                    $('#detail_preview_polis').attr('src', response.data.documents[i].file_path+"#toolbar=0")
+                                    $('#detail_preview_polis').attr('src', response.data.documents[i]
+                                        .file_path + "#toolbar=0")
                                     $('#detail_ket_polis').css('display', 'none')
                                     break;
                                 case 'BPKB':
                                     $('#detail_no_bpkb').val(response.data.documents[i].text)
-                                    $('#detail_preview_bpkb').attr('src', response.data.documents[i].file_path+"#toolbar=0")
+                                    $('#detail_preview_bpkb').attr('src', response.data.documents[i]
+                                        .file_path + "#toolbar=0")
                                     $('#detail_ket_bpkb').css('display', 'none')
                                     break;
                                 default:
                                     break;
                             }
-                        }
-                        else {
-                            switch(response.data.documents[i].category) {
+                        } else {
+                            switch (response.data.documents[i].category) {
                                 case 'STNK':
                                     $('#detail_no_stnk').css('display', 'none')
                                     $('#detail_preview_stnk').css('display', 'none')
@@ -165,12 +231,14 @@
                         }
                         if (response.data.pengajuan) {
                             var data = response.data.pengajuan;
-                            $('#detail_nama_pengaju').html('Nama : '+data.nama);
-                            $('#detail_no_po').html('Nomor : '+data.no_po);
-                            $('#detail_kendaraan').html('Kendaraan : '+data.kendaraan);
-                            $('#detail_tahun').html('Tahun : '+data.tahun_kendaraan);
-                            $('#detail_harga').html('Harga : '+'Rp '+formatMoney(data.harga_kendaraan, 0, ',', '.'));
-                            $('#detail_jumlah_pesanan').html('Jumlah Pemesanan : '+data.jumlah_kendaraan);
+                            $('#detail_nama_pengaju').html('Nama : ' + data.nama);
+                            $('#detail_no_po').html('Nomor : ' + data.no_po);
+                            $('#detail_kendaraan').html('Kendaraan : ' + data.kendaraan);
+                            $('#detail_tahun').html('Tahun : ' + data.tahun_kendaraan);
+                            $('#detail_harga').html('Harga : ' + 'Rp ' + formatMoney(data
+                                .harga_kendaraan, 0, ',', '.'));
+                            $('#detail_jumlah_pesanan').html('Jumlah Pemesanan : ' + data
+                                .jumlah_kendaraan);
                         }
                     }
                 },
