@@ -65,35 +65,34 @@
                                             $bpkb = \App\Models\Document::where('kredit_id', $item->id)
                                                 ->where('document_category_id', 5)
                                                 ->first();
-                                            $setImbalJasa = DB::table('imbal_jasas')
-                                                ->join('tenor_imbal_jasas as ti', 'ti.imbaljasa_id', 'imbal_jasas.id')
-                                                ->select('ti.*')
-                                                ->where('plafond1', '>', 1200000)
-                                                ->where('plafond2', '>', 1200000)
-                                                ->where('tenor', 24)
+                                            $imbalJasa = \App\Models\Document::where('kredit_id', $item->id)
+                                                ->where('document_category_id', 6)
                                                 ->first();
+                                            $setImbalJasa = DB::table('tenor_imbal_jasas')->find($item->id_tenor_imbal_jasa);
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->kode_cabang }}</td>
-                                            <td class="@if($item->detail) link-po @endif">
+                                            <td class="@if ($item->detail) link-po @endif">
                                                 @if ($buktiPembayaran)
-                                                    @if($item->detail)
-                                                    <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
-                                                        data-tanggalPo="{{$item->detail['tanggal']}}"
-                                                        data-filepo="{{config('global.los_host').$item->detail['po']}}">
-                                                        {{$item->detail['nama']}}</a>
+                                                    @if ($item->detail)
+                                                        <a class="open-po" data-toggle="modal" data-target="#detailPO"
+                                                            data-nomorPo="{{ $item->detail['no_po'] }}"
+                                                            data-tanggalPo="{{ $item->detail['tanggal'] }}"
+                                                            data-filepo="{{ config('global.los_host') . $item->detail['po'] }}">
+                                                            {{ $item->detail['nama'] }}</a>
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
-                                                    @if($item->detail)
-                                                    <a class="open-po" data-toggle="modal" data-target="#detailPO" data-nomorPo="{{$item->detail['no_po']}}"
-                                                        data-tanggalPo="20 April 2023"
-                                                        data-filepo="{{config('global.los_host').$item->detail['po']}}">
-                                                        {{$item->detail['no_po']}}</a>
+                                                    @if ($item->detail)
+                                                        <a class="open-po" data-toggle="modal" data-target="#detailPO"
+                                                            data-nomorPo="{{ $item->detail['no_po'] }}"
+                                                            data-tanggalPo="20 April 2023"
+                                                            data-filepo="{{ config('global.los_host') . $item->detail['po'] }}">
+                                                            {{ $item->detail['no_po'] }}</a>
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @endif
                                             </td>
@@ -131,7 +130,8 @@
                                                             <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
                                                                 target="_blank">{{ $stnk->date }}</a>
                                                         @else
-                                                            <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                            <span class="text-warning">Menunggu konfirmasi penyerahan
+                                                                STNK</span>
                                                         @endif
                                                     @else
                                                         @if (Auth::user()->role_id == 3)
@@ -143,9 +143,9 @@
                                                     @endif
                                                 @else
                                                     @if (Auth::user()->role_id == 3)
-                                                    <span class="text-warning">Menunggu penyerahan unit</span>
+                                                        <span class="text-warning">Menunggu penyerahan STNK</span>
                                                     @else
-                                                    <span class="text-warning">Menunggu penyerahan unit</span>
+                                                        <span class="text-warning">Menunggu penyerahan STNK</span>
                                                     @endif
                                                 @endif
                                             </td>
@@ -157,9 +157,10 @@
                                                                 target="_blank">{{ $polis->date }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
-                                                            <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                <span class="text-warning">Menunggu konfirmasi penyerahan
+                                                                    unit</span>
                                                             @else
-                                                            <span class="text-warning">Menunggu penyerahan polis</span>
+                                                                <span class="text-warning">Menunggu penyerahan polis</span>
                                                             @endif
                                                         @endif
                                                     @else
@@ -196,10 +197,43 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($setImbalJasa)
-                                                {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
+                                                {{-- @if ($setImbalJasa)
+                                                    {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
                                                 @else
-                                                -
+                                                    -
+                                                @endif --}}
+                                                @if ($penyerahanUnit)
+                                                    @if ($imbalJasa)
+                                                        @if ($imbalJasa->file && $imbalJasa->is_confirm)
+                                                            <a href="/storage/dokumentasi-imbal-jasa/{{ $imbalJasa->file }}"
+                                                                target="_blank">Rp.
+                                                                {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
+                                                        @else
+                                                            @if (Auth::user()->role_id == 3)
+                                                                <span class="text-info">Silahkan konfirmasi bukti transfer
+                                                                    imbal
+                                                                    jasa</span>
+                                                            @else
+                                                                <span class="text-info">Menunggu bukti transfer imbal
+                                                                    jasa</span>
+                                                            @endif
+                                                        @endif
+                                                    @else
+                                                        @if ($stnk && $polis && $bpkb)
+                                                            @if (Auth::user()->role_id == 2)
+                                                                <span class="text-info">Silahkan upload bukti transfer imbal
+                                                                    jasa</span>
+                                                            @else
+                                                                <span class="text-info">Menunggu bukti transfer imbal
+                                                                    jasa</span>
+                                                            @endif
+                                                        @else
+                                                            <span class="text-warning">Menunggu penyerahan semua
+                                                                berkas</span>
+                                                        @endif
+                                                    @endif
+                                                @else
+                                                    <span class="text-warning">Menunggu penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td
@@ -258,7 +292,8 @@
                                                                         data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
                                                                         data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
                                                                         data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
-                                                                        href="#" class="dropdown-item upload-berkas">
+                                                                        href="#"
+                                                                        class="dropdown-item upload-berkas">
                                                                         Upload Berkas
                                                                     </a>
                                                                 @endif
@@ -283,7 +318,8 @@
                                                             @if ($stnk || $polis || $bpkb)
                                                                 @if (isset($stnk->is_confirm) || isset($polis->is_confirm) || isset($bpkb->is_confirm))
                                                                     @if (!$stnk->is_confirm || !$polis->is_confirm || !$bpkb->is_confirm)
-                                                                        <a data-toggle="modal" data-target="#uploadBerkasModal"
+                                                                        <a data-toggle="modal"
+                                                                            data-target="#uploadBerkasModal"
                                                                             data-id_kkb="{{ $item->kkb_id }}"
                                                                             data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
                                                                             data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"
@@ -302,10 +338,31 @@
                                                                 @endif
                                                             @endif
                                                         @endif
-                                                        <a class="dropdown-item detail-link"
-                                                            data-toggle="modal"
-                                                            data-target="#detailModal"
-                                                            data-id="{{$item->id}}" 
+                                                        @if (Auth::user()->role_id == 2)
+                                                            @if ($stnk && $polis && $bpkb && !$imbalJasa)
+                                                                <a href="#" class="dropdown-item upload-imbal-jasa"
+                                                                    data-toggle="modal"
+                                                                    data-target="#uploadImbalJasaModal"
+                                                                    data-id="{{ $item->id }}">Upload bukti imbal
+                                                                    jasa</a>
+                                                            @endif
+                                                        @else
+                                                            @if ($stnk && $polis && $bpkb)
+                                                                @if ($imbalJasa && $imbalJasa->is_confirm == false)
+                                                                    <a href="#"
+                                                                        class="dropdown-item confirm-imbal-jasa"
+                                                                        data-id="{{ $imbalJasa->id }}"
+                                                                        data-file="{{ $imbalJasa->file }}"
+                                                                        data-toggle="modal"
+                                                                        data-target="#confirmModalImbalJasa">Konfirmasi
+                                                                        bukti
+                                                                        imbal
+                                                                        jasa</a>
+                                                                @endif
+                                                            @endif
+                                                        @endif
+                                                        <a class="dropdown-item detail-link" data-toggle="modal"
+                                                            data-target="#detailModal" data-id="{{ $item->id }}"
                                                             href="#">Detail</a>
                                                     </div>
                                                 </div>
@@ -374,6 +431,37 @@
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="fa fa-calendar-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Imbal Jasa Modal -->
+    <div class="modal fade" id="uploadImbalJasaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-imbal-jasa-form">
+                        @csrf
+                        <input type="hidden" name="id_kkbimbaljasa" id="id_kkbimbaljasa">
+                        <div class="form-group">
+                            <label>Upload bukti transfer imbal jasa</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" accept="image/*" id="file_imbal_jasa"
+                                    name="file_imbal_jasa" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-image"></i>
                                     </span>
                                 </div>
                             </div>
@@ -597,14 +685,33 @@
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
                     </div>
-                    @if (Auth::user()->role_id == 2)
-                        <img id="preview_penyerahan_unit" class="mt-2" width="100%" height="500"></img>
-                    @endif
                     <div class="form-inline">
                         <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
                         <form id="confirm-form-penyerahan-unit">
                             <input type="hidden" name="confirm_id" id="confirm_id">
                             <input type="hidden" name="confirm_id_category" id="confirm_id_category">
+                            <button type="submit" class="btn btn-primary">Ya</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Confirm Imbal Jasa --}}
+    <div class="modal fade" id="confirmModalImbalJasa" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-group name" id="konfirmasi">
+                        Yakin ingin mengkonfirmasi data ini?
+                    </div>
+                    <iframe id="preview_imbal-jasa" src="" width="100%" height="450px"></iframe>
+                    <div class="form-inline">
+                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
+                        <form id="confirm-form-imbal-jasa">
+                            <input type="hidden" name="id_cat" id="id_cat">
                             <button type="submit" class="btn btn-primary">Ya</button>
                         </form>
                     </div>
@@ -756,34 +863,30 @@
                     $('#modal-berkas #stnk_scan').val(file_stnk);
                     $('#modal-berkas #polis_scan').val(file_polis);
                     $('#modal-berkas #bpkb_scan').val(file_bpkb);
-                }
-                catch(e) {
+                } catch (e) {
                     console.log('error')
                 }
                 var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis;
                 var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
-                
+
                 if (file_stnk) {
-                    var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk+"#toolbar=0";
+                    var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk + "#toolbar=0";
                     $("#preview_stnk").attr("src", path_stnk);
-                }
-                else {
+                } else {
                     $("#preview_stnk").css("display", 'none');
                 }
 
                 if (file_polis) {
-                    var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis+"#toolbar=0";
+                    var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis + "#toolbar=0";
                     $("#preview_polis").attr("src", path_polis);
-                }
-                else {
+                } else {
                     $("#preview_polis").css("display", 'none');
                 }
 
                 if (file_bpkb) {
-                    var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb+"#toolbar=0";
+                    var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#toolbar=0";
                     $("#preview_bpkb").attr("src", path_bpkb);
-                }
-                else {
+                } else {
                     $("#preview_bpkb").css("display", 'none');
                 }
             })
@@ -1101,6 +1204,95 @@
                 $('#confirm_id_category').val(data_category_doc_id)
             })
 
+            // Imbal Jasa
+            $('.upload-imbal-jasa').on('click', function(e) {
+                const data_id = $(this).data('id')
+                $('#id_kkbimbaljasa').val(data_id)
+            })
+            $('.confirm-imbal-jasa').on('click', function(e) {
+                const data_id = $(this).data('id')
+                const file_bukti = $(this).data('file') ? $(this).data('file') : ''
+                var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file_bukti;
+
+                $("#preview_imbal-jasa").attr("src", path_file);
+                console.log(path_file);
+                $('#id_cat').val(data_id)
+            })
+
+            $('#modal-imbal-jasa-form').submit(function(e) {
+                e.preventDefault()
+                const req_id = document.getElementById('id_kkbimbaljasa')
+                const req_file = document.getElementById('file_imbal_jasa')
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_imbal_jasa') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('no_bpkb'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('bpkb_scan'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                                // console.log(data.message)
+                            } else {
+                                ErrorMessage(data.message)
+                                // console.log(data.message)
+                            }
+                            $('#uploadImbalJasaModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        // ErrorMessage('Terjadi kesalahan')
+                    }
+                });
+            });
+            $('#confirm-form-imbal-jasa').on('submit', function(e) {
+                e.preventDefault()
+                const req_id = $('#id_cat').val()
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.confirm-imbal-jasa') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: req_id,
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            console.log(data.error)
+                            /*for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('id'))
+                                    showError(req_id, message)
+                                if (message.toLowerCase().includes('category_id'))
+                                    showError(req_category_doc_id, message)
+                            }*/
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#modal-imbal-jasa-form').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                })
+            })
             // Cabang
             $('#confirm-form').on('submit', function(e) {
                 e.preventDefault()

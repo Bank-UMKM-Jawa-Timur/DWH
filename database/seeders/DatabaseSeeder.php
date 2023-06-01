@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             DocumentCategoriesSeeder::class,
             ActionSeeder::class,
             NotificationTemplatesSeeder::class,
+            ImbalJasaSeeder::class,
         ]);
     }
 }

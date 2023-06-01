@@ -17,10 +17,11 @@ class KreditController extends Controller
 {
     private $notificationController;
 
-    function __construct() {
+    function __construct()
+    {
         $this->notificationController = new NotificationController;
     }
-    
+
     public function store(Request $request)
     {
         $status = '';
@@ -50,7 +51,23 @@ class KreditController extends Controller
                 $req_status = HttpFoundationResponse::HTTP_UNPROCESSABLE_ENTITY;
                 $status = 'failed';
                 $message = $fields->errors();
-            } else {                
+            } else {
+                $tenor = $request->tenor < 36 ? $request->tenor : 36;
+                $harga_kendaraan1 = $request->harga_kendaraan;
+                $harga_kendaraan2 = $request->harga_kendaraan > 50000000 ?   0 : $request->harga_kendaraan;
+                $setImbalJasa = DB::table('imbal_jasas')
+                    ->join('tenor_imbal_jasas as ti', 'ti.imbaljasa_id', 'imbal_jasas.id')
+                    ->select('ti.*');
+                if ($request->harga_kendaraan > 50000000) {
+                    $setImbalJasa = $setImbalJasa->where('plafond1', '<', $harga_kendaraan1)
+                        ->where('plafond2', '=', $harga_kendaraan2);
+                } else {
+                    $setImbalJasa = $setImbalJasa->where('plafond1', '<', $harga_kendaraan1)
+                        ->where('plafond2', '<', $harga_kendaraan2);
+                }
+                $setImbalJasa = $setImbalJasa->where('tenor', $tenor)
+                    ->first();
+
                 $model = new Kredit();
                 $model->pengajuan_id = $request->pengajuan_id;
                 $model->kode_cabang = $request->kode_cabang;
@@ -58,6 +75,7 @@ class KreditController extends Controller
 
                 $createKKB = new KKB();
                 $createKKB->kredit_id = $model->id;
+                $createKKB->id_tenor_imbal_jasa = $setImbalJasa->id;
                 $createKKB->save();
 
                 // send notification

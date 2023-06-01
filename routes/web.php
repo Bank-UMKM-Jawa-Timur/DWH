@@ -78,6 +78,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/kredit/confirm-document-vendor', [KreditController::class, 'confirmDocumentVendor'])->name('kredit.confirm_document_vendor');
     Route::post('/kredit/confirm-penyerahan-unit', [KreditController::class, 'confirmPenyerahanUnit'])->name('kredit.confirm_penyerahan_unit');
     Route::get('/kredit/{id}', [KreditController::class, 'show'])->name('kredit.show');
+    Route::post('/kredit/upload-imbal-jasa', [KreditController::class, 'uploadUImbalJasa'])->name('kredit.upload_imbal_jasa');
+    Route::post('/kredit/confirm-imbal-jasa', [KreditController::class, 'confirmUploadUImbalJasa'])->name('kredit.confirm-imbal-jasa');
 
     Route::get('/log_aktivitas', [LogActivitesController::class, 'index']);
 });
