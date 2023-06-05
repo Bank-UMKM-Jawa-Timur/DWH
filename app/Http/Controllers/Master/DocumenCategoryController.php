@@ -26,7 +26,7 @@ class DocumenCategoryController extends Controller
     {
         $param['title'] = 'Kategori Dokumen';
         $param['pageTitle'] = 'Kategori Dokumen';
-        $param['data'] = DocumentCategory::whereNot('name', 'Bukti Pembayaran')->whereNot('name', 'Bukti Pembayaran Imbal Jasa')->orderBy('name')->get();
+        $param['data'] = $this->list();
 
         return view('pages.kategori_dokumen.index', $param);
     }

@@ -35,6 +35,7 @@
                                         <th scope="col">Nama</th>
                                         <th scope="col">PO</th>
                                         <th scope="col">Ketersediaan Unit</th>
+                                        <th scope="col">Bukti Pembayaran</th>
                                         <th scope="col">Penyerahan Unit</th>
                                         {{--  <th scope="col">STNK</th>
                                         <th scope="col">Polis</th>
@@ -42,6 +43,7 @@
                                         @foreach ($documentCategories as $item)
                                             <th scope="col">{{ $item->name }}</th>
                                         @endforeach
+                                        <th scope="col">Bukti Pembayaran Imbal Jasa</th>
                                         <th scope="col">Imbal Jasa</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Aksi</th>
@@ -72,7 +74,11 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->kode_cabang }}</td>
+                                            <td>
+                                                @if ($item->detail)
+                                                    {{$item->detail['nama']}}
+                                                @endif
+                                            </td>
                                             <td class="@if ($item->detail) link-po @endif">
                                                 @if ($buktiPembayaran)
                                                     @if ($item->detail)
@@ -113,6 +119,44 @@
                                             </td>
                                             <td>
                                                 @if ($item->tgl_ketersediaan_unit)
+                                                    @if (Auth::user()->role_id == 3)
+                                                        {{--  vendor  --}}
+                                                        @if (!$buktiPembayaran->is_confirm)
+                                                        <a style="cursor: pointer; text-decoration: underline;" class="confirm-bukti-pembayaran"
+                                                            data-toggle="modal" data-id-category="1"
+                                                            data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
+                                                            data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
+                                                            href="#confirmModalVendor">Konfirmasi Bukti Pembayaran</a>
+                                                        @elseif ($buktiPembayaran->is_confirm)
+                                                        <p class="m-0">Selesai</p>
+                                                        <a class="bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
+                                                        data-file="{{ $buktiPembayaran->file }}">Lihat Bukti Pembayaran</a>
+                                                        @else
+                                                        Menunggu Pembayaran dari Cabang
+                                                        @endif
+                                                    @else
+                                                        {{--  role selain vendor  --}}
+                                                        @if (!$buktiPembayaran)
+                                                            <a class="" data-toggle="modal"
+                                                                data-target="#buktiPembayaranModal"
+                                                                data-id_kkb="{{ $item->id }}" href="#"
+                                                                onclick="uploadBuktiPembayaran({{ $item->id }})">Bayar</a>
+                                                        @else
+                                                        @if (!$buktiPembayaran->is_confirm)
+                                                        <p class="m-0">Menunggu Konfirmasi Vendor</p>
+                                                        @elseif ($buktiPembayaran->is_confirm)
+                                                        <p class="m-0">Selesai</p>
+                                                        @endif
+                                                        <a class="bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
+                                                        data-file="{{ $buktiPembayaran->file }}">Lihat Bukti Pembayaran</a>
+                                                        @endif
+                                                    @endif
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($item->tgl_ketersediaan_unit)
                                                     @if ($penyerahanUnit)
                                                         {{ $penyerahanUnit->date }}
                                                     @else
@@ -120,7 +164,7 @@
                                                             {{ date('Y-m-d', strtotime($item->tgl_ketersediaan_unit . ' +1 days')) }}</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu konfirmasi penyerahan unit</span>
+                                                    <span class="text-danger">-</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -145,7 +189,7 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-warning">Menunggu penyerahan unit</span>
+                                                    <span class="text-warning">-</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -174,7 +218,7 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-warning">Menunggu penyerahan unit</span>
+                                                    <span class="text-warning">-</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -199,15 +243,48 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-warning">Menunggu penyerahan unit</span>
+                                                    <span class="text-warning">-</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                {{-- @if ($setImbalJasa)
-                                                    {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
+                                                @if (Auth::user()->role_id == 3)
+                                                    {{--  vendor  --}}
+                                                    @if (!$imbalJasa->is_confirm)
+                                                    <a style="cursor: pointer; text-decoration: underline;" class="confirm-bukti-pembayaran"
+                                                        data-toggle="modal" data-id-category="1"
+                                                        data-id-doc="{{ $imbalJasa ? $imbalJasa->id : 0 }}"
+                                                        data-file="@isset($imbalJasa->file){{ $imbalJasa->file }}@endisset"
+                                                        href="#confirmModalVendor">Konfirmasi Bukti Pembayaran</a>
+                                                    @elseif ($imbalJasa->is_confirm)
+                                                    <p class="m-0">Selesai</p>
+                                                    <a class="bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
+                                                    data-file="{{ $imbalJasa->file }}">Lihat Bukti Pembayaran</a>
+                                                    @else
+                                                    Menunggu Pembayaran dari Cabang
+                                                    @endif
                                                 @else
-                                                    -
-                                                @endif --}}
+                                                    {{--  role selain vendor  --}}
+                                                    @if ($stnk && $polis && $bpkb)
+                                                        @if (!$imbalJasa)
+                                                        <a href="#" class="dropdown-item upload-imbal-jasa"
+                                                            data-toggle="modal"
+                                                            data-target="#uploadImbalJasaModal"
+                                                            data-id="{{ $item->id }}">Bayar</a>
+                                                        @else
+                                                        @if (!$imbalJasa->is_confirm)
+                                                        <p class="m-0">Menunggu Konfirmasi Vendor</p>
+                                                        @elseif ($imbalJasa->is_confirm)
+                                                        <p class="m-0">Selesai</p>
+                                                        @endif
+                                                        <a class="bukti-pembayaran-modal" style="text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
+                                                        data-file="{{ $imbalJasa->file }}">Lihat Bukti Pembayaran</a>
+                                                        @endif
+                                                    @else
+                                                        -
+                                                    @endif
+                                                @endif
+                                            </td>
+                                            <td>
                                                 @if ($penyerahanUnit)
                                                     @if ($imbalJasa)
                                                         @if ($imbalJasa->file && $imbalJasa->is_confirm)
@@ -239,7 +316,7 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-warning">Menunggu penyerahan unit</span>
+                                                    <span class="text-warning">-</span>
                                                 @endif
                                             </td>
                                             <td
@@ -257,23 +334,6 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        @if (!$buktiPembayaran && $item->tgl_ketersediaan_unit && Auth::user()->role_id == 2)
-                                                            <a class="dropdown-item" data-toggle="modal"
-                                                                data-target="#buktiPembayaranModal"
-                                                                data-id_kkb="{{ $item->id }}" href="#"
-                                                                onclick="uploadBuktiPembayaran({{ $item->id }})">Upload
-                                                                Bukti Pembayaran</a>
-                                                        @endif
-                                                        @if ($buktiPembayaran)
-                                                            @if ($buktiPembayaran->file && !$buktiPembayaran->is_confirm && Auth::user()->role_id == 3)
-                                                                <a class="dropdown-item confirm-bukti-pembayaran"
-                                                                    data-toggle="modal" data-id-category="1"
-                                                                    data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
-                                                                    data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
-                                                                    href="#confirmModalVendor">Konfirmasi Bukti
-                                                                    Pembayaran</a>
-                                                            @endif
-                                                        @endif
                                                         @if ($item->tgl_ketersediaan_unit)
                                                             @if ($buktiPembayaran)
                                                                 @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && Auth::user()->vendor_id)
@@ -417,6 +477,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal bukti pembayaran -->
+    @include('pages.kredit.modal.bukti-pembayaran-modal')
 
     {{-- Detail PO --}}
     @include('pages.kredit.modal.detail-po')

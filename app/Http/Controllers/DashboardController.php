@@ -10,6 +10,7 @@ use App\Models\Kredit;
 use App\Models\Notification;
 use App\Models\Target;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class DashboardController extends Controller
 {
@@ -26,8 +27,8 @@ class DashboardController extends Controller
                 ->join('roles AS r', 'r.id', 'users.role_id')
                 ->where('users.id', Auth::user()->id)
                 ->first();
-            $param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit'])->orderBy('name', 'DESC')->get();
-            $param['data'] = Kredit::select(
+            $param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
+            $data = Kredit::select(
                 'kredits.id',
                 'kredits.pengajuan_id',
                 'kredits.kode_cabang',
@@ -53,6 +54,35 @@ class DashboardController extends Controller
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed')
                 ->paginate(5);
+
+            foreach ($data as $key => $value) {
+                // retrieve from api
+                $host = env('LOS_API_HOST');
+                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id;
+
+                $headers = [
+                    'token' => env('LOS_API_TOKEN')
+                ];
+
+                try {
+                    $response = Http::withHeaders($headers)->get($apiURL);
+
+                    $statusCode = $response->status();
+                    $responseBody = json_decode($response->getBody(), true);
+                    // input file path
+                    if ($responseBody) {
+                        $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                        $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                        $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                    }
+
+                    // insert response to object
+                    $value->detail = $responseBody;
+                } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                    // return $e->getMessage();
+                }
+            }
+            $param['data'] = $data;
 
             $param['role'] = $user->role_name;
             $param['total_cabang'] = User::where('role_id', 2)->count();
@@ -96,6 +126,7 @@ class DashboardController extends Controller
             }
             $param['barChartData'] = $arrBarChartData;
             $param['barChartLabel'] = $arrLabelChartLabel;
+
             return view('pages.home', $param);
         } catch (\Exception $e) {
             return redirect('/dashboard')->withError('Terjadi kesalahan');
