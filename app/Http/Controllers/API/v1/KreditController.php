@@ -58,8 +58,8 @@ class KreditController extends Controller
                 $harga_kendaraan1 = $request->harga_kendaraan;
                 $harga_kendaraan2 = $request->harga_kendaraan > 50000000 ?   0 : $request->harga_kendaraan;
                 $setImbalJasa = DB::table('imbal_jasas')
-                    ->join('tenor_imbal_jasas as ti', 'ti.imbaljasa_id', 'imbal_jasas.id')
-                    ->select('ti.*');
+                                ->join('tenor_imbal_jasas as ti', 'ti.imbaljasa_id', 'imbal_jasas.id')
+                                ->select('ti.*');
                 if ($request->harga_kendaraan > 50000000) {
                     $setImbalJasa = $setImbalJasa->where('plafond1', '<', $harga_kendaraan1)
                         ->where('plafond2', '=', $harga_kendaraan2);

@@ -38,6 +38,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->name }}</td>
                                             <td>
+                                                @if ($item->id > 5)
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-info dropdown-toggle" type="button"
                                                         data-toggle="dropdown" aria-expanded="false">
@@ -52,6 +53,9 @@
                                                             data-id="{{ $item->id }}" href="#">Hapus</a>
                                                     </div>
                                                 </div>
+                                                @else
+                                                -
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
