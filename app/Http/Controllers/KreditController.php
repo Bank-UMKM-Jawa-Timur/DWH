@@ -57,6 +57,8 @@ class KreditController extends Controller
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             // return $e->getMessage();
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
         /**
          * File path LOS

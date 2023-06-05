@@ -38,6 +38,8 @@ class DashboardController extends Controller
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             // return $e->getMessage();
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
         /*try {
             $param['title'] = 'Dashboard';
