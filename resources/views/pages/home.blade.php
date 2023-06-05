@@ -197,7 +197,11 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->id . '-' . $item->kode_cabang }}</td>
+                                            <td>
+                                                @if ($item->detail)
+                                                    {{$item->detail['nama']}}
+                                                @endif
+                                            </td>
                                             <td class="link-po">
                                                 @if ($buktiPembayaran)
                                                     @isset($item->detail)
@@ -205,7 +209,7 @@
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
                                                             data-tanggalPo="20 April 2023"
                                                             data-filePo="{{ config('global.los_host') . $item->detail['po'] }}">
-                                                            {{ $item->detail['nama'] }}</a>
+                                                            {{ $item->detail['no_po'] }}</a>
                                                     @endisset
                                                 @else
                                                     @isset($item->detail)
@@ -241,7 +245,7 @@
                                                             {{ date('Y-m-d', strtotime($item->tgl_ketersediaan_unit . ' +1 days')) }}</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">-</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -262,7 +266,7 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">-</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -283,7 +287,7 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">-</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -304,13 +308,43 @@
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                                                    <span class="text-danger">-</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                @isset($setImbalJasa)
-                                                    {{ number_format($setImbalJasa->imbaljasa), 0, '', '.' }}
-                                                @endisset
+                                                @if ($penyerahanUnit)
+                                                    @if ($imbalJasa)
+                                                        @if ($imbalJasa->file && $imbalJasa->is_confirm)
+                                                            <a href="/storage/dokumentasi-imbal-jasa/{{ $imbalJasa->file }}"
+                                                                target="_blank">Rp.
+                                                                {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
+                                                        @else
+                                                            @if (Auth::user()->role_id == 3)
+                                                                <span class="text-info">Silahkan konfirmasi bukti transfer
+                                                                    imbal
+                                                                    jasa</span>
+                                                            @else
+                                                                <span class="text-info">Menunggu bukti transfer imbal
+                                                                    jasa</span>
+                                                            @endif
+                                                        @endif
+                                                    @else
+                                                        @if ($stnk && $polis && $bpkb)
+                                                            @if (Auth::user()->role_id == 2)
+                                                                <span class="text-info">Silahkan upload bukti transfer imbal
+                                                                    jasa</span>
+                                                            @else
+                                                                <span class="text-info">Menunggu bukti transfer imbal
+                                                                    jasa</span>
+                                                            @endif
+                                                        @else
+                                                            <span class="text-warning">Menunggu penyerahan semua
+                                                                berkas</span>
+                                                        @endif
+                                                    @endif
+                                                @else
+                                                    <span class="text-warning">-</span>
+                                                @endif
                                             </td>
                                             <td
                                                 class="@if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">

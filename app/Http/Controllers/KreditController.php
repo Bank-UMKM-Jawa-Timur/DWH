@@ -78,11 +78,11 @@ class KreditController extends Controller
 
             foreach ($data as $key => $value) {
                 // retrieve from api
-                $host = config('global.los_api_host');
+                $host = env('LOS_API_HOST');
                 $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id;
 
                 $headers = [
-                    'token' => config('global.los_api_token')
+                    'token' => env('LOS_API_TOKEN')
                 ];
 
                 try {
