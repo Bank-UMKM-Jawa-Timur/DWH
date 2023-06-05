@@ -37,9 +37,9 @@ class DashboardController extends Controller
             }
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            // return $e->getMessage();
+            return $e->getMessage();
         }
-        try {
+        /*try {
             $param['title'] = 'Dashboard';
             $param['pageTitle'] = 'Dashboard';
             $user = User::select(
@@ -155,7 +155,7 @@ class DashboardController extends Controller
             return redirect('/dashboard')->withError('Terjadi kesalahan');
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect('/dashboard')->withError('Terjadi kesalahan pada database');
-        }
+        }*/
     }
 
     public function getRoleName()
