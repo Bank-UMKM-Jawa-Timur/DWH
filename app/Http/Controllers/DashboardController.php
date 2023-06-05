@@ -65,7 +65,7 @@ class DashboardController extends Controller
                 ];
 
                 try {
-                    $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    $response = Http::withHeaders($headers)->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
