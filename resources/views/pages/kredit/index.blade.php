@@ -130,23 +130,22 @@
                                                             <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
                                                                 target="_blank">{{ $stnk->date }}</a>
                                                         @else
-                                                            <span class="text-warning">Menunggu konfirmasi penyerahan
-                                                                STNK</span>
+                                                            <span class="text-warning">Menunggu konfirmasi</span>
                                                         @endif
                                                     @else
                                                         @if (Auth::user()->role_id == 3)
-                                                            <span class="text-info">Maksimal tanggal upload STNK
-                                                                {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                            @if ($penyerahanUnit->is_confirm)
+                                                                <span class="text-info">Maksimal tanggal upload STNK
+                                                                    {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                            @else
+                                                            <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                            @endif
                                                         @else
                                                             <span class="text-warning">Menunggu penyerahan STNK</span>
                                                         @endif
                                                     @endif
                                                 @else
-                                                    @if (Auth::user()->role_id == 3)
-                                                        <span class="text-warning">Menunggu penyerahan STNK</span>
-                                                    @else
-                                                        <span class="text-warning">Menunggu penyerahan STNK</span>
-                                                    @endif
+                                                    <span class="text-warning">Menunggu penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -157,22 +156,25 @@
                                                                 target="_blank">{{ $polis->date }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
-                                                                <span class="text-warning">Menunggu konfirmasi penyerahan
-                                                                    unit</span>
+                                                                <span class="text-warning">Menunggu konfirmasi</span>
                                                             @else
                                                                 <span class="text-warning">Menunggu penyerahan polis</span>
                                                             @endif
                                                         @endif
                                                     @else
                                                         @if (Auth::user()->role_id == 3)
-                                                            <span class="text-info">Maksimal tanggal upload Polis
+                                                            @if ($penyerahanUnit->is_confirm)
+                                                                <span class="text-info">Maksimal tanggal upload Polis
                                                                 {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                            @else
+                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                            @endif
                                                         @else
                                                             <span class="text-warning">Menunggu Penyerahan Polis</span>
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                    <span class="text-warning">Menunggu penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -186,14 +188,18 @@
                                                         @endif
                                                     @else
                                                         @if (Auth::user()->role_id == 3)
+                                                            @if ($penyerahanUnit->is_confirm)
                                                             <span class="text-info">Maksimal tanggal upload BPKB
                                                                 {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                            @else
+                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                            @endif
                                                         @else
                                                             <span class="text-warning">Menunggu Penyerahan BPKB</span>
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                    <span class="text-warning">Menunggu penyerahan unit</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -701,7 +707,7 @@
     {{-- Modal Confirm Imbal Jasa --}}
     <div class="modal fade" id="confirmModalImbalJasa" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="form-group name" id="konfirmasi">
@@ -1215,7 +1221,6 @@
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file_bukti;
 
                 $("#preview_imbal-jasa").attr("src", path_file);
-                console.log(path_file);
                 $('#id_cat').val(data_id)
             })
 
