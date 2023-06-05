@@ -96,7 +96,7 @@
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
-                                                            data-tanggalPo="20 April 2023"
+                                                            data-tanggalPo="{{ $item->detail['tanggal'] }}"
                                                             data-filepo="{{ config('global.los_host') . $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
