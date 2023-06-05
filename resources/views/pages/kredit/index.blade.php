@@ -147,7 +147,7 @@
                                                         @elseif ($buktiPembayaran->is_confirm)
                                                         <p class="m-0">Selesai</p>
                                                         @endif
-                                                        <a class="bukti-pembayaran-modal" style="text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
+                                                        <a class="bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
                                                         data-file="{{ $buktiPembayaran->file }}">Lihat Bukti Pembayaran</a>
                                                         @endif
                                                     @endif
@@ -247,10 +247,41 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($buktiPembayaran)
-                                                <a href="#">Lihat</a>
+                                                @if (Auth::user()->role_id == 3)
+                                                    {{--  vendor  --}}
+                                                    @if (!$imbalJasa->is_confirm)
+                                                    <a style="cursor: pointer; text-decoration: underline;" class="confirm-bukti-pembayaran"
+                                                        data-toggle="modal" data-id-category="1"
+                                                        data-id-doc="{{ $imbalJasa ? $imbalJasa->id : 0 }}"
+                                                        data-file="@isset($imbalJasa->file){{ $imbalJasa->file }}@endisset"
+                                                        href="#confirmModalVendor">Konfirmasi Bukti Pembayaran</a>
+                                                    @elseif ($imbalJasa->is_confirm)
+                                                    <p class="m-0">Selesai</p>
+                                                    <a class="bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
+                                                    data-file="{{ $imbalJasa->file }}">Lihat Bukti Pembayaran</a>
+                                                    @else
+                                                    Menunggu Pembayaran dari Cabang
+                                                    @endif
                                                 @else
-                                                -
+                                                    {{--  role selain vendor  --}}
+                                                    @if ($stnk && $polis && $bpkb)
+                                                        @if (!$imbalJasa)
+                                                        <a href="#" class="dropdown-item upload-imbal-jasa"
+                                                            data-toggle="modal"
+                                                            data-target="#uploadImbalJasaModal"
+                                                            data-id="{{ $item->id }}">Bayar</a>
+                                                        @else
+                                                        @if (!$imbalJasa->is_confirm)
+                                                        <p class="m-0">Menunggu Konfirmasi Vendor</p>
+                                                        @elseif ($imbalJasa->is_confirm)
+                                                        <p class="m-0">Selesai</p>
+                                                        @endif
+                                                        <a class="bukti-pembayaran-modal" style="text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
+                                                        data-file="{{ $imbalJasa->file }}">Lihat Bukti Pembayaran</a>
+                                                        @endif
+                                                    @else
+                                                        -
+                                                    @endif
                                                 @endif
                                             </td>
                                             <td>
