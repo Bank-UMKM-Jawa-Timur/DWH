@@ -70,23 +70,29 @@ class KreditController extends Controller
                 $setImbalJasa = $setImbalJasa->where('tenor', $tenor)
                     ->first();
 
-                $model = new Kredit();
-                $model->pengajuan_id = $request->pengajuan_id;
-                $model->kode_cabang = $request->kode_cabang;
-                $model->save();
+                if ($setImbalJasa) {
+                    $model = new Kredit();
+                    $model->pengajuan_id = $request->pengajuan_id;
+                    $model->kode_cabang = $request->kode_cabang;
+                    $model->save();
 
-                $createKKB = new KKB();
-                $createKKB->kredit_id = $model->id;
-                $createKKB->id_tenor_imbal_jasa = $setImbalJasa->id;
-                $createKKB->save();
+                    $createKKB = new KKB();
+                    $createKKB->kredit_id = $model->id;
+                    $createKKB->id_tenor_imbal_jasa = $setImbalJasa->id;
+                    $createKKB->save();
 
-                // send notification
-                $extraMessage = view('notifications.detail-notif')->with('nomor', $request->nomor_po)->render();
-                $this->notificationController->sendWithExtra(2, $model->id, $extraMessage);
+                    // send notification
+                    $extraMessage = view('notifications.detail-notif')->with('nomor', $request->nomor_po)->render();
+                    $this->notificationController->sendWithExtra(2, $model->id, $extraMessage);
 
-                $req_status = HttpFoundationResponse::HTTP_OK;
-                $status = 'success';
-                $message = 'Data saved successfully';
+                    $req_status = HttpFoundationResponse::HTTP_OK;
+                    $status = 'success';
+                    $message = 'Data saved successfully';
+                } else {
+                    $req_status = HttpFoundationResponse::HTTP_OK;
+                    $status = 'failed';
+                    $message = 'Imbal jasa tidak ditemukan.';
+                }
             }
         } catch (Exception $e) {
             DB::rollBack();
