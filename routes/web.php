@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/kredit/upload-imbal-jasa', [KreditController::class, 'uploadUImbalJasa'])->name('kredit.upload_imbal_jasa');
     Route::post('/kredit/confirm-imbal-jasa', [KreditController::class, 'confirmUploadUImbalJasa'])->name('kredit.confirm-imbal-jasa');
 
-    Route::get('/log_aktivitas', [LogActivitesController::class, 'index']);
+    Route::get('/log_aktivitas', [LogActivitesController::class, 'index'])->name('log_aktivitas.index');
 });
 
 
