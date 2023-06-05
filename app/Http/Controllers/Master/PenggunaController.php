@@ -109,7 +109,7 @@ class PenggunaController extends Controller
             ];
     
             try {
-                $response = Http::withHeaders($headers)->get($apiURL);
+                $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
     
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);

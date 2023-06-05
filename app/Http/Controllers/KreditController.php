@@ -86,7 +86,7 @@ class KreditController extends Controller
                 ];
 
                 try {
-                    $response = Http::withHeaders($headers)->get($apiURL);
+                    $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
@@ -935,7 +935,7 @@ class KreditController extends Controller
     //         $responseBody = null;
 
     //         try {
-    //             $response = Http::withHeaders($headers)->get($apiURL);
+    //             $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
     //             $statusCode = $response->status();
     //             $responseBody = json_decode($response->getBody(), true);

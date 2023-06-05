@@ -77,6 +77,8 @@
                                             <td>
                                                 @if ($item->detail)
                                                     {{$item->detail['nama']}}
+                                                @else
+                                                undifined
                                                 @endif
                                             </td>
                                             <td class="@if ($item->detail) link-po @endif">
