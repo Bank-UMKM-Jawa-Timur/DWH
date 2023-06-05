@@ -35,31 +35,6 @@ class KreditController extends Controller
 
     public function index()
     {
-        $host = env('LOS_API_HOST');
-        $apiURL = $host . '/kkb/get-data-pengajuan/552';
-
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
-
-        try {
-            $response = Http::withHeaders($headers)->get($apiURL);
-
-            $statusCode = $response->status();
-            $responseBody = json_decode($response->getBody(), true);
-            return $responseBody;
-            // input file path
-            if ($responseBody) {
-                $responseBody['sppk'] = "/upload/552/sppk/" . $responseBody['sppk'];
-                $responseBody['po'] = "/upload/552/po/" . $responseBody['po'];
-                $responseBody['pk'] = "/upload/552/pk/" . $responseBody['pk'];
-            }
-
-        } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            return $e->getMessage();
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
         /**
          * File path LOS
          *
@@ -68,7 +43,7 @@ class KreditController extends Controller
          * upload/{id_pengajuan}/pk/{filename}
          */
 
-        /*try {
+        try {
             $this->param['role'] = $this->dashboardContoller->getRoleName();
             $this->param['title'] = 'KKB';
             $this->param['pageTitle'] = 'KKB';
@@ -111,7 +86,7 @@ class KreditController extends Controller
                 ];
 
                 try {
-                    $response = Http::withHeaders($headers)->get($apiURL);
+                    $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
@@ -133,7 +108,7 @@ class KreditController extends Controller
             return back()->withError('Terjadi kesalahan');
         } catch (\Illuminate\Database\QueryException $e) {
             return back()->withError('Terjadi kesalahan pada database');
-        }*/
+        }
     }
 
     public function uploadBuktiPembayaran(Request $request)
@@ -960,7 +935,7 @@ class KreditController extends Controller
     //         $responseBody = null;
 
     //         try {
-    //             $response = Http::withHeaders($headers)->get($apiURL);
+    //             $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
     //             $statusCode = $response->status();
     //             $responseBody = json_decode($response->getBody(), true);
