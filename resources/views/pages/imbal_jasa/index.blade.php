@@ -43,69 +43,77 @@
                                     @forelse ($data as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->plafond1 == 0 ? '' : number_format($item->plafond1, 0, '', '.') }}
-                                                s/d {{ number_format($item->plafond2, 0, '', '.') }}
-                                            </td>
-                                            @php
-                                                $imbaljasa = DB::table('tenor_imbal_jasas')
-                                                    ->where('imbaljasa_id', $item->id)
-                                                    ->get();
-                                                $tenor12 = 0;
-                                                $tenor24 = 0;
-                                                $tenor36 = 0;
-                                                $id12 = '';
-                                                $id24 = '';
-                                                $id36 = '';
-                                            @endphp
-                                            @foreach ($imbaljasa as $i)
-                                                @php
-                                                    if ($i->tenor == 12) {
-                                                        $tenor12 = $i->imbaljasa;
-                                                        $id12 = $i->id;
-                                                    } elseif ($i->tenor == 24) {
-                                                        $tenor24 = $i->imbaljasa;
-                                                        $id24 = $i->id;
-                                                    } elseif ($i->tenor == 36) {
-                                                        $tenor36 = $i->imbaljasa;
-                                                        $id36 = $i->id;
-                                                    }
-                                                @endphp
-                                                <td>{{ number_format($i->imbaljasa, 0, '', '.') }}</td>
-                                                {{-- @empty --}}
-                                                {{-- <td colspan="3"><span class="text-danger">Maaf data belum
-                                                        tersedia.</span></td> --}}
-                                            @endforeach
                                             <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-expanded="false">
-                                                        Selengkapnya
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" data-toggle="modal"
-                                                            data-target="#editModal" data-id="{{ $item->id }}"
-                                                            data-plafond1="{{ number_format($item->plafond1, 0, '', '.') }}"
-                                                            data-plafond2="{{ number_format($item->plafond2, 0, '', '.') }}"
-                                                            data-imbaljasa12="{{ number_format($tenor12, 0, '', '.') }}"
-                                                            data-imbaljasa24="{{ number_format($tenor24, 0, '', '.') }}"
-                                                            data-imbaljasa36="{{ number_format($tenor36, 0, '', '.') }}"
-                                                            data-idimbaljasa12="{{ $id12 }}"
-                                                            data-idimbaljasa24="{{ $id24 }}"
-                                                            data-idimbaljasa36="{{ $id36 }}"
-                                                            href="#">Edit</a>
-                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
-                                                            data-target="#deleteModal" data-name="{{ $item->name }}"
-                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6">
-                                                <span class="text-danger">Maaf data belum tersedia.</span>
-                                            </td>
-                                        </tr>
+                                                @if ($item->plafond1 == 0)
+                                                < @else @if ($item->plafond1 == 50000000)
+                                                        > {{ number_format($item->plafond1, 0, '', '.') }}
+                                                    @else
+                                                        {{ number_format($item->plafond1, 0, '', '.') }} s/d
+                                                @endif
+                                    @endif
+                                    @if ($item->plafond2 != 0)
+                                        {{ number_format($item->plafond2, 0, '', '.') }}
+                                    @endif
+                                    </td>
+                                    @php
+                                        $imbaljasa = DB::table('tenor_imbal_jasas')
+                                            ->where('imbaljasa_id', $item->id)
+                                            ->get();
+                                        $tenor12 = 0;
+                                        $tenor24 = 0;
+                                        $tenor36 = 0;
+                                        $id12 = '';
+                                        $id24 = '';
+                                        $id36 = '';
+                                    @endphp
+                                    @foreach ($imbaljasa as $i)
+                                        @php
+                                            if ($i->tenor == 12) {
+                                                $tenor12 = $i->imbaljasa;
+                                                $id12 = $i->id;
+                                            } elseif ($i->tenor == 24) {
+                                                $tenor24 = $i->imbaljasa;
+                                                $id24 = $i->id;
+                                            } elseif ($i->tenor == 36) {
+                                                $tenor36 = $i->imbaljasa;
+                                                $id36 = $i->id;
+                                            }
+                                        @endphp
+                                        <td>{{ number_format($i->imbaljasa, 0, '', '.') }}</td>
+                                        {{-- @empty --}}
+                                        {{-- <td colspan="3"><span class="text-danger">Maaf data belum
+                                                        tersedia.</span></td> --}}
+                                    @endforeach
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                data-toggle="dropdown" aria-expanded="false">
+                                                Selengkapnya
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#editModal"
+                                                    data-id="{{ $item->id }}"
+                                                    data-plafond1="{{ number_format($item->plafond1, 0, '', '.') }}"
+                                                    data-plafond2="{{ number_format($item->plafond2, 0, '', '.') }}"
+                                                    data-imbaljasa12="{{ number_format($tenor12, 0, '', '.') }}"
+                                                    data-imbaljasa24="{{ number_format($tenor24, 0, '', '.') }}"
+                                                    data-imbaljasa36="{{ number_format($tenor36, 0, '', '.') }}"
+                                                    data-idimbaljasa12="{{ $id12 }}"
+                                                    data-idimbaljasa24="{{ $id24 }}"
+                                                    data-idimbaljasa36="{{ $id36 }}" href="#">Edit</a>
+                                                <a class="dropdown-item deleteModal" data-toggle="modal"
+                                                    data-target="#deleteModal" data-name="{{ $item->name }}"
+                                                    data-id="{{ $item->id }}" href="#">Hapus</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6">
+                                            <span class="text-danger">Maaf data belum tersedia.</span>
+                                        </td>
+                                    </tr>
                                     @endforelse
                                 </tbody>
                             </table>
