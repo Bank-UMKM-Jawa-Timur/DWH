@@ -20,6 +20,6 @@ class CheckLogin
         if ($_SERVER['HTTP_MID_CLIENT_KEY'] == '$2y$10$uK7wv2xbmgOFAWOA./7nn.RMkuDfg4FKy64ad4h0AVqKxEpt0Co2u') {
             return $next($request);
         }
-        return response()->json('Your tokes is invalid');
+        return response()->json('Your token is invalid');
     }
 }
