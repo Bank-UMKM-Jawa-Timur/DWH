@@ -30,7 +30,26 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
-Route::get('/karyawan/{nip}', [PenggunaController::class, 'getKaryawan']);
+Route::get('/karyawan/{nip}', function() {
+    // $json = json_decode(file_get_contents('https://develop.bankumkm.id/bio_interface/api/karyawan?nip=01497'), true);
+    // return $json;
+    $url = 'https://develop.bankumkm.id/bio_interface/api/karyawan';
+    $data = array('nip' => '01497');
+
+    // use key 'http' even if you send the request to https://...
+    $options = array(
+        'http' => array(
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'GET',
+            'content' => http_build_query($data)
+        )
+    );
+    $context  = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+    if ($result === FALSE) { /* Handle error */ }
+
+    return $result;
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
