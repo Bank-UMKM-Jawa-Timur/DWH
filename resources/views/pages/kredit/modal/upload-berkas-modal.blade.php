@@ -249,7 +249,7 @@
 
         $('#stnk-tab-menu').on('click', function() {
             if (file_stnk != '') {
-                if (user_role == 2)
+                if (user_role == 2 && !confirm_stnk)
                     $('.form-submit-berkas').css('display', 'block')
                 else
                     $('.form-submit-berkas').css('display', 'none')
@@ -269,7 +269,10 @@
         })
         $('#polis-tab-menu').on('click', function() {
             if (file_polis != '') {
-                if (user_role == 2)
+                $('#tanggal_upload_polis').html('Tanggal Upload : '+tanggal_polis);
+                $('#tanggal_confirm_polis').html('Tanggal Konfirmasi : '+confirm_at_polis);
+                $('#status_confirm_polis').html('Status : '+(confirm_polis ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
+                if (user_role == 2 && !confirm_polis)
                     $('.form-submit-berkas').css('display', 'block')
                 else
                     $('.form-submit-berkas').css('display', 'none')
@@ -289,7 +292,10 @@
         })
         $('#bpkb-tab-menu').on('click', function() {
             if (file_bpkb != '') {
-                if (user_role == 2)
+                $('#tanggal_upload_bpkb').html('Tanggal Upload : '+tanggal_bpkb);
+                $('#tanggal_confirm_bpkb').html('Tanggal Konfirmasi : '+confirm_at_bpkb);
+                $('#status_confirm_bpkb').html('Status : '+(confirm_bpkb ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
+                if (user_role == 2 && !confirm_bpkb)
                     $('.form-submit-berkas').css('display', 'block')
                 else
                     $('.form-submit-berkas').css('display', 'none')
@@ -316,8 +322,10 @@
             if (file_stnk != '') {
                 if (user_role == 3)
                     $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2)
+                if (user_role == 2 && !confirm_stnk && stnkActive)
                     $('.form-submit-berkas').css('display', 'block')
+                else
+                    $('.form-submit-berkas').css('display', 'none')
                 $('.input-stnk').css('display', 'none')
                 $('#no_stnk').prop('readonly', true)
                 $('#tanggal_upload_stnk').html('Tanggal Upload : '+tanggal_stnk);
@@ -337,10 +345,10 @@
                 }
             }
             
-            if (file_polis != '') {
+            /*if (file_polis != '') {
                 if (user_role == 3)
                     $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2)
+                if (user_role == 2 && !confirm_polis && polisActive)
                     $('.form-submit-berkas').css('display', 'block')
                 $('.input-polis').css('display', 'none')
                 $('#no_polis').prop('readonly', true)
@@ -363,7 +371,7 @@
             if (file_bpkb != '') {
                 if (user_role == 3)
                     $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2)
+                if (user_role == 2 && !confirm_bpkb && bpkbActive)
                     $('.form-submit-berkas').css('display', 'block')
                 $('.input-bpkb').css('display', 'none')
                 $('#no_bpkb').prop('readonly', true)
@@ -382,7 +390,7 @@
                     if (bpkbActive)
                         $('.form-submit-berkas').css('display', 'block')
                 }
-            }
+            }*/
         }
 
         $('#modal-berkas').on("submit", function(event) {

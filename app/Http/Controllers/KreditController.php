@@ -621,14 +621,16 @@ class KreditController extends Controller
                 if (is_numeric($request->id_stnk)) {
                     $stnk = Document::find($request->id_stnk);
                     $docCategory = DocumentCategory::select('name')->find($stnk->document_category_id);
+                    
+                    // send notification
+                    if (!$stnk->is_confirm)
+                        $this->notificationController->send(12, $stnk->kredit_id);
 
                     $stnk->is_confirm = 1;
                     $stnk->confirm_at = date('Y-m-d');
                     $stnk->confirm_by = Auth::user()->id;
                     $stnk->save();
 
-                    // send notification
-                    $this->notificationController->send(12, $stnk->kredit_id);
                 }
 
                 // polis
@@ -636,13 +638,15 @@ class KreditController extends Controller
                     $polis = Document::find($request->id_polis);
                     $docCategory = DocumentCategory::select('name')->find($polis->document_category_id);
 
+                    // send notification
+                    if (!$polis->is_confirm)
+                        $this->notificationController->send(13, $polis->kredit_id);
+
                     $polis->is_confirm = 1;
                     $polis->confirm_at = date('Y-m-d');
                     $polis->confirm_by = Auth::user()->id;
                     $polis->save();
 
-                    // send notification
-                    $this->notificationController->send(13, $polis->kredit_id);
                 }
 
                 // bpkb
@@ -650,13 +654,15 @@ class KreditController extends Controller
                     $bpkb = Document::find($request->id_bpkb);
                     $docCategory = DocumentCategory::select('name')->find($bpkb->document_category_id);
 
+                    // send notification
+                    if (!$bpkb->is_confirm)
+                        $this->notificationController->send(14, $bpkb->kredit_id);
+
                     $bpkb->is_confirm = 1;
                     $bpkb->confirm_at = date('Y-m-d');
                     $bpkb->confirm_by = Auth::user()->id;
                     $bpkb->save();
 
-                    // send notification
-                    $this->notificationController->send(14, $bpkb->kredit_id);
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');

@@ -122,7 +122,7 @@
                                         {{ $item->title }} -
                                         {{ strlen($item->content) >= 100 ? substr($item->content, 0, 100) . '...' : $item->content }}
                                     </h4>
-                                    <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p>
+                                    <p class="lead-notif">{{ date('d-m-Y H:i', strtotime($item->created_at)) }}</p>
                                 </div>
                             @empty
                                 <span>Belum ada notifikasi.</span>
@@ -320,27 +320,23 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($penyerahanUnit)
-                                                    @if ($penyerahanUnit->is_confirm)
-                                                        @if ($stnk)
-                                                            @if ($stnk->file && $stnk->is_confirm)
-                                                                <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
-                                                                    target="_blank">{{ $stnk->date }}</a>
+                                                    @if ($stnk)
+                                                        @if ($stnk->file && $stnk->is_confirm)
+                                                            <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
+                                                                target="_blank">{{ $stnk->date }}</a>
+                                                        @else
+                                                            <span class="text-warning">Menunggu konfirmasi</span>
+                                                        @endif
+                                                    @else
+                                                        @if (Auth::user()->role_id == 3)
+                                                            @if ($penyerahanUnit->is_confirm)
+                                                                <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
-                                                                @if ($penyerahanUnit->is_confirm)
-                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
-                                                                @else
-                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
-                                                                @endif
-                                                            @else
-                                                                <span class="text-warning">Menunggu penyerahan</span>
-                                                            @endif
+                                                            -
                                                         @endif
-                                                    @else
-                                                    -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -348,28 +344,54 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($penyerahanUnit)
-                                                    @if ($penyerahanUnit->is_confirm)
-                                                        @if ($polis)
-                                                            @if ($polis->file && $polis->is_confirm)
-                                                                <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
-                                                                    target="_blank">{{ $polis->date }}</a>
-                                                            @else
-                                                                @if (Auth::user()->role_id == 3)
-                                                                    <span class="text-warning">Menunggu konfirmasi</span>
-                                                                @else
-                                                                    <span class="text-warning">Menunggu penyerahan</span>
-                                                                @endif
-                                                            @endif
+                                                    @if ($polis)
+                                                        @if ($polis->file && $polis->is_confirm)
+                                                            <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
+                                                                target="_blank">{{ $polis->date }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
                                                                     <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
                                                                 @else
-                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                    <span class="text-warning">Menunggu konfirmasi</span>
                                                                 @endif
                                                             @else
-                                                                <span class="text-warning">Menunggu penyerahan</span>
+                                                                -
                                                             @endif
+                                                        @endif
+                                                    @else
+                                                        @if (Auth::user()->role_id == 3)
+                                                            @if ($penyerahanUnit->is_confirm)
+                                                                <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                            @else
+                                                                -
+                                                            @endif
+                                                        @else
+                                                            <span class="text-warning">Menunggu penyerahan</span>
+                                                        @endif
+                                                    @endif
+                                                @else
+                                                    <span class="text-warning">-</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if ($penyerahanUnit)
+                                                    @if ($bpkb)
+                                                        @if ($polis->file && $polis->is_confirm)
+                                                            <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
+                                                                target="_blank">{{ $bpkb->date }}</a>
+                                                        @else
+                                                            <span class="text-warning">Menunggu konfirmasi</span>
+                                                        @endif
+                                                    @else
+                                                        @if (Auth::user()->role_id == 3)
+                                                            @if ($penyerahanUnit->is_confirm)
+                                                            <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
+                                                            @else
+                                                                -
+                                                            @endif
+                                                        @else
+                                                            <span class="text-warning">Menunggu penyerahan</span>
                                                         @endif
                                                     @else
                                                     -
@@ -561,7 +583,7 @@
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
-                                                                @if ((isset($stnk->is_confirm) || !$stnk->is_confirm) || (isset($polis->is_confirm) || !$polis->is_confirm) || (isset($bpkb->is_confirm) || !$bpkb->is_confirm))
+                                                                @if ((isset($stnk->is_confirm) && !$stnk->is_confirm) || (isset($polis->is_confirm) && !$polis->is_confirm) || (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
                                                                     <a data-toggle="modal"
                                                                         data-target="#uploadBerkasModal"
                                                                         data-id_kkb="{{ $item->kkb_id }}"
