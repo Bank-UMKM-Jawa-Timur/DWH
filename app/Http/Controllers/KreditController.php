@@ -618,7 +618,7 @@ class KreditController extends Controller
             if (Auth::user()->role_id == 2) {
                 // Cabang
                 // stnk
-                if ($request->id_stnk) {
+                if (is_numeric($request->id_stnk)) {
                     $stnk = Document::find($request->id_stnk);
                     $docCategory = DocumentCategory::select('name')->find($stnk->document_category_id);
 
@@ -632,7 +632,7 @@ class KreditController extends Controller
                 }
 
                 // polis
-                if ($request->id_polis) {
+                if (is_numeric($request->id_polis)) {
                     $polis = Document::find($request->id_polis);
                     $docCategory = DocumentCategory::select('name')->find($polis->document_category_id);
 
@@ -646,7 +646,7 @@ class KreditController extends Controller
                 }
 
                 // bpkb
-                if ($request->id_bpkb) {
+                if (is_numeric($request->id_bpkb)) {
                     $bpkb = Document::find($request->id_bpkb);
                     $docCategory = DocumentCategory::select('name')->find($bpkb->document_category_id);
 
