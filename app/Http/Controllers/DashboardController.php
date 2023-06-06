@@ -53,7 +53,7 @@ class DashboardController extends Controller
                 ])
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
-            
+
             if (Auth::user()->role_id == 2) {
                 $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
             }
@@ -86,6 +86,7 @@ class DashboardController extends Controller
                     return $e->getMessage();
                 }
             }
+
             $param['data'] = $data;
 
             $param['role'] = $user->role_name;
@@ -118,6 +119,7 @@ class DashboardController extends Controller
                     ->where('notifications.read', false)
                     ->orderBy('notifications.read')
                     ->orderBy('notifications.created_at', 'DESC')
+                    ->limit(3)
                     ->get();
             }
 

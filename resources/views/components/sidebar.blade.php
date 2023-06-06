@@ -8,6 +8,7 @@
                 <div class="info">
                     <a data-toggle="collapse">
                         <span>
+                            <span class="user-role">{{ $role }}</span>
                             <span class="user-level">Data Warehouse</span>
                         </span>
                     </a>

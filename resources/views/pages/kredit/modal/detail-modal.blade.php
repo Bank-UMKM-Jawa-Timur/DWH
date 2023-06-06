@@ -56,7 +56,7 @@
                                                 <button onclick="printPDF()" class="btn btn-info btn-sm"
                                                     id="printfile">Print File PO</button>
                                                 <iframe id="detail_filepo" src="" class="mt-2" width="100%"
-                                                height="500"></iframe>
+                                                    height="500"></iframe>
                                             </div>
                                         </div>
                                     </div>
@@ -73,46 +73,48 @@
                                                 <tr>
                                                     <td>Nama</td>
                                                     <td>:</td>
-                                                    <td><label id="detail_nama_pengaju" style="font-weight: 400 !important;">undifined</label></td>
+                                                    <td><label id="detail_nama_pengaju"
+                                                            style="font-weight: 400 !important;">undifined</label></td>
                                                 </tr>
                                                 <hr>
                                             @endif
                                             <h4 class="m-0 title-detailpo">Data PO</h4>
                                             <table>
                                                 <tr>
-                                                    <td>Nomor</td>
+                                                    <td class="tabel-bold">Nomor</td>
                                                     <td> :</td>
                                                     <td id="detail_no_po">undifined</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Merk</td>
+                                                    <td class="tabel-bold">Merk</td>
                                                     <td> :</td>
                                                     <td id="detail_merk">undifined</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Merk</td>
+                                                    <td class="tabel-bold">Merk</td>
                                                     <td> :</td>
                                                     <td id="detail_tipe">undifined</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Tahun</td>
+                                                    <td class="tabel-bold">Tahun</td>
                                                     <td> :</td>
                                                     <td id="detail_tahun">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Harga</td>
+                                                    <td class="tabel-bold">Harga</td>
                                                     <td> :</td>
                                                     <td id="detail_harga">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Jumlah Pemesanan</td>
+                                                    <td class="tabel-bold">Jumlah Pemesanan</td>
                                                     <td> :</td>
                                                     <td id="detail_jumlah_pesanan">-</td>
                                                 </tr>
                                             </table>
                                         </div>
                                         <div class="col">
-                                            <img class="img img-thumbnail img-detailpo" src="{{asset('template/assets/img/img-not-found.jpg')}}"
+                                            <img class="img img-thumbnail img-detailpo"
+                                                src="{{ asset('template/assets/img/img-not-found.jpg') }}"
                                                 alt="bukti penyerahan unit">
                                         </div>
                                     </div>
@@ -121,15 +123,30 @@
                             {{--  STNK  --}}
                             <div class="tab-pane fade" id="detail_stnk" role="tabpanel"
                                 aria-labelledby="detail-stnk-tab">
-                                <p class="m-0" id="detail_tanggal_unggah_stnk">Tanggal : -</p>
-                                <p class="m-0" id="detail_tanggal_confirm_stnk">Tanggal Konfirmasi : -</p>
-                                <p class="m-0" id="detail_status_confirm_stnk">Status : Berkas belum diunggah</p>
                                 <div class="form-group detail-input-stnk">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_stnk"
-                                            name="no_stnk" readonly>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-6 mb-2">
+                                            <h5 class="title-po">Tanggal :</h5>
+                                            <b class="content-po" id="detail_tanggal_unggah_stnk">-</b>
+                                        </div>
+                                        <div class="col-sm-6 mb-2">
+                                            <h5 class="title-po">Tanggal Konfirmasi :</h5>
+                                            <b class="content-po" id="detail_tanggal_confirm_stnk">-</b>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h5 class="title-po">Status :</h5>
+                                            <b class="content-po" id="detail_status_confirm_stnk">Berkas belum
+                                                diunggah</b>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h5 class="title-po">Nomor :</h5>
+                                            <b class="content-po" id="detail_no_stnk" name="no_stnk">-</b>
+                                        </div>
                                     </div>
+                                    {{-- <label>Nomor</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" readonly>
+                                    </div> --}}
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_stnk" src="" width="100%"
                                         height="450px"></iframe>
@@ -139,15 +156,33 @@
                             {{--  Polis  --}}
                             <div class="tab-pane fade" id="detail_polis" role="tabpanel"
                                 aria-labelledby="detail-polis-tab">
-                                <p class="m-0" id="detail_tanggal_unggah_polis">Tanggal : -</p>
-                                <p class="m-0" id="detail_tanggal_confirm_polis">Tanggal Konfirmasi : -</p>
-                                <p class="m-0" id="detail_status_confirm_polis">Status : Berkas belum diunggah</p>
+                                {{-- <p class="m-0" id="">Tanggal : -</p>
+                                <p class="m-0" id="">Tanggal Konfirmasi : -</p>
+                                <p class="m-0" id="">Status : Berkas belum diunggah</p> --}}
                                 <div class="form-group detail-input-polis">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_polis"
-                                            name="no_polis" readonly>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-6 mb-2">
+                                            <h5 class="title-po">Tanggal :</h5>
+                                            <b class="content-po" id="detail_tanggal_unggah_polis">-</b>
+                                        </div>
+                                        <div class="col-sm-6 mb-2">
+                                            <h5 class="title-po">Tanggal Konfirmasi :</h5>
+                                            <b class="content-po" id="detail_tanggal_confirm_polis">-</b>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h5 class="title-po">Status :</h5>
+                                            <b class="content-po" id="detail_status_confirm_polis">Berkas belum
+                                                diunggah</b>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h5 class="title-po">Nomor :</h5>
+                                            <b class="content-po" id="detail_no_polis" name="no_polis">-</b>
+                                        </div>
                                     </div>
+                                    {{-- <label>Nomor</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" readonly>
+                                    </div> --}}
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_polis" src="" width="100%"
                                         height="450px"></iframe>
@@ -156,15 +191,30 @@
                             {{--  BPKB  --}}
                             <div class="tab-pane fade" id="detail_bpkb" role="tabpanel"
                                 aria-labelledby="detail-bpkb-tab">
-                                <p class="m-0" id="detail_tanggal_unggah_bpkb">Tanggal : -</p>
-                                <p class="m-0" id="detail_tanggal_confirm_bpkb">Tanggal Konfirmasi : -</p>
-                                <p class="m-0" id="detail_status_confirm_bpkb">Status : Berkas belum diunggah</p>
                                 <div class="form-group detail-input-bpkb">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="detail_no_bpkb"
-                                            name="no_bpkb" readonly>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-6 mb-2">
+                                            <h5 class="title-po">Tanggal :</h5>
+                                            <b class="content-po" id="detail_tanggal_unggah_bpkb">-</b>
+                                        </div>
+                                        <div class="col-sm-6 mb-2">
+                                            <h5 class="title-po">Tanggal Konfirmasi :</h5>
+                                            <b class="content-po" id="detail_tanggal_confirm_bpkb">-</b>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h5 class="title-po">Status :</h5>
+                                            <b class="content-po" id="detail_status_confirm_bpkb">Berkas belum
+                                                diunggah</b>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h5 class="title-po">Nomor :</h5>
+                                            <b class="content-po" id="detail_no_bpkb" name="no_bpkb">-</b>
+                                        </div>
                                     </div>
+                                    {{-- <label>Nomor</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" readonly>
+                                    </div> --}}
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_bpkb" src="" width="100%"
                                         height="450px"></iframe>
@@ -200,8 +250,9 @@
                         if (document.file != null) {
                             switch (document.category) {
                                 case 'STNK':
-                                    $('#detail_tanggal_unggah_stnk').html('Tanggal : '+document.date)
+                                    $('#detail_tanggal_unggah_stnk').html(document.date)
                                     if (document.confirm_at)
+<<<<<<< Updated upstream
                                         $('#detail_tanggal_confirm_stnk').html('Tanggal Konfirmasi : '+document.confirm_at)
                                     if (karyawan)
                                         $('#detail_status_confirm_stnk').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
@@ -209,28 +260,53 @@
                                         $('#detail_status_confirm_stnk').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
                                     $('#detail_no_stnk').val(document.text ? document.text : '-')
                                     $('#detail_preview_stnk').attr('src', document.file_path + "#toolbar=0")
+=======
+                                        $('#detail_tanggal_confirm_stnk').html(document.confirm_at)
+                                    $('#detail_status_confirm_stnk').html(document.is_confirm ?
+                                        'Sudah dikonfirmasi' :
+                                        'Belum dikonfirmasi')
+                                    $('#detail_no_stnk').html(document.text ? document.text : '-')
+                                    $('#detail_preview_stnk').attr('src', document.file_path +
+                                        "#toolbar=0")
+>>>>>>> Stashed changes
                                     break;
                                 case 'Polis':
-                                    $('#detail_tanggal_unggah_polis').html('Tanggal : '+document.date)
+                                    $('#detail_tanggal_unggah_polis').html(document.date)
                                     if (document.confirm_at)
+<<<<<<< Updated upstream
                                         $('#detail_tanggal_confirm_polis').html('Tanggal Konfirmasi : '+document.confirm_at)
                                     if (karyawan)
                                         $('#detail_status_confirm_polis').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
                                     else
                                         $('#detail_status_confirm_polis').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
                                     $('#detail_no_polis').val(document.text ? document.text : '-')
+=======
+                                        $('#detail_tanggal_confirm_polis').html(document.confirm_at)
+                                    $('#detail_status_confirm_polis').html(document.is_confirm ?
+                                        'Sudah dikonfirmasi' :
+                                        'Belum dikonfirmasi')
+                                    $('#detail_no_polis').html(document.text ? document.text : '-')
+>>>>>>> Stashed changes
                                     $('#detail_preview_polis').attr('src', document
                                         .file_path + "#toolbar=0")
                                     break;
                                 case 'BPKB':
-                                    $('#detail_tanggal_unggah_bpkb').html('Tanggal : '+document.date)
+                                    $('#detail_tanggal_unggah_bpkb').html(document.date)
                                     if (document.confirm_at)
+<<<<<<< Updated upstream
                                         $('#detail_tanggal_confirm_bpkb').html('Tanggal Konfirmasi : '+document.confirm_at)
                                     if (karyawan)
                                         $('#detail_status_confirm_bpkb').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
                                     else
                                         $('#detail_status_confirm_bpkb').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
                                     $('#detail_no_bpkb').val(document.text ? document.text : '-')
+=======
+                                        $('#detail_tanggal_confirm_bpkb').html(document.confirm_at)
+                                    $('#detail_status_confirm_bpkb').html(document.is_confirm ?
+                                        'Sudah dikonfirmasi' :
+                                        'Belum dikonfirmasi')
+                                    $('#detail_no_bpkb').html(document.text ? document.text : '-')
+>>>>>>> Stashed changes
                                     $('#detail_preview_bpkb').attr('src', document
                                         .file_path + "#toolbar=0")
                                     break;
@@ -270,7 +346,8 @@
                             .harga_kendaraan, 0, ',', '.'));
                         $('#detail_jumlah_pesanan').html(data
                             .jumlah_kendaraan);
-                        const file_po_path = "{{config('global.los_host')}}/public"+data.po+"#toolbar=0";
+                        const file_po_path = "{{ config('global.los_host') }}/public" + data.po +
+                            "#toolbar=0";
                         $("#detail_filepo").attr("src", file_po_path)
                         $("#detail_nomorPo").html(data.no_po)
                         $("#detail_tanggalPo").html(data.tanggal)

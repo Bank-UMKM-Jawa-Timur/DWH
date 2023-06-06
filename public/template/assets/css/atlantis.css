@@ -644,6 +644,13 @@ body {
     margin-top: 5px;
 }
 
+.sidebar .user .info a>span .user-role,
+.sidebar[data-background-color="white"] .user .info a>span .user-role {
+    color: #DC3545;
+    font-weight: 600;
+    font-size: 15px;
+}
+
 .sidebar .user .info a .link-collapse,
 .sidebar[data-background-color="white"] .user .info a .link-collapse {
     padding: 7px 0;
@@ -22846,6 +22853,14 @@ body[data-background-color="dark"] .board {
     border-left: 0.2px solid #EEEEEE;
     border-right: 0.2px solid #EEEEEE;
     /* border-radius: 10px; */
+}
+
+.modal iframe {
+    border: 0;
+}
+
+.tabel-bold {
+    font-weight: bold;
 }
 
 /* .modaldetailpo .nav-tabs {

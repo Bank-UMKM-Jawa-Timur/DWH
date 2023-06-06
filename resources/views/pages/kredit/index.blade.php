@@ -8,6 +8,7 @@
             height: 50rem;
             border: 1rem solid rgba(0, 0, 0, .1);
         }
+
         td {
             padding: 5px;
         }
@@ -25,8 +26,8 @@
             </div>
         </div>
     </div>
-    <div class="page-inner mt-5">
-        <div class="row mt-2">
+    <div class="page-inner mt--5">
+        <div class="row mt--2">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
@@ -79,9 +80,9 @@
                                             <td class="text-center">{{ $loop->iteration }}</td>
                                             <td class="text-center">
                                                 @if ($item->detail)
-                                                    {{$item->detail['nama']}}
+                                                    {{ $item->detail['nama'] }}
                                                 @else
-                                                undifined
+                                                    undifined
                                                 @endif
                                             </td>
                                             <td class="@if ($item->detail) link-po @endif text-center">
@@ -90,7 +91,7 @@
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
                                                             data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
-                                                            data-filepo="{{ config('global.los_host').'/public' . $item->detail['po'] }}">
+                                                            data-filepo="{{ config('global.los_host') . '/public' . $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
                                                         -
@@ -100,7 +101,7 @@
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
                                                             data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
-                                                            data-filepo="{{ config('global.los_host').'/public'. $item->detail['po'] }}">
+                                                            data-filepo="{{ config('global.los_host') . '/public' . $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
                                                         -
@@ -128,17 +129,22 @@
                                                         {{--  vendor  --}}
                                                         @if ($buktiPembayaran)
                                                             @if (!$buktiPembayaran->is_confirm)
-                                                            <a style="cursor: pointer; text-decoration: underline;" class="confirm-bukti-pembayaran"
-                                                                data-toggle="modal" data-id-category="1"
-                                                                data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
-                                                                data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
-                                                                href="#confirmModalVendor">Konfirmasi</a>
+                                                                <a style="cursor: pointer; text-decoration: underline;"
+                                                                    class="confirm-bukti-pembayaran" data-toggle="modal"
+                                                                    data-id-category="1"
+                                                                    data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
+                                                                    data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
+                                                                    href="#confirmModalVendor">Konfirmasi</a>
                                                             @elseif ($buktiPembayaran->is_confirm)
-                                                            <a class="m-0 bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                            data-file="{{ $buktiPembayaran->file }}" data-confirm="{{$buktiPembayaran->is_confirm}}"
-                                                            data-tanggal="{{$buktiPembayaran->date}}">Selesai</a>
+                                                                <a class="m-0 bukti-pembayaran-modal"
+                                                                    style="cursor: pointer; text-decoration: underline;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#previewBuktiPembayaranModal"
+                                                                    data-file="{{ $buktiPembayaran->file }}"
+                                                                    data-confirm="{{ $buktiPembayaran->is_confirm }}"
+                                                                    data-tanggal="{{ $buktiPembayaran->date }}">Selesai</a>
                                                             @else
-                                                            Menunggu Pembayaran dari Cabang
+                                                                Menunggu Pembayaran dari Cabang
                                                             @endif
                                                         @else
                                                             Menunggu Pembayaran dari Cabang
@@ -152,12 +158,21 @@
                                                                 onclick="uploadBuktiPembayaran({{ $item->id }})">Bayar</a>
                                                         @else
                                                             @if (!$buktiPembayaran->is_confirm)
-                                                            <a class="m-0 bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                            data-file="{{ $buktiPembayaran->file }}" data-confirm="{{$buktiPembayaran->is_confirm}}">Menunggu Konfirmasi Vendor</a>
+                                                                <a class="m-0 bukti-pembayaran-modal"
+                                                                    style="cursor: pointer; text-decoration: underline;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#previewBuktiPembayaranModal"
+                                                                    data-file="{{ $buktiPembayaran->file }}"
+                                                                    data-confirm="{{ $buktiPembayaran->is_confirm }}">Menunggu
+                                                                    Konfirmasi Vendor</a>
                                                             @elseif ($buktiPembayaran->is_confirm)
-                                                            <a class="m-0 bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                            data-file="{{ $buktiPembayaran->file }}" data-confirm="{{$buktiPembayaran->is_confirm}}"
-                                                            data-tanggal="{{$buktiPembayaran->date}}">Selesai</a>
+                                                                <a class="m-0 bukti-pembayaran-modal"
+                                                                    style="cursor: pointer; text-decoration: underline;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#previewBuktiPembayaranModal"
+                                                                    data-file="{{ $buktiPembayaran->file }}"
+                                                                    data-confirm="{{ $buktiPembayaran->is_confirm }}"
+                                                                    data-tanggal="{{ $buktiPembayaran->date }}">Selesai</a>
                                                             @endif
                                                         @endif
                                                     @endif
@@ -169,58 +184,66 @@
                                                 @if ($item->tgl_ketersediaan_unit)
                                                     @if ($penyerahanUnit)
                                                         @if ($penyerahanUnit->is_confirm)
-                                                        <a style="text-decoration: underline; cursor: pointer;" class="confirm-penyerahan-unit"
-                                                            data-toggle="modal" data-id-category="2"
-                                                            data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
-                                                            data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
-                                                            data-confirm="{{$penyerahanUnit->is_confirm}}"
-                                                            data-tanggal="{{date('d-m-Y', strtotime($penyerahanUnit->date))}}"
-                                                            data-confirm_at="{{date('d-m-Y', strtotime($penyerahanUnit->confirm_at))}}"
-                                                            href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                            <a style="text-decoration: underline; cursor: pointer;"
+                                                                class="confirm-penyerahan-unit" data-toggle="modal"
+                                                                data-id-category="2"
+                                                                data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                                data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                                data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                                                data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                                data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
+                                                                href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 <span>Menunggu konfirmasi cabang</span>
                                                             @else
-                                                                <a style="text-decoration: underline; cursor: pointer;" class="confirm-penyerahan-unit"
-                                                                    data-toggle="modal" data-id-category="2"
+                                                                <a style="text-decoration: underline; cursor: pointer;"
+                                                                    class="confirm-penyerahan-unit" data-toggle="modal"
+                                                                    data-id-category="2"
                                                                     data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
                                                                     data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
-                                                                    data-confirm="{{$penyerahanUnit->is_confirm}}"
-                                                                    data-tanggal="{{date('d-m-Y', strtotime($penyerahanUnit->date))}}"
-                                                                    data-confirm_at="{{date('d-m-Y', strtotime($penyerahanUnit->confirm_at))}}"
+                                                                    data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                                                    data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                                    data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
                                                                     href="#confirmModalPenyerahanUnit">Konfirmasi</a>
                                                             @endif
                                                         @endif
                                                     @else
-                                                        <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' +1 month')) }}</span>
+                                                        <span class="text-info">Maksimal
+                                                            {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' +1 month')) }}</span>
                                                     @endif
                                                 @else
                                                     <span class="text-danger">-</span>
                                                 @endif
                                             </td>
+                                            {{-- revisi --}}
                                             <td class="text-center">
                                                 @if ($penyerahanUnit)
                                                     @if ($penyerahanUnit->is_confirm)
                                                         @if ($stnk)
                                                             @if ($stnk->file && $stnk->is_confirm)
-                                                                <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
-                                                                    target="_blank">{{ $stnk->date }}</a>
+                                                                <a style="text-decoration: underline; cursor: pointer;"
+                                                                    class="open-po detailFileStnk" data-toggle="modal"
+                                                                    data-target="#detailStnk"
+                                                                    data-file="{{ $stnk->file }}">{{ $stnk->date }}</a>
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
-                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                                    <span class="text-info">Maksimal
+                                                                        {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
                                                                 @else
-                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                    <span class="text-warning">Menunggu konfirmasi
+                                                                        penyerahan unit</span>
                                                                 @endif
                                                             @else
                                                                 <span class="text-warning">Menunggu penyerahan</span>
                                                             @endif
                                                         @endif
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -231,24 +254,30 @@
                                                     @if ($penyerahanUnit->is_confirm)
                                                         @if ($polis)
                                                             @if ($polis->file && $polis->is_confirm)
-                                                                <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
-                                                                    target="_blank">{{ $polis->date }}</a>
+                                                                <a style="text-decoration: underline; cursor: pointer;"
+                                                                    class="open-po detailFilePolis" data-toggle="modal"
+                                                                    data-target="#detailPolis"
+                                                                    data-file="{{ $polis->file }}">{{ $polis->date }}</a>
+                                                                {{-- <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
+                                                                    target="_blank">{{ $polis->date }}</a> --}}
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
-                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                                    <span class="text-info">Maksimal
+                                                                        {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
                                                                 @else
-                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                    <span class="text-warning">Menunggu konfirmasi
+                                                                        penyerahan unit</span>
                                                                 @endif
                                                             @else
                                                                 <span class="text-warning">Menunggu penyerahan</span>
                                                             @endif
                                                         @endif
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -259,24 +288,30 @@
                                                     @if ($penyerahanUnit->is_confirm)
                                                         @if ($bpkb)
                                                             @if ($polis->file && $polis->is_confirm)
-                                                                <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
-                                                                    target="_blank">{{ $bpkb->date }}</a>
+                                                                <a style="text-decoration: underline; cursor: pointer;"
+                                                                    class="open-po detailFileBpkb" data-toggle="modal"
+                                                                    data-target="#detailBpkb"
+                                                                    data-file="{{ $bpkb->file }}">{{ $bpkb->date }}</a>
+                                                                {{-- <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
+                                                                    target="_blank">{{ $bpkb->date }}</a> --}}
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
-                                                                <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
+                                                                    <span class="text-info">Maksimal
+                                                                        {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
                                                                 @else
-                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                    <span class="text-warning">Menunggu konfirmasi
+                                                                        penyerahan unit</span>
                                                                 @endif
                                                             @else
                                                                 <span class="text-warning">Menunggu penyerahan</span>
                                                             @endif
                                                         @endif
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -287,37 +322,46 @@
                                                     {{--  vendor  --}}
                                                     @if ($imbalJasa)
                                                         @if (!$imbalJasa->is_confirm)
-                                                        <a style="cursor: pointer; text-decoration: underline;" class="confirm-imbal-jasa"
-                                                            data-toggle="modal""
-                                                            data-id="{{ $imbalJasa->id }}"
-                                                            data-file="{{ $imbalJasa->file }}"
-                                                            href="#confirmModalImbalJasa">Konfirmasi Bukti Pembayaran</a>
+                                                            <a style="cursor: pointer; text-decoration: underline;"
+                                                                class="confirm-imbal-jasa" data-toggle="modal""
+                                                                data-id="{{ $imbalJasa->id }}"
+                                                                data-file="{{ $imbalJasa->file }}"
+                                                                href="#confirmModalImbalJasa">Konfirmasi Bukti
+                                                                Pembayaran</a>
                                                         @elseif ($imbalJasa->is_confirm)
-                                                        <p class="m-0">Selesai</p>
-                                                        <a class="bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                        data-file="{{ $imbalJasa->file }}">Lihat Bukti Pembayaran</a>
+                                                            <p class="m-0">Selesai</p>
+                                                            <a class="bukti-pembayaran-modal"
+                                                                style="cursor: pointer; text-decoration: underline;"
+                                                                data-toggle="modal"
+                                                                data-target="#previewBuktiPembayaranModal"
+                                                                data-file="{{ $imbalJasa->file }}">Lihat Bukti
+                                                                Pembayaran</a>
                                                         @else
-                                                        Menunggu Pembayaran dari Cabang
+                                                            Menunggu Pembayaran dari Cabang
                                                         @endif
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
                                                     {{--  role selain vendor  --}}
                                                     @if ($stnk && $polis && $bpkb)
                                                         @if (!$imbalJasa)
-                                                        <a href="#" style="text-decoration: underline; cursor: pointer;" class="upload-imbal-jasa"
-                                                            data-toggle="modal"
-                                                            data-target="#uploadImbalJasaModal"
-                                                            data-id="{{ $item->id }}">Bayar</a>
+                                                            <a href="#"
+                                                                style="text-decoration: underline; cursor: pointer;"
+                                                                class="upload-imbal-jasa" data-toggle="modal"
+                                                                data-target="#uploadImbalJasaModal"
+                                                                data-id="{{ $item->id }}">Bayar</a>
                                                         @else
-                                                        @if (!$imbalJasa->is_confirm)
-                                                        <p class="m-0">Menunggu Konfirmasi Vendor</p>
-                                                        @elseif ($imbalJasa->is_confirm)
-                                                        <p class="m-0">Selesai</p>
-                                                        @endif
-                                                        <a class="bukti-pembayaran-modal" style="text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                        data-file="{{ $imbalJasa->file }}">Lihat Bukti Pembayaran</a>
+                                                            @if (!$imbalJasa->is_confirm)
+                                                                <p class="m-0">Menunggu Konfirmasi Vendor</p>
+                                                            @elseif ($imbalJasa->is_confirm)
+                                                                <p class="m-0">Selesai</p>
+                                                            @endif
+                                                            <a class="bukti-pembayaran-modal"
+                                                                style="text-decoration: underline;" data-toggle="modal"
+                                                                data-target="#previewBuktiPembayaranModal"
+                                                                data-file="{{ $imbalJasa->file }}">Lihat Bukti
+                                                                Pembayaran</a>
                                                         @endif
                                                     @else
                                                         -
@@ -328,8 +372,10 @@
                                                 @if ($penyerahanUnit)
                                                     @if ($imbalJasa)
                                                         @if ($imbalJasa->file && $imbalJasa->is_confirm)
-                                                            <a href="/storage/dokumentasi-imbal-jasa/{{ $imbalJasa->file }}"
-                                                                target="_blank">Rp.
+                                                            <a style="text-decoration: underline; cursor: pointer;"
+                                                                class="open-po detailFileImbalJasa" data-toggle="modal"
+                                                                data-target="#imbaljasadetail"
+                                                                data-file="{{ $imbalJasa->file }}">Rp.
                                                                 {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
@@ -346,14 +392,17 @@
                                                             @if ($imbalJasa->file && $imbalJasa->is_confirm)
                                                                 @if ($stnk && $polis && $bpkb)
                                                                     @if (Auth::user()->role_id == 2)
-                                                                        <span class="text-info">Silahkan upload bukti transfer imbal
+                                                                        <span class="text-info">Silahkan upload bukti
+                                                                            transfer imbal
                                                                             jasa</span>
                                                                     @else
-                                                                        <span class="text-info">Menunggu bukti transfer imbal
+                                                                        <span class="text-info">Menunggu bukti transfer
+                                                                            imbal
                                                                             jasa</span>
                                                                     @endif
                                                                 @else
-                                                                    <span class="text-warning">Menunggu penyerahan semua berkas</span>
+                                                                    <span class="text-warning">Menunggu penyerahan semua
+                                                                        berkas</span>
                                                                 @endif
                                                             @else
                                                                 -
@@ -384,7 +433,8 @@
                                                         @if ($item->tgl_ketersediaan_unit)
                                                             @if ($buktiPembayaran)
                                                                 @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && Auth::user()->vendor_id)
-                                                                    <a data-toggle="modal" data-target="#tglModalPenyerahan"
+                                                                    <a data-toggle="modal"
+                                                                        data-target="#tglModalPenyerahan"
                                                                         data-id_kkb="{{ $item->kkb_id }}" href="#"
                                                                         class="dropdown-item"
                                                                         onclick="setPenyerahan({{ $item->kkb_id }})">Kirim
@@ -397,7 +447,8 @@
                                                             @if ($penyerahanUnit->is_confirm)
                                                                 @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
                                                                     {{--  Vendor  --}}
-                                                                    <a data-toggle="modal" data-target="#uploadBerkasModal"
+                                                                    <a data-toggle="modal"
+                                                                        data-target="#uploadBerkasModal"
                                                                         data-id_kkb="{{ $item->kkb_id }}"
                                                                         data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
                                                                         data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
@@ -424,7 +475,10 @@
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
-                                                                @if ((isset($stnk->is_confirm) && !$stnk->is_confirm) || (isset($polis->is_confirm) && !$polis->is_confirm) || (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
+                                                                @if (
+                                                                    (isset($stnk->is_confirm) && !$stnk->is_confirm) ||
+                                                                        (isset($polis->is_confirm) && !$polis->is_confirm) ||
+                                                                        (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
                                                                     <a data-toggle="modal"
                                                                         data-target="#uploadBerkasModal"
                                                                         data-id_kkb="{{ $item->kkb_id }}"
@@ -455,7 +509,10 @@
                                                         @endif
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  @if ($stnk && $polis && $bpkb && !$imbalJasa)  --}}
-                                                            @if ((isset($stnk->is_confirm) && !$stnk->is_confirm) && (isset($polis->is_confirm) && !$polis->is_confirm) && (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
+                                                            @if (isset($stnk->is_confirm) &&
+                                                                    !$stnk->is_confirm &&
+                                                                    (isset($polis->is_confirm) && !$polis->is_confirm) &&
+                                                                    (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
                                                                 <a href="#" class="dropdown-item upload-imbal-jasa"
                                                                     data-toggle="modal"
                                                                     data-target="#uploadImbalJasaModal"
@@ -498,32 +555,14 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                {{-- <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div> --}}
-                <div class="modal-body">
-                    <form method="POST" action="#" id="modal-form">
-                        <div class="form-group name">
-                            <label for="name">Nama Peran</label>
-                            <input type="text" class="form-control" id="name" name="name">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{-- File STNK --}}
+    @include('pages.kredit.modal.file-stnk')
+    {{-- File Polis --}}
+    @include('pages.kredit.modal.file-polis')
+    {{-- File BPKB --}}
+    @include('pages.kredit.modal.file-bpkb')
+    {{-- File imbalJasa --}}
+    @include('pages.kredit.modal.imbal-jasa')
 
     <!-- Modal bukti pembayaran -->
     @include('pages.kredit.modal.bukti-pembayaran-modal')
@@ -536,6 +575,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Konfirmasi Penyerahan Unit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <form id="modal-tgl-form">
                         <input type="hidden" name="id_kkb" id="id_kkb">
@@ -566,6 +611,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Bukti Transfer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <form id="modal-imbal-jasa-form">
                         @csrf
@@ -597,6 +648,7 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+
                 <div class="modal-body">
                     <form id="modal-bukti-pembayaran" enctype="multipart/form-data">
                         @csrf
@@ -628,6 +680,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Penyerahan Unit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <form id="modal-tgl-penyerahan" enctype="multipart/form-data">
                         @csrf
@@ -750,6 +808,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                {{-- <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Konfirmasi Penyerahan Unit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div> --}}
                 <div class="modal-body">
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
@@ -772,6 +836,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Konfirmasi Bukti Pembayaran</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
@@ -800,6 +870,12 @@
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title" id="previewBuktiPembayaranModalLabel">Bukti Pembayaran Imbal Jasa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
