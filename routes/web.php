@@ -30,6 +30,8 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
+Route::get('/karyawan/{nip}', [PenggunaController::class, 'getKaryawan']);
+
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
