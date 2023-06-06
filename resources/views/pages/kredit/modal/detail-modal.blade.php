@@ -190,17 +190,23 @@
                     for (var i = 0; i < response.data.documents.length; i++) {
                         var content = '';
                         const document = response.data.documents[i];
+                        const karyawan = response.data.karyawan ? response.data.karyawan : null;
+
                         if (document.category == "Penyerahan Unit") {
                             if (document.file)
                                 $(".img-detailpo").attr('src', document.file_path)
                         }
+
                         if (document.file != null) {
                             switch (document.category) {
                                 case 'STNK':
                                     $('#detail_tanggal_unggah_stnk').html('Tanggal : '+document.date)
                                     if (document.confirm_at)
                                         $('#detail_tanggal_confirm_stnk').html('Tanggal Konfirmasi : '+document.confirm_at)
-                                    $('#detail_status_confirm_stnk').html(document.is_confirm ? 'Status : Sudah dikonfirmasi' : 'Status : Belum dikonfirmasi')
+                                    if (karyawan)
+                                        $('#detail_status_confirm_stnk').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
+                                    else
+                                        $('#detail_status_confirm_stnk').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
                                     $('#detail_no_stnk').val(document.text ? document.text : '-')
                                     $('#detail_preview_stnk').attr('src', document.file_path + "#toolbar=0")
                                     break;
@@ -208,7 +214,10 @@
                                     $('#detail_tanggal_unggah_polis').html('Tanggal : '+document.date)
                                     if (document.confirm_at)
                                         $('#detail_tanggal_confirm_polis').html('Tanggal Konfirmasi : '+document.confirm_at)
-                                    $('#detail_status_confirm_polis').html(document.is_confirm ? 'Status : Sudah dikonfirmasi' : 'Status : Belum dikonfirmasi')
+                                    if (karyawan)
+                                        $('#detail_status_confirm_polis').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
+                                    else
+                                        $('#detail_status_confirm_polis').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
                                     $('#detail_no_polis').val(document.text ? document.text : '-')
                                     $('#detail_preview_polis').attr('src', document
                                         .file_path + "#toolbar=0")
@@ -217,7 +226,10 @@
                                     $('#detail_tanggal_unggah_bpkb').html('Tanggal : '+document.date)
                                     if (document.confirm_at)
                                         $('#detail_tanggal_confirm_bpkb').html('Tanggal Konfirmasi : '+document.confirm_at)
-                                    $('#detail_status_confirm_bpkb').html(document.is_confirm ? 'Status : Sudah dikonfirmasi' : 'Status : Belum dikonfirmasi')
+                                    if (karyawan)
+                                        $('#detail_status_confirm_bpkb').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
+                                    else
+                                        $('#detail_status_confirm_bpkb').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
                                     $('#detail_no_bpkb').val(document.text ? document.text : '-')
                                     $('#detail_preview_bpkb').attr('src', document
                                         .file_path + "#toolbar=0")
@@ -249,7 +261,6 @@
                     }
                     if (response.data.pengajuan) {
                         var data = response.data.pengajuan;
-                        console.log(data.nama)
                         $('#detail_nama_pengaju').html(data.nama);
                         $('#detail_no_po').html(data.no_po);
                         $('#detail_merk').html(data.merk);

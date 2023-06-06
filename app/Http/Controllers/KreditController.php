@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Master\PenggunaController;
 use App\Models\Document;
 use App\Models\DocumentCategory;
 use App\Models\KKB;
@@ -24,6 +25,7 @@ class KreditController extends Controller
     private $logActivity;
     private $dashboardContoller;
     private $notificationController;
+    private $penggunaController;
     private $param;
 
     function __construct()
@@ -31,6 +33,7 @@ class KreditController extends Controller
         $this->logActivity = new LogActivitesController;
         $this->dashboardContoller = new DashboardController;
         $this->notificationController = new NotificationController;
+        $this->penggunaController = new PenggunaController;
     }
 
     public function index()
@@ -960,9 +963,16 @@ class KreditController extends Controller
                 // return $e->getMessage();
             }
 
+            // retrieve karyawan data
+            $karyawan = $this->penggunaController->getKaryawan(Auth::user()->nip);
+            
+            if (array_key_exists('error', $karyawan))
+                $karyawan = null;
+
             $data = [
                 'documents' => $document,
                 'pengajuan' => $responseBody,
+                'karyawan' => $karyawan,
             ];
             $status = 'success';
             $message = 'Berhasil mengambil data';

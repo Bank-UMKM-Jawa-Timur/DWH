@@ -294,4 +294,27 @@ class PenggunaController extends Controller
             return response()->json($response);
         }
     }
+
+    public function getKaryawan($nip)
+    {
+        // retrieve from api
+        $host = env('BIO_INTERFACE_API_HOST');
+        $apiURL = $host . '/karyawan//';
+
+        try {
+            $response = Http::timeout(3)->get($apiURL, [
+                'nip' => $nip,
+            ]);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+            if (array_key_exists('data', $responseBody))
+                return $responseBody['data'];
+            else
+                return $responseBody;
+            return $responseBody;
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return $e->getMessage();
+        }
+    }
 }
