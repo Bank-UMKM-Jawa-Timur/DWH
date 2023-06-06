@@ -316,10 +316,8 @@
             if (file_stnk != '') {
                 if (user_role == 3)
                     $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2) {
-                    console.log('vendor block')
+                if (user_role == 2)
                     $('.form-submit-berkas').css('display', 'block')
-                }
                 $('.input-stnk').css('display', 'none')
                 $('#no_stnk').prop('readonly', true)
                 $('#tanggal_upload_stnk').html('Tanggal Upload : '+tanggal_stnk);
@@ -386,5 +384,99 @@
                 }
             }
         }
+
+        $('#modal-berkas').on("submit", function(event) {
+            event.preventDefault();
+            var is_confirm = "{{ Auth::user()->role_id }}" == 2;
+
+            if (!is_confirm) {
+                // Upload
+                const req_id = document.getElementById('id_kkb')
+                const req_no_stnk = document.getElementById('no_stnk')
+                const req_file_stnk = document.getElementById('stnk_scan')
+                const req_no_polis = document.getElementById('no_polis')
+                const req_file_polis = document.getElementById('polis_scan')
+                const req_no_bpkb = document.getElementById('no_bpkb')
+                const req_file_bpkb = document.getElementById('bpkb_scan')
+                var formData = new FormData($(this)[0]);
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_berkas') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('no_stnk'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('stnk_scan'))
+                                    showError(req_image, message)
+                                if (message.toLowerCase().includes('no_polis'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('polis_scan'))
+                                    showError(req_image, message)
+                                if (message.toLowerCase().includes('no_bpkb'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('bpkb_scan'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#uploadBerkasModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            } else {
+                // Confirm
+                const req_id_stnk = document.getElementById('id_stnk')
+                const req_id_polis = document.getElementById('id_polis')
+                const req_id_bpkb = document.getElementById('id_bpkb')
+                var formData = new FormData($(this)[0]);
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.confirm_berkas') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                console.log(message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#uploadBerkasModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            }
+        })
     </script>
 @endpush

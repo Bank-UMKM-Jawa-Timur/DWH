@@ -561,34 +561,32 @@
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
-                                                                @if (isset($stnk->is_confirm) || isset($polis->is_confirm) || isset($bpkb->is_confirm))
-                                                                    @if (!$stnk->is_confirm || !$polis->is_confirm || !$bpkb->is_confirm)
-                                                                        <a data-toggle="modal"
-                                                                            data-target="#uploadBerkasModal"
-                                                                            data-id_kkb="{{ $item->kkb_id }}"
-                                                                            data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
-                                                                            data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"
-                                                                            data-id-bpkb="@if ($bpkb) {{ $bpkb->id }}@else- @endif"
-                                                                            data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
-                                                                            data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
-                                                                            data-date-stnk="@isset($stnk->date){{ date('d-m-Y', strtotime($stnk->date)) }}@endisset"
-                                                                            data-confirm-stnk="@isset($stnk->is_confirm){{ $stnk->is_confirm }}@endisset"
-                                                                            data-confirm-at-stnk="@isset($stnk->confirm_at){{ date('d-m-Y', strtotime($stnk->confirm_at)) }}@endisset"
-                                                                            data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
-                                                                            data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
-                                                                            data-date-polis="@isset($polis->date){{ date('d-m-Y', strtotime($polis->date)) }}@endisset"
-                                                                            data-confirm-polis="@isset($polis->is_confirm){{ $polis->is_confirm }}@endisset"
-                                                                            data-confirm-at-polis="@isset($polis->confirm_at){{ date('d-m-Y', strtotime($polis->confirm_at)) }}@endisset"
-                                                                            data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
-                                                                            data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
-                                                                            data-date-bpkb="@isset($bpkb->date){{ date('d-m-Y', strtotime($bpkb->date)) }}@endisset"
-                                                                            data-confirm-bpkb="@isset($bpkb->is_confirm){{ $bpkb->is_confirm }}@endisset"
-                                                                            data-confirm-at-bpkb="@isset($bpkb->confirm_at){{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}@endisset"
-                                                                            href="#"
-                                                                            class="dropdown-item upload-berkas">
-                                                                            Konfirmasi Berkas
-                                                                        </a>
-                                                                    @endif
+                                                                @if ((isset($stnk->is_confirm) || !$stnk->is_confirm) || (isset($polis->is_confirm) || !$polis->is_confirm) || (isset($bpkb->is_confirm) || !$bpkb->is_confirm))
+                                                                    <a data-toggle="modal"
+                                                                        data-target="#uploadBerkasModal"
+                                                                        data-id_kkb="{{ $item->kkb_id }}"
+                                                                        data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
+                                                                        data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"
+                                                                        data-id-bpkb="@if ($bpkb) {{ $bpkb->id }}@else- @endif"
+                                                                        data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
+                                                                        data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
+                                                                        data-date-stnk="@isset($stnk->date){{ date('d-m-Y', strtotime($stnk->date)) }}@endisset"
+                                                                        data-confirm-stnk="@isset($stnk->is_confirm){{ $stnk->is_confirm }}@endisset"
+                                                                        data-confirm-at-stnk="@isset($stnk->confirm_at){{ date('d-m-Y', strtotime($stnk->confirm_at)) }}@endisset"
+                                                                        data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
+                                                                        data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
+                                                                        data-date-polis="@isset($polis->date){{ date('d-m-Y', strtotime($polis->date)) }}@endisset"
+                                                                        data-confirm-polis="@isset($polis->is_confirm){{ $polis->is_confirm }}@endisset"
+                                                                        data-confirm-at-polis="@isset($polis->confirm_at){{ date('d-m-Y', strtotime($polis->confirm_at)) }}@endisset"
+                                                                        data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
+                                                                        data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
+                                                                        data-date-bpkb="@isset($bpkb->date){{ date('d-m-Y', strtotime($bpkb->date)) }}@endisset"
+                                                                        data-confirm-bpkb="@isset($bpkb->is_confirm){{ $bpkb->is_confirm }}@endisset"
+                                                                        data-confirm-at-bpkb="@isset($bpkb->confirm_at){{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}@endisset"
+                                                                        href="#"
+                                                                        class="dropdown-item upload-berkas">
+                                                                        Konfirmasi Berkas
+                                                                    </a>
                                                                 @endif
                                                             @endif
                                                         @endif

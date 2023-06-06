@@ -425,50 +425,35 @@
                                                                 @endif
                                                             @endif
                                                         @endif
-                                                        {{--  Konfirmasi penyerahan unit (Cabang)  --}}
-                                                        {{--  @if (Auth::user()->role_id == 2 && $penyerahanUnit)
-                                                            @if (!$penyerahanUnit->is_confirm)
-                                                                @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
-                                                                    <a class="dropdown-item confirm-penyerahan-unit"
-                                                                        data-toggle="modal" data-id-category="2"
-                                                                        data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
-                                                                        data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
-                                                                        href="#confirmModalPenyerahanUnit">Konfirmasi
-                                                                        Penyerahan Unit</a>
-                                                                @endif
-                                                            @endif
-                                                        @endif  --}}
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
-                                                                @if (isset($stnk->is_confirm) || isset($polis->is_confirm) || isset($bpkb->is_confirm))
-                                                                    @if (!$stnk->is_confirm || !$polis->is_confirm || !$bpkb->is_confirm)
-                                                                        <a data-toggle="modal"
-                                                                            data-target="#uploadBerkasModal"
-                                                                            data-id_kkb="{{ $item->kkb_id }}"
-                                                                            data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
-                                                                            data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"
-                                                                            data-id-bpkb="@if ($bpkb) {{ $bpkb->id }}@else- @endif"
-                                                                            data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
-                                                                            data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
-                                                                            data-date-stnk="@isset($stnk->date){{ date('d-m-Y', strtotime($stnk->date)) }}@endisset"
-                                                                            data-confirm-stnk="@isset($stnk->is_confirm){{ $stnk->is_confirm }}@endisset"
-                                                                            data-confirm-at-stnk="@isset($stnk->confirm_at){{ date('d-m-Y', strtotime($stnk->confirm_at)) }}@endisset"
-                                                                            data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
-                                                                            data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
-                                                                            data-date-polis="@isset($polis->date){{ date('d-m-Y', strtotime($polis->date)) }}@endisset"
-                                                                            data-confirm-polis="@isset($polis->is_confirm){{ $polis->is_confirm }}@endisset"
-                                                                            data-confirm-at-polis="@isset($polis->confirm_at){{ date('d-m-Y', strtotime($polis->confirm_at)) }}@endisset"
-                                                                            data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
-                                                                            data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
-                                                                            data-date-bpkb="@isset($bpkb->date){{ date('d-m-Y', strtotime($bpkb->date)) }}@endisset"
-                                                                            data-confirm-bpkb="@isset($bpkb->is_confirm){{ $bpkb->is_confirm }}@endisset"
-                                                                            data-confirm-at-bpkb="@isset($bpkb->confirm_at){{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}@endisset"
-                                                                            href="#"
-                                                                            class="dropdown-item upload-berkas">
-                                                                            Konfirmasi Berkas
-                                                                        </a>
-                                                                    @endif
+                                                                @if ((isset($stnk->is_confirm) || !$stnk->is_confirm) || (isset($polis->is_confirm) || !$polis->is_confirm) || (isset($bpkb->is_confirm) || !$bpkb->is_confirm))
+                                                                    <a data-toggle="modal"
+                                                                        data-target="#uploadBerkasModal"
+                                                                        data-id_kkb="{{ $item->kkb_id }}"
+                                                                        data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
+                                                                        data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"
+                                                                        data-id-bpkb="@if ($bpkb) {{ $bpkb->id }}@else- @endif"
+                                                                        data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
+                                                                        data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
+                                                                        data-date-stnk="@isset($stnk->date){{ date('d-m-Y', strtotime($stnk->date)) }}@endisset"
+                                                                        data-confirm-stnk="@isset($stnk->is_confirm){{ $stnk->is_confirm }}@endisset"
+                                                                        data-confirm-at-stnk="@isset($stnk->confirm_at){{ date('d-m-Y', strtotime($stnk->confirm_at)) }}@endisset"
+                                                                        data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
+                                                                        data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
+                                                                        data-date-polis="@isset($polis->date){{ date('d-m-Y', strtotime($polis->date)) }}@endisset"
+                                                                        data-confirm-polis="@isset($polis->is_confirm){{ $polis->is_confirm }}@endisset"
+                                                                        data-confirm-at-polis="@isset($polis->confirm_at){{ date('d-m-Y', strtotime($polis->confirm_at)) }}@endisset"
+                                                                        data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
+                                                                        data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
+                                                                        data-date-bpkb="@isset($bpkb->date){{ date('d-m-Y', strtotime($bpkb->date)) }}@endisset"
+                                                                        data-confirm-bpkb="@isset($bpkb->is_confirm){{ $bpkb->is_confirm }}@endisset"
+                                                                        data-confirm-at-bpkb="@isset($bpkb->confirm_at){{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}@endisset"
+                                                                        href="#"
+                                                                        class="dropdown-item upload-berkas">
+                                                                        Konfirmasi Berkas
+                                                                    </a>
                                                                 @endif
                                                             @endif
                                                         @endif
@@ -1039,106 +1024,6 @@
                         ErrorMessage('Terjadi kesalahan')
                     }
                 })
-            })
-
-            $('#modal-berkas').on("submit", function(event) {
-                event.preventDefault();
-                var is_confirm = "{{ Auth::user()->role_id }}" == 2;
-
-                if (!is_confirm) {
-                    // Upload
-                    const req_id = document.getElementById('id_kkb')
-                    const req_no_stnk = document.getElementById('no_stnk')
-                    const req_file_stnk = document.getElementById('stnk_scan')
-                    const req_no_polis = document.getElementById('no_polis')
-                    const req_file_polis = document.getElementById('polis_scan')
-                    const req_no_bpkb = document.getElementById('no_bpkb')
-                    const req_file_bpkb = document.getElementById('bpkb_scan')
-                    var formData = new FormData($(this)[0]);
-
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ route('kredit.upload_berkas') }}",
-                        data: formData,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        success: function(data) {
-                            if (Array.isArray(data.error)) {
-                                for (var i = 0; i < data.error.length; i++) {
-                                    var message = data.error[i];
-                                    if (message.toLowerCase().includes('no_stnk'))
-                                        showError(req_date, message)
-                                    if (message.toLowerCase().includes('stnk_scan'))
-                                        showError(req_image, message)
-                                    if (message.toLowerCase().includes('no_polis'))
-                                        showError(req_date, message)
-                                    if (message.toLowerCase().includes('polis_scan'))
-                                        showError(req_image, message)
-                                    if (message.toLowerCase().includes('no_bpkb'))
-                                        showError(req_date, message)
-                                    if (message.toLowerCase().includes('bpkb_scan'))
-                                        showError(req_image, message)
-                                }
-                            } else {
-                                if (data.status == 'success') {
-                                    SuccessMessage(data.message);
-                                } else {
-                                    ErrorMessage(data.message)
-                                }
-                                $('#uploadBerkasModal').modal().hide()
-                                $('body').removeClass('modal-open');
-                                $('.modal-backdrop').remove();
-                            }
-                        },
-                        error: function(e) {
-                            console.log(e)
-                            ErrorMessage('Terjadi kesalahan')
-                        }
-                    })
-                } else {
-                    // Confirm
-                    const req_id_stnk = document.getElementById('id_stnk')
-                    const req_id_polis = document.getElementById('id_polis')
-                    const req_id_bpkb = document.getElementById('id_bpkb')
-                    var formData = new FormData($(this)[0]);
-
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ route('kredit.confirm_berkas') }}",
-                        data: formData,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        success: function(data) {
-                            if (Array.isArray(data.error)) {
-                                for (var i = 0; i < data.error.length; i++) {
-                                    var message = data.error[i];
-                                    console.log(message)
-                                    /*if (message.toLowerCase().includes('no_stnk'))
-                                        showError(req_date, message)
-                                    if (message.toLowerCase().includes('stnk_scan'))
-                                        showError(req_image, message)
-                                    if (message.toLowerCase().includes('no_polis'))
-                                        showError(req_image, message)*/
-                                }
-                            } else {
-                                if (data.status == 'success') {
-                                    SuccessMessage(data.message);
-                                } else {
-                                    ErrorMessage(data.message)
-                                }
-                                $('#uploadBerkasModal').modal().hide()
-                                $('body').removeClass('modal-open');
-                                $('.modal-backdrop').remove();
-                            }
-                        },
-                        error: function(e) {
-                            console.log(e)
-                            ErrorMessage('Terjadi kesalahan')
-                        }
-                    })
-                }
             })
 
             $('#modal-stnk').on("submit", function(event) {
