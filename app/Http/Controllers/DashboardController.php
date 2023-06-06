@@ -52,8 +52,12 @@ class DashboardController extends Controller
                     'kkb.tgl_ketersediaan_unit',
                 ])
                 ->orderBy('total_file_uploaded')
-                ->orderBy('total_file_confirmed')
-                ->paginate(5);
+                ->orderBy('total_file_confirmed');
+            
+            if (Auth::user()->role_id == 2) {
+                $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
+            }
+            $data = $data->paginate(5);
 
             foreach ($data as $key => $value) {
                 // retrieve from api
@@ -65,7 +69,7 @@ class DashboardController extends Controller
                 ];
 
                 try {
-                    $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
@@ -79,7 +83,7 @@ class DashboardController extends Controller
                     // insert response to object
                     $value->detail = $responseBody;
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    // return $e->getMessage();
+                    return $e->getMessage();
                 }
             }
             $param['data'] = $data;

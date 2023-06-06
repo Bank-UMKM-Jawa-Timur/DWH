@@ -60,7 +60,7 @@ class KreditController extends Controller
                 \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
                 \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
                 // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
-                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'process', 'done') AS status"),
+                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
             )
                 ->join('kkb', 'kkb.kredit_id', 'kredits.id')
                 ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
@@ -73,8 +73,12 @@ class KreditController extends Controller
                     'kkb.tgl_ketersediaan_unit',
                 ])
                 ->orderBy('total_file_uploaded')
-                ->orderBy('total_file_confirmed')
-                ->paginate(5);
+                ->orderBy('total_file_confirmed');
+
+            if (Auth::user()->role_id == 2) {
+                $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
+            }
+            $data = $data->paginate(5);
 
             foreach ($data as $key => $value) {
                 // retrieve from api
@@ -86,7 +90,7 @@ class KreditController extends Controller
                 ];
 
                 try {
-                    $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
@@ -882,96 +886,99 @@ class KreditController extends Controller
 
     public function show($id)
     {
-        'ads';
+        $status = '';
+        $message = '';
+        $data = null;
+        try {
+            $kredit = Kredit::find($id);
+            $document = DocumentCategory::select(
+                'd.id',
+                \DB::raw("DATE_FORMAT(d.date, '%d-%m-%Y') AS date"),
+                'd.file',
+                'document_categories.name AS category',
+                'd.text',
+                'd.is_confirm',
+                \DB::raw("DATE_FORMAT(d.confirm_at, '%d-%m-%Y') AS confirm_at"),
+                'd.confirm_by',
+            )
+                ->leftJoin('documents AS d', 'd.document_category_id', 'document_categories.id')
+                ->where('d.kredit_id', $id)
+                ->orWhereNull('d.kredit_id')
+                ->get();
+            foreach ($document as $key => $value) {
+                switch ($value->category) {
+                    case "Bukti Pembayaran":
+                        $value->file_path = asset('storage') . "/dokumentasi-bukti-pembayaran/" . $value->file;
+                        break;
+                    case "Penyerahan Unit":
+                        $value->file_path = asset('storage') . "/dokumentasi-peyerahan/" . $value->file;
+                        break;
+                    case "BPKB":
+                        $value->file_path = asset('storage') . "/dokumentasi-bpkb/" . $value->file;
+                        break;
+                    case "Polis":
+                        $value->file_path = asset('storage') . "/dokumentasi-polis/" . $value->file;
+                        break;
+                    case "STNK":
+                        $value->file_path = asset('storage') . "/dokumentasi-stnk/" . $value->file;
+                        break;
+                    default:
+                        $value->file_path = 'not found';
+                        break;
+                }
+            }
+
+             // retrieve from api
+            $host = config('global.los_api_host');
+            $apiURL = $host . '/kkb/get-data-pengajuan/' . $kredit->pengajuan_id;
+
+            $headers = [
+                'token' => config('global.los_api_token')
+            ];
+
+            $responseBody = null;
+
+            try {
+                $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+                // input file path
+                if ($responseBody) {
+                    $responseBody['sppk'] = "/upload/$kredit->pengajuan_id/sppk/" . $responseBody['sppk'];
+                    $responseBody['po'] = "/upload/$kredit->pengajuan_id/po/" . $responseBody['po'];
+                    $responseBody['pk'] = "/upload/$kredit->pengajuan_id/pk/" . $responseBody['pk'];
+                    $responseBody['tanggal'] = date('d-m-Y', strtotime($responseBody['tanggal']));
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
+
+            $data = [
+                'documents' => $document,
+                'pengajuan' => $responseBody,
+            ];
+            $status = 'success';
+            $message = 'Berhasil mengambil data';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } catch (\Throwable $th) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $th;
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+                'data' => $data,
+            ];
+
+            return response()->json($response);
+        }
     }
-    // {
-    //     $status = '';
-    //     $message = '';
-    //     $data = null;
-
-    //     try {
-    //         $kredit = Kredit::find($id);
-    //         $document = DocumentCategory::select(
-    //             'd.id',
-    //             'd.file',
-    //             'document_categories.name AS category',
-    //             'd.text'
-    //         )
-    //             ->leftJoin('documents AS d', 'd.document_category_id', 'document_categories.id')
-    //             ->where('d.kredit_id', $id)
-    //             ->orWhereNull('d.kredit_id')
-    //             ->get();
-    //         foreach ($document as $key => $value) {
-    //             switch ($value->category) {
-    //                 case "Bukti Pembayaran":
-    //                     $value->file_path = asset('storage') . "/dokumentasi-bukti-pembayaran/" . $value->file;
-    //                     break;
-    //                 case "Penyerahan Unit":
-    //                     $value->file_path = asset('storage') . "/dokumentasi-peyerahan/" . $value->file;
-    //                     break;
-    //                 case "BPKB":
-    //                     $value->file_path = asset('storage') . "/dokumentasi-bpkb/" . $value->file;
-    //                     break;
-    //                 case "Polis":
-    //                     $value->file_path = asset('storage') . "/dokumentasi-polis/" . $value->file;
-    //                     break;
-    //                 case "STNK":
-    //                     $value->file_path = asset('storage') . "/dokumentasi-stnk/" . $value->file;
-    //                     break;
-    //                 default:
-    //                     $value->file_path = 'not found';
-    //                     break;
-    //             }
-    //         }
-
-    //         // retrieve from api
-    //         $host = config('global.los_api_host');
-    //         $apiURL = $host . '/kkb/get-data-pengajuan/' . $kredit->pengajuan_id;
-
-    //         $headers = [
-    //             'token' => config('global.los_api_token')
-    //         ];
-
-    //         $responseBody = null;
-
-    //         try {
-    //             $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-
-    //             $statusCode = $response->status();
-    //             $responseBody = json_decode($response->getBody(), true);
-    //             // input file path
-    //             $responseBody['sppk'] = "/upload/$kredit->pengajuan_id/sppk/" . $responseBody['sppk'];
-    //             $responseBody['po'] = "/upload/$kredit->pengajuan_id/po/" . $responseBody['po'];
-    //             $responseBody['pk'] = "/upload/$kredit->pengajuan_id/pk/" . $responseBody['pk'];
-    //         } catch (\Illuminate\Http\Client\ConnectionException $e) {
-    //             // return $e->getMessage();
-    //         }
-
-    //         $data = [
-    //             'documents' => $document,
-    //             'pengajuan' => $responseBody,
-    //         ];
-    //         $status = 'success';
-    //         $message = 'Berhasil mengambil data';
-    //     } catch (\Exception $e) {
-    //         $status = 'failed';
-    //         $message = 'Terjadi kesalahan ' . $e;
-    //     } catch (\Illuminate\Database\QueryException $e) {
-    //         $status = 'failed';
-    //         $message = 'Terjadi kesalahan pada database';
-    //     } catch (\Throwable $th) {
-    //         $status = 'failed';
-    //         $message = 'Terjadi kesalahan ' . $th;
-    //     } finally {
-    //         $response = [
-    //             'status' => $status,
-    //             'message' => $message,
-    //             'data' => $data,
-    //         ];
-
-    //         return response()->json($response);
-    //     }
-    // }
 
     public function uploadUImbalJasa(Request $request)
     {

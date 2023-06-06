@@ -1,6 +1,12 @@
-<div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="detailPOLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title" id="detailPOLabel">Detail PO</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" class="text-light">&times;</span>
+                </button>
+            </div>
             <div class="modal-body">
                 <div class="row container">
                     <div class="col-sm-6">

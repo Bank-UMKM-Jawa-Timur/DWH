@@ -3,10 +3,10 @@
     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                Detail
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title" id="detailModalLabel">Detail</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true" class="text-light">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -54,8 +54,7 @@
                                                 <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File
                                                     PO</button>
                                                 <button onclick="printPDF()" class="btn btn-info btn-sm"
-                                                    id="printfile">Print File
-                                                    PO</button>
+                                                    id="printfile">Print File PO</button>
                                                 <iframe id="detail_filepo" src="" class="mt-2" width="100%"
                                                 height="500"></iframe>
                                             </div>
@@ -74,7 +73,7 @@
                                                 <tr>
                                                     <td>Nama</td>
                                                     <td>:</td>
-                                                    <td id="detail_nama_pengaju">undifined</td>
+                                                    <td><label id="detail_nama_pengaju" style="font-weight: 400 !important;">undifined</label></td>
                                                 </tr>
                                                 <hr>
                                             @endif
@@ -122,7 +121,10 @@
                             {{--  STNK  --}}
                             <div class="tab-pane fade" id="detail_stnk" role="tabpanel"
                                 aria-labelledby="detail-stnk-tab">
-                                <div class="form-group">
+                                <p class="m-0" id="detail_tanggal_unggah_stnk">Tanggal : -</p>
+                                <p class="m-0" id="detail_tanggal_confirm_stnk">Tanggal Konfirmasi : -</p>
+                                <p class="m-0" id="detail_status_confirm_stnk">Status : Berkas belum diunggah</p>
+                                <div class="form-group detail-input-stnk">
                                     <label>Nomor</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="detail_no_stnk"
@@ -131,14 +133,16 @@
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_stnk" src="" width="100%"
                                         height="450px"></iframe>
-                                    <p class="m-0" id="detail_ket_stnk">Berkas tidak ada.</p>
                                 </div>
 
                             </div>
                             {{--  Polis  --}}
                             <div class="tab-pane fade" id="detail_polis" role="tabpanel"
                                 aria-labelledby="detail-polis-tab">
-                                <div class="form-group">
+                                <p class="m-0" id="detail_tanggal_unggah_polis">Tanggal : -</p>
+                                <p class="m-0" id="detail_tanggal_confirm_polis">Tanggal Konfirmasi : -</p>
+                                <p class="m-0" id="detail_status_confirm_polis">Status : Berkas belum diunggah</p>
+                                <div class="form-group detail-input-polis">
                                     <label>Nomor</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="detail_no_polis"
@@ -147,13 +151,15 @@
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_polis" src="" width="100%"
                                         height="450px"></iframe>
-                                    <p class="m-0" id="detail_ket_polis">Berkas tidak ada.</p>
                                 </div>
                             </div>
                             {{--  BPKB  --}}
                             <div class="tab-pane fade" id="detail_bpkb" role="tabpanel"
                                 aria-labelledby="detail-bpkb-tab">
-                                <div class="form-group">
+                                <p class="m-0" id="detail_tanggal_unggah_bpkb">Tanggal : -</p>
+                                <p class="m-0" id="detail_tanggal_confirm_bpkb">Tanggal Konfirmasi : -</p>
+                                <p class="m-0" id="detail_status_confirm_bpkb">Status : Berkas belum diunggah</p>
+                                <div class="form-group detail-input-bpkb">
                                     <label>Nomor</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="detail_no_bpkb"
@@ -162,9 +168,7 @@
                                     <small class="form-text text-danger error"></small>
                                     <iframe id="detail_preview_bpkb" src="" width="100%"
                                         height="450px"></iframe>
-                                    <p class="m-0" id="detail_ket_bpkb">Berkas tidak ada.</p>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -185,71 +189,80 @@
                 success: function(response) {
                     for (var i = 0; i < response.data.documents.length; i++) {
                         var content = '';
-                        if (response.data.documents[i].category == "Penyerahan Unit") {
-                            if (response.data.documents[i].file)
-                                $(".img-detailpo").attr('src', response.data.documents[i].file_path)
+                        const document = response.data.documents[i];
+                        if (document.category == "Penyerahan Unit") {
+                            if (document.file)
+                                $(".img-detailpo").attr('src', document.file_path)
                         }
-                        if (response.data.documents[i].file != "") {
-                            switch (response.data.documents[i].category) {
+                        if (document.file != null) {
+                            switch (document.category) {
                                 case 'STNK':
-                                    $('#detail_no_stnk').val(response.data.documents[i].text)
-                                    $('#detail_preview_stnk').attr('src', response.data.documents[i]
-                                        .file_path + "#toolbar=0")
-                                    $('#detail_ket_stnk').css('display', 'none')
+                                    $('#detail_tanggal_unggah_stnk').html('Tanggal : '+document.date)
+                                    if (document.confirm_at)
+                                        $('#detail_tanggal_confirm_stnk').html('Tanggal Konfirmasi : '+document.confirm_at)
+                                    $('#detail_status_confirm_stnk').html(document.is_confirm ? 'Status : Sudah dikonfirmasi' : 'Status : Belum dikonfirmasi')
+                                    $('#detail_no_stnk').val(document.text ? document.text : '-')
+                                    $('#detail_preview_stnk').attr('src', document.file_path + "#toolbar=0")
                                     break;
                                 case 'Polis':
-                                    $('#detail_no_polis').val(response.data.documents[i].text)
-                                    $('#detail_preview_polis').attr('src', response.data.documents[i]
+                                    $('#detail_tanggal_unggah_polis').html('Tanggal : '+document.date)
+                                    if (document.confirm_at)
+                                        $('#detail_tanggal_confirm_polis').html('Tanggal Konfirmasi : '+document.confirm_at)
+                                    $('#detail_status_confirm_polis').html(document.is_confirm ? 'Status : Sudah dikonfirmasi' : 'Status : Belum dikonfirmasi')
+                                    $('#detail_no_polis').val(document.text ? document.text : '-')
+                                    $('#detail_preview_polis').attr('src', document
                                         .file_path + "#toolbar=0")
-                                    $('#detail_ket_polis').css('display', 'none')
                                     break;
                                 case 'BPKB':
-                                    $('#detail_no_bpkb').val(response.data.documents[i].text)
-                                    $('#detail_preview_bpkb').attr('src', response.data.documents[i]
+                                    $('#detail_tanggal_unggah_bpkb').html('Tanggal : '+document.date)
+                                    if (document.confirm_at)
+                                        $('#detail_tanggal_confirm_bpkb').html('Tanggal Konfirmasi : '+document.confirm_at)
+                                    $('#detail_status_confirm_bpkb').html(document.is_confirm ? 'Status : Sudah dikonfirmasi' : 'Status : Belum dikonfirmasi')
+                                    $('#detail_no_bpkb').val(document.text ? document.text : '-')
+                                    $('#detail_preview_bpkb').attr('src', document
                                         .file_path + "#toolbar=0")
-                                    $('#detail_ket_bpkb').css('display', 'none')
                                     break;
                                 default:
                                     break;
                             }
                         } else {
-                            switch (response.data.documents[i].category) {
+                            switch (document.category) {
                                 case 'STNK':
                                     $('#detail_no_stnk').css('display', 'none')
                                     $('#detail_preview_stnk').css('display', 'none')
-                                    $('#detail_ket_stnk').css('display', 'block')
+                                    $('.detail-input-stnk').css('display', 'none')
                                     break;
                                 case 'Polis':
                                     $('#detail_no_polis').css('display', 'none !important')
                                     $('#detail_preview_polis').css('display', 'none')
-                                    $('#detail_ket_polis').css('display', 'block')
+                                    $('.detail-input-polis').css('display', 'none')
                                     break;
                                 case 'BPKB':
                                     $('#detail_no_bpkb').css('display', 'none !important')
                                     $('#detail_preview_bpkb').css('display', 'none')
-                                    $('#detail_ket_bpkb').css('display', 'block')
+                                    $('.detail-input-bpkb').css('display', 'none')
                                     break;
                                 default:
                                     break;
                             }
                         }
-                        if (response.data.pengajuan) {
-                            var data = response.data.pengajuan;
-                            $('#detail_nama_pengaju').html(data.nama);
-                            $('#detail_no_po').html(data.no_po);
-                            $('#detail_merk').html(data.merk);
-                            $('#detail_tipe').html(data.tipe);
-                            $('#detail_tahun').html(data.tahun_kendaraan);
-                            $('#detail_harga').html('Rp ' + formatMoney(data
-                                .harga_kendaraan, 0, ',', '.'));
-                            $('#detail_jumlah_pesanan').html(data
-                                .jumlah_kendaraan);
-                            const file_po_path = "{{config('global.los_host')}}"+data.po+"#toolbar=0";
-                            console.log(file_po_path)
-                            $("#detail_filepo").attr("src", file_po_path)
-                            $("#detail_nomorPo").html(data.no_po)
-                            $("#detail_tanggalPo").html(data.tanggal)
-                        }
+                    }
+                    if (response.data.pengajuan) {
+                        var data = response.data.pengajuan;
+                        console.log(data.nama)
+                        $('#detail_nama_pengaju').html(data.nama);
+                        $('#detail_no_po').html(data.no_po);
+                        $('#detail_merk').html(data.merk);
+                        $('#detail_tipe').html(data.tipe);
+                        $('#detail_tahun').html(data.tahun_kendaraan);
+                        $('#detail_harga').html('Rp ' + formatMoney(data
+                            .harga_kendaraan, 0, ',', '.'));
+                        $('#detail_jumlah_pesanan').html(data
+                            .jumlah_kendaraan);
+                        const file_po_path = "{{config('global.los_host')}}/public"+data.po+"#toolbar=0";
+                        $("#detail_filepo").attr("src", file_po_path)
+                        $("#detail_nomorPo").html(data.no_po)
+                        $("#detail_tanggalPo").html(data.tanggal)
                     }
                 },
                 error: function(error) {

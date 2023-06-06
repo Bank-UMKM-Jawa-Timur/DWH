@@ -8,6 +8,9 @@
             height: 50rem;
             border: 1rem solid rgba(0, 0, 0, .1);
         }
+        td {
+            padding: 5px;
+        }
     </style>
 @endpush
 
@@ -27,26 +30,26 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table mt-3" id="basic-datatables">
+                        <div class="">
+                            <table class="mt-3" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Nama</th>
-                                        <th scope="col">PO</th>
-                                        <th scope="col">Ketersediaan Unit</th>
-                                        <th scope="col">Bukti Pembayaran</th>
-                                        <th scope="col">Penyerahan Unit</th>
+                                        <th class="px-2 text-center" scope="col">No</th>
+                                        <th class="px-2 text-center" scope="col" width="150">Nama</th>
+                                        <th class="px-2 text-center" scope="col">PO</th>
+                                        <th class="px-2 text-center" scope="col">Ketersediaan Unit</th>
+                                        <th class="px-2 text-center" scope="col">Bukti Pembayaran</th>
+                                        <th class="px-2 text-center" scope="col">Penyerahan Unit</th>
                                         {{--  <th scope="col">STNK</th>
                                         <th scope="col">Polis</th>
                                         <th scope="col">BPKB</th>  --}}
                                         @foreach ($documentCategories as $item)
-                                            <th scope="col">{{ $item->name }}</th>
+                                            <th class="px-2 text-center" scope="col">{{ $item->name }}</th>
                                         @endforeach
-                                        <th scope="col">Bukti Pembayaran Imbal Jasa</th>
-                                        <th scope="col">Imbal Jasa</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Aksi</th>
+                                        <th class="px-2 text-center" scope="col">Bukti Pembayaran Imbal Jasa</th>
+                                        <th class="px-2 text-center" scope="col">Imbal Jasa</th>
+                                        <th class="px-2 text-center" scope="col">Status</th>
+                                        <th class="px-2 text-center" scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -73,22 +76,22 @@
                                             $setImbalJasa = DB::table('tenor_imbal_jasas')->find($item->id_tenor_imbal_jasa);
                                         @endphp
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                            <td class="text-center">
                                                 @if ($item->detail)
                                                     {{$item->detail['nama']}}
                                                 @else
                                                 undifined
                                                 @endif
                                             </td>
-                                            <td class="@if ($item->detail) link-po @endif">
+                                            <td class="@if ($item->detail) link-po @endif text-center">
                                                 @if ($buktiPembayaran)
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
                                                             data-tanggalPo="{{ $item->detail['tanggal'] }}"
-                                                            data-filepo="{{ config('global.los_host') . $item->detail['po'] }}">
-                                                            {{ $item->detail['nama'] }}</a>
+                                                            data-filepo="{{ config('global.los_host').'/public' . $item->detail['po'] }}">
+                                                            {{ $item->detail['no_po'] }}</a>
                                                     @else
                                                         -
                                                     @endif
@@ -97,29 +100,29 @@
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
                                                             data-tanggalPo="{{ $item->detail['tanggal'] }}"
-                                                            data-filepo="{{ config('global.los_host') . $item->detail['po'] }}">
+                                                            data-filepo="{{ config('global.los_host').'/public'. $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
                                                         -
                                                     @endif
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if (Auth::user()->vendor_id)
                                                     @if (!$item->tgl_ketersediaan_unit)
                                                         <a style="text-decoration: underline;" data-toggle="modal"
                                                             data-target="#tglModal" data-id_kkb="{{ $item->kkb_id }}"
                                                             href="#">Atur</a>
                                                     @else
-                                                        {{ $item->tgl_ketersediaan_unit }}
+                                                        {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}
                                                     @endif
                                                 @elseif ($item->tgl_ketersediaan_unit)
-                                                    {{ $item->tgl_ketersediaan_unit }}
+                                                    {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}
                                                 @else
                                                     <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($item->tgl_ketersediaan_unit)
                                                     @if (Auth::user()->role_id == 3)
                                                         {{--  vendor  --}}
@@ -162,98 +165,128 @@
                                                     -
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($item->tgl_ketersediaan_unit)
                                                     @if ($penyerahanUnit)
-                                                        {{ $penyerahanUnit->date }}
+                                                        @if ($penyerahanUnit->is_confirm)
+                                                        <a style="text-decoration: underline; cursor: pointer;" class="confirm-penyerahan-unit"
+                                                            data-toggle="modal" data-id-category="2"
+                                                            data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                            data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                            data-confirm="{{$penyerahanUnit->is_confirm}}"
+                                                            data-tanggal="{{date('d-m-Y', strtotime($penyerahanUnit->date))}}"
+                                                            data-confirm_at="{{date('d-m-Y', strtotime($penyerahanUnit->confirm_at))}}"
+                                                            href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                        @else
+                                                            @if (Auth::user()->role_id == 3)
+                                                                <span>Menunggu konfirmasi cabang</span>
+                                                            @else
+                                                                <a style="text-decoration: underline; cursor: pointer;" class="confirm-penyerahan-unit"
+                                                                    data-toggle="modal" data-id-category="2"
+                                                                    data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                                    data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                                    data-confirm="{{$penyerahanUnit->is_confirm}}"
+                                                                    data-tanggal="{{date('d-m-Y', strtotime($penyerahanUnit->date))}}"
+                                                                    data-confirm_at="{{date('d-m-Y', strtotime($penyerahanUnit->confirm_at))}}"
+                                                                    href="#confirmModalPenyerahanUnit">Konfirmasi</a>
+                                                            @endif
+                                                        @endif
                                                     @else
-                                                        <span class="text-info">Maksimal tanggal penyerahan unit
-                                                            {{ date('Y-m-d', strtotime($item->tgl_ketersediaan_unit . ' +1 days')) }}</span>
+                                                        <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' +1 month')) }}</span>
                                                     @endif
                                                 @else
                                                     <span class="text-danger">-</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($penyerahanUnit)
-                                                    @if ($stnk)
-                                                        @if ($stnk->file && $stnk->is_confirm)
-                                                            <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
-                                                                target="_blank">{{ $stnk->date }}</a>
-                                                        @else
-                                                            <span class="text-warning">Menunggu konfirmasi</span>
-                                                        @endif
-                                                    @else
-                                                        @if (Auth::user()->role_id == 3)
-                                                            @if ($penyerahanUnit->is_confirm)
-                                                                <span class="text-info">Maksimal tanggal upload STNK
-                                                                    {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                    @if ($penyerahanUnit->is_confirm)
+                                                        @if ($stnk)
+                                                            @if ($stnk->file && $stnk->is_confirm)
+                                                                <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
+                                                                    target="_blank">{{ $stnk->date }}</a>
                                                             @else
-                                                            <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
-                                                        @else
-                                                            <span class="text-warning">Menunggu penyerahan STNK</span>
-                                                        @endif
-                                                    @endif
-                                                @else
-                                                    <span class="text-warning">-</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($penyerahanUnit)
-                                                    @if ($polis)
-                                                        @if ($polis->file && $polis->is_confirm)
-                                                            <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
-                                                                target="_blank">{{ $polis->date }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
-                                                                <span class="text-warning">Menunggu konfirmasi</span>
+                                                                @if ($penyerahanUnit->is_confirm)
+                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                                @else
+                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                @endif
                                                             @else
-                                                                <span class="text-warning">Menunggu penyerahan polis</span>
+                                                                <span class="text-warning">Menunggu penyerahan</span>
                                                             @endif
                                                         @endif
                                                     @else
-                                                        @if (Auth::user()->role_id == 3)
-                                                            @if ($penyerahanUnit->is_confirm)
-                                                                <span class="text-info">Maksimal tanggal upload Polis
-                                                                {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
-                                                            @else
-                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
-                                                            @endif
-                                                        @else
-                                                            <span class="text-warning">Menunggu Penyerahan Polis</span>
-                                                        @endif
+                                                    -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($penyerahanUnit)
-                                                    @if ($bpkb)
-                                                        @if ($polis->file && $polis->is_confirm)
-                                                            <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
-                                                                target="_blank">{{ $bpkb->date }}</a>
-                                                        @else
-                                                            <span class="text-warning">Menunggu konfirmasi</span>
-                                                        @endif
-                                                    @else
-                                                        @if (Auth::user()->role_id == 3)
-                                                            @if ($penyerahanUnit->is_confirm)
-                                                            <span class="text-info">Maksimal tanggal upload BPKB
-                                                                {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                    @if ($penyerahanUnit->is_confirm)
+                                                        @if ($polis)
+                                                            @if ($polis->file && $polis->is_confirm)
+                                                                <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
+                                                                    target="_blank">{{ $polis->date }}</a>
                                                             @else
-                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                @if (Auth::user()->role_id == 3)
+                                                                    <span class="text-warning">Menunggu konfirmasi</span>
+                                                                @else
+                                                                    <span class="text-warning">Menunggu penyerahan</span>
+                                                                @endif
                                                             @endif
                                                         @else
-                                                            <span class="text-warning">Menunggu Penyerahan BPKB</span>
+                                                            @if (Auth::user()->role_id == 3)
+                                                                @if ($penyerahanUnit->is_confirm)
+                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                                @else
+                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="text-warning">Menunggu penyerahan</span>
+                                                            @endif
                                                         @endif
+                                                    @else
+                                                    -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
+                                                @if ($penyerahanUnit)
+                                                    @if ($penyerahanUnit->is_confirm)
+                                                        @if ($bpkb)
+                                                            @if ($polis->file && $polis->is_confirm)
+                                                                <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
+                                                                    target="_blank">{{ $bpkb->date }}</a>
+                                                            @else
+                                                                <span class="text-warning">Menunggu konfirmasi</span>
+                                                            @endif
+                                                        @else
+                                                            @if (Auth::user()->role_id == 3)
+                                                                @if ($penyerahanUnit->is_confirm)
+                                                                <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
+                                                                @else
+                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="text-warning">Menunggu penyerahan</span>
+                                                            @endif
+                                                        @endif
+                                                    @else
+                                                    -
+                                                    @endif
+                                                @else
+                                                    <span class="text-warning">-</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
                                                 @if (Auth::user()->role_id == 3)
                                                     {{--  vendor  --}}
                                                     @if ($imbalJasa)
@@ -271,7 +304,7 @@
                                                         Menunggu Pembayaran dari Cabang
                                                         @endif
                                                     @else
-                                                    Menunggu Pembayaran dari Cabang
+                                                    -
                                                     @endif
                                                 @else
                                                     {{--  role selain vendor  --}}
@@ -295,7 +328,7 @@
                                                     @endif
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($penyerahanUnit)
                                                     @if ($imbalJasa)
                                                         @if ($imbalJasa->file && $imbalJasa->is_confirm)
@@ -313,17 +346,24 @@
                                                             @endif
                                                         @endif
                                                     @else
-                                                        @if ($stnk && $polis && $bpkb)
-                                                            @if (Auth::user()->role_id == 2)
-                                                                <span class="text-info">Silahkan upload bukti transfer imbal
-                                                                    jasa</span>
+                                                        @if ($imbalJasa)
+                                                            @if ($imbalJasa->file && $imbalJasa->is_confirm)
+                                                                @if ($stnk && $polis && $bpkb)
+                                                                    @if (Auth::user()->role_id == 2)
+                                                                        <span class="text-info">Silahkan upload bukti transfer imbal
+                                                                            jasa</span>
+                                                                    @else
+                                                                        <span class="text-info">Menunggu bukti transfer imbal
+                                                                            jasa</span>
+                                                                    @endif
+                                                                @else
+                                                                    <span class="text-warning">Menunggu penyerahan semua berkas</span>
+                                                                @endif
                                                             @else
-                                                                <span class="text-info">Menunggu bukti transfer imbal
-                                                                    jasa</span>
+                                                                -
                                                             @endif
                                                         @else
-                                                            <span class="text-warning">Menunggu penyerahan semua
-                                                                berkas</span>
+                                                            <span class="text-warning">-</span>
                                                         @endif
                                                     @endif
                                                 @else
@@ -331,14 +371,14 @@
                                                 @endif
                                             </td>
                                             <td
-                                                class="@if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
+                                                class="text-center @if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
                                                 @if ($setImbalJasa)
                                                     {{ $item->status }}
                                                 @else
                                                     progress
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-info dropdown-toggle" type="button"
                                                         data-toggle="dropdown" aria-expanded="false">
@@ -365,10 +405,19 @@
                                                                         data-id_kkb="{{ $item->kkb_id }}"
                                                                         data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
                                                                         data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
+                                                                        data-date-stnk="@isset($stnk->date){{ date('d-m-Y', strtotime($stnk->date)) }}@endisset"
+                                                                        data-confirm-stnk="@isset($stnk->is_confirm){{ $stnk->is_confirm }}@endisset"
+                                                                        data-confirm-at-stnk="@isset($stnk->confirm_at){{ date('d-m-Y', strtotime($stnk->confirm_at)) }}@endisset"
                                                                         data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
                                                                         data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
+                                                                        data-date-polis="@isset($polis->date){{ date('d-m-Y', strtotime($polis->date)) }}@endisset"
+                                                                        data-confirm-polis="@isset($polis->is_confirm){{ $polis->is_confirm }}@endisset"
+                                                                        data-confirm-at-polis="@isset($polis->confirm_at){{ date('d-m-Y', strtotime($polis->confirm_at)) }}@endisset"
                                                                         data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
                                                                         data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
+                                                                        data-date-bpkb="@isset($bpkb->date){{ date('d-m-Y', strtotime($bpkb->date)) }}@endisset"
+                                                                        data-confirm-bpkb="@isset($bpkb->is_confirm){{ $bpkb->is_confirm }}@endisset"
+                                                                        data-confirm-at-bpkb="@isset($bpkb->confirm_at){{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}@endisset"
                                                                         href="#"
                                                                         class="dropdown-item upload-berkas">
                                                                         Upload Berkas
@@ -377,10 +426,9 @@
                                                             @endif
                                                         @endif
                                                         {{--  Konfirmasi penyerahan unit (Cabang)  --}}
-                                                        @if (Auth::user()->role_id == 2 && $penyerahanUnit)
+                                                        {{--  @if (Auth::user()->role_id == 2 && $penyerahanUnit)
                                                             @if (!$penyerahanUnit->is_confirm)
                                                                 @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
-                                                                    {{--  Vendor  --}}
                                                                     <a class="dropdown-item confirm-penyerahan-unit"
                                                                         data-toggle="modal" data-id-category="2"
                                                                         data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
@@ -389,7 +437,7 @@
                                                                         Penyerahan Unit</a>
                                                                 @endif
                                                             @endif
-                                                        @endif
+                                                        @endif  --}}
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
@@ -403,10 +451,19 @@
                                                                             data-id-bpkb="@if ($bpkb) {{ $bpkb->id }}@else- @endif"
                                                                             data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
                                                                             data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
+                                                                            data-date-stnk="@isset($stnk->date){{ date('d-m-Y', strtotime($stnk->date)) }}@endisset"
+                                                                            data-confirm-stnk="@isset($stnk->is_confirm){{ $stnk->is_confirm }}@endisset"
+                                                                            data-confirm-at-stnk="@isset($stnk->confirm_at){{ date('d-m-Y', strtotime($stnk->confirm_at)) }}@endisset"
                                                                             data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
                                                                             data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
+                                                                            data-date-polis="@isset($polis->date){{ date('d-m-Y', strtotime($polis->date)) }}@endisset"
+                                                                            data-confirm-polis="@isset($polis->is_confirm){{ $polis->is_confirm }}@endisset"
+                                                                            data-confirm-at-polis="@isset($polis->confirm_at){{ date('d-m-Y', strtotime($polis->confirm_at)) }}@endisset"
                                                                             data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
                                                                             data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
+                                                                            data-date-bpkb="@isset($bpkb->date){{ date('d-m-Y', strtotime($bpkb->date)) }}@endisset"
+                                                                            data-confirm-bpkb="@isset($bpkb->is_confirm){{ $bpkb->is_confirm }}@endisset"
+                                                                            data-confirm-at-bpkb="@isset($bpkb->confirm_at){{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}@endisset"
                                                                             href="#"
                                                                             class="dropdown-item upload-berkas">
                                                                             Konfirmasi Berkas
@@ -757,26 +814,7 @@
     </div>
 
     {{-- Modal Confirm Penyerahan Unit --}}
-    <div class="modal fade" id="confirmModalPenyerahanUnit" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="form-group name" id="konfirmasi">
-                        Yakin ingin mengkonfirmasi data ini?
-                    </div>
-                    <div class="form-inline">
-                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
-                        <form id="confirm-form-penyerahan-unit">
-                            <input type="hidden" name="confirm_id" id="confirm_id">
-                            <input type="hidden" name="confirm_id_category" id="confirm_id_category">
-                            <button type="submit" class="btn btn-primary">Ya</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('pages.kredit.modal.confirm-penyerahan-unit')
 
     {{-- Modal Confirm Imbal Jasa --}}
     <div class="modal fade" id="confirmModalImbalJasa" tabindex="-1" role="dialog"
@@ -804,6 +842,8 @@
 
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/pdfobject.min.js"></script>
+        <script type="module" src="https://unpkg.com/x-frame-bypass"></script>
+
 
         <script>
             function printPDF() {
@@ -918,58 +958,6 @@
             function uploadStnk(id) {
                 $('#modal-stnk #id_kkb').val(id);
             }
-
-            $('.upload-berkas').on('click', function(e) {
-                e.preventDefault()
-                var id = $(this).data('id_kkb')
-                var id_stnk = $(this).data('id-stnk') ? $(this).data('id-stnk') : '';
-                var id_polis = $(this).data('id-polis') ? $(this).data('id-polis') : '';
-                var id_bpkb = $(this).data('id-bpkb') ? $(this).data('id-bpkb') : '';
-                var no_stnk = $(this).data('no-stnk') ? $(this).data('no-stnk') : ''
-                var no_polis = $(this).data('no-polis') ? $(this).data('no-polis') : ''
-                var no_bpkb = $(this).data('no-bpkb') ? $(this).data('no-bpkb') : ''
-                var file_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
-                var file_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
-                var file_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
-
-                try {
-                    $('#modal-berkas #id_kkb').val(id);
-                    $('#modal-berkas #id_stnk').val(id_stnk);
-                    $('#modal-berkas #id_polis').val(id_polis);
-                    $('#modal-berkas #id_bpkb').val(id_bpkb);
-                    $('#modal-berkas #no_stnk').val(no_stnk);
-                    $('#modal-berkas #no_polis').val(no_polis);
-                    $('#modal-berkas #no_bpkb').val(no_bpkb);
-                    $('#modal-berkas #stnk_scan').val(file_stnk);
-                    $('#modal-berkas #polis_scan').val(file_polis);
-                    $('#modal-berkas #bpkb_scan').val(file_bpkb);
-                } catch (e) {
-                    console.log('error')
-                }
-                var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis;
-                var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
-
-                if (file_stnk) {
-                    var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk + "#toolbar=0";
-                    $("#preview_stnk").attr("src", path_stnk);
-                } else {
-                    $("#preview_stnk").css("display", 'none');
-                }
-
-                if (file_polis) {
-                    var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis + "#toolbar=0";
-                    $("#preview_polis").attr("src", path_polis);
-                } else {
-                    $("#preview_polis").css("display", 'none');
-                }
-
-                if (file_bpkb) {
-                    var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#toolbar=0";
-                    $("#preview_bpkb").attr("src", path_bpkb);
-                } else {
-                    $("#preview_bpkb").css("display", 'none');
-                }
-            })
 
             $('#modal-bukti-pembayaran').on("submit", function(e) {
                 e.preventDefault();
@@ -1270,16 +1258,6 @@
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file_bukti +
                     "#toolbar=0";
                 $("#preview_bukti_tf").attr("src", path_file);
-                $('#confirm_id').val(data_id)
-                $('#confirm_id_category').val(data_category_doc_id)
-            })
-
-            $('.confirm-penyerahan-unit').on('click', function(e) {
-                const data_id = $(this).data('id-doc')
-                const data_category_doc_id = $(this).data('id-category')
-                const file_bukti = $(this).data('file') ? $(this).data('file') : ''
-                var path_file = "{{ asset('storage') }}" + "/dokumentasi-peyerahan/" + file_bukti;
-                $("#preview_penyerahan_unit").attr("src", path_file);
                 $('#confirm_id').val(data_id)
                 $('#confirm_id_category').val(data_category_doc_id)
             })

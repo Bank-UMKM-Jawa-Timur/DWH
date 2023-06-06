@@ -150,26 +150,26 @@
                         Data KKB
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table mt-3" id="basic-datatables">
+                        <div class="">
+                            <table class="mt-3" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Nama</th>
-                                        <th scope="col">PO</th>
-                                        <th scope="col">Ketersediaan Unit</th>
-                                        <th scope="col">Bukti Pembayaran</th>
-                                        <th scope="col">Penyerahan Unit</th>
+                                        <th class="px-2 text-center" scope="col">No</th>
+                                        <th class="px-2 text-center" scope="col" width="150">Nama</th>
+                                        <th class="px-2 text-center" scope="col">PO</th>
+                                        <th class="px-2 text-center" scope="col">Ketersediaan Unit</th>
+                                        <th class="px-2 text-center" scope="col">Bukti Pembayaran</th>
+                                        <th class="px-2 text-center" scope="col">Penyerahan Unit</th>
                                         {{--  <th scope="col">STNK</th>
                                         <th scope="col">Polis</th>
                                         <th scope="col">BPKB</th>  --}}
                                         @foreach ($documentCategories as $item)
-                                            <th scope="col">{{ $item->name }}</th>
+                                            <th class="px-2 text-center" scope="col">{{ $item->name }}</th>
                                         @endforeach
-                                        <th scope="col">Bukti Pembayaran Imbal Jasa</th>
-                                        <th scope="col">Imbal Jasa</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Aksi</th>
+                                        <th class="px-2 text-center" scope="col">Bukti Pembayaran Imbal Jasa</th>
+                                        <th class="px-2 text-center" scope="col">Imbal Jasa</th>
+                                        <th class="px-2 text-center" scope="col">Status</th>
+                                        <th class="px-2 text-center" scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -196,22 +196,22 @@
                                             $setImbalJasa = DB::table('tenor_imbal_jasas')->find($item->id_tenor_imbal_jasa);
                                         @endphp
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                            <td class="text-center">
                                                 @if ($item->detail)
                                                     {{$item->detail['nama']}}
                                                 @else
                                                 undifined
                                                 @endif
                                             </td>
-                                            <td class="@if ($item->detail) link-po @endif">
+                                            <td class="@if ($item->detail) link-po @endif text-center">
                                                 @if ($buktiPembayaran)
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
                                                             data-tanggalPo="{{ $item->detail['tanggal'] }}"
-                                                            data-filepo="{{ config('global.los_host') . $item->detail['po'] }}">
-                                                            {{ $item->detail['nama'] }}</a>
+                                                            data-filepo="{{ config('global.los_host').'/public' . $item->detail['po'] }}">
+                                                            {{ $item->detail['no_po'] }}</a>
                                                     @else
                                                         -
                                                     @endif
@@ -219,30 +219,30 @@
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
-                                                            data-tanggalPo="20 April 2023"
-                                                            data-filepo="{{ config('global.los_host') . $item->detail['po'] }}">
+                                                            data-tanggalPo="{{ $item->detail['tanggal'] }}"
+                                                            data-filepo="{{ config('global.los_host').'/public'. $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
                                                         -
                                                     @endif
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if (Auth::user()->vendor_id)
                                                     @if (!$item->tgl_ketersediaan_unit)
                                                         <a style="text-decoration: underline;" data-toggle="modal"
                                                             data-target="#tglModal" data-id_kkb="{{ $item->kkb_id }}"
                                                             href="#">Atur</a>
                                                     @else
-                                                        {{ $item->tgl_ketersediaan_unit }}
+                                                        {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}
                                                     @endif
                                                 @elseif ($item->tgl_ketersediaan_unit)
-                                                    {{ $item->tgl_ketersediaan_unit }}
+                                                    {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}
                                                 @else
                                                     <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($item->tgl_ketersediaan_unit)
                                                     @if (Auth::user()->role_id == 3)
                                                         {{--  vendor  --}}
@@ -285,19 +285,18 @@
                                                     -
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($item->tgl_ketersediaan_unit)
                                                     @if ($penyerahanUnit)
                                                         {{ $penyerahanUnit->date }}
                                                     @else
-                                                        <span class="text-info">Maksimal tanggal penyerahan unit
-                                                            {{ date('Y-m-d', strtotime($item->tgl_ketersediaan_unit . ' +1 days')) }}</span>
+                                                        <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' +1 month')) }}</span>
                                                     @endif
                                                 @else
                                                     <span class="text-danger">-</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($penyerahanUnit)
                                                     @if ($stnk)
                                                         @if ($stnk->file && $stnk->is_confirm)
@@ -322,7 +321,7 @@
                                                     <span class="text-warning">-</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($penyerahanUnit)
                                                     @if ($polis)
                                                         @if ($polis->file && $polis->is_confirm)
@@ -351,7 +350,7 @@
                                                     <span class="text-warning">-</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($penyerahanUnit)
                                                     @if ($bpkb)
                                                         @if ($polis->file && $polis->is_confirm)
@@ -376,7 +375,7 @@
                                                     <span class="text-warning">-</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if (Auth::user()->role_id == 3)
                                                     {{--  vendor  --}}
                                                     @if ($imbalJasa)
@@ -394,7 +393,7 @@
                                                         Menunggu Pembayaran dari Cabang
                                                         @endif
                                                     @else
-                                                    Menunggu Pembayaran dari Cabang
+                                                    -
                                                     @endif
                                                 @else
                                                     {{--  role selain vendor  --}}
@@ -418,7 +417,7 @@
                                                     @endif
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if ($penyerahanUnit)
                                                     @if ($imbalJasa)
                                                         @if ($imbalJasa->file && $imbalJasa->is_confirm)
@@ -454,14 +453,14 @@
                                                 @endif
                                             </td>
                                             <td
-                                                class="@if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
+                                                class="text-center @if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
                                                 @if ($setImbalJasa)
                                                     {{ $item->status }}
                                                 @else
                                                     progress
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <div class="dropdown">
                                                     <button class="btn btn-sm btn-info dropdown-toggle" type="button"
                                                         data-toggle="dropdown" aria-expanded="false">
