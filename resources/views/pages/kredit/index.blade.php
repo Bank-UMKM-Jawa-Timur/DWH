@@ -25,8 +25,8 @@
             </div>
         </div>
     </div>
-    <div class="page-inner mt--5">
-        <div class="row mt--2">
+    <div class="page-inner mt-5">
+        <div class="row mt-2">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
@@ -89,7 +89,7 @@
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
-                                                            data-tanggalPo="{{ $item->detail['tanggal'] }}"
+                                                            data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
                                                             data-filepo="{{ config('global.los_host').'/public' . $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
@@ -99,7 +99,7 @@
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
-                                                            data-tanggalPo="{{ $item->detail['tanggal'] }}"
+                                                            data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
                                                             data-filepo="{{ config('global.los_host').'/public'. $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else

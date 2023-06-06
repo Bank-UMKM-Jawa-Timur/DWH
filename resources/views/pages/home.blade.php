@@ -209,7 +209,7 @@
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
-                                                            data-tanggalPo="{{ $item->detail['tanggal'] }}"
+                                                            data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
                                                             data-filepo="{{ config('global.los_host').'/public' . $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
@@ -219,7 +219,7 @@
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
-                                                            data-tanggalPo="{{ $item->detail['tanggal'] }}"
+                                                            data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
                                                             data-filepo="{{ config('global.los_host').'/public'. $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
@@ -288,7 +288,29 @@
                                             <td class="text-center">
                                                 @if ($item->tgl_ketersediaan_unit)
                                                     @if ($penyerahanUnit)
-                                                        {{ $penyerahanUnit->date }}
+                                                        @if ($penyerahanUnit->is_confirm)
+                                                        <a style="text-decoration: underline; cursor: pointer;" class="confirm-penyerahan-unit"
+                                                            data-toggle="modal" data-id-category="2"
+                                                            data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                            data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                            data-confirm="{{$penyerahanUnit->is_confirm}}"
+                                                            data-tanggal="{{date('d-m-Y', strtotime($penyerahanUnit->date))}}"
+                                                            data-confirm_at="{{date('d-m-Y', strtotime($penyerahanUnit->confirm_at))}}"
+                                                            href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                        @else
+                                                            @if (Auth::user()->role_id == 3)
+                                                                <span>Menunggu konfirmasi cabang</span>
+                                                            @else
+                                                                <a style="text-decoration: underline; cursor: pointer;" class="confirm-penyerahan-unit"
+                                                                    data-toggle="modal" data-id-category="2"
+                                                                    data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                                    data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                                    data-confirm="{{$penyerahanUnit->is_confirm}}"
+                                                                    data-tanggal="{{date('d-m-Y', strtotime($penyerahanUnit->date))}}"
+                                                                    data-confirm_at="{{date('d-m-Y', strtotime($penyerahanUnit->confirm_at))}}"
+                                                                    href="#confirmModalPenyerahanUnit">Konfirmasi</a>
+                                                            @endif
+                                                        @endif
                                                     @else
                                                         <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' +1 month')) }}</span>
                                                     @endif
@@ -298,53 +320,27 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($penyerahanUnit)
-                                                    @if ($stnk)
-                                                        @if ($stnk->file && $stnk->is_confirm)
-                                                            <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
-                                                                target="_blank">{{ $stnk->date }}</a>
-                                                        @else
-                                                            <span class="text-warning">Menunggu konfirmasi</span>
-                                                        @endif
-                                                    @else
-                                                        @if (Auth::user()->role_id == 3)
-                                                            @if ($penyerahanUnit->is_confirm)
-                                                                <span class="text-info">Maksimal tanggal upload STNK
-                                                                    {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                    @if ($penyerahanUnit->is_confirm)
+                                                        @if ($stnk)
+                                                            @if ($stnk->file && $stnk->is_confirm)
+                                                                <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
+                                                                    target="_blank">{{ $stnk->date }}</a>
                                                             @else
-                                                            <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
-                                                        @else
-                                                            <span class="text-warning">Menunggu penyerahan STNK</span>
-                                                        @endif
-                                                    @endif
-                                                @else
-                                                    <span class="text-warning">-</span>
-                                                @endif
-                                            </td>
-                                            <td class="text-center">
-                                                @if ($penyerahanUnit)
-                                                    @if ($polis)
-                                                        @if ($polis->file && $polis->is_confirm)
-                                                            <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
-                                                                target="_blank">{{ $polis->date }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
-                                                                <span class="text-warning">Menunggu konfirmasi</span>
+                                                                @if ($penyerahanUnit->is_confirm)
+                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                                @else
+                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                @endif
                                                             @else
-                                                                <span class="text-warning">Menunggu penyerahan polis</span>
+                                                                <span class="text-warning">Menunggu penyerahan</span>
                                                             @endif
                                                         @endif
                                                     @else
-                                                        @if (Auth::user()->role_id == 3)
-                                                            @if ($penyerahanUnit->is_confirm)
-                                                                <span class="text-info">Maksimal tanggal upload Polis
-                                                                {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
-                                                            @else
-                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
-                                                            @endif
-                                                        @else
-                                                            <span class="text-warning">Menunggu Penyerahan Polis</span>
-                                                        @endif
+                                                    -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -352,24 +348,59 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($penyerahanUnit)
-                                                    @if ($bpkb)
-                                                        @if ($polis->file && $polis->is_confirm)
-                                                            <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
-                                                                target="_blank">{{ $bpkb->date }}</a>
-                                                        @else
-                                                            <span class="text-warning">Menunggu konfirmasi</span>
-                                                        @endif
-                                                    @else
-                                                        @if (Auth::user()->role_id == 3)
-                                                            @if ($penyerahanUnit->is_confirm)
-                                                            <span class="text-info">Maksimal tanggal upload BPKB
-                                                                {{ date('Y-m-d', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                                    @if ($penyerahanUnit->is_confirm)
+                                                        @if ($polis)
+                                                            @if ($polis->file && $polis->is_confirm)
+                                                                <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
+                                                                    target="_blank">{{ $polis->date }}</a>
                                                             @else
-                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                @if (Auth::user()->role_id == 3)
+                                                                    <span class="text-warning">Menunggu konfirmasi</span>
+                                                                @else
+                                                                    <span class="text-warning">Menunggu penyerahan</span>
+                                                                @endif
                                                             @endif
                                                         @else
-                                                            <span class="text-warning">Menunggu Penyerahan BPKB</span>
+                                                            @if (Auth::user()->role_id == 3)
+                                                                @if ($penyerahanUnit->is_confirm)
+                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                                @else
+                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="text-warning">Menunggu penyerahan</span>
+                                                            @endif
                                                         @endif
+                                                    @else
+                                                    -
+                                                    @endif
+                                                @else
+                                                    <span class="text-warning">-</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if ($penyerahanUnit)
+                                                    @if ($penyerahanUnit->is_confirm)
+                                                        @if ($bpkb)
+                                                            @if ($polis->file && $polis->is_confirm)
+                                                                <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
+                                                                    target="_blank">{{ $bpkb->date }}</a>
+                                                            @else
+                                                                <span class="text-warning">Menunggu konfirmasi</span>
+                                                            @endif
+                                                        @else
+                                                            @if (Auth::user()->role_id == 3)
+                                                                @if ($penyerahanUnit->is_confirm)
+                                                                <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
+                                                                @else
+                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="text-warning">Menunggu penyerahan</span>
+                                                            @endif
+                                                        @endif
+                                                    @else
+                                                    -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -435,17 +466,24 @@
                                                             @endif
                                                         @endif
                                                     @else
-                                                        @if ($stnk && $polis && $bpkb)
-                                                            @if (Auth::user()->role_id == 2)
-                                                                <span class="text-info">Silahkan upload bukti transfer imbal
-                                                                    jasa</span>
+                                                        @if ($imbalJasa)
+                                                            @if ($imbalJasa->file && $imbalJasa->is_confirm)
+                                                                @if ($stnk && $polis && $bpkb)
+                                                                    @if (Auth::user()->role_id == 2)
+                                                                        <span class="text-info">Silahkan upload bukti transfer imbal
+                                                                            jasa</span>
+                                                                    @else
+                                                                        <span class="text-info">Menunggu bukti transfer imbal
+                                                                            jasa</span>
+                                                                    @endif
+                                                                @else
+                                                                    <span class="text-warning">Menunggu penyerahan semua berkas</span>
+                                                                @endif
                                                             @else
-                                                                <span class="text-info">Menunggu bukti transfer imbal
-                                                                    jasa</span>
+                                                                -
                                                             @endif
                                                         @else
-                                                            <span class="text-warning">Menunggu penyerahan semua
-                                                                berkas</span>
+                                                            <span class="text-warning">-</span>
                                                         @endif
                                                     @endif
                                                 @else
@@ -487,10 +525,19 @@
                                                                         data-id_kkb="{{ $item->kkb_id }}"
                                                                         data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
                                                                         data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
+                                                                        data-date-stnk="@isset($stnk->date){{ date('d-m-Y', strtotime($stnk->date)) }}@endisset"
+                                                                        data-confirm-stnk="@isset($stnk->is_confirm){{ $stnk->is_confirm }}@endisset"
+                                                                        data-confirm-at-stnk="@isset($stnk->confirm_at){{ date('d-m-Y', strtotime($stnk->confirm_at)) }}@endisset"
                                                                         data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
                                                                         data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
+                                                                        data-date-polis="@isset($polis->date){{ date('d-m-Y', strtotime($polis->date)) }}@endisset"
+                                                                        data-confirm-polis="@isset($polis->is_confirm){{ $polis->is_confirm }}@endisset"
+                                                                        data-confirm-at-polis="@isset($polis->confirm_at){{ date('d-m-Y', strtotime($polis->confirm_at)) }}@endisset"
                                                                         data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
                                                                         data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
+                                                                        data-date-bpkb="@isset($bpkb->date){{ date('d-m-Y', strtotime($bpkb->date)) }}@endisset"
+                                                                        data-confirm-bpkb="@isset($bpkb->is_confirm){{ $bpkb->is_confirm }}@endisset"
+                                                                        data-confirm-at-bpkb="@isset($bpkb->confirm_at){{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}@endisset"
                                                                         href="#"
                                                                         class="dropdown-item upload-berkas">
                                                                         Upload Berkas
@@ -499,10 +546,9 @@
                                                             @endif
                                                         @endif
                                                         {{--  Konfirmasi penyerahan unit (Cabang)  --}}
-                                                        @if (Auth::user()->role_id == 2 && $penyerahanUnit)
+                                                        {{--  @if (Auth::user()->role_id == 2 && $penyerahanUnit)
                                                             @if (!$penyerahanUnit->is_confirm)
                                                                 @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
-                                                                    {{--  Vendor  --}}
                                                                     <a class="dropdown-item confirm-penyerahan-unit"
                                                                         data-toggle="modal" data-id-category="2"
                                                                         data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
@@ -511,7 +557,7 @@
                                                                         Penyerahan Unit</a>
                                                                 @endif
                                                             @endif
-                                                        @endif
+                                                        @endif  --}}
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
@@ -525,10 +571,19 @@
                                                                             data-id-bpkb="@if ($bpkb) {{ $bpkb->id }}@else- @endif"
                                                                             data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
                                                                             data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
+                                                                            data-date-stnk="@isset($stnk->date){{ date('d-m-Y', strtotime($stnk->date)) }}@endisset"
+                                                                            data-confirm-stnk="@isset($stnk->is_confirm){{ $stnk->is_confirm }}@endisset"
+                                                                            data-confirm-at-stnk="@isset($stnk->confirm_at){{ date('d-m-Y', strtotime($stnk->confirm_at)) }}@endisset"
                                                                             data-no-polis="@isset($polis->text){{ $polis->text }}@endisset"
                                                                             data-file-polis="@isset($polis->file){{ $polis->file }}@endisset"
+                                                                            data-date-polis="@isset($polis->date){{ date('d-m-Y', strtotime($polis->date)) }}@endisset"
+                                                                            data-confirm-polis="@isset($polis->is_confirm){{ $polis->is_confirm }}@endisset"
+                                                                            data-confirm-at-polis="@isset($polis->confirm_at){{ date('d-m-Y', strtotime($polis->confirm_at)) }}@endisset"
                                                                             data-no-bpkb="@isset($bpkb->text){{ $bpkb->text }}@endisset"
                                                                             data-file-bpkb="@isset($bpkb->file){{ $bpkb->file }}@endisset"
+                                                                            data-date-bpkb="@isset($bpkb->date){{ date('d-m-Y', strtotime($bpkb->date)) }}@endisset"
+                                                                            data-confirm-bpkb="@isset($bpkb->is_confirm){{ $bpkb->is_confirm }}@endisset"
+                                                                            data-confirm-at-bpkb="@isset($bpkb->confirm_at){{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}@endisset"
                                                                             href="#"
                                                                             class="dropdown-item upload-berkas">
                                                                             Konfirmasi Berkas
@@ -584,45 +639,299 @@
         </div>
     </div>
 
+    <!-- Modal bukti pembayaran -->
+    @include('pages.kredit.modal.bukti-pembayaran-modal')
 
-    <!-- Modal -->
-    <div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    {{-- Detail PO --}}
+    @include('pages.kredit.modal.detail-po')
+
+    <!-- Tanggal Ketersediaan Unit Modal -->
+    <div class="modal fade" id="tglModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
-                    <div class="row container">
-                        <div class="col-sm-6">
-                            <h5 class="title-po">Nomor PO</h5>
-                            <b class="content-po" id="nomorPo">12345678</b>
-                        </div>
-                        <div class="col-sm-6">
-                            <h5 class="title-po">Tanggal PO</h5>
-                            <b class="content-po" id="tanggalPo">21 Maret 2023</b>
-                        </div>
-                        <div class="col-sm-12 mt-4">
-                            <h5 class="title-po">File PO</h5>
-                            <div class="form-inline mt-1">
-                                <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File PO</button>
-                                <button onclick="printPDF()" class="btn btn-info btn-sm" id="printfile">Print File
-                                    PO</button>
-                                <iframe id="filePo"
-                                    src="C:\Users\iqbalronii\Downloads\REv 16 Jan_Jadwal Genap 2023.pdf" class="mt-2"
-                                    width="100%" height="500"></iframe>
+                    <form id="modal-tgl-form">
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Tanggal Ketersediaan Unit</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="tgl_ketersediaan_unit"
+                                    name="tgl_ketersediaan_unit">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-calendar-check"></i>
+                                    </span>
+                                </div>
                             </div>
+                            <small class="form-text text-danger error"></small>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
                 </div>
-                {{-- <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Konfirmasi</button>
-                </div> --}}
             </div>
         </div>
     </div>
 
+    <!-- Imbal Jasa Modal -->
+    <div class="modal fade" id="uploadImbalJasaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-imbal-jasa-form">
+                        @csrf
+                        <input type="hidden" name="id_kkbimbaljasa" id="id_kkbimbaljasa">
+                        <div class="form-group">
+                            <label>Upload bukti transfer imbal jasa</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" accept="image/*" id="file_imbal_jasa"
+                                    name="file_imbal_jasa" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-image"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Modal bukti pembayaran -->
-    @include('pages.kredit.modal.bukti-pembayaran-modal')
+    <!-- Upload Bukti Pembayaran Modal -->
+    <div class="modal fade" id="buktiPembayaranModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-bukti-pembayaran" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Scan Bukti Pembayaran (pdf)</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="bukti_pembayaran_scan"
+                                    name="bukti_pembayaran_scan" accept="application/pdf" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-file"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tanggal Penyerahan Unit Modal -->
+    <div class="modal fade" id="tglModalPenyerahan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-tgl-penyerahan" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Tanggal Pengiriman</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="tgl_pengiriman" name="tgl_pengiriman">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-calendar-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Foto Bukti Penyerahan Unit</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="upload_penyerahan_unit"
+                                    name="upload_penyerahan_unit" accept="image/png, image/jpeg, image/jpeg">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-image"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Berkas Modal -->
+    @include('pages.kredit.modal.upload-berkas-modal')
+
+    <!-- Upload BKPB Modal -->
+    <div class="modal fade" id="uploadBpkbModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-bpkb" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Nomor</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="no_bpkb" name="no_bpkb" required>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Scan Berkas (pdf)</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="bpkb_scan" name="bpkb_scan"
+                                    accept="application/pdf" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-file"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload STNK Modal -->
+    <div class="modal fade" id="uploadStnkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modal-stnk" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id_kkb" id="id_kkb">
+                        <div class="form-group">
+                            <label>Nomor</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="no_stnk" name="no_stnk" required>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Scan Berkas (pdf)</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="stnk_scan" name="stnk_scan"
+                                    accept="application/pdf" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-file"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="form-text text-danger error"></small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Confirm Cabang --}}
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-group name" id="konfirmasi">
+                        Yakin ingin mengkonfirmasi data ini?
+                    </div>
+                    <div class="form-inline">
+                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
+                        <form id="confirm-form">
+                            <input type="hidden" name="confirm_id" id="confirm_id">
+                            <input type="hidden" name="confirm_id_category" id="confirm_id_category">
+                            <button type="submit" class="btn btn-primary">Ya</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Confirm Vendor --}}
+    <div class="modal fade" id="confirmModalVendor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-group name" id="konfirmasi">
+                        Yakin ingin mengkonfirmasi data ini?
+                    </div>
+                    @if (Auth::user()->role_id == 3)
+                        <iframe id="preview_bukti_tf" class="mt-2" width="100%" height="500"></iframe>
+                    @endif
+                    <div class="form-inline">
+                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
+                        <form id="confirm-form-vendor">
+                            <input type="hidden" name="confirm_id" id="confirm_id">
+                            <input type="hidden" name="confirm_id_category" id="confirm_id_category">
+                            <button type="submit" class="btn btn-primary">Ya</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Confirm Penyerahan Unit --}}
+    @include('pages.kredit.modal.confirm-penyerahan-unit')
+
+    {{-- Modal Confirm Imbal Jasa --}}
+    <div class="modal fade" id="confirmModalImbalJasa" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-group name" id="konfirmasi">
+                        Yakin ingin mengkonfirmasi data ini?
+                    </div>
+                    <iframe id="preview_imbal-jasa" src="" width="100%" height="450px"></iframe>
+                    <div class="form-inline">
+                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
+                        <form id="confirm-form-imbal-jasa">
+                            <input type="hidden" name="id_cat" id="id_cat">
+                            <button type="submit" class="btn btn-primary">Ya</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @include('pages.kredit.modal.detail-modal')
 
     @push('extraScript')
         <!-- Chart JS -->
