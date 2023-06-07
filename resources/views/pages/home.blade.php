@@ -503,8 +503,8 @@
                                                                     imbal
                                                                     jasa</span>
                                                             @else
-                                                                <span class="text-info">Menunggu bukti transfer imbal
-                                                                    jasa</span>
+                                                                <span>Rp.
+                                                                    {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</span>
                                                             @endif
                                                         @endif
                                                     @else
@@ -538,9 +538,9 @@
                                             <td
                                                 class="text-center @if ($item->status == 'done' && $setImbalJasa) text-success @else text-info @endif">
                                                 @if ($setImbalJasa)
-                                                    {{ $item->status }}
+                                                    {{ ucwords($item->status) }}
                                                 @else
-                                                    progress
+                                                    Progress
                                                 @endif
                                             </td>
                                             <td class="text-center">
