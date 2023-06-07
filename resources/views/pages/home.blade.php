@@ -261,7 +261,8 @@
                                                                     data-target="#previewBuktiPembayaranModal"
                                                                     data-file="{{ $buktiPembayaran->file }}"
                                                                     data-confirm="{{ $buktiPembayaran->is_confirm }}"
-                                                                    data-tanggal="{{ $buktiPembayaran->date }}">Selesai</a>
+                                                                    data-tanggal="{{ date('d-m-Y', strtotime($buktiPembayaran->date)) }}"
+                                                                    data-confirm_at="{{ date('d-m-Y', strtotime($buktiPembayaran->confirm_at)) }}">Selesai</a>
                                                             @else
                                                                 Menunggu Pembayaran dari Cabang
                                                             @endif
@@ -282,7 +283,8 @@
                                                                     data-toggle="modal"
                                                                     data-target="#previewBuktiPembayaranModal"
                                                                     data-file="{{ $buktiPembayaran->file }}"
-                                                                    data-confirm="{{ $buktiPembayaran->is_confirm }}">Menunggu
+                                                                    data-confirm="{{ $buktiPembayaran->is_confirm }}"
+                                                                    data-confirm_at="{{ date('d-m-Y', strtotime($buktiPembayaran->confirm_at)) }}">Menunggu
                                                                     Konfirmasi Vendor</a>
                                                             @elseif ($buktiPembayaran->is_confirm)
                                                                 <a class="m-0 bukti-pembayaran-modal"
@@ -291,7 +293,8 @@
                                                                     data-target="#previewBuktiPembayaranModal"
                                                                     data-file="{{ $buktiPembayaran->file }}"
                                                                     data-confirm="{{ $buktiPembayaran->is_confirm }}"
-                                                                    data-tanggal="{{ $buktiPembayaran->date }}">Selesai</a>
+                                                                    data-tanggal="{{ date('d-m-Y', strtotime($buktiPembayaran->date)) }}"
+                                                                    data-confirm_at="{{ date('d-m-Y', strtotime($buktiPembayaran->confirm_at)) }}">Selesai</a>
                                                             @endif
                                                         @endif
                                                     @endif
@@ -344,7 +347,10 @@
                                                                 <a style="text-decoration: underline; cursor: pointer;"
                                                                     class="open-po detailFileStnk" data-toggle="modal"
                                                                     data-target="#detailStnk"
-                                                                    data-file="{{ $stnk->file }}">{{ $stnk->date }}</a>
+                                                                    data-file="{{ $stnk->file }}"
+                                                                    data-confirm="{{ $stnk->is_confirm }}"
+                                                                    data-tanggal="{{ date('d-m-Y', strtotime($stnk->date)) }}"
+                                                                    data-confirm_at="{{ date('d-m-Y', strtotime($stnk->confirm_at)) }}">{{ date('d-m-Y', strtotime($stnk->date)) }}</a>
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
@@ -376,9 +382,10 @@
                                                                 <a style="text-decoration: underline; cursor: pointer;"
                                                                     class="open-po detailFilePolis" data-toggle="modal"
                                                                     data-target="#detailPolis"
-                                                                    data-file="{{ $polis->file }}">{{ $polis->date }}</a>
-                                                                {{-- <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
-                                                                    target="_blank">{{ $polis->date }}</a> --}}
+                                                                    data-file="{{ $polis->file }}"
+                                                                    data-confirm="{{ $polis->is_confirm }}"
+                                                                    data-tanggal="{{ date('d-m-Y', strtotime($polis->date)) }}"
+                                                                    data-confirm_at="{{ date('d-m-Y', strtotime($polis->confirm_at)) }}">{{ date('d-m-Y', strtotime($polis->date)) }}</a>
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
@@ -406,13 +413,14 @@
                                                 @if ($penyerahanUnit)
                                                     @if ($penyerahanUnit->is_confirm)
                                                         @if ($bpkb)
-                                                            @if ($polis->file && $polis->is_confirm)
+                                                            @if ($bpkb->file && $bpkb->is_confirm)
                                                                 <a style="text-decoration: underline; cursor: pointer;"
                                                                     class="open-po detailFileBpkb" data-toggle="modal"
                                                                     data-target="#detailBpkb"
-                                                                    data-file="{{ $bpkb->file }}">{{ $bpkb->date }}</a>
-                                                                {{-- <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
-                                                                    target="_blank">{{ $bpkb->date }}</a> --}}
+                                                                    data-file="{{ $bpkb->file }}"
+                                                                    data-confirm="{{ $bpkb->is_confirm }}"
+                                                                    data-tanggal="{{ date('d-m-Y', strtotime($bpkb->date)) }}"
+                                                                    data-confirm_at="{{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}">{{ date('d-m-Y', strtotime($bpkb->date)) }}</a>
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
@@ -452,7 +460,8 @@
                                                             <a class="bukti-pembayaran-modal"
                                                                 style="cursor: pointer; text-decoration: underline;"
                                                                 data-toggle="modal" data-target="#previewImbalJasaModal"
-                                                                data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
+                                                                data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->date)->format('d-m-Y') }}"
+                                                                data-confirm_at="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
                                                                 data-confirm="{{ $imbalJasa->is_confirm }}"
                                                                 data-file="{{ $imbalJasa->file }}">Selesai</a>
                                                         @else
@@ -479,7 +488,8 @@
                                                                     data-toggle="modal"
                                                                     data-target="#previewImbalJasaModal"
                                                                     data-confirm="{{ $imbalJasa->is_confirm }}"
-                                                                    data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
+                                                                    data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->date)->format('d-m-Y') }}"
+                                                                    data-confirm_at="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
                                                                     data-file="{{ $imbalJasa->file }}">Selesai</a>
                                                             @endif
                                                         @endif
