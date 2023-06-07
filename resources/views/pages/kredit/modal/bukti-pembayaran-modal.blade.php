@@ -10,11 +10,17 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-6">
                         <h5 class="title-po">Tanggal : </h5>
                         <b id="tanggal_pembayaran" class="content-po"></b>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-6">
+                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
+                        <b id="tanggal_confirm_pembayaran" class="content-po"></b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
                         <h5 class="title-po">Status : </h5>
                         <b id="status_confirm" class="content-po"></b>
                     </div>
@@ -32,10 +38,12 @@
             const status = $(this).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
                 'Menunggu konfirmasi dari vendor.';
             const tanggal = $(this).data('tanggal');
+            const confirm_at = $(this).data('confirm_at');
             var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#toolbar=0";
 
             $('#bukti_pembayaran_img').attr('src', path_file)
             $('#tanggal_pembayaran').html(tanggal)
+            $('#tanggal_confirm_pembayaran').html(confirm_at)
             $('#status_confirm').html(status)
         })
     </script>

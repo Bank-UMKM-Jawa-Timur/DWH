@@ -9,6 +9,22 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5 class="title-po">Tanggal : </h5>
+                        <b id="tanggal_bpkb" class="content-po"></b>
+                    </div>
+                    <div class="col-sm-6">
+                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
+                        <b id="tanggal_confirm_bpkb" class="content-po"></b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5 class="title-po">Status : </h5>
+                        <b id="status_confirm_bpkb" class="content-po"></b>
+                    </div>
+                </div>
                 <iframe id="filebpkb" src="" class="mt-2" width="100%" height="500"></iframe>
             </div>
         </div>
@@ -18,8 +34,15 @@
     <script>
         $('.detailFileBpkb').on('click', function(e) {
             const file = $(this).data('file');
+            const status = $(this).data('confirm') ? 'Sudah dikonfirmasi.' :
+                'Menunggu konfirmasi.';
+            const tanggal = $(this).data('tanggal');
+            const confirm_at = $(this).data('confirm_at');
             var path_file = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file + "#toolbar=0";
             $('#filebpkb').attr('src', path_file)
+            $('#tanggal_bpkb').html(tanggal)
+            $('#tanggal_confirm_bpkb').html(confirm_at)
+            $('#status_confirm_bpkb').html(status)
         })
     </script>
 @endpush

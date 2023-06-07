@@ -9,16 +9,22 @@
                 </button>
             </div>
             <div class="modal-body">
-                {{-- <div class="row">
-                    <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-sm-6">
                         <h5 class="title-po">Tanggal : </h5>
-                        <b id="tanggal_pembayaran" class="content-po"></b>
+                        <b id="tanggal_stnk" class="content-po"></b>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-6">
+                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
+                        <b id="tanggal_confirm_stnk" class="content-po"></b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
                         <h5 class="title-po">Status : </h5>
-                        <b id="status_confirm" class="content-po"></b>
+                        <b id="status_confirm_stnk" class="content-po"></b>
                     </div>
-                </div> --}}
+                </div>
                 <iframe id="filestnk" src="" class="mt-2" width="100%" height="500"></iframe>
             </div>
         </div>
@@ -28,11 +34,15 @@
     <script>
         $('.detailFileStnk').on('click', function(e) {
             const file = $(this).data('file');
-            // console.log(file);
+            const status = $(this).data('confirm') ? 'Sudah dikonfirmasi.' :
+                'Menunggu konfirmasi.';
+            const tanggal = $(this).data('tanggal');
+            const confirm_at = $(this).data('confirm_at');
             var path_file = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file + "#toolbar=0";
             $('#filestnk').attr('src', path_file)
-            // $('#tanggal_pembayaran').html(tanggal)
-            // $('#status_confirm').html(status)
+            $('#tanggal_stnk').html(tanggal)
+            $('#tanggal_confirm_stnk').html(confirm_at)
+            $('#status_confirm_stnk').html(status)
         })
     </script>
 @endpush
