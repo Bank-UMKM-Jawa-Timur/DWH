@@ -199,9 +199,9 @@
                                             <td class="text-center">{{ $loop->iteration }}</td>
                                             <td class="text-center">
                                                 @if ($item->detail)
-                                                    {{$item->detail['nama']}}
+                                                    {{ $item->detail['nama'] }}
                                                 @else
-                                                undifined
+                                                    undifined
                                                 @endif
                                             </td>
                                             <td class="@if ($item->detail) link-po @endif text-center">
@@ -210,7 +210,7 @@
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
                                                             data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
-                                                            data-filepo="{{ config('global.los_host').'/public' . $item->detail['po'] }}">
+                                                            data-filepo="{{ config('global.los_host') . '/public' . $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
                                                         -
@@ -220,7 +220,7 @@
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ $item->detail['no_po'] }}"
                                                             data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
-                                                            data-filepo="{{ config('global.los_host').'/public'. $item->detail['po'] }}">
+                                                            data-filepo="{{ config('global.los_host') . '/public' . $item->detail['po'] }}">
                                                             {{ $item->detail['no_po'] }}</a>
                                                     @else
                                                         -
@@ -248,17 +248,22 @@
                                                         {{--  vendor  --}}
                                                         @if ($buktiPembayaran)
                                                             @if (!$buktiPembayaran->is_confirm)
-                                                            <a style="cursor: pointer; text-decoration: underline;" class="confirm-bukti-pembayaran"
-                                                                data-toggle="modal" data-id-category="1"
-                                                                data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
-                                                                data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
-                                                                href="#confirmModalVendor">Konfirmasi</a>
+                                                                <a style="cursor: pointer; text-decoration: underline;"
+                                                                    class="confirm-bukti-pembayaran" data-toggle="modal"
+                                                                    data-id-category="1"
+                                                                    data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
+                                                                    data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
+                                                                    href="#confirmModalVendor">Konfirmasi</a>
                                                             @elseif ($buktiPembayaran->is_confirm)
-                                                            <a class="m-0 bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                            data-file="{{ $buktiPembayaran->file }}" data-confirm="{{$buktiPembayaran->is_confirm}}"
-                                                            data-tanggal="{{$buktiPembayaran->date}}">Selesai</a>
+                                                                <a class="m-0 bukti-pembayaran-modal"
+                                                                    style="cursor: pointer; text-decoration: underline;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#previewBuktiPembayaranModal"
+                                                                    data-file="{{ $buktiPembayaran->file }}"
+                                                                    data-confirm="{{ $buktiPembayaran->is_confirm }}"
+                                                                    data-tanggal="{{ $buktiPembayaran->date }}">Selesai</a>
                                                             @else
-                                                            Menunggu Pembayaran dari Cabang
+                                                                Menunggu Pembayaran dari Cabang
                                                             @endif
                                                         @else
                                                             Menunggu Pembayaran dari Cabang
@@ -272,12 +277,21 @@
                                                                 onclick="uploadBuktiPembayaran({{ $item->id }})">Bayar</a>
                                                         @else
                                                             @if (!$buktiPembayaran->is_confirm)
-                                                            <a class="m-0 bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                            data-file="{{ $buktiPembayaran->file }}" data-confirm="{{$buktiPembayaran->is_confirm}}">Menunggu Konfirmasi Vendor</a>
+                                                                <a class="m-0 bukti-pembayaran-modal"
+                                                                    style="cursor: pointer; text-decoration: underline;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#previewBuktiPembayaranModal"
+                                                                    data-file="{{ $buktiPembayaran->file }}"
+                                                                    data-confirm="{{ $buktiPembayaran->is_confirm }}">Menunggu
+                                                                    Konfirmasi Vendor</a>
                                                             @elseif ($buktiPembayaran->is_confirm)
-                                                            <a class="m-0 bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                            data-file="{{ $buktiPembayaran->file }}" data-confirm="{{$buktiPembayaran->is_confirm}}"
-                                                            data-tanggal="{{$buktiPembayaran->date}}">Selesai</a>
+                                                                <a class="m-0 bukti-pembayaran-modal"
+                                                                    style="cursor: pointer; text-decoration: underline;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#previewBuktiPembayaranModal"
+                                                                    data-file="{{ $buktiPembayaran->file }}"
+                                                                    data-confirm="{{ $buktiPembayaran->is_confirm }}"
+                                                                    data-tanggal="{{ $buktiPembayaran->date }}">Selesai</a>
                                                             @endif
                                                         @endif
                                                     @endif
@@ -289,58 +303,66 @@
                                                 @if ($item->tgl_ketersediaan_unit)
                                                     @if ($penyerahanUnit)
                                                         @if ($penyerahanUnit->is_confirm)
-                                                        <a style="text-decoration: underline; cursor: pointer;" class="confirm-penyerahan-unit"
-                                                            data-toggle="modal" data-id-category="2"
-                                                            data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
-                                                            data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
-                                                            data-confirm="{{$penyerahanUnit->is_confirm}}"
-                                                            data-tanggal="{{date('d-m-Y', strtotime($penyerahanUnit->date))}}"
-                                                            data-confirm_at="{{date('d-m-Y', strtotime($penyerahanUnit->confirm_at))}}"
-                                                            href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                            <a style="text-decoration: underline; cursor: pointer;"
+                                                                class="confirm-penyerahan-unit" data-toggle="modal"
+                                                                data-id-category="2"
+                                                                data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                                data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                                data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                                                data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                                data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
+                                                                href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 <span>Menunggu konfirmasi cabang</span>
                                                             @else
-                                                                <a style="text-decoration: underline; cursor: pointer;" class="confirm-penyerahan-unit"
-                                                                    data-toggle="modal" data-id-category="2"
+                                                                <a style="text-decoration: underline; cursor: pointer;"
+                                                                    class="confirm-penyerahan-unit" data-toggle="modal"
+                                                                    data-id-category="2"
                                                                     data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
                                                                     data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
-                                                                    data-confirm="{{$penyerahanUnit->is_confirm}}"
-                                                                    data-tanggal="{{date('d-m-Y', strtotime($penyerahanUnit->date))}}"
-                                                                    data-confirm_at="{{date('d-m-Y', strtotime($penyerahanUnit->confirm_at))}}"
+                                                                    data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                                                    data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                                    data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
                                                                     href="#confirmModalPenyerahanUnit">Konfirmasi</a>
                                                             @endif
                                                         @endif
                                                     @else
-                                                        <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' +1 month')) }}</span>
+                                                        <span class="text-info">Maksimal
+                                                            {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' +1 month')) }}</span>
                                                     @endif
                                                 @else
                                                     <span class="text-danger">-</span>
                                                 @endif
                                             </td>
+                                            {{-- revisi --}}
                                             <td class="text-center">
                                                 @if ($penyerahanUnit)
                                                     @if ($penyerahanUnit->is_confirm)
                                                         @if ($stnk)
                                                             @if ($stnk->file && $stnk->is_confirm)
-                                                                <a href="/storage/dokumentasi-stnk/{{ $stnk->file }}"
-                                                                    target="_blank">{{ $stnk->date }}</a>
+                                                                <a style="text-decoration: underline; cursor: pointer;"
+                                                                    class="open-po detailFileStnk" data-toggle="modal"
+                                                                    data-target="#detailStnk"
+                                                                    data-file="{{ $stnk->file }}">{{ $stnk->date }}</a>
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
-                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                                    <span class="text-info">Maksimal
+                                                                        {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
                                                                 @else
-                                                                <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                    <span class="text-warning">Menunggu konfirmasi
+                                                                        penyerahan unit</span>
                                                                 @endif
                                                             @else
                                                                 <span class="text-warning">Menunggu penyerahan</span>
                                                             @endif
                                                         @endif
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -351,24 +373,30 @@
                                                     @if ($penyerahanUnit->is_confirm)
                                                         @if ($polis)
                                                             @if ($polis->file && $polis->is_confirm)
-                                                                <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
-                                                                    target="_blank">{{ $polis->date }}</a>
+                                                                <a style="text-decoration: underline; cursor: pointer;"
+                                                                    class="open-po detailFilePolis" data-toggle="modal"
+                                                                    data-target="#detailPolis"
+                                                                    data-file="{{ $polis->file }}">{{ $polis->date }}</a>
+                                                                {{-- <a href="/storage/dokumentasi-polis/{{ $polis->file }}"
+                                                                    target="_blank">{{ $polis->date }}</a> --}}
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
-                                                                    <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                                    <span class="text-info">Maksimal
+                                                                        {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
                                                                 @else
-                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                    <span class="text-warning">Menunggu konfirmasi
+                                                                        penyerahan unit</span>
                                                                 @endif
                                                             @else
                                                                 <span class="text-warning">Menunggu penyerahan</span>
                                                             @endif
                                                         @endif
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -379,24 +407,30 @@
                                                     @if ($penyerahanUnit->is_confirm)
                                                         @if ($bpkb)
                                                             @if ($polis->file && $polis->is_confirm)
-                                                                <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
-                                                                    target="_blank">{{ $bpkb->date }}</a>
+                                                                <a style="text-decoration: underline; cursor: pointer;"
+                                                                    class="open-po detailFileBpkb" data-toggle="modal"
+                                                                    data-target="#detailBpkb"
+                                                                    data-file="{{ $bpkb->file }}">{{ $bpkb->date }}</a>
+                                                                {{-- <a href="/storage/dokumentasi-bpkb/{{ $bpkb->file }}"
+                                                                    target="_blank">{{ $bpkb->date }}</a> --}}
                                                             @else
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
-                                                                <span class="text-info">Maksimal {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
+                                                                    <span class="text-info">Maksimal
+                                                                        {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
                                                                 @else
-                                                                    <span class="text-warning">Menunggu konfirmasi penyerahan unit</span>
+                                                                    <span class="text-warning">Menunggu konfirmasi
+                                                                        penyerahan unit</span>
                                                                 @endif
                                                             @else
                                                                 <span class="text-warning">Menunggu penyerahan</span>
                                                             @endif
                                                         @endif
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
                                                     <span class="text-warning">-</span>
@@ -407,37 +441,47 @@
                                                     {{--  vendor  --}}
                                                     @if ($imbalJasa)
                                                         @if (!$imbalJasa->is_confirm)
-                                                        <a style="cursor: pointer; text-decoration: underline;" class="confirm-imbal-jasa"
-                                                            data-toggle="modal""
-                                                            data-id="{{ $imbalJasa->id }}"
-                                                            data-file="{{ $imbalJasa->file }}"
-                                                            href="#confirmModalImbalJasa">Konfirmasi Bukti Pembayaran</a>
+                                                            <a style="cursor: pointer; text-decoration: underline;"
+                                                                class="confirm-imbal-jasa" data-toggle="modal"
+                                                                data-id="{{ $imbalJasa->id }}"
+                                                                data-file="{{ $imbalJasa->file }}"
+                                                                data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->created_at)->format('d-m-Y') }}"
+                                                                href="#confirmModalImbalJasa">Konfirmasi Bukti
+                                                                Pembayaran</a>
                                                         @elseif ($imbalJasa->is_confirm)
-                                                        <p class="m-0">Selesai</p>
-                                                        <a class="bukti-pembayaran-modal" style="cursor: pointer; text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                        data-file="{{ $imbalJasa->file }}">Lihat Bukti Pembayaran</a>
+                                                            <a class="bukti-pembayaran-modal"
+                                                                style="cursor: pointer; text-decoration: underline;"
+                                                                data-toggle="modal" data-target="#previewImbalJasaModal"
+                                                                data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
+                                                                data-confirm="{{ $imbalJasa->is_confirm }}"
+                                                                data-file="{{ $imbalJasa->file }}">Selesai</a>
                                                         @else
-                                                        Menunggu Pembayaran dari Cabang
+                                                            Menunggu Pembayaran dari Cabang
                                                         @endif
                                                     @else
-                                                    -
+                                                        -
                                                     @endif
                                                 @else
                                                     {{--  role selain vendor  --}}
                                                     @if ($stnk && $polis && $bpkb)
                                                         @if (!$imbalJasa)
-                                                        <a href="#" style="text-decoration: underline; cursor: pointer;" class="upload-imbal-jasa"
-                                                            data-toggle="modal"
-                                                            data-target="#uploadImbalJasaModal"
-                                                            data-id="{{ $item->id }}">Bayar</a>
+                                                            <a href="#"
+                                                                style="text-decoration: underline; cursor: pointer;"
+                                                                class="upload-imbal-jasa" data-toggle="modal"
+                                                                data-target="#uploadImbalJasaModal"
+                                                                data-id="{{ $item->id }}">Bayar</a>
                                                         @else
-                                                        @if (!$imbalJasa->is_confirm)
-                                                        <p class="m-0">Menunggu Konfirmasi Vendor</p>
-                                                        @elseif ($imbalJasa->is_confirm)
-                                                        <p class="m-0">Selesai</p>
-                                                        @endif
-                                                        <a class="bukti-pembayaran-modal" style="text-decoration: underline;" data-toggle="modal" data-target="#previewBuktiPembayaranModal"
-                                                        data-file="{{ $imbalJasa->file }}">Lihat Bukti Pembayaran</a>
+                                                            @if (!$imbalJasa->is_confirm)
+                                                                <p class="m-0">Menunggu Konfirmasi Vendor</p>
+                                                            @elseif ($imbalJasa->is_confirm)
+                                                                <a class="bukti-pembayaran-modal"
+                                                                    style="cursor: pointer; text-decoration: underline;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#previewImbalJasaModal"
+                                                                    data-confirm="{{ $imbalJasa->is_confirm }}"
+                                                                    data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
+                                                                    data-file="{{ $imbalJasa->file }}">Selesai</a>
+                                                            @endif
                                                         @endif
                                                     @else
                                                         -
@@ -448,8 +492,10 @@
                                                 @if ($penyerahanUnit)
                                                     @if ($imbalJasa)
                                                         @if ($imbalJasa->file && $imbalJasa->is_confirm)
-                                                            <a href="/storage/dokumentasi-imbal-jasa/{{ $imbalJasa->file }}"
-                                                                target="_blank">Rp.
+                                                            <a {{-- style="text-decoration: underline; cursor: pointer;"
+                                                                class="open-po detailFileImbalJasa" data-toggle="modal"
+                                                                data-target="#imbaljasadetail"
+                                                                data-file="{{ $imbalJasa->file }}" --}}>Rp.
                                                                 {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
@@ -466,14 +512,17 @@
                                                             @if ($imbalJasa->file && $imbalJasa->is_confirm)
                                                                 @if ($stnk && $polis && $bpkb)
                                                                     @if (Auth::user()->role_id == 2)
-                                                                        <span class="text-info">Silahkan upload bukti transfer imbal
+                                                                        <span class="text-info">Silahkan upload bukti
+                                                                            transfer imbal
                                                                             jasa</span>
                                                                     @else
-                                                                        <span class="text-info">Menunggu bukti transfer imbal
+                                                                        <span class="text-info">Menunggu bukti transfer
+                                                                            imbal
                                                                             jasa</span>
                                                                     @endif
                                                                 @else
-                                                                    <span class="text-warning">Menunggu penyerahan semua berkas</span>
+                                                                    <span class="text-warning">Menunggu penyerahan semua
+                                                                        berkas</span>
                                                                 @endif
                                                             @else
                                                                 -
@@ -504,7 +553,8 @@
                                                         @if ($item->tgl_ketersediaan_unit)
                                                             @if ($buktiPembayaran)
                                                                 @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && Auth::user()->vendor_id)
-                                                                    <a data-toggle="modal" data-target="#tglModalPenyerahan"
+                                                                    <a data-toggle="modal"
+                                                                        data-target="#tglModalPenyerahan"
                                                                         data-id_kkb="{{ $item->kkb_id }}" href="#"
                                                                         class="dropdown-item"
                                                                         onclick="setPenyerahan({{ $item->kkb_id }})">Kirim
@@ -517,7 +567,8 @@
                                                             @if ($penyerahanUnit->is_confirm)
                                                                 @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
                                                                     {{--  Vendor  --}}
-                                                                    <a data-toggle="modal" data-target="#uploadBerkasModal"
+                                                                    <a data-toggle="modal"
+                                                                        data-target="#uploadBerkasModal"
                                                                         data-id_kkb="{{ $item->kkb_id }}"
                                                                         data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
                                                                         data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
@@ -544,7 +595,10 @@
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
-                                                                @if ((isset($stnk->is_confirm) && !$stnk->is_confirm) || (isset($polis->is_confirm) && !$polis->is_confirm) || (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
+                                                                @if (
+                                                                    (isset($stnk->is_confirm) && !$stnk->is_confirm) ||
+                                                                        (isset($polis->is_confirm) && !$polis->is_confirm) ||
+                                                                        (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
                                                                     <a data-toggle="modal"
                                                                         data-target="#uploadBerkasModal"
                                                                         data-id_kkb="{{ $item->kkb_id }}"
@@ -575,11 +629,15 @@
                                                         @endif
                                                         @if (Auth::user()->role_id == 2)
                                                             {{--  @if ($stnk && $polis && $bpkb && !$imbalJasa)  --}}
-                                                            @if ((isset($stnk->is_confirm) && !$stnk->is_confirm) && (isset($polis->is_confirm) && !$polis->is_confirm) && (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
+                                                            @if (isset($stnk->is_confirm) &&
+                                                                    !$stnk->is_confirm &&
+                                                                    (isset($polis->is_confirm) && !$polis->is_confirm) &&
+                                                                    (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
                                                                 <a href="#" class="dropdown-item upload-imbal-jasa"
                                                                     data-toggle="modal"
                                                                     data-target="#uploadImbalJasaModal"
-                                                                    data-id="{{ $item->id }}">Upload bukti imbal
+                                                                    data-id="{{ $item->id }}">Upload
+                                                                    bukti imbal
                                                                     jasa</a>
                                                             @endif
                                                         @else
@@ -618,8 +676,20 @@
         </div>
     </div>
 
+    {{-- File STNK --}}
+    @include('pages.kredit.modal.file-stnk')
+    {{-- File Polis --}}
+    @include('pages.kredit.modal.file-polis')
+    {{-- File BPKB --}}
+    @include('pages.kredit.modal.file-bpkb')
+    {{-- File imbalJasa --}}
+    @include('pages.kredit.modal.imbal-jasa')
+
     <!-- Modal bukti pembayaran -->
     @include('pages.kredit.modal.bukti-pembayaran-modal')
+
+    <!-- Modal bukti pembayaran Imbal Jasa -->
+    @include('pages.kredit.modal.bukti-imbal-jasa-modal')
 
     {{-- Detail PO --}}
     @include('pages.kredit.modal.detail-po')
@@ -897,11 +967,29 @@
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
                     </div>
-                    <iframe id="preview_imbal-jasa" src="" width="100%" height="450px"></iframe>
                     <div class="form-inline">
-                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
                         <form id="confirm-form-imbal-jasa">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <h5>Tanggal Upload :</h5>
+                                        <b id="tgl-upload-imbal-jasa">-</b>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <h5>Tanggal Konfirmasi :</h5>
+                                        <b>-</b>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <h5>Status Konfirmasi :</h5>
+                                        <b>Belum di Konfirmasi Vendor</b>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <img id="preview_imbal-jasa" src="" width="100%">
+                                    </div>
+                                </div>
+                            </div>
                             <input type="hidden" name="id_cat" id="id_cat">
+                            <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
                             <button type="submit" class="btn btn-primary">Ya</button>
                         </form>
                     </div>
@@ -917,6 +1005,8 @@
         <script src="{{ asset('template') }}/assets/js/plugin/chart.js/chart.min.js"></script>
 
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
+        <!-- DateTimePicker -->
+        <script src="{{ asset('template') }}/assets/js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
         <script>
             function printPDF() {
                 const pdfURL = 'https://www.africau.edu/images/default/sample.pdf';
@@ -926,13 +1016,10 @@
                     pdfWindow.print();
                 };
             }
-
-            $('#basic-datatables').DataTable({});
         </script>
         <script>
             var label = {{ Js::from($barChartLabel) }};
             var data = {{ Js::from($barChartData) }};
-            console.log(data);
             $(document).ready(function() {
                 const ctx = document.getElementById('chart').getContext('2d');
 
@@ -970,6 +1057,7 @@
             });
 
             $(document).on("click", ".link-po", function() {
+                // console.log('bisa');
                 var nomorPo = $(this).data('nomorpo');
                 var tanggalPo = $(this).data('tanggalpo');
                 var filePo = $(this).data('filepo') + "#toolbar=0";
@@ -978,6 +1066,527 @@
                 $("#tanggalPo").text(tanggalPo);
                 $("#filePo").attr("src", filePo);
             });
+
+            // From index kkb
+            $('#basic-datatables').DataTable({});
+            // Initial datepicker
+            $('#tgl_ketersediaan_unit').datetimepicker({
+                format: 'MM/DD/YYYY',
+            });
+            $('#tgl_pengiriman').datetimepicker({
+                format: 'MM/DD/YYYY',
+            });
+            // End
+
+            $('#modal-tgl-form').on("submit", function(event) {
+                event.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_date = document.getElementById('tgl_ketersediaan_unit')
+
+                if (req_date == '') {
+                    showError(req_date, 'Tanggal ketersediaan unit harus dipilih.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.set_tgl_ketersediaan_unit') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id_kkb: req_id.value,
+                        date: req_date.value,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (Array.isArray(data.error)) {
+                            showError(req_date, data.error[0])
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#tglModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            function uploadBuktiPembayaran(id) {
+                $('#modal-bukti-pembayaran #id_kkb').val(id);
+            }
+
+            function setPenyerahan(id) {
+                $('#modal-tgl-penyerahan #id_kkb').val(id);
+            }
+
+            function uploadPolis(id) {
+                $('#modal-polis #id_kkb').val(id);
+            }
+
+            function uploadBpkb(id) {
+                $('#modal-bpkb #id_kkb').val(id);
+            }
+
+            function uploadStnk(id) {
+                $('#modal-stnk #id_kkb').val(id);
+            }
+
+            $('#modal-bukti-pembayaran').on("submit", function(e) {
+                e.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_file = document.getElementById('bukti_pembayaran_scan')
+                var formData = new FormData($(this)[0]);
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_bukti_pembayaran') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        console.log(data)
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('bukti_pembayaran_scan'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#buktiPembayaranModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            $('#modal-tgl-penyerahan').on("submit", function(event) {
+                event.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_date = document.getElementById('tgl_pengiriman')
+                const req_image = document.getElementById('upload_penyerahan_unit')
+                var formData = new FormData($(this)[0]);
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.set_tgl_penyerahan_unit') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('tanggal'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('gambar'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#tglModalPenyerahan').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            $('#modal-stnk').on("submit", function(event) {
+                event.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_no = document.getElementById('no_stnk')
+                const req_file = document.getElementById('stnk_scan')
+                var formData = new FormData($(this)[0]);
+
+                if (req_no == '') {
+                    showError(req_no, 'Nomor harus diisi.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_stnk') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('no_stnk'))
+                                    showError(req_no, message)
+                                if (message.toLowerCase().includes('scan'))
+                                    showError(req_file, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#uploadStnkModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            $('#modal-stnkbpkb').on("submit", function(event) {
+                event.preventDefault();
+
+                const req_id = document.getElementById('id_kkb')
+                const req_no = document.getElementById('no_bpkb')
+                const req_file = document.getElementById('bpkb_scan')
+                var formData = new FormData($(this)[0]);
+
+                if (req_no == '') {
+                    showError(req_no, 'Nomor harus diisi.');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_bpkb') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('no_bpkb'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('bpkb_scan'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#uploadBpkbModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        ErrorMessage('Terjadi kesalahan')
+                    }
+                })
+            })
+
+            // Modal
+            $('body').on('click', '.confirm-police', function(e) {
+                const data_id = $(this).data('id-doc')
+                const data_category_doc_id = $(this).data('id-category')
+
+                $('#confirm_id').val(data_id)
+                $('#confirm_id_category').val(data_category_doc_id)
+            })
+            $('body').on('click', '.confirm-stnk', function(e) {
+                const data_id = $(this).data('id-doc')
+                const data_category_doc_id = $(this).data('id-category')
+
+                $('#confirm_id').val(data_id)
+                $('#confirm_id_category').val(data_category_doc_id)
+            })
+
+            $('.confirm-bukti-pembayaran').on('click', function(e) {
+                const data_id = $(this).data('id-doc')
+                const data_category_doc_id = $(this).data('id-category')
+                const file_bukti = $(this).data('file') ? $(this).data('file') : ''
+                var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file_bukti +
+                    "#toolbar=0";
+                $("#preview_bukti_tf").attr("src", path_file);
+                $('#confirm_id').val(data_id)
+                $('#confirm_id_category').val(data_category_doc_id)
+            })
+
+            // Imbal Jasa
+            $('.upload-imbal-jasa').on('click', function(e) {
+                const data_id = $(this).data('id')
+                $('#id_kkbimbaljasa').val(data_id)
+            })
+            $('.confirm-imbal-jasa').on('click', function(e) {
+                const data_id = $(this).data('id')
+                const tanggal = $(this).data('tanggal')
+                const file_bukti = $(this).data('file') ? $(this).data('file') : ''
+                var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file_bukti;
+
+                $("#preview_imbal-jasa").attr("src", path_file);
+                $('#id_cat').val(data_id)
+                $('#tgl-upload-imbal-jasa').html(tanggal)
+            })
+
+            $('#modal-imbal-jasa-form').submit(function(e) {
+                e.preventDefault()
+                const req_id = document.getElementById('id_kkbimbaljasa')
+                const req_file = document.getElementById('file_imbal_jasa')
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.upload_imbal_jasa') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('no_bpkb'))
+                                    showError(req_date, message)
+                                if (message.toLowerCase().includes('bpkb_scan'))
+                                    showError(req_image, message)
+                            }
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                                // console.log(data.message)
+                            } else {
+                                ErrorMessage(data.message)
+                                // console.log(data.message)
+                            }
+                            $('#uploadImbalJasaModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e)
+                        // ErrorMessage('Terjadi kesalahan')
+                    }
+                });
+            });
+            $('#confirm-form-imbal-jasa').on('submit', function(e) {
+                e.preventDefault()
+                const req_id = $('#id_cat').val()
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.confirm-imbal-jasa') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: req_id,
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            console.log(data.error)
+                            /*for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('id'))
+                                    showError(req_id, message)
+                                if (message.toLowerCase().includes('category_id'))
+                                    showError(req_category_doc_id, message)
+                            }*/
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            $('#modal-imbal-jasa-form').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                })
+            })
+            // Cabang
+            $('#confirm-form').on('submit', function(e) {
+                e.preventDefault()
+                const req_id = $('#confirm_id').val()
+                const req_category_doc_id = $('#confirm_id_category').val()
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.confirm_document') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: req_id,
+                        category_id: req_category_doc_id
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            console.log(data.error)
+                            /*for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('id'))
+                                    showError(req_id, message)
+                                if (message.toLowerCase().includes('category_id'))
+                                    showError(req_category_doc_id, message)
+                            }*/
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                            // $('#uploadPolisModal').modal().hide()
+                            // $('body').removeClass('modal-open');
+                            // $('.modal-backdrop').remove();
+                        }
+                    }
+                })
+            })
+
+            // Vendor
+            $('#confirm-form-vendor').on('submit', function(e) {
+                e.preventDefault()
+                const req_id = $('#confirm_id').val()
+                const req_category_doc_id = $('#confirm_id_category').val()
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.confirm_document_vendor') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: req_id,
+                        category_id: req_category_doc_id
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            console.log(data.error)
+                            /*for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('id'))
+                                    showError(req_id, message)
+                                if (message.toLowerCase().includes('category_id'))
+                                    showError(req_category_doc_id, message)
+                            }*/
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                        }
+                    }
+                })
+            })
+
+            // Cabang - Confirm penyerahan unit
+            $('#confirm-form-penyerahan-unit').on('submit', function(e) {
+                e.preventDefault()
+                const req_id = $('#confirm_id').val()
+                const req_category_doc_id = $('#confirm_id_category').val()
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kredit.confirm_penyerahan_unit') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: req_id,
+                        category_id: req_category_doc_id
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            console.log(data.error)
+                            /*for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
+                                if (message.toLowerCase().includes('id'))
+                                    showError(req_id, message)
+                                if (message.toLowerCase().includes('category_id'))
+                                    showError(req_category_doc_id, message)
+                            }*/
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                ErrorMessage(data.message)
+                            }
+                        }
+                    }
+                })
+            })
+
+            $(document).ready(function() {
+                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
+                    var data_id_kkb = '';
+                    if (typeof $(this).data('id_kkb') !== 'undefined') {
+                        data_id_kkb = $(this).data('id_kkb');
+                    }
+                    $('#id_kkb').val(data_id_kkb);
+                })
+
+            });
+
+            function SuccessMessage(message) {
+                swal("Berhasil!", message, {
+                    icon: "success",
+                    timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            }
+
+            function ErrorMessage(message) {
+                swal("Gagal!", message, {
+                    icon: "error",
+                    // timer: 3000,
+                    closeOnClickOutside: false
+                }).then(() => {
+                    location.reload();
+                });
+                // setTimeout(function() {
+                //     location.reload();
+                // }, 3000);
+            }
+
+            function showError(input, message) {
+                const inputGroup = input.parentElement;
+                const formGroup = inputGroup.parentElement;
+                const errorSpan = formGroup.querySelector('.error');
+
+                formGroup.classList.add('has-error');
+                errorSpan.innerText = message;
+                input.focus();
+                input.value = '';
+            }
         </script>
         @if (Auth::user()->role_id != 3)
             <script>

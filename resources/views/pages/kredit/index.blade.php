@@ -326,12 +326,15 @@
                                                                 class="confirm-imbal-jasa" data-toggle="modal"
                                                                 data-id="{{ $imbalJasa->id }}"
                                                                 data-file="{{ $imbalJasa->file }}"
-                                                                href="#confirmModalImbalJasa">Konfirmasi Bukti Pembayaran</a>
+                                                                data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->created_at)->format('d-m-Y') }}"
+                                                                href="#confirmModalImbalJasa">Konfirmasi Bukti
+                                                                Pembayaran</a>
                                                         @elseif ($imbalJasa->is_confirm)
                                                             <a class="bukti-pembayaran-modal"
                                                                 style="cursor: pointer; text-decoration: underline;"
-                                                                data-toggle="modal"
-                                                                data-target="#previewBuktiPembayaranModal"
+                                                                data-toggle="modal" data-target="#previewImbalJasaModal"
+                                                                data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
+                                                                data-confirm="{{ $imbalJasa->is_confirm }}"
                                                                 data-file="{{ $imbalJasa->file }}">Selesai</a>
                                                         @else
                                                             Menunggu Pembayaran dari Cabang
@@ -352,11 +355,13 @@
                                                             @if (!$imbalJasa->is_confirm)
                                                                 <p class="m-0">Menunggu Konfirmasi Vendor</p>
                                                             @elseif ($imbalJasa->is_confirm)
-                                                            <a class="bukti-pembayaran-modal"
-                                                                style="cursor: pointer; text-decoration: underline;"
-                                                                data-toggle="modal"
-                                                                data-target="#previewBuktiPembayaranModal"
-                                                                data-file="{{ $imbalJasa->file }}">Selesai</a>
+                                                                <a class="bukti-pembayaran-modal"
+                                                                    style="cursor: pointer; text-decoration: underline;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#previewImbalJasaModal"
+                                                                    data-confirm="{{ $imbalJasa->is_confirm }}"
+                                                                    data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
+                                                                    data-file="{{ $imbalJasa->file }}">Selesai</a>
                                                             @endif
                                                         @endif
                                                     @else
@@ -368,10 +373,10 @@
                                                 @if ($penyerahanUnit)
                                                     @if ($imbalJasa)
                                                         @if ($imbalJasa->file && $imbalJasa->is_confirm)
-                                                            <a style="text-decoration: underline; cursor: pointer;"
+                                                            <a {{-- style="text-decoration: underline; cursor: pointer;"
                                                                 class="open-po detailFileImbalJasa" data-toggle="modal"
                                                                 data-target="#imbaljasadetail"
-                                                                data-file="{{ $imbalJasa->file }}">Rp.
+                                                                data-file="{{ $imbalJasa->file }}" --}}>Rp.
                                                                 {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
@@ -512,7 +517,8 @@
                                                                 <a href="#" class="dropdown-item upload-imbal-jasa"
                                                                     data-toggle="modal"
                                                                     data-target="#uploadImbalJasaModal"
-                                                                    data-id="{{ $item->id }}">Upload bukti imbal
+                                                                    data-id="{{ $item->id }}">Upload
+                                                                    bukti imbal
                                                                     jasa</a>
                                                             @endif
                                                         @else
@@ -562,6 +568,9 @@
 
     <!-- Modal bukti pembayaran -->
     @include('pages.kredit.modal.bukti-pembayaran-modal')
+
+    <!-- Modal bukti pembayaran Imbal Jasa -->
+    @include('pages.kredit.modal.bukti-imbal-jasa-modal')
 
     {{-- Detail PO --}}
     @include('pages.kredit.modal.detail-po')
@@ -866,21 +875,33 @@
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <h5 class="modal-title" id="previewBuktiPembayaranModalLabel">Bukti Pembayaran Imbal Jasa</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" class="text-light">&times;</span>
-                    </button>
-                </div>
                 <div class="modal-body">
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
                     </div>
-                    <iframe id="preview_imbal-jasa" src="" width="100%" height="450px"></iframe>
                     <div class="form-inline">
-                        <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
                         <form id="confirm-form-imbal-jasa">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <h5>Tanggal Upload :</h5>
+                                        <b id="tgl-upload-imbal-jasa">-</b>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <h5>Tanggal Konfirmasi :</h5>
+                                        <b>-</b>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <h5>Status Konfirmasi :</h5>
+                                        <b>Belum di Konfirmasi Vendor</b>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <img id="preview_imbal-jasa" src="" width="100%">
+                                    </div>
+                                </div>
+                            </div>
                             <input type="hidden" name="id_cat" id="id_cat">
+                            <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
                             <button type="submit" class="btn btn-primary">Ya</button>
                         </form>
                     </div>
@@ -1220,11 +1241,13 @@
             })
             $('.confirm-imbal-jasa').on('click', function(e) {
                 const data_id = $(this).data('id')
+                const tanggal = $(this).data('tanggal')
                 const file_bukti = $(this).data('file') ? $(this).data('file') : ''
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file_bukti;
 
                 $("#preview_imbal-jasa").attr("src", path_file);
                 $('#id_cat').val(data_id)
+                $('#tgl-upload-imbal-jasa').html(tanggal)
             })
 
             $('#modal-imbal-jasa-form').submit(function(e) {

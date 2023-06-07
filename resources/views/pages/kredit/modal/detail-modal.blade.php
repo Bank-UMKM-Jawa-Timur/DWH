@@ -252,61 +252,54 @@
                                 case 'STNK':
                                     $('#detail_tanggal_unggah_stnk').html(document.date)
                                     if (document.confirm_at)
-<<<<<<< Updated upstream
-                                        $('#detail_tanggal_confirm_stnk').html('Tanggal Konfirmasi : '+document.confirm_at)
+                                        $('#detail_tanggal_confirm_stnk').html('Tanggal Konfirmasi : ' +
+                                            document.confirm_at)
                                     if (karyawan)
-                                        $('#detail_status_confirm_stnk').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
+                                        $('#detail_status_confirm_stnk').html(document.is_confirm ?
+                                            'Status : Sudah dikonfirmasi oleh cabang ' + karyawan[
+                                                'entitas']['cab']['nama_cabang'] + '.' :
+                                            'Status : Belum dikonfirmasi')
                                     else
-                                        $('#detail_status_confirm_stnk').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
+                                        $('#detail_status_confirm_stnk').html(document.is_confirm ?
+                                            'Status : Sudah dikonfirmasi oleh cabang.' :
+                                            'Status : Belum dikonfirmasi')
                                     $('#detail_no_stnk').val(document.text ? document.text : '-')
-                                    $('#detail_preview_stnk').attr('src', document.file_path + "#toolbar=0")
-=======
-                                        $('#detail_tanggal_confirm_stnk').html(document.confirm_at)
-                                    $('#detail_status_confirm_stnk').html(document.is_confirm ?
-                                        'Sudah dikonfirmasi' :
-                                        'Belum dikonfirmasi')
-                                    $('#detail_no_stnk').html(document.text ? document.text : '-')
                                     $('#detail_preview_stnk').attr('src', document.file_path +
                                         "#toolbar=0")
->>>>>>> Stashed changes
                                     break;
                                 case 'Polis':
                                     $('#detail_tanggal_unggah_polis').html(document.date)
                                     if (document.confirm_at)
-<<<<<<< Updated upstream
-                                        $('#detail_tanggal_confirm_polis').html('Tanggal Konfirmasi : '+document.confirm_at)
+                                        $('#detail_tanggal_confirm_polis').html(
+                                            'Tanggal Konfirmasi : ' + document.confirm_at)
                                     if (karyawan)
-                                        $('#detail_status_confirm_polis').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
+                                        $('#detail_status_confirm_polis').html(document.is_confirm ?
+                                            'Status : Sudah dikonfirmasi oleh cabang ' + karyawan[
+                                                'entitas']['cab']['nama_cabang'] + '.' :
+                                            'Status : Belum dikonfirmasi')
                                     else
-                                        $('#detail_status_confirm_polis').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
+                                        $('#detail_status_confirm_polis').html(document.is_confirm ?
+                                            'Status : Sudah dikonfirmasi oleh cabang.' :
+                                            'Status : Belum dikonfirmasi')
                                     $('#detail_no_polis').val(document.text ? document.text : '-')
-=======
-                                        $('#detail_tanggal_confirm_polis').html(document.confirm_at)
-                                    $('#detail_status_confirm_polis').html(document.is_confirm ?
-                                        'Sudah dikonfirmasi' :
-                                        'Belum dikonfirmasi')
-                                    $('#detail_no_polis').html(document.text ? document.text : '-')
->>>>>>> Stashed changes
                                     $('#detail_preview_polis').attr('src', document
                                         .file_path + "#toolbar=0")
                                     break;
                                 case 'BPKB':
                                     $('#detail_tanggal_unggah_bpkb').html(document.date)
                                     if (document.confirm_at)
-<<<<<<< Updated upstream
-                                        $('#detail_tanggal_confirm_bpkb').html('Tanggal Konfirmasi : '+document.confirm_at)
+                                        $('#detail_tanggal_confirm_bpkb').html('Tanggal Konfirmasi : ' +
+                                            document.confirm_at)
                                     if (karyawan)
-                                        $('#detail_status_confirm_bpkb').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang '+karyawan['entitas']['cab']['nama_cabang']+'.' : 'Status : Belum dikonfirmasi')
+                                        $('#detail_status_confirm_bpkb').html(document.is_confirm ?
+                                            'Status : Sudah dikonfirmasi oleh cabang ' + karyawan[
+                                                'entitas']['cab']['nama_cabang'] + '.' :
+                                            'Status : Belum dikonfirmasi')
                                     else
-                                        $('#detail_status_confirm_bpkb').html(document.is_confirm ? 'Status : Sudah dikonfirmasi oleh cabang.' : 'Status : Belum dikonfirmasi')
+                                        $('#detail_status_confirm_bpkb').html(document.is_confirm ?
+                                            'Status : Sudah dikonfirmasi oleh cabang.' :
+                                            'Status : Belum dikonfirmasi')
                                     $('#detail_no_bpkb').val(document.text ? document.text : '-')
-=======
-                                        $('#detail_tanggal_confirm_bpkb').html(document.confirm_at)
-                                    $('#detail_status_confirm_bpkb').html(document.is_confirm ?
-                                        'Sudah dikonfirmasi' :
-                                        'Belum dikonfirmasi')
-                                    $('#detail_no_bpkb').html(document.text ? document.text : '-')
->>>>>>> Stashed changes
                                     $('#detail_preview_bpkb').attr('src', document
                                         .file_path + "#toolbar=0")
                                     break;
