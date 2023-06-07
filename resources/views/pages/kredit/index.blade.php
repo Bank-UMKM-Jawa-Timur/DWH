@@ -323,19 +323,16 @@
                                                     @if ($imbalJasa)
                                                         @if (!$imbalJasa->is_confirm)
                                                             <a style="cursor: pointer; text-decoration: underline;"
-                                                                class="confirm-imbal-jasa" data-toggle="modal""
+                                                                class="confirm-imbal-jasa" data-toggle="modal"
                                                                 data-id="{{ $imbalJasa->id }}"
                                                                 data-file="{{ $imbalJasa->file }}"
-                                                                href="#confirmModalImbalJasa">Konfirmasi Bukti
-                                                                Pembayaran</a>
+                                                                href="#confirmModalImbalJasa">Konfirmasi Bukti Pembayaran</a>
                                                         @elseif ($imbalJasa->is_confirm)
-                                                            <p class="m-0">Selesai</p>
                                                             <a class="bukti-pembayaran-modal"
                                                                 style="cursor: pointer; text-decoration: underline;"
                                                                 data-toggle="modal"
                                                                 data-target="#previewBuktiPembayaranModal"
-                                                                data-file="{{ $imbalJasa->file }}">Lihat Bukti
-                                                                Pembayaran</a>
+                                                                data-file="{{ $imbalJasa->file }}">Selesai</a>
                                                         @else
                                                             Menunggu Pembayaran dari Cabang
                                                         @endif
@@ -355,13 +352,12 @@
                                                             @if (!$imbalJasa->is_confirm)
                                                                 <p class="m-0">Menunggu Konfirmasi Vendor</p>
                                                             @elseif ($imbalJasa->is_confirm)
-                                                                <p class="m-0">Selesai</p>
-                                                            @endif
                                                             <a class="bukti-pembayaran-modal"
-                                                                style="text-decoration: underline;" data-toggle="modal"
+                                                                style="cursor: pointer; text-decoration: underline;"
+                                                                data-toggle="modal"
                                                                 data-target="#previewBuktiPembayaranModal"
-                                                                data-file="{{ $imbalJasa->file }}">Lihat Bukti
-                                                                Pembayaran</a>
+                                                                data-file="{{ $imbalJasa->file }}">Selesai</a>
+                                                            @endif
                                                         @endif
                                                     @else
                                                         -
