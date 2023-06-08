@@ -34,7 +34,6 @@
     <script>
         $('.bukti-pembayaran-modal').on('click', function(e) {
             const file = $(this).data('file');
-            console.log(file);
             const status = $(this).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
                 'Menunggu konfirmasi dari vendor.';
             const tanggal = $(this).data('tanggal');
