@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KreditController;
 use App\Http\Controllers\LogActivitesController;
@@ -30,7 +31,12 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
-Route::get('/karyawan/{nip}', function() {
+Route::get('first-login', [AuthenticatedSessionController::class, 'firstLogin'])
+    ->name('first-login.index');
+Route::post('first-login', [AuthenticatedSessionController::class, 'firstLoginStore'])
+    ->name('first-login.store');
+
+Route::get('/karyawan/{nip}', function () {
     // $json = json_decode(file_get_contents('https://develop.bankumkm.id/bio_interface/api/karyawan?nip=01497'), true);
     // return $json;
     $url = 'https://develop.bankumkm.id/bio_interface/api/karyawan';
@@ -46,7 +52,8 @@ Route::get('/karyawan/{nip}', function() {
     );
     $context  = stream_context_create($options);
     $result = file_get_contents($url, false, $context);
-    if ($result === FALSE) { /* Handle error */ }
+    if ($result === FALSE) { /* Handle error */
+    }
 
     return $result;
 });
