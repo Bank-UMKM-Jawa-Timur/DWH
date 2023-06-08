@@ -43,18 +43,14 @@
                                             <td>{{ $item->nip ? $item->nip : '-' }}</td>
                                             <td>{{ $item->email ? $item->email : '-' }}</td>
                                             <td>
-                                                @if($item->role_id == 2)
-                                                    @if ($item->detail != null)
-                                                        @if ($item->detail['entitas']['type'] == 1)
-                                                        Pusat
-                                                        @else
-                                                            {{$item->detail['entitas']['cab']['nama_cabang']}}
-                                                        @endif
+                                                @if ($item->detail != null || property_exists($item, 'detail'))
+                                                    @if ($item->detail['entitas']['type'] == 1)
+                                                    Pusat
                                                     @else
-                                                        -
+                                                        {{$item->detail['entitas']['cab']['nama_cabang']}}
                                                     @endif
                                                 @else
-                                                -
+                                                    -
                                                 @endif
                                             </td>
                                             <td>{{ $item->role }}</td>
