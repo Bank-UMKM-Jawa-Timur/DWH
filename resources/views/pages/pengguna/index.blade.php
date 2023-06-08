@@ -31,6 +31,7 @@
                                         {{-- <th scope="col">Nama</th> --}}
                                         <th scope="col">NIP</th>
                                         <th scope="col">Email</th>
+                                        <th scope="col">Cabang</th>
                                         <th scope="col">Role</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
@@ -42,6 +43,13 @@
                                             {{-- <td>Antoni</td> --}}
                                             <td>{{ $item->nip ? $item->nip : '-' }}</td>
                                             <td>{{ $item->email ? $item->email : '-' }}</td>
+                                            <td>
+                                                @if ($item->detail)
+                                                    {{$item->detail['entitas']['cab']['nama_cabang']}}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
                                             <td>{{ $item->role }}</td>
                                             <td>
                                                 <div class="dropdown">

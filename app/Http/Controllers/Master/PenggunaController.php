@@ -27,28 +27,36 @@ class PenggunaController extends Controller
     {
         $param['title'] = 'Pengguna';
         $param['pageTitle'] = 'Pengguna';
-        // $data = User::select(
-        //         'users.*',
-        //         'r.name AS role',
-        //     )
-        //     ->join('roles AS r', 'r.id', 'users.role_id')
-        //     ->orderBy('users.id')
-        //     ->get();
         $data = $this->paginasi();
         $param['data'] = $data;
-
+        
         return view('pages.pengguna.index', $param);
     }
 
     public function paginasi()
     {
-        return User::select(
+        $user = User::select(
             'users.*',
             'r.name AS role',
         )
         ->join('roles AS r', 'r.id', 'users.role_id')
         ->orderBy('users.id')
         ->paginate(10);
+        foreach ($user as $key => $value) {
+            if ($value->nip) {
+                $karyawan = $this->getKaryawan($value->nip);
+                if ($karyawan) {
+                    if (array_key_exists('error', $karyawan)) {
+                        $value->detail = null;
+                    }
+                    else {
+                        $value->detail = $karyawan;
+                    }
+                }
+            }
+        }
+
+        return $user;
     }
 
     public function listCabang()
@@ -314,7 +322,7 @@ class PenggunaController extends Controller
                 return $responseBody;
             return $responseBody;
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            return $e->getMessage();
+            // return $e->getMessage();
         }
     }
 }
