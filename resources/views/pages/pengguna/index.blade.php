@@ -300,9 +300,6 @@
                 update();
             })
 
-
-
-
             $("#button-generate").click(function(e) {
                 var characters = "abcdefghijklmnopqrstuvwxyz";
                 var randomCharacter = '';
@@ -438,7 +435,7 @@
                         _method: 'PUT',
                         nip: req_nip.value,
                         email: req_email.value,
-                        password: req_password.value,
+                        password: req_password ? req_password.value : null,
                         role_id: req_role_id.value,
                     },
                     success: function(data) {
