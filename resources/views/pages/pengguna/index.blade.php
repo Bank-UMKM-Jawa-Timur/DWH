@@ -31,7 +31,7 @@
                                         {{-- <th scope="col">Nama</th> --}}
                                         <th scope="col">NIP</th>
                                         <th scope="col">Email</th>
-                                        <th scope="col">Cabang</th>
+                                        <th scope="col">Kantor</th>
                                         <th scope="col">Role</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
@@ -40,14 +40,21 @@
                                     @forelse ($data as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            {{-- <td>Antoni</td> --}}
                                             <td>{{ $item->nip ? $item->nip : '-' }}</td>
                                             <td>{{ $item->email ? $item->email : '-' }}</td>
                                             <td>
-                                                @if ($item->detail)
-                                                    {{$item->detail['entitas']['cab']['nama_cabang']}}
+                                                @if($item->role_id == 2)
+                                                    @if ($item->detail != null)
+                                                        @if ($item->detail['entitas']['type'] == 1)
+                                                        Pusat
+                                                        @else
+                                                            {{$item->detail['entitas']['cab']['nama_cabang']}}
+                                                        @endif
+                                                    @else
+                                                        -
+                                                    @endif
                                                 @else
-                                                    -
+                                                -
                                                 @endif
                                             </td>
                                             <td>{{ $item->role }}</td>
