@@ -931,18 +931,6 @@
         <script src="{{ asset('template') }}/assets/js/pdfobject.min.js"></script>
         <script type="module" src="https://unpkg.com/x-frame-bypass"></script>
 
-
-        <script>
-            function printPDF() {
-                const pdfURL = 'https://www.africau.edu/images/default/sample.pdf';
-                const pdfWindow = window.open(pdfURL, '_blank');
-
-                pdfWindow.onload = function() {
-                    pdfWindow.print();
-                };
-            }
-        </script>
-
         @if (session('status'))
             <script>
                 swal("Berhasil!", '{{ session('status') }}', {
