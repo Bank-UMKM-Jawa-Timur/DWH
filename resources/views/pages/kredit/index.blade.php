@@ -31,7 +31,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="">
+                        <div class="table-responsive">
                             <table class="mt-3" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
@@ -663,7 +663,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Bukti Pembayaran</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <form id="modal-bukti-pembayaran" enctype="multipart/form-data">
                         @csrf

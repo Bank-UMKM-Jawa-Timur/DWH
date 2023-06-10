@@ -709,6 +709,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Konfirmasi Penyerahan Unit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <form id="modal-tgl-form">
                         <input type="hidden" name="id_kkb" id="id_kkb">
@@ -739,6 +745,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Bukti Transfer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <form id="modal-imbal-jasa-form">
                         @csrf
@@ -770,6 +782,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Bukti Pembayaran</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <form id="modal-bukti-pembayaran" enctype="multipart/form-data">
                         @csrf
@@ -801,6 +819,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Penyerahan Unit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <form id="modal-tgl-penyerahan" enctype="multipart/form-data">
                         @csrf
@@ -923,6 +947,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                {{-- <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Konfirmasi Penyerahan Unit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div> --}}
                 <div class="modal-body">
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
@@ -945,6 +975,12 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title penyerahan-unit-title">Konfirmasi Bukti Pembayaran</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="text-light">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
