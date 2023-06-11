@@ -20,12 +20,12 @@
                     <div class="col-sm-12 mt-4">
                         <h5 class="title-po">File PO</h5>
                         <div class="form-inline mt-1">
-                            <a download href="" id="downloadFilePO">
+                            {{-- <a download href="" id="downloadFilePO">
                                 <button class="btn btn-primary mr-1 btn-sm">Unduh
                                     File PO</button>
                             </a>
-                            <button onclick="printPDF()" class="btn btn-info btn-sm" id="printfile">Print File
-                                PO</button>
+                            <button class="btn btn-info btn-sm printfilePO">Print File
+                                PO</button> --}}
                             <iframe id="filepo" src="" class="mt-2" width="100%" height="500"></iframe>
                         </div>
                     </div>
@@ -39,30 +39,12 @@
         $(document).on("click", ".open-po", function() {
             var nomorPo = $(this).data('nomorpo');
             var tanggalPo = $(this).data('tanggalpo');
-            var filePo = $(this).data('filepo') + "#toolbar=0";
-            console.log("file : " + filePo);
+            var filePo = $(this).data('filepo') + "#navpanes=0";
+
+            var functionPrint = 'PrintPdfPO("' + $(this).data('filepo') + '")';
             $("#nomorPo").text(nomorPo);
             $("#tanggalPo").text(tanggalPo);
             $("#filepo").attr("src", filePo);
-            $("#downloadFilePO").attr("href", $(this).data('filepo'));
         });
-
-        function printPDF() {
-            const pdfURL = 'https://www.africau.edu/images/default/sample.pdf';
-            const pdfWindow = window.open(pdfURL, '_blank');
-
-            pdfWindow.onload = function() {
-                pdfWindow.print();
-            };
-        }
-
-        // function downloadPDF(url = 'https://www.africau.edu/images/default/sample.pdf') {
-        //     var link = document.createElement('a');
-        //     link.href = url;
-        //     link.download = 'filename.pdf';
-        //     document.body.appendChild(link);
-        //     link.click();
-        //     document.body.removeChild(link);
-        // }
     </script>
 @endpush

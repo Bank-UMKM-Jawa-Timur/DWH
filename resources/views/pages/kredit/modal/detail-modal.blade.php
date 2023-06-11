@@ -51,10 +51,10 @@
                                         <div class="col-sm-12 mt-4">
                                             <h5 class="title-po">File PO</h5>
                                             <div class="form-inline mt-1">
-                                                <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File
+                                                {{-- <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File
                                                     PO</button>
                                                 <button onclick="printPDF()" class="btn btn-info btn-sm"
-                                                    id="printfile">Print File PO</button>
+                                                    id="printfile">Print File PO</button> --}}
                                                 <iframe id="detail_filepo" src="" class="mt-2" width="100%"
                                                     height="500"></iframe>
                                             </div>
@@ -337,7 +337,7 @@
                         $('#detail_jumlah_pesanan').html(data
                             .jumlah_kendaraan);
                         const file_po_path = "{{ config('global.los_host') }}/public" + data.po +
-                            "#toolbar=0";
+                            "#navpanes=0";
                         $("#detail_filepo").attr("src", file_po_path)
                         $("#detail_nomorPo").html(data.no_po)
                         $("#detail_tanggalPo").html(data.tanggal)
