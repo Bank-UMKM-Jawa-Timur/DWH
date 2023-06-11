@@ -196,9 +196,9 @@
             confirm_stnk = $(this).data('confirm-stnk') ? $(this).data('confirm-stnk') : ''
             confirm_polis = $(this).data('confirm-polis') ? $(this).data('confirm-polis') : ''
             confirm_bpkb = $(this).data('confirm-bpkb') ? $(this).data('confirm-bpkb') : ''
-            
+
             visibilityComponents();
-            
+
             try {
                 $('#modal-berkas #id_kkb').val(id);
                 if (id_stnk != '')
@@ -226,21 +226,21 @@
             var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
 
             if (file_stnk != '') {
-                var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk + "#toolbar=0";
+                var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk + "#navpanes=0";
                 $("#preview_stnk").attr("src", path_stnk);
             } else {
                 $("#preview_stnk").css("display", 'none');
             }
 
             if (file_polis != '') {
-                var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis + "#toolbar=0";
+                var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis + "#navpanes=0";
                 $("#preview_polis").attr("src", path_polis);
             } else {
                 $("#preview_polis").css("display", 'none');
             }
 
             if (file_bpkb != '') {
-                var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#toolbar=0";
+                var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#navpanes=0";
                 $("#preview_bpkb").attr("src", path_bpkb);
             } else {
                 $("#preview_bpkb").css("display", 'none');
@@ -344,7 +344,7 @@
                         $('.form-submit-berkas').css('display', 'block')
                 }
             }
-            
+
             /*if (file_polis != '') {
                 if (user_role == 3)
                     $('.form-submit-berkas').css('display', 'none')

@@ -38,7 +38,7 @@
                 'Menunggu konfirmasi dari vendor.';
             const tanggal = $(this).data('tanggal');
             const confirm_at = $(this).data('confirm_at');
-            var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#toolbar=0";
+            var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#navpanes=0";
 
             $('#bukti_pembayaran_img').attr('src', path_file)
             $('#tanggal_pembayaran').html(tanggal)

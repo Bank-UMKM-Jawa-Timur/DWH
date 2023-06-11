@@ -1231,7 +1231,7 @@
                 const data_category_doc_id = $(this).data('id-category')
                 const file_bukti = $(this).data('file') ? $(this).data('file') : ''
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file_bukti +
-                    "#toolbar=0";
+                    "#navpanes=0";
                 $("#preview_bukti_tf").attr("src", path_file);
                 $('#confirm_id').val(data_id)
                 $('#confirm_id_category').val(data_category_doc_id)

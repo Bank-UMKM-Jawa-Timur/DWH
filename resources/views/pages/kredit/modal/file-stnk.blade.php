@@ -38,7 +38,7 @@
                 'Menunggu konfirmasi.';
             const tanggal = $(this).data('tanggal');
             const confirm_at = $(this).data('confirm_at');
-            var path_file = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file + "#toolbar=0";
+            var path_file = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file + "#navpanes=0";
             $('#filestnk').attr('src', path_file)
             $('#tanggal_stnk').html(tanggal)
             $('#tanggal_confirm_stnk').html(confirm_at)

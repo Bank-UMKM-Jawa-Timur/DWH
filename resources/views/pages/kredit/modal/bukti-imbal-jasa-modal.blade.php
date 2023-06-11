@@ -39,7 +39,7 @@
                 'Menunggu konfirmasi dari vendor.';
             const tanggal = $(this).data('tanggal');
             const confirm_at = $(this).data('confirm_at');
-            var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file + "#toolbar=0";
+            var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file + "#navpanes=0";
 
             $('#bukti_pembayaran_imbal_jasa').attr('src', path_file)
             $('#tanggal_pembayaran_imbal_jasa').html(tanggal)

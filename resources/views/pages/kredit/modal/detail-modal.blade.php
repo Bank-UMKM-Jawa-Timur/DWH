@@ -232,7 +232,6 @@
     <script>
         $('.detail-link').on('click', function(e) {
             const id = $(this).data('id');
-
             $.ajax({
                 url: "{{ url('/kredit') }}/" + id,
                 method: "GET",
@@ -264,7 +263,7 @@
                                             'Belum dikonfirmasi')
                                     $('#detail_no_stnk').val(document.text ? document.text : '-')
                                     $('#detail_preview_stnk').attr('src', document.file_path +
-                                        "#toolbar=0")
+                                        "#navpanes=0")
                                     break;
                                 case 'Polis':
                                     $('#detail_tanggal_unggah_polis').html(document.date)
@@ -281,7 +280,7 @@
                                             'Belum dikonfirmasi')
                                     $('#detail_no_polis').val(document.text ? document.text : '-')
                                     $('#detail_preview_polis').attr('src', document
-                                        .file_path + "#toolbar=0")
+                                        .file_path + "#navpanes=0")
                                     break;
                                 case 'BPKB':
                                     $('#detail_tanggal_unggah_bpkb').html(document.date)
@@ -298,7 +297,7 @@
                                             'Belum dikonfirmasi')
                                     $('#detail_no_bpkb').val(document.text ? document.text : '-')
                                     $('#detail_preview_bpkb').attr('src', document
-                                        .file_path + "#toolbar=0")
+                                        .file_path + "#navpanes=0")
                                     break;
                                 default:
                                     break;

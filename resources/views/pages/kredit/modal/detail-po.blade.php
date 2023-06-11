@@ -1,5 +1,5 @@
 <div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="detailPOLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title" id="detailPOLabel">Detail PO</h5>
@@ -39,8 +39,10 @@
         $(document).on("click", ".open-po", function() {
             var nomorPo = $(this).data('nomorpo');
             var tanggalPo = $(this).data('tanggalpo');
+            // var filePo = "https://www.africau.edu/images/default/sample.pdf#navpanes=0";
             var filePo = $(this).data('filepo') + "#navpanes=0";
 
+            // example : https://www.africau.edu/images/default/sample.pdf
             var functionPrint = 'PrintPdfPO("' + $(this).data('filepo') + '")';
             $("#nomorPo").text(nomorPo);
             $("#tanggalPo").text(tanggalPo);

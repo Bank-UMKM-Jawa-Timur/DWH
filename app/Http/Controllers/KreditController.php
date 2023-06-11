@@ -624,7 +624,7 @@ class KreditController extends Controller
                 if (is_numeric($request->id_stnk)) {
                     $stnk = Document::find($request->id_stnk);
                     $docCategory = DocumentCategory::select('name')->find($stnk->document_category_id);
-                    
+
                     // send notification
                     if (!$stnk->is_confirm)
                         $this->notificationController->send(12, $stnk->kredit_id);
@@ -965,9 +965,14 @@ class KreditController extends Controller
 
             // retrieve karyawan data
             $karyawan = $this->penggunaController->getKaryawan(Auth::user()->nip);
-            
-            if (array_key_exists('error', $karyawan))
+
+
+            if(is_array($karyawan)){
+                if (array_key_exists('error', $karyawan))
+                    $karyawan = null;
+            }else{
                 $karyawan = null;
+            }
 
             $data = [
                 'documents' => $document,

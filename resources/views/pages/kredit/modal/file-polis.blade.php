@@ -38,7 +38,7 @@
                 'Menunggu konfirmasi.';
             const tanggal = $(this).data('tanggal');
             const confirm_at = $(this).data('confirm_at');
-            var path_file = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file + "#toolbar=0";
+            var path_file = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file + "#navpanes=0";
             $('#filepolis').attr('src', path_file)
             $('#tanggal_polis').html(tanggal)
             $('#tanggal_confirm_polis').html(confirm_at)
