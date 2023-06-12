@@ -42,15 +42,15 @@
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <h5 class="title-po">Nomor PO</h5>
-                                            <b class="content-po" id="detail_nomorPo">undifined</b>
+                                            <input type="text" class="form-control text-field" id="detail_nomorPo"
+                                                readonly>
+                                            <h5 class="title-po">Tanggal PO</h5>
+                                            <input type="text" class="form-control text-field" id="detail_tanggalPo"
+                                                readonly>
                                         </div>
                                         <div class="col-sm-6">
-                                            <h5 class="title-po">Tanggal PO</h5>
-                                            <b class="content-po" id="detail_tanggalPo">undifined</b>
-                                        </div>
-                                        <div class="col-sm-12 mt-4">
                                             <h5 class="title-po">File PO</h5>
-                                            <div class="form-inline mt-1">
+                                            <div class="form-inline mt-1 show-pdf">
                                                 {{-- <button type="button" class="btn btn-primary mr-1 btn-sm">Unduh File
                                                     PO</button>
                                                 <button onclick="printPDF()" class="btn btn-info btn-sm"
@@ -127,29 +127,32 @@
                                     <div class="row mb-2">
                                         <div class="col-sm-6 mb-2">
                                             <h5 class="title-po">Tanggal :</h5>
-                                            <b class="content-po" id="detail_tanggal_unggah_stnk">-</b>
-                                        </div>
-                                        <div class="col-sm-6 mb-2">
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_tanggal_unggah_stnk" readonly>
                                             <h5 class="title-po">Tanggal Konfirmasi :</h5>
-                                            <b class="content-po" id="detail_tanggal_confirm_stnk">-</b>
-                                        </div>
-                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_tanggal_confirm_stnk" readonly>
                                             <h5 class="title-po">Status :</h5>
-                                            <b class="content-po" id="detail_status_confirm_stnk">Berkas belum
-                                                diunggah</b>
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_status_confirm_stnk" readonly>
+                                            <h5 class="title-po">Nomor :</h5>
+                                            <input type="text" class="form-control text-field" id="detail_no_stnk"
+                                                readonly>
                                         </div>
                                         <div class="col-sm-6">
-                                            <h5 class="title-po">Nomor :</h5>
-                                            <b class="content-po" id="detail_no_stnk" name="no_stnk">-</b>
+                                            <h5 class="title-po">File STNK :</h5>
+                                            <small class="form-text text-danger error"></small>
+                                            <div class="form-inline mt-1 show-pdf">
+                                                <iframe id="detail_preview_stnk" src="" width="100%"
+                                                    height="450px"></iframe>
+                                            </div>
                                         </div>
                                     </div>
                                     {{-- <label>Nomor</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" readonly>
                                     </div> --}}
-                                    <small class="form-text text-danger error"></small>
-                                    <iframe id="detail_preview_stnk" src="" width="100%"
-                                        height="450px"></iframe>
+
                                 </div>
 
                             </div>
@@ -163,29 +166,27 @@
                                     <div class="row mb-2">
                                         <div class="col-sm-6 mb-2">
                                             <h5 class="title-po">Tanggal :</h5>
-                                            <b class="content-po" id="detail_tanggal_unggah_polis">-</b>
-                                        </div>
-                                        <div class="col-sm-6 mb-2">
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_tanggal_unggah_polis" readonly>
                                             <h5 class="title-po">Tanggal Konfirmasi :</h5>
-                                            <b class="content-po" id="detail_tanggal_confirm_polis">-</b>
-                                        </div>
-                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_tanggal_confirm_polis" readonly>
                                             <h5 class="title-po">Status :</h5>
-                                            <b class="content-po" id="detail_status_confirm_polis">Berkas belum
-                                                diunggah</b>
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_status_confirm_polis" readonly>
+                                            <h5 class="title-po">Nomor :</h5>
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_no_polis" readonly>
                                         </div>
                                         <div class="col-sm-6">
-                                            <h5 class="title-po">Nomor :</h5>
-                                            <b class="content-po" id="detail_no_polis" name="no_polis">-</b>
+                                            <h5 class="title-po">File Polis :</h5>
+                                            <small class="form-text text-danger error"></small>
+                                            <div class="form-inline mt-1 show-pdf">
+                                                <iframe id="detail_preview_polis" src="" width="100%"
+                                                    height="450px"></iframe>
+                                            </div>
                                         </div>
                                     </div>
-                                    {{-- <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" readonly>
-                                    </div> --}}
-                                    <small class="form-text text-danger error"></small>
-                                    <iframe id="detail_preview_polis" src="" width="100%"
-                                        height="450px"></iframe>
                                 </div>
                             </div>
                             {{--  BPKB  --}}
@@ -195,29 +196,27 @@
                                     <div class="row mb-2">
                                         <div class="col-sm-6 mb-2">
                                             <h5 class="title-po">Tanggal :</h5>
-                                            <b class="content-po" id="detail_tanggal_unggah_bpkb">-</b>
-                                        </div>
-                                        <div class="col-sm-6 mb-2">
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_tanggal_unggah_bpkb" readonly>
                                             <h5 class="title-po">Tanggal Konfirmasi :</h5>
-                                            <b class="content-po" id="detail_tanggal_confirm_bpkb">-</b>
-                                        </div>
-                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_tanggal_confirm_bpkb" readonly>
                                             <h5 class="title-po">Status :</h5>
-                                            <b class="content-po" id="detail_status_confirm_bpkb">Berkas belum
-                                                diunggah</b>
+                                            <input type="text" class="form-control text-field"
+                                                id="detail_status_confirm_bpkb" readonly>
+                                            <h5 class="title-po">Nomor :</h5>
+                                            <input type="text" class="form-control text-field" id="detail_no_bpkb"
+                                                readonly>
                                         </div>
                                         <div class="col-sm-6">
-                                            <h5 class="title-po">Nomor :</h5>
-                                            <b class="content-po" id="detail_no_bpkb" name="no_bpkb">-</b>
+                                            <h5 class="title-po">File BPKB :</h5>
+                                            <small class="form-text text-danger error"></small>
+                                            <div class="form-inline mt-1 show-pdf">
+                                                <iframe id="detail_preview_bpkb" src="" width="100%"
+                                                    height="450px"></iframe>
+                                            </div>
                                         </div>
                                     </div>
-                                    {{-- <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" readonly>
-                                    </div> --}}
-                                    <small class="form-text text-danger error"></small>
-                                    <iframe id="detail_preview_bpkb" src="" width="100%"
-                                        height="450px"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -249,16 +248,16 @@
                         if (document.file != null) {
                             switch (document.category) {
                                 case 'STNK':
-                                    $('#detail_tanggal_unggah_stnk').html(document.date)
+                                    $('#detail_tanggal_unggah_stnk').val(document.date)
                                     if (document.confirm_at)
-                                        $('#detail_tanggal_confirm_stnk').html(document.confirm_at)
+                                        $('#detail_tanggal_confirm_stnk').val(document.confirm_at)
                                     if (karyawan)
-                                        $('#detail_status_confirm_stnk').html(document.is_confirm ?
+                                        $('#detail_status_confirm_stnk').val(document.is_confirm ?
                                             'Sudah dikonfirmasi oleh cabang ' + karyawan[
                                                 'entitas']['cab']['nama_cabang'] + '.' :
                                             'Belum dikonfirmasi')
                                     else
-                                        $('#detail_status_confirm_stnk').html(document.is_confirm ?
+                                        $('#detail_status_confirm_stnk').val(document.is_confirm ?
                                             'Sudah dikonfirmasi oleh cabang.' :
                                             'Belum dikonfirmasi')
                                     $('#detail_no_stnk').val(document.text ? document.text : '-')
@@ -266,16 +265,16 @@
                                         "#navpanes=0")
                                     break;
                                 case 'Polis':
-                                    $('#detail_tanggal_unggah_polis').html(document.date)
+                                    $('#detail_tanggal_unggah_polis').val(document.date)
                                     if (document.confirm_at)
-                                        $('#detail_tanggal_confirm_polis').html(document.confirm_at)
+                                        $('#detail_tanggal_confirm_polis').val(document.confirm_at)
                                     if (karyawan)
-                                        $('#detail_status_confirm_polis').html(document.is_confirm ?
+                                        $('#detail_status_confirm_polis').val(document.is_confirm ?
                                             'Sudah dikonfirmasi oleh cabang ' + karyawan[
                                                 'entitas']['cab']['nama_cabang'] + '.' :
                                             'Belum dikonfirmasi')
                                     else
-                                        $('#detail_status_confirm_polis').html(document.is_confirm ?
+                                        $('#detail_status_confirm_polis').val(document.is_confirm ?
                                             'Sudah dikonfirmasi oleh cabang.' :
                                             'Belum dikonfirmasi')
                                     $('#detail_no_polis').val(document.text ? document.text : '-')
@@ -283,16 +282,16 @@
                                         .file_path + "#navpanes=0")
                                     break;
                                 case 'BPKB':
-                                    $('#detail_tanggal_unggah_bpkb').html(document.date)
+                                    $('#detail_tanggal_unggah_bpkb').val(document.date)
                                     if (document.confirm_at)
-                                        $('#detail_tanggal_confirm_bpkb').html(document.confirm_at)
+                                        $('#detail_tanggal_confirm_bpkb').val(document.confirm_at)
                                     if (karyawan)
-                                        $('#detail_status_confirm_bpkb').html(document.is_confirm ?
+                                        $('#detail_status_confirm_bpkb').val(document.is_confirm ?
                                             'Sudah dikonfirmasi oleh cabang ' + karyawan[
                                                 'entitas']['cab']['nama_cabang'] + '.' :
                                             'Belum dikonfirmasi')
                                     else
-                                        $('#detail_status_confirm_bpkb').html(document.is_confirm ?
+                                        $('#detail_status_confirm_bpkb').val(document.is_confirm ?
                                             'Sudah dikonfirmasi oleh cabang.' :
                                             'Belum dikonfirmasi')
                                     $('#detail_no_bpkb').val(document.text ? document.text : '-')
@@ -338,8 +337,8 @@
                         const file_po_path = "{{ config('global.los_host') }}/public" + data.po +
                             "#navpanes=0";
                         $("#detail_filepo").attr("src", file_po_path)
-                        $("#detail_nomorPo").html(data.no_po)
-                        $("#detail_tanggalPo").html(data.tanggal)
+                        $("#detail_nomorPo").val(data.no_po)
+                        $("#detail_tanggalPo").val(data.tanggal)
                     }
                 },
                 error: function(error) {

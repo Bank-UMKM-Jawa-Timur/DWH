@@ -1,6 +1,6 @@
 <div class="modal fade" id="previewBuktiPembayaranModal" tabindex="-1" role="dialog"
     aria-labelledby="previewBuktiPembayaranModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title" id="previewBuktiPembayaranModalLabel">Bukti Pembayaran</h5>
@@ -12,20 +12,20 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <h5 class="title-po">Tanggal : </h5>
-                        <b id="tanggal_pembayaran" class="content-po"></b>
+                        <input type="text" class="form-control text-field" id="tanggal_pembayaran" readonly>
+                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
+                        <input type="text" class="form-control text-field" id="tanggal_confirm_pembayaran" readonly>
+                        <h5 class="title-po">Status : </h5>
+                        <input type="text" class="form-control text-field" id="status_confirm" readonly>
                     </div>
                     <div class="col-sm-6">
-                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
-                        <b id="tanggal_confirm_pembayaran" class="content-po"></b>
+                        <h5 class="title-po">File Bukti Pendaftaran : </h5>
+                        <div class="form-inline mt-1 show-pdf">
+                            <iframe id="bukti_pembayaran_img" src="" class="mt-2" width="100%"
+                                height="500"></iframe>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h5 class="title-po">Status : </h5>
-                        <b id="status_confirm" class="content-po"></b>
-                    </div>
-                </div>
-                <iframe id="bukti_pembayaran_img" src="" class="mt-2" width="100%" height="500"></iframe>
             </div>
         </div>
     </div>
@@ -41,9 +41,9 @@
             var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#navpanes=0";
 
             $('#bukti_pembayaran_img').attr('src', path_file)
-            $('#tanggal_pembayaran').html(tanggal)
-            $('#tanggal_confirm_pembayaran').html(confirm_at)
-            $('#status_confirm').html(status)
+            $('#tanggal_pembayaran').val(tanggal)
+            $('#tanggal_confirm_pembayaran').val(confirm_at)
+            $('#status_confirm').val(status)
         })
     </script>
 @endpush

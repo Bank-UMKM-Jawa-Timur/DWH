@@ -1,6 +1,6 @@
 <div class="modal fade" id="confirmModalPenyerahanUnit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title penyerahan-unit-title">Konfirmasi Penyerahan Unit</h5>
@@ -12,18 +12,22 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <h5 class="title-po">Tanggal : </h5>
-                        <b id="tanggal_penyerahan_unit" class="content-po"></b>
+                        <input type="text" class="form-control text-field" id="tanggal_penyerahan_unit" readonly>
+                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
+                        <input type="text" class="form-control text-field" id="tanggal_confirm_penyerahan_unit"
+                            readonly>
+                        <h5 class="title-po">Status : </h5>
+                        <input type="text" class="form-control text-field" id="status_confirm_penyerahan_unit"
+                            readonly>
                     </div>
                     <div class="col-sm-6">
-                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
-                        <b id="tanggal_confirm_penyerahan_unit" class="content-po"></b>
-                    </div>
-                    <div class="col-sm-12 mt-2 mb-3">
-                        <h5 class="title-po">Status : </h5>
-                        <b id="status_confirm_penyerahan_unit" class="content-po"></b>
+                        <h5 class="title-po">Foto Penyerahan Unit : </h5>
+                        <div class="form-inline mt-1 show-pdf">
+                            <img id="preview_penyerahan_unit" width="100%" height="500px">
+                        </div>
                     </div>
                 </div>
-                <img id="preview_penyerahan_unit" width="100%" height="500px">
+
             </div>
             <div class="modal-footer mt-2">
                 <div class="form-inline form-confim">
@@ -55,9 +59,9 @@
             $("#preview_penyerahan_unit").attr("src", path_file);
             $('#confirm_id').val(data_id)
             $('#confirm_id_category').val(data_category_doc_id)
-            $('#tanggal_penyerahan_unit').html(tanggal)
-            $('#tanggal_confirm_penyerahan_unit').html(confirm_at)
-            $('#status_confirm_penyerahan_unit').html(status)
+            $('#tanggal_penyerahan_unit').val(tanggal)
+            $('#tanggal_confirm_penyerahan_unit').val(confirm_at)
+            $('#status_confirm_penyerahan_unit').val(status)
             if (is_confirm) {
                 $('.form-confim').css('display', 'none');
                 $('.penyerahan-unit-title').html('Penyerahan Unit');

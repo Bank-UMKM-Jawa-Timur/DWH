@@ -1,5 +1,5 @@
 <div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="detailPOLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title" id="detailPOLabel">Detail PO</h5>
@@ -8,27 +8,21 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="row container">
+                <div class="row">
                     <div class="col-sm-6">
                         <h5 class="title-po">Nomor PO</h5>
-                        <b class="content-po" id="nomorPo">undifined</b>
+                        <input type="text" class="form-control text-field" id="nomorPo" readonly>
+                        {{-- <b class="content-po text-field">undifined</b> --}}
+                        <h5 class="title-po">Tanggal PO</h5>
+                        <input type="text" class="form-control text-field" id="tanggalPo" readonly>
                     </div>
                     <div class="col-sm-6">
-                        <h5 class="title-po">Tanggal PO</h5>
-                        <b class="content-po" id="tanggalPo">undifined</b>
-                    </div>
-                    <div class="col-sm-12 mt-4">
                         <h5 class="title-po">File PO</h5>
-                        <div class="form-inline mt-1">
-                            {{-- <a download href="" id="downloadFilePO">
-                                <button class="btn btn-primary mr-1 btn-sm">Unduh
-                                    File PO</button>
-                            </a>
-                            <button class="btn btn-info btn-sm printfilePO">Print File
-                                PO</button> --}}
+                        <div class="form-inline mt-1 show-pdf">
                             <iframe id="filepo" src="" class="mt-2" width="100%" height="500"></iframe>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -43,9 +37,10 @@
             var filePo = $(this).data('filepo') + "#navpanes=0";
 
             // example : https://www.africau.edu/images/default/sample.pdf
+
             var functionPrint = 'PrintPdfPO("' + $(this).data('filepo') + '")';
-            $("#nomorPo").text(nomorPo);
-            $("#tanggalPo").text(tanggalPo);
+            $("#nomorPo").val(nomorPo);
+            $("#tanggalPo").val(tanggalPo);
             $("#filepo").attr("src", filePo);
         });
     </script>

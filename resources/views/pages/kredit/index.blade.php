@@ -29,7 +29,34 @@
     <div class="page-inner mt--5">
         <div class="row mt--2">
             <div class="col-md-12">
+                {{-- <div class="card">
+                    <div class="card-header">
+                        Filter Data KKB
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="get">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h5 class="modal-title penyerahan-unit-title">Ketersediaan Unit</h5>
+                                    <input type="date" class="form-control" name="ketersediaan_unit" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h5 class="modal-title penyerahan-unit-title">Status</h5>
+                                    <select class="custom-select form-control" name="status" required>
+                                        <option value="" selected>Pilih Status...</option>
+                                        <option value="process">process</option>
+                                        <option value="Done">Done</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-primary mt-3">Filter Data</button>
+                        </form>
+                    </div>
+                </div> --}}
                 <div class="card">
+                    <div class="card-header">
+                        Data KKB
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="mt-3" id="basic-datatables">
@@ -966,6 +993,9 @@
             $('#basic-datatables').DataTable({});
             // Initial datepicker
             $('#tgl_ketersediaan_unit').datetimepicker({
+                format: 'MM/DD/YYYY',
+            });
+            $('#ketersediaan_unit').datetimepicker({
                 format: 'MM/DD/YYYY',
             });
             $('#tgl_pengiriman').datetimepicker({

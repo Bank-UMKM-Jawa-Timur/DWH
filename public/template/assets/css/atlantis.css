@@ -22863,6 +22863,23 @@ body[data-background-color="dark"] .board {
     font-weight: bold;
 }
 
+.modal .text-field {
+    width: 100%;
+    border: 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #EEEEEE;
+}
+
+.modal .show-pdf {
+    width: 100%;
+    border: 0;
+    margin-top: 10px;
+    background-color: #EEEEEE;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 /* .modaldetailpo .nav-tabs {
     border: 0;
 }
