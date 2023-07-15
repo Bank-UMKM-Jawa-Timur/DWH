@@ -91,8 +91,8 @@
                                     <div class="avatar-lg"><img src="{{ asset('template') }}/assets/img/profile.jpg"
                                             alt="image profile" class="avatar-img rounded"></div>
                                     <div class="u-text">
-                                        <h4>{{ Auth::user()->nip }}</h4>
-                                        <p class="text-muted">{{ Auth::user()->email }}</p>
+                                        <h4>{{ Auth::user()->nip ? Auth::user()->nip : (Auth::user()->email ? Auth::user()->email : 'Undinfined') }}</h4>
+                                        <p class="text-muted">{{ Auth::user()->email ? Auth::user()->email : (Session::has('nama_karyawan') ? Session::get('nama_karyawan') : 'undifined') }}</p>
                                     </div>
                                 </div>
                             </li>

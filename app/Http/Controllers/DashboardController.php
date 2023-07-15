@@ -19,14 +19,17 @@ class DashboardController extends Controller
         try {
             $param['title'] = 'Dashboard';
             $param['pageTitle'] = 'Dashboard';
+            $param['karyawan'] = null;
             $user = User::select(
                 'users.id',
+                'users.nip',
                 'users.role_id',
                 'r.name AS role_name',
             )
                 ->join('roles AS r', 'r.id', 'users.role_id')
                 ->where('users.id', Auth::user()->id)
                 ->first();
+
             $param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
             $data = Kredit::select(
                 'kredits.id',
@@ -75,15 +78,18 @@ class DashboardController extends Controller
                     $responseBody = json_decode($response->getBody(), true);
                     // input file path
                     if ($responseBody) {
-                        $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
-                        $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
-                        $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                        if (array_key_exists('sppk', $responseBody))
+                            $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                        if (array_key_exists('po', $responseBody))
+                            $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                        if (array_key_exists('pk', $responseBody))
+                            $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
                     }
 
                     // insert response to object
                     $value->detail = $responseBody;
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    return $e->getMessage();
+                    // return $e->getMessage();
                 }
             }
 
@@ -135,6 +141,7 @@ class DashboardController extends Controller
 
             return view('pages.home', $param);
         } catch (\Exception $e) {
+            return $e->getMessage();
             return redirect('/dashboard')->withError('Terjadi kesalahan');
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect('/dashboard')->withError('Terjadi kesalahan pada database');

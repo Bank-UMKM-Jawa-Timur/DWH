@@ -98,9 +98,12 @@ class KreditController extends Controller
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
                     // input file path
-                    $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
-                    $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
-                    $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                    if (array_key_exists('sppk', $responseBody))
+                        $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                    if (array_key_exists('po', $responseBody))
+                        $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                    if (array_key_exists('pk', $responseBody))
+                        $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
 
                     // insert response to object
                     $value->detail = $responseBody;
