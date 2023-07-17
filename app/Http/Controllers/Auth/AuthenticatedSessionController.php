@@ -42,7 +42,7 @@ class AuthenticatedSessionController extends Controller
         if ($user->nip) {
             $karyawan = $this->penggunaController->getKaryawan($user->nip);
             if ($karyawan)
-                session(['nama_karyawan' => $karyawan['nama_karyawan']]);
+                session(['nama_karyawan' => $karyawan['nama']]);
         }
         if ($user->role_id != 4) {
             if ($user->first_login == true) {
