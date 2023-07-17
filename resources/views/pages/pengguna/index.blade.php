@@ -44,10 +44,14 @@
                                             <td>{{ $item->email ? $item->email : '-' }}</td>
                                             <td>
                                                 @if ($item->detail != null || property_exists($item, 'detail'))
-                                                    @if ($item->detail['entitas']['type'] == 1)
-                                                    Pusat
+                                                    @if (array_key_exists('entitas', $item->detail))
+                                                        @if ($item->detail['entitas']['type'] == 1)
+                                                            Pusat
+                                                        @else
+                                                            {{$item->detail['entitas']['cab']['nama_cabang']}}
+                                                        @endif
                                                     @else
-                                                        {{$item->detail['entitas']['cab']['nama_cabang']}}
+                                                        undifined
                                                     @endif
                                                 @else
                                                     -

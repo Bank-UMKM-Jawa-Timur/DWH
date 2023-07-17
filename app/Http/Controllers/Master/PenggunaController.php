@@ -307,10 +307,12 @@ class PenggunaController extends Controller
     {
         // retrieve from api
         $host = env('BIO_INTERFACE_API_HOST');
-        $apiURL = $host . '/karyawan/' . $nip;
+        $apiURL = $host . '/karyawan';
 
         try {
-            $response = Http::timeout(3)->get($apiURL);
+            $response = Http::timeout(3)->get($apiURL, [
+                'nip' => $nip
+            ]);
 
             $statusCode = $response->status();
             $responseBody = json_decode($response->getBody(), true);
@@ -323,7 +325,7 @@ class PenggunaController extends Controller
             }
             return $responseBody;
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            // return $e->getMessage();
+            return $e->getMessage();
         }
     }
 }
