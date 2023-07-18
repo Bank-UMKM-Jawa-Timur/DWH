@@ -19,7 +19,7 @@
                         <input type="text" class="form-control text-field" id="status_confirm" readonly>
                     </div>
                     <div class="col-sm-6">
-                        <h5 class="title-po">File Bukti Pendaftaran : </h5>
+                        <h5 class="title-po">File Bukti Pembayaran : </h5>
                         <div class="form-inline mt-1 show-pdf">
                             <iframe id="bukti_pembayaran_img" src="" class="mt-2" width="100%"
                                 height="500"></iframe>
