@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
+use App\Http\Controllers\Master\PenggunaController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +17,12 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
+    private $penggunaController;
     private $logActivity;
 
     function __construct()
     {
+        $this->penggunaController = new PenggunaController;
         $this->logActivity = new LogActivitesController;
     }
     /**
@@ -32,9 +36,22 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
+        if ($user->nip) {
+            $karyawan = $this->penggunaController->getKaryawan($user->nip);
+
+            if (gettype($karyawan) == 'string')
+                session(['nama_karyawan' => 'undifined']);
+            else {
+                if ($karyawan)
+                    if (array_key_exists('nama', $karyawan))
+                        session(['nama_karyawan' => $karyawan['nama']]);
+                    else
+                        session(['nama_karyawan' => 'undifined']);
+            }
+        }
         if ($user->role_id != 4) {
             if ($user->first_login == true) {
                 return redirect('first-login?id=' . $user->id);

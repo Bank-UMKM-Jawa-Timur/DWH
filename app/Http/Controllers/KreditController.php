@@ -105,9 +105,12 @@ class KreditController extends Controller
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
                         // input file path
-                        $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
-                        $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
-                        $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                        if (array_key_exists('sppk', $responseBody))
+                            $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                        if (array_key_exists('po', $responseBody))
+                            $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                        if (array_key_exists('pk', $responseBody))
+                            $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
 
                         // insert response to object
                         $value->detail = $responseBody;
@@ -1036,11 +1039,11 @@ class KreditController extends Controller
         }
 
         try {
-            $kkb = KKB::where('id', $request->id_kkbimbaljasa)->first();
+            $kkb = Kredit::where('id', $request->id_kkbimbaljasa)->first();
             $file = $request->file('file_imbal_jasa');
             $file->storeAs('public/dokumentasi-imbal-jasa', $file->hashName());
             $document = new Document();
-            $document->kredit_id = $kkb->kredit_id;
+            $document->kredit_id = $request->id_kkbimbaljasa;
             $document->date = Carbon::now();
             $document->file = $file->hashName();
             $document->document_category_id  = 6;

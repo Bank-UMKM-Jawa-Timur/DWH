@@ -91,8 +91,12 @@
                                     <div class="avatar-lg"><img src="{{ asset('template') }}/assets/img/profile.jpg"
                                             alt="image profile" class="avatar-img rounded"></div>
                                     <div class="u-text">
-                                        <h4>{{ Auth::user()->nip }}</h4>
-                                        <p class="text-muted">{{ Auth::user()->email }}</p>
+                                        <h4>{{ Auth::user()->nip ? Auth::user()->nip : (Auth::user()->email ? Auth::user()->email : 'Undinfined') }}</h4>
+                                        @if(Auth::user()->nip && Session::has('nama_karyawan'))
+                                            <p class="text-muted">{{ Session::get('nama_karyawan') }}</p>
+                                        @else
+                                            <p class="text-muted">undifined</p>
+                                        @endif
                                     </div>
                                 </div>
                             </li>

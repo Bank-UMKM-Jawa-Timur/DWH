@@ -465,6 +465,7 @@
                         console.log(data)
                         if (data) {
                             for (i in data) {
+                                console.log(i)
                                 $("#add-cabang").append(`<option value="` + data[i].id + `">` + data[i]
                                     .nip + `</option>`);
                             }

@@ -110,7 +110,7 @@
                                             <td class="text-center">{{ $loop->iteration }}</td>
                                             <td class="text-center">
                                                 @if ($item->detail)
-                                                    {{ $item->detail['nama'] }}
+                                                    {{ array_key_exists('nama', $item->detail) ? $item->detail['nama'] : '-' }}
                                                 @else
                                                     undifined
                                                 @endif
@@ -119,20 +119,20 @@
                                                 @if ($buktiPembayaran)
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
-                                                            data-nomorPo="{{ $item->detail['no_po'] }}"
-                                                            data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
-                                                            data-filepo="{{ config('global.los_host') . '/public' . $item->detail['po'] }}">
-                                                            {{ $item->detail['no_po'] }}</a>
+                                                            data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
+                                                            data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
+                                                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_host') . $item->detail['po'] : '' }}">
+                                                            {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}</a>
                                                     @else
                                                         -
                                                     @endif
                                                 @else
                                                     @if ($item->detail)
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
-                                                            data-nomorPo="{{ $item->detail['no_po'] }}"
-                                                            data-tanggalPo="{{ date('d-m-Y', strtotime($item->detail['tanggal'])) }}"
-                                                            data-filepo="{{ config('global.los_host') . '/public' . $item->detail['po'] }}">
-                                                            {{ $item->detail['no_po'] }}</a>
+                                                            data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
+                                                            data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
+                                                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_host') . $item->detail['po'] : '' }}">
+                                                            {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}</a>
                                                     @else
                                                         -
                                                     @endif
