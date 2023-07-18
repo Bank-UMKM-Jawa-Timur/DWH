@@ -133,7 +133,28 @@ class DashboardController extends Controller
             $arrBarChartData = [];
             $barChart = DB::select('SELECT COUNT(*) as total, k.kode_cabang FROM documents as d JOIN kredits as k ON k.id = d.kredit_id WHERE d.document_category_id = 1 AND d.is_confirm = true GROUP BY k.kode_cabang');
             foreach ($barChart as $k => $v) {
-                array_push($arrLabelChartLabel, $v->kode_cabang);
+                $cabang = $v->kode_cabang;
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                CURLOPT_URL => env('LOS_API_HOST').'/kkb/get-cabang/'.$cabang,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'token: gTWx1U1bVhtz9h51cRNoiluuBfsHqty5MCdXRdmWthFDo9RMhHgHIwrU9DBFVaNj'
+                ),
+                ));
+
+                $response = curl_exec($curl);
+                curl_close($curl);
+                $res = json_decode($response);
+
+                array_push($arrLabelChartLabel, $res->cabang);
                 array_push($arrBarChartData, $v->total);
             }
             $param['barChartData'] = $arrBarChartData;

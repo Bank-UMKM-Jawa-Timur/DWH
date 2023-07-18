@@ -45,13 +45,14 @@ class PenggunaController extends Controller
         foreach ($user as $key => $value) {
             if ($value->nip) {
                 $karyawan = $this->getKaryawan($value->nip);
-                if ($karyawan) {
-                    if (array_key_exists('error', $karyawan)) {
-                        $value->detail = null;
-                    }
-                    else {
-                        $value->detail = $karyawan;
-                    }
+                if (gettype($karyawan) == 'string')
+                session(['nama_karyawan' => 'undifined']);
+                else {
+                    if ($karyawan)
+                        if (array_key_exists('nama', $karyawan))
+                            session(['nama_karyawan' => $karyawan['nama']]);
+                        else
+                            session(['nama_karyawan' => 'undifined']);
                 }
             }
         }
