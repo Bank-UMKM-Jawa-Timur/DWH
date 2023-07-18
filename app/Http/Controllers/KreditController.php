@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class KreditController extends Controller
 {
@@ -36,7 +39,7 @@ class KreditController extends Controller
         $this->penggunaController = new PenggunaController;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         /**
          * File path LOS
@@ -46,79 +49,102 @@ class KreditController extends Controller
          * upload/{id_pengajuan}/pk/{filename}
          */
 
-        try {
-            $this->param['role'] = $this->dashboardContoller->getRoleName();
-            $this->param['title'] = 'KKB';
-            $this->param['pageTitle'] = 'KKB';
-            $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
+            try {
+                $this->param['role'] = $this->dashboardContoller->getRoleName();
+                $this->param['title'] = 'KKB';
+                $this->param['pageTitle'] = 'KKB';
+                $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
 
-            $data = Kredit::select(
-                'kredits.id',
-                'kredits.pengajuan_id',
-                'kredits.kode_cabang',
-                'kkb.id AS kkb_id',
-                'kkb.tgl_ketersediaan_unit',
-                'kkb.id_tenor_imbal_jasa',
-                \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
-                \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-                \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
-                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
-            )
-                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
-                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
-                ->groupBy([
+                $data = Kredit::select(
                     'kredits.id',
                     'kredits.pengajuan_id',
                     'kredits.kode_cabang',
-                    'kkb.id_tenor_imbal_jasa',
-                    'kkb.id',
+                    'kkb.id AS kkb_id',
                     'kkb.tgl_ketersediaan_unit',
-                ])
-                ->orderBy('total_file_uploaded')
-                ->orderBy('total_file_confirmed');
+                    'kkb.id_tenor_imbal_jasa',
+                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                    // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
+                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                )
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                    ])
+                    ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
+                        return $query->whereBetween('kkb.tgl_ketersediaan_unit', [$request->tAwal, $request->tAkhir]);
+                    })
+                    ->orderBy('total_file_uploaded')
+                    ->orderBy('total_file_confirmed');
 
-            if (Auth::user()->role_id == 2) {
-                $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
-            }
-            $data = $data->paginate(5);
 
-            foreach ($data as $key => $value) {
-                // retrieve from api
-                $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id;
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
-
-                try {
-                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-
-                    $statusCode = $response->status();
-                    $responseBody = json_decode($response->getBody(), true);
-                    // input file path
-                    if (array_key_exists('sppk', $responseBody))
-                        $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
-                    if (array_key_exists('po', $responseBody))
-                        $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
-                    if (array_key_exists('pk', $responseBody))
-                        $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
-
-                    // insert response to object
-                    $value->detail = $responseBody;
-                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    // return $e->getMessage();
+                if (Auth::user()->role_id == 2) {
+                    $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
                 }
-            }
-            $this->param['data'] = $data;
+                $data = $data->paginate(5);
 
-            return view('pages.kredit.index', $this->param);
-        } catch (\Exception $e) {
-            return back()->withError('Terjadi kesalahan');
-        } catch (\Illuminate\Database\QueryException $e) {
-            return back()->withError('Terjadi kesalahan pada database');
-        }
+                foreach ($data as $key => $value) {
+                    // retrieve from api
+                    $host = env('LOS_API_HOST');
+                    $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id;
+
+                    $headers = [
+                        'token' => env('LOS_API_TOKEN')
+                    ];
+
+                    try {
+                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                        $statusCode = $response->status();
+                        $responseBody = json_decode($response->getBody(), true);
+                        // input file path
+                        if (array_key_exists('sppk', $responseBody))
+                            $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                        if (array_key_exists('po', $responseBody))
+                            $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                        if (array_key_exists('pk', $responseBody))
+                            $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+
+                        // insert response to object
+                        $value->detail = $responseBody;
+                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                        // return $e->getMessage();
+                    }
+                }
+
+                $data_array = [];
+                if($request->status != null){
+                    foreach($data as $rows){
+                        if($rows->status == $request->status){
+                            array_push($data_array,$rows);
+                        }
+                    }
+                    $this->param['data'] = $this->paginate($data_array);
+                }else{
+                    $this->param['data'] = $data;
+                }
+
+
+                return view('pages.kredit.index', $this->param);
+            } catch (\Exception $e) {
+                return back()->withError('Terjadi kesalahan');
+            } catch (\Illuminate\Database\QueryException $e) {
+                return back()->withError('Terjadi kesalahan pada database');
+            }
+    }
+
+    public function paginate($items, $perPage = 5, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
     public function uploadBuktiPembayaran(Request $request)

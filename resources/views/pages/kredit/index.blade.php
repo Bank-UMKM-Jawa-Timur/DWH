@@ -45,7 +45,7 @@
                                     <select class="custom-select form-control" name="status" required>
                                         <option value="" selected>Pilih Status...</option>
                                         <option value="process">process</option>
-                                        <option value="Done">Done</option>
+                                        <option value="done">Done</option>
                                     </select>
                                 </div>
                             </div>
@@ -54,8 +54,19 @@
                     </div>
                 </div> --}}
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between">
                         Data KKB
+                        <div>
+                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter">
+                                Filter Data
+                            </button>
+                            @if (Request()->query() != null)
+                                <a href="/kredit" type="button" class="btn btn-sm btn-warning">
+                                    Reset Filter
+                                </a>
+                            @endif
+                        </div>
+
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -246,7 +257,6 @@
                                                     <span class="text-danger">-</span>
                                                 @endif
                                             </td>
-                                            {{-- revisi --}}
                                             <td class="text-center">
                                                 @if ($penyerahanUnit)
                                                     @if ($penyerahanUnit->is_confirm)
@@ -594,6 +604,7 @@
         </div>
     </div>
 
+    @include('pages.kredit.modal.filter-modal')
     {{-- File STNK --}}
     @include('pages.kredit.modal.file-stnk')
     {{-- File Polis --}}

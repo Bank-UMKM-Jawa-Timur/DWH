@@ -150,7 +150,7 @@
                         Data KKB
                     </div>
                     <div class="card-body">
-                        <div class="">
+                        <div class="table-responsive">
                             <table class="mt-3" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
