@@ -1028,11 +1028,11 @@ class KreditController extends Controller
         }
 
         try {
-            $kkb = KKB::where('id', $request->id_kkbimbaljasa)->first();
+            $kkb = Kredit::where('id', $request->id_kkbimbaljasa)->first();
             $file = $request->file('file_imbal_jasa');
             $file->storeAs('public/dokumentasi-imbal-jasa', $file->hashName());
             $document = new Document();
-            $document->kredit_id = $kkb->kredit_id;
+            $document->kredit_id = $request->id_kkbimbaljasa;
             $document->date = Carbon::now();
             $document->file = $file->hashName();
             $document->document_category_id  = 6;
