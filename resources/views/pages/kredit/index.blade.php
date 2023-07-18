@@ -56,9 +56,17 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         Data KKB
-                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter">
-                            Filter Data
-                        </button>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter">
+                                Filter Data
+                            </button>
+                            @if (Request()->query() != null)
+                                <a href="/kredit" type="button" class="btn btn-sm btn-warning">
+                                    Reset Filter
+                                </a>
+                            @endif
+                        </div>
+
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">

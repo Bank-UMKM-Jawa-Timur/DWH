@@ -113,6 +113,9 @@
                                             </table>
                                         </div>
                                         <div class="col">
+                                            <div class="alert alert-danger alert-detailpo">
+                                                Data bukti penyerahan unit belum di upload
+                                            </div>
                                             <img class="img img-thumbnail img-detailpo"
                                                 src="{{ asset('template/assets/img/img-not-found.jpg') }}"
                                                 alt="bukti penyerahan unit">
@@ -123,6 +126,9 @@
                             {{--  STNK  --}}
                             <div class="tab-pane fade" id="detail_stnk" role="tabpanel"
                                 aria-labelledby="detail-stnk-tab">
+                                <div class="alert alert-danger alert-stnk-file">
+                                    File STNK belum di upload
+                                </div>
                                 <div class="form-group detail-input-stnk">
                                     <div class="row mb-2">
                                         <div class="col-sm-6 mb-2">
@@ -159,6 +165,9 @@
                             {{--  Polis  --}}
                             <div class="tab-pane fade" id="detail_polis" role="tabpanel"
                                 aria-labelledby="detail-polis-tab">
+                                <div class="alert alert-danger alert-polis-file">
+                                    File Polis belum di upload
+                                </div>
                                 {{-- <p class="m-0" id="">Tanggal : -</p>
                                 <p class="m-0" id="">Tanggal Konfirmasi : -</p>
                                 <p class="m-0" id="">Status : Berkas belum diunggah</p> --}}
@@ -192,6 +201,9 @@
                             {{--  BPKB  --}}
                             <div class="tab-pane fade" id="detail_bpkb" role="tabpanel"
                                 aria-labelledby="detail-bpkb-tab">
+                                <div class="alert alert-danger alert-bpkb-file">
+                                    File BPKB belum di upload
+                                </div>
                                 <div class="form-group detail-input-bpkb">
                                     <div class="row mb-2">
                                         <div class="col-sm-6 mb-2">
@@ -241,13 +253,17 @@
                         const karyawan = response.data.karyawan ? response.data.karyawan : null;
 
                         if (document.category == "Penyerahan Unit") {
-                            if (document.file)
+                            if (document.file) {
+                                $(".alert-detailpo").hide();
                                 $(".img-detailpo").attr('src', document.file_path)
+                            }
+
                         }
 
                         if (document.file != null) {
                             switch (document.category) {
                                 case 'STNK':
+                                    $('.alert-stnk-file').hide();
                                     $('#detail_tanggal_unggah_stnk').val(document.date)
                                     if (document.confirm_at)
                                         $('#detail_tanggal_confirm_stnk').val(document.confirm_at)
@@ -265,6 +281,7 @@
                                         "#navpanes=0")
                                     break;
                                 case 'Polis':
+                                    $(".alert-polis-file").hide();
                                     $('#detail_tanggal_unggah_polis').val(document.date)
                                     if (document.confirm_at)
                                         $('#detail_tanggal_confirm_polis').val(document.confirm_at)
@@ -282,6 +299,7 @@
                                         .file_path + "#navpanes=0")
                                     break;
                                 case 'BPKB':
+                                    $(".alert-bpkb-file").hide();
                                     $('#detail_tanggal_unggah_bpkb').val(document.date)
                                     if (document.confirm_at)
                                         $('#detail_tanggal_confirm_bpkb').val(document.confirm_at)

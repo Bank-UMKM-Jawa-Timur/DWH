@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class KreditController extends Controller
 {
@@ -78,9 +81,6 @@ class KreditController extends Controller
                     ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
                         return $query->whereBetween('kkb.tgl_ketersediaan_unit', [$request->tAwal, $request->tAkhir]);
                     })
-                    ->when($request->status,function($query){
-                        return $query->where('status','in progress');
-                    })
                     ->orderBy('total_file_uploaded')
                     ->orderBy('total_file_confirmed');
 
@@ -119,10 +119,18 @@ class KreditController extends Controller
                     }
                 }
 
-                // dd($data);
-                $this->param['data'] = $data;
+                $data_array = [];
+                if($request->status != null){
+                    foreach($data as $rows){
+                        if($rows->status == $request->status){
+                            array_push($data_array,$rows);
+                        }
+                    }
+                    $this->param['data'] = $this->paginate($data_array);
+                }else{
+                    $this->param['data'] = $data;
+                }
 
-                // dd($this->param['data']);
 
                 return view('pages.kredit.index', $this->param);
             } catch (\Exception $e) {
@@ -130,6 +138,13 @@ class KreditController extends Controller
             } catch (\Illuminate\Database\QueryException $e) {
                 return back()->withError('Terjadi kesalahan pada database');
             }
+    }
+
+    public function paginate($items, $perPage = 5, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
     public function uploadBuktiPembayaran(Request $request)
