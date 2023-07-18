@@ -41,8 +41,16 @@ class AuthenticatedSessionController extends Controller
         $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
         if ($user->nip) {
             $karyawan = $this->penggunaController->getKaryawan($user->nip);
-            if ($karyawan)
-                session(['nama_karyawan' => $karyawan['nama']]);
+
+            if (gettype($karyawan) == 'string')
+                session(['nama_karyawan' => 'undifined']);
+            else {
+                if ($karyawan)
+                    if (array_key_exists('nama', $karyawan))
+                        session(['nama_karyawan' => $karyawan['nama']]);
+                    else
+                        session(['nama_karyawan' => 'undifined']);
+            }
         }
         if ($user->role_id != 4) {
             if ($user->first_login == true) {

@@ -210,7 +210,7 @@
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
                                                             data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
-                                                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_host') . '/public' . $item->detail['po'] : '' }}">
+                                                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_host') . $item->detail['po'] : '' }}">
                                                             {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}</a>
                                                     @else
                                                         -
@@ -220,7 +220,7 @@
                                                         <a class="open-po" data-toggle="modal" data-target="#detailPO"
                                                             data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
                                                             data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
-                                                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_host') . '/public' . $item->detail['po'] : '' }}">
+                                                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_host') . $item->detail['po'] : '' }}">
                                                             {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}</a>
                                                     @else
                                                         -
