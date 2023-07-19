@@ -5,14 +5,14 @@
                 <!-- <div class="avatar-sm float-left mr-2">
    <img src="{{ asset('template') }}/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
   </div> -->
-  @php
-      $role = \App\Models\Role::where('id', Auth::user()->role_id)->pluck('name')[0];
-  @endphp
+                @php
+                    $role = \App\Models\Role::where('id', Auth::user()->role_id)->pluck('name')[0];
+                @endphp
                 <div class="info">
                     <a data-toggle="collapse">
                         <span>
                             <span class="user-role">{{ $role }}</span>
-                            <span class="user-level">Data Warehouse</span>
+                            <span class="user-level">Dashboard KKB</span>
                         </span>
                     </a>
                 </div>

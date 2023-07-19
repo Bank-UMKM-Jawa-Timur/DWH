@@ -29,7 +29,7 @@ class PenggunaController extends Controller
         $param['pageTitle'] = 'Pengguna';
         $data = $this->paginasi();
         $param['data'] = $data;
-        
+
         return view('pages.pengguna.index', $param);
     }
 
@@ -113,14 +113,14 @@ class PenggunaController extends Controller
             $kode_cabang = '';
             $host = config('global.los_api_host');
             $apiURL = $host.'/kkb/get-data-users/'.$request->nip;
-    
+
             $headers = [
                 'token' => config('global.los_api_token')
             ];
-    
+
             try {
                 $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-    
+
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
 
