@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Master\PenggunaController;
 use App\Models\DocumentCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -90,6 +91,24 @@ class DashboardController extends Controller
                     $value->detail = $responseBody;
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
+                }
+            }
+
+            $penggunaController = new PenggunaController;
+            foreach ($data as $key => $value) {
+                if ($value->nip) {
+                    $karyawan = $penggunaController->getKaryawan($value->nip);
+                    if (gettype($karyawan) == 'string') {
+                        $value->detail = null;
+                    }
+                    else {
+                        if ($karyawan) {
+                            if (array_key_exists('nama', $karyawan))
+                                $value->detail = $karyawan;
+                            else
+                                $value->detail = null;
+                        }
+                    }
                 }
             }
 

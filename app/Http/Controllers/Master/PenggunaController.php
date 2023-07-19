@@ -46,13 +46,14 @@ class PenggunaController extends Controller
             if ($value->nip) {
                 $karyawan = $this->getKaryawan($value->nip);
                 if (gettype($karyawan) == 'string')
-                session(['nama_karyawan' => 'undifined']);
+                    $value->detail = null;
                 else {
-                    if ($karyawan)
+                    if ($karyawan) {
                         if (array_key_exists('nama', $karyawan))
-                            session(['nama_karyawan' => $karyawan['nama']]);
+                            $value->detail = $karyawan;
                         else
-                            session(['nama_karyawan' => 'undifined']);
+                            $value->detail = null;
+                    }
                 }
             }
         }
