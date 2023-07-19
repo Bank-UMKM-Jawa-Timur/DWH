@@ -153,8 +153,11 @@ class DashboardController extends Controller
                 $response = curl_exec($curl);
                 curl_close($curl);
                 $res = json_decode($response);
+                $namaCabang = 'undifined';
+                if ($res)
+                    $namaCabang = $res->cabang;
 
-                array_push($arrLabelChartLabel, $res->cabang);
+                array_push($arrLabelChartLabel, $namaCabang);
                 array_push($arrBarChartData, $v->total);
             }
             $param['barChartData'] = $arrBarChartData;
