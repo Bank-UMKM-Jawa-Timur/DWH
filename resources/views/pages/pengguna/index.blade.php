@@ -48,7 +48,7 @@
                                                         @if ($item->detail['entitas']['type'] == 1)
                                                             Pusat
                                                         @else
-                                                            {{ $item->detail['entitas']['cab']['nama_cabang'] }}
+                                                            {{$item->detail['entitas']['cab']['nama_cabang']}}
                                                         @endif
                                                     @else
                                                         undifined
@@ -72,7 +72,6 @@
                                                         <a class="dropdown-item editModal" data-toggle="modal"
                                                             data-target="#editModal" data-id="{{ $item->id }}"
                                                             data-nip="{{ $item->nip }}" data-email="{{ $item->email }}"
-                                                            data-cabang="{{ $item->kode_cabang }}"
                                                             data-role="{{ $item->role_id }}" href="#">Edit</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
                                                             data-target="#deleteModal" data-id="{{ $item->id }}"
@@ -145,15 +144,6 @@
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="Formcabang">
-                                        <label for="add-cabang">Cabang</label>
-                                        <select class="form-control" id="inputAdd-cabang">
-                                            <option value="0">-- Pilih cabang --</option>
-                                        </select>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -210,15 +200,6 @@
                                         <label for="exampleFormControlSelect1">Role</label>
                                         <select class="form-control" id="edit-role">
                                             <option value="0">-- Pilih role --</option>
-                                        </select>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="FormEditcabang">
-                                        <label for="add-cabang">Cabang</label>
-                                        <select class="form-control" id="inputEdit-cabang">
-                                            <option value="0">-- Pilih cabang --</option>
                                         </select>
                                         <small class="form-text text-danger error"></small>
                                     </div>
@@ -400,7 +381,6 @@
                 const req_email = document.getElementById('add-email')
                 const req_password = document.getElementById('add-password')
                 const req_role_id = document.getElementById('add-role')
-                const req_cabang_id = document.getElementById('inputAdd-cabang')
 
                 if (req_password == '') {
                     showError(req_password, 'Password wajib diisi.');
@@ -409,13 +389,6 @@
                 if (req_role_id == '' || req_role_id == 0) {
                     showError(req_role_id, 'Role harus dipilih.');
                     return false;
-                }
-
-                if (req_role_id.value == 2) {
-                    if (req_cabang_id == '' || req_role_id == 0) {
-                        showError(req_cabang_id, 'Cabang harus dipilih.');
-                        return false;
-                    }
                 }
 
                 $.ajax({
@@ -427,7 +400,6 @@
                         email: req_email.value,
                         password: req_password.value,
                         role_id: req_role_id.value,
-                        kode_cabang: req_cabang_id.value
                     },
                     success: function(data) {
                         console.log(data);
@@ -464,18 +436,10 @@
                 const req_email = document.getElementById('edit-email')
                 const req_password = document.getElementById('edit-password')
                 const req_role_id = document.getElementById('edit-role')
-                const req_cabang_id = document.getElementById('inputEdit-cabang')
 
                 if (req_role_id == '' || req_role_id == 0) {
                     showError(req_role_id, 'Role harus dipilih.');
                     return false;
-                }
-
-                if (req_role_id.value == 2) {
-                    if (req_cabang_id == '' || req_role_id == 0) {
-                        showError(req_cabang_id, 'Cabang harus dipilih.');
-                        return false;
-                    }
                 }
 
                 $.ajax({
@@ -488,7 +452,6 @@
                         email: req_email.value,
                         password: req_password ? req_password.value : null,
                         role_id: req_role_id.value,
-                        kode_cabang: req_cabang_id.value
                     },
                     success: function(data) {
                         console.log(data);
@@ -525,6 +488,7 @@
                     type: "GET",
                     url: "{{ route('role.list_options') }}",
                     success: function(data) {
+                        console.log(data)
                         if (data) {
                             for (i in data) {
                                 $("#add-role").append(`<option value="` + data[i].id + `">` + data[i].name +
@@ -532,35 +496,6 @@
                             }
                         }
                     }
-                });
-
-                $(document).ready(function() {
-                    $(".Formcabang").hide();
-                    $("#add-role").on("change", function() {
-                        var id = $(this).val();
-                        if (id == 2) {
-                            $.ajax({
-                                type: "GET",
-                                url: "{{ env('LOS_API_HOST') }}/kkb/get-cabang",
-                                headers: {
-                                    'token': "{{ env('LOS_API_TOKEN') }}",
-                                },
-                                success: function(data) {
-                                    for (i in data) {
-                                        $("#inputAdd-cabang").append(`<option value="` +
-                                            data[i].kode_cabang + `">` + data[i]
-                                            .cabang +
-                                            `</option>`);
-                                    }
-                                }
-                            });
-                            $(".Formcabang").show();
-                            $("#inputAdd-cabang").prop("required", true);
-                        } else {
-                            $(".Formcabang").hide();
-                            $("#inputAdd-cabang").prop("required", false);
-                        }
-                    });
                 });
 
                 $('#addModal').modal('show')
@@ -648,41 +583,10 @@
                 var nip = $(this).data('nip');
                 var email = $(this).data('email');
                 var data_role_id = $(this).data('role');
-                var data_cabang_id = $(this).data('cabang');
 
                 $('#edit-id').val(data_id);
                 $('#edit-nip').val(nip);
                 $('#edit-email').val(email);
-
-
-                if (data_role_id == 2) {
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ env('LOS_API_HOST') }}/kkb/get-cabang",
-                        headers: {
-                            'token': "{{ env('LOS_API_TOKEN') }}",
-                        },
-                        success: function(data) {
-                            for (i in data) {
-                                if (data[i].kode_cabang == data_cabang_id)
-                                    $("#inputEdit-cabang").append(`<option value="` +
-                                        data[i].kode_cabang +
-                                        `" selected>` + data[i].cabang +
-                                        `</option>`);
-                                else
-                                    $("#inputEdit-cabang").append(`<option value="` +
-                                        data[i].kode_cabang + `">` + data[i]
-                                        .cabang +
-                                        `</option>`);
-                            }
-                        }
-                    });
-                    $(".FormEditcabang").show();
-                    $("#inputEdit-cabang").prop("required", true);
-                } else {
-                    $(".FormEditcabang").hide();
-                    $("#inputEdit-cabang").prop("required", false);
-                }
 
                 $.ajax({
                     type: "GET",
