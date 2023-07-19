@@ -29,7 +29,7 @@ class PenggunaController extends Controller
         $param['pageTitle'] = 'Pengguna';
         $data = $this->paginasi();
         $param['data'] = $data;
-        
+
         return view('pages.pengguna.index', $param);
     }
 
@@ -109,28 +109,28 @@ class PenggunaController extends Controller
 
         try {
             // retrieve kode_cabang from api
-            $kode_cabang = '';
-            $host = config('global.los_api_host');
-            $apiURL = $host.'/kkb/get-data-users/'.$request->nip;
-    
-            $headers = [
-                'token' => config('global.los_api_token')
-            ];
-    
-            try {
-                $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-    
-                $statusCode = $response->status();
-                $responseBody = json_decode($response->getBody(), true);
+            // $kode_cabang = '';
+            // $host = config('global.los_api_host');
+            // $apiURL = $host.'/kkb/get-data-users/'.$request->nip;
 
-                $kode_cabang = $responseBody['kode_cabang'];
-            } catch(\Illuminate\Http\Client\ConnectionException $e) {
-                // return $e->getMessage();
-            }
+            // $headers = [
+            //     'token' => config('global.los_api_token')
+            // ];
+
+            // try {
+            //     $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+            //     $statusCode = $response->status();
+            //     $responseBody = json_decode($response->getBody(), true);
+
+            //     $kode_cabang = $responseBody['kode_cabang'];
+            // } catch(\Illuminate\Http\Client\ConnectionException $e) {
+            //     // return $e->getMessage();
+            // }
             $newUser = new User();
             $newUser->nip = $request->nip;
             $newUser->email = $request->email;
-            $newUser->kode_cabang = $kode_cabang;
+            $newUser->kode_cabang = $request->kode_cabang;
             $newUser->password = \Hash::make($request->password);
             $newUser->role_id = $request->role_id;
             $newUser->save();
@@ -142,7 +142,7 @@ class PenggunaController extends Controller
             $message = 'Berhasil menyimpan data';
         } catch (\Exception $e) {
             $status = 'failed';
-            $message = 'Terjadi kesalahan';
+            $message = $e;
         } catch (\Illuminate\Database\QueryException $e) {
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database';
@@ -196,6 +196,7 @@ class PenggunaController extends Controller
             $currentUser->nip = $request->nip;
             $currentUser->email = $request->email;
             $currentUser->role_id = $request->role_id;
+            $currentUser->kode_cabang = $request->kode_cabang;
             if ($request->password)
                 $currentUser->password = \Hash::make($request->password);
             $currentUser->save();
