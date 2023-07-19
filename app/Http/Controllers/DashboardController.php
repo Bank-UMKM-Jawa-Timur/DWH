@@ -11,10 +11,13 @@ use App\Models\Notification;
 use App\Models\Target;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
             $param['title'] = 'Dashboard';
@@ -42,7 +45,7 @@ class DashboardController extends Controller
                 \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
                 \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
                 // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
-                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'process', 'done') AS status"),
+                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
             )
                 ->join('kkb', 'kkb.kredit_id', 'kredits.id')
                 ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
@@ -54,6 +57,9 @@ class DashboardController extends Controller
                     'kkb.id',
                     'kkb.tgl_ketersediaan_unit',
                 ])
+                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
+                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [$request->tAwal, $request->tAkhir]);
+                })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
 
@@ -93,7 +99,7 @@ class DashboardController extends Controller
                 }
             }
 
-            $param['data'] = $data;
+            // $param['data'] = $data;
 
             $param['role'] = $user->role_name;
             $param['total_cabang'] = User::where('role_id', 2)->count();
@@ -163,6 +169,18 @@ class DashboardController extends Controller
             $param['barChartData'] = $arrBarChartData;
             $param['barChartLabel'] = $arrLabelChartLabel;
 
+            $data_array = [];
+                if($request->status != null){
+                    foreach($data as $rows){
+                        if($rows->status == $request->status){
+                            array_push($data_array,$rows);
+                        }
+                    }
+                    $param['data'] = $this->paginate($data_array);
+                }else{
+                    $param['data'] = $data;
+                }
+
             return view('pages.home', $param);
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -170,6 +188,13 @@ class DashboardController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect('/dashboard')->withError('Terjadi kesalahan pada database');
         }
+    }
+
+    public function paginate($items, $perPage = 5, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
     public function getRoleName()

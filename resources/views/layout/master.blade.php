@@ -9,7 +9,7 @@
             <footer class="footer">
                 <div class="container-fluid">
                     <div class="copyright ml-auto">
-                        @2023 Data Warehouse | All rights reserved
+                        @2023 Dashboard KKB | All rights reserved
                     </div>
                 </div>
             </footer>

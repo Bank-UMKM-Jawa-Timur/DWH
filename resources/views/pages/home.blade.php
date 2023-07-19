@@ -146,8 +146,18 @@
         <div class="row mt--2">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between">
                         Data KKB
+                        <div>
+                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter">
+                                Filter Data
+                            </button>
+                            @if (Request()->query() != null)
+                                <a href="/dashboard" type="button" class="btn btn-sm btn-warning">
+                                    Reset Filter
+                                </a>
+                            @endif
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -173,7 +183,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($data as $item)
+                                    @forelse($data as $item)
                                         @php
                                             $buktiPembayaran = \App\Models\Document::where('kredit_id', $item->id)
                                                 ->where('document_category_id', 1)
@@ -1045,6 +1055,7 @@
     </div>
 
     @include('pages.kredit.modal.detail-modal')
+    @include('pages.kredit.modal.filter-modal')
 
     @push('extraScript')
         <!-- Chart JS -->
