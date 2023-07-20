@@ -352,7 +352,7 @@
                             .harga_kendaraan, 0, ',', '.'));
                         $('#detail_jumlah_pesanan').html(data
                             .jumlah_kendaraan);
-                        const file_po_path = "{{ config('global.los_host') }}" + data.po +
+                        const file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
                             "#navpanes=0";
                         $("#detail_filepo").attr("src", file_po_path)
                         $("#detail_nomorPo").val(data.no_po)
