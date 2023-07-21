@@ -41,7 +41,7 @@ class PenggunaController extends Controller
         )
         ->join('roles AS r', 'r.id', 'users.role_id')
         ->orderBy('users.id')
-        ->paginate(10);
+        ->get();
         foreach ($user as $key => $value) {
             if ($value->nip) {
                 $karyawan = $this->getKaryawan($value->nip);
