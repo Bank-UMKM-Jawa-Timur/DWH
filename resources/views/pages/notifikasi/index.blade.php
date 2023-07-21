@@ -9,7 +9,8 @@
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                 <div>
                     <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                    <h5 class="text-primary mb-2 total-notif-message">Anda mempunyai {{ $total_belum_dibaca }} notifikasi yang belum dibaca.</h5>
+                    <h5 class="text-primary mb-2 total-notif-message">Anda mempunyai {{ $total_belum_dibaca }} notifikasi
+                        yang belum dibaca.</h5>
                 </div>
             </div>
         </div>
@@ -26,21 +27,26 @@
 
                 {{-- foreach notif --}}
                 @forelse ($data as $item)
-                <a href="#" data-toggle="modal" class="notification-click" data-target="#notif"
-                    data-id="{{$item->id}}">
-                    <div class="card card-notif">
-                        <div class="card-body notif-body-card-{{$item->id}} @if ($item->read) reading @endif">
-                            <div class="notif ">
-                                <span class="alert-notif text-success notif-status-{{$item->id}}">@if ($item->read) Sudah Dibaca @else Belum Dibaca @endif</span>
-                                <h4>
-                                    {{ $item->title }} - 
-                                    {{ strlen($item->content) >= 100 ? substr($item->content,0,100).'...' : $item->content }}
-                                </h4>
-                                <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p>
+                    <a href="#" data-toggle="modal" class="notification-click" data-target="#notif"
+                        data-id="{{ $item->id }}">
+                        <div class="card card-notif">
+                            <div
+                                class="card-body notif-body-card-{{ $item->id }} @if ($item->read) reading @endif">
+                                <div class="notif ">
+                                    @if ($item->read)
+                                        <span class="alert-notif text-success">Sudah Dibaca</span>
+                                    @else
+                                        <span class="alert-notif text-danger">Belum Dibaca</span>
+                                    @endif
+                                    <h4>
+                                        {{ $item->title }} -
+                                        {{ strlen($item->content) >= 100 ? substr($item->content, 0, 100) . '...' : $item->content }}
+                                    </h4>
+                                    <p class="lead-notif">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
                 @empty
                     <p>Belum ada notifikasi.</p>
                 @endforelse
@@ -50,17 +56,15 @@
     @push('extraScript')
         <script>
             $('.notification-click').on('click', function(e) {
-                const data_id = $(this).data('id');
-                console.log("notification id :"+data_id+";")
-                
+                const data_id = $(this).data('id')
+
                 $.ajax({
                     type: "GET",
-                    url: "{{url('/notifikasi')}}/"+data_id,
+                    url: "{{ url('/notifikasi') }}/" + data_id,
                     success: function(response) {
-                        console.log(response)
                         if (response.status == 'success') {
                             const notif = response.data
-                            var datetime = notif.created_at.replace("T", " ").substring(0,16)
+                            var datetime = notif.created_at.replace("T", " ").substring(0, 16)
                             $('#title-notif').html(notif.title)
                             $('#time-notif').html(datetime)
                             $('#content-notif').html(notif.content)
@@ -75,21 +79,21 @@
                             }
                             if (notif.read) {
                                 $('.modal-notifikasi').show()
-                                $('.notification-click').find('.notif-body-card-'+data_id).addClass('reading')
+                                $('.notification-click').find('.notif-body-card-' + data_id).addClass(
+                                    'reading')
                                 $('.notification-click').find('span').html('Sudah Dibaca')
                                 const total_unread = response.total_belum_dibaca
                                 if (total_unread > 0) {
-                                    $('.total-notif-message').html(`Anda mempunyai ${total_unread} notifikasi yang belum dibaca.`)
+                                    $('.total-notif-message').html(
+                                        `Anda mempunyai ${total_unread} notifikasi yang belum dibaca.`)
+                                } else {
+                                    $('.total-notif-message').html(
+                                        'Anda tidak mempunyai notifikasi yang belum dibaca.')
                                 }
-                                else {
-                                    $('.total-notif-message').html('Anda tidak mempunyai notifikasi yang belum dibaca.')
-                                }
-                            }
-                            else {
+                            } else {
                                 ErrorMessage('Tidak dapat membuka notifikasi')
                             }
-                        }
-                        else {
+                        } else {
                             ErrorMessage('Terjadi kesalahan')
                         }
                     },
@@ -98,7 +102,7 @@
                     }
                 })
             })
-            
+
             function ErrorMessage(message) {
                 swal("Gagal!", message, {
                     icon: "error",

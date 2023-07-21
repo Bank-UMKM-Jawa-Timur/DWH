@@ -7789,9 +7789,9 @@ label.error {
     border-bottom: 0px;
 }
 
-.messages-notif-box .notif-center a .notif-content {
+/* .messages-notif-box .notif-center a .notif-content {
     padding: 7px 15px 7px 5px;
-}
+} */
 
 /*     User Dropdown    */
 .dropdown-user {
@@ -22889,3 +22889,8 @@ body[data-background-color="dark"] .board {
     border-radius: 10px;
     color: #fff;
 } */
+
+.notif-style {
+    /* background-color: pink; */
+    padding: 0 10px;
+}

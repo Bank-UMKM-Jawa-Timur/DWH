@@ -163,10 +163,10 @@ class NotificationController extends Controller
 
             // get roles
             $roles = Role::pluck('id');
-            
+
             // get kredit
             $kredit = Kredit::find($kreditId);
-            
+
             // get user who will be sended the notification
             foreach ($template as $key => $value) {
                 // get kode cabang
@@ -206,7 +206,7 @@ class NotificationController extends Controller
 
             // get roles
             $roles = Role::pluck('id');
-            
+
             // get kredit
             $kredit = Kredit::find($kreditId);
 

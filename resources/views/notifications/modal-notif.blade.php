@@ -12,8 +12,16 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" id="close" data-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
 </div>
+
+@push('extraScript')
+    <script>
+        $('#close').on('click', function(i) {
+            location.reload();
+        });
+    </script>
+@endpush
