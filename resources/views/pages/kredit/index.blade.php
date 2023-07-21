@@ -57,7 +57,7 @@
                     <div class="card-header d-flex justify-content-between">
                         Data KKB
                         <div>
-                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter">
+                            <button type="button" class="btn btn-sm btn-primary" id="buttonFilter" data-toggle="modal" data-target="#filter">
                                 Filter Data
                             </button>
                             @if (Request()->query() != null)

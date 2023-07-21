@@ -57,7 +57,6 @@
         <script>
             $('.notification-click').on('click', function(e) {
                 const data_id = $(this).data('id')
-
                 $.ajax({
                     type: "GET",
                     url: "{{ url('/notifikasi') }}/" + data_id,

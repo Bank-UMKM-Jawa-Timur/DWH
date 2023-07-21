@@ -104,20 +104,19 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="card">
+                    <div class="card card-notifikasi">
                         <div class="card-header">
-                            Notifikasi
+                            {{ count($notification) }} Notifikasi belum dibaca
                         </div>
-                        <div class="card-body">
+                        <div class="card-body card-notif">
                             @forelse ($notification as $item)
-                                <div class="notif-app">
-                                    <span class="alert-notif text-success notif-status-{{ $item->id }}">
-                                        @if ($item->read)
-                                            Sudah Dibaca
-                                        @else
-                                            Belum Dibaca
-                                        @endif
-                                    </span>
+                                <div class="notif-app" id="notification-clicks" class="notification-clicks"
+                                    data-toggle="modal" data-target="#notif" data-id="{{ $item->id }}">
+                                    @if ($item->read)
+                                        <span class="alert-notif text-success">Sudah Dibaca</span>
+                                    @else
+                                        <span class="alert-notif text-white">Belum Dibaca</span>
+                                    @endif
                                     <h4>
                                         {{ $item->title }} -
                                         {{ strlen($item->content) >= 100 ? substr($item->content, 0, 100) . '...' : $item->content }}
@@ -149,7 +148,8 @@
                     <div class="card-header d-flex justify-content-between">
                         Data KKB
                         <div>
-                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter">
+                            <button type="button" id="buttonFilter" class="btn btn-sm btn-primary" data-toggle="modal"
+                                data-target="#filter">
                                 Filter Data
                             </button>
                             @if (Request()->query() != null)
@@ -1112,6 +1112,53 @@
                     }
                 });
             });
+
+            $('.card-notif').on('click', '#notification-clicks', function(e) {
+                const data_id = $(this).data('id')
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('/notifikasi') }}/" + data_id,
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            const notif = response.data
+                            var datetime = notif.created_at.replace("T", " ").substring(0, 16)
+                            $('#title-notif').html(notif.title)
+                            $('#time-notif').html(datetime)
+                            $('#content-notif').html(notif.content)
+                            if (notif.extra) {
+                                $('.extra-notif').empty()
+                                var extra = `<div class="row">
+                            <div class="col-12">
+                                ${notif.extra}
+                            </div>
+                        </div>`;
+                                $('.extra-notif').append(extra)
+                            }
+                            if (notif.read) {
+                                $('.modal-notifikasi').show()
+                                $('.notification-click').find('.notif-body-card-' + data_id).addClass(
+                                    'reading')
+                                $('.notification-click').find('span').html('Sudah Dibaca')
+                                const total_unread = response.total_belum_dibaca
+                                if (total_unread > 0) {
+                                    $('.total-notif-message').html(
+                                        `Anda mempunyai ${total_unread} notifikasi yang belum dibaca.`)
+                                } else {
+                                    $('.total-notif-message').html(
+                                        'Anda tidak mempunyai notifikasi yang belum dibaca.')
+                                }
+                            } else {
+                                ErrorMessage('Tidak dapat membuka notifikasi')
+                            }
+                        } else {
+                            ErrorMessage('Terjadi kesalahan')
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            })
 
             $(document).on("click", ".link-po", function() {
                 // console.log('bisa');

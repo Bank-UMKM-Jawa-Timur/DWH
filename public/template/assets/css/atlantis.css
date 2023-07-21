@@ -22766,16 +22766,20 @@ body[data-background-color="dark"] .board {
 
 .card-notif {
     margin: 0;
-    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    /* box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px; */
     margin-bottom: 15px;
 }
 
 .notif-app {
-    border-bottom: 1px solid #C1D0B5;
-    border-top: 1px solid #C1D0B5;
-    margin-bottom: 15px;
+    /* padding: 7px 15px; */
+    margin-top: 8px;
+    border-radius: 10px;
+    /* border-bottom: 1px solid #C1D0B5;
+    border-top: 1px solid #C1D0B5; */
+    /* margin-bottom: 15px;
     padding-bottom: 13px;
-    padding-top: 10px;
+    padding-top: 10px; */
 }
 
 .notif-app .alert-notif {
@@ -22791,7 +22795,7 @@ body[data-background-color="dark"] .board {
 
 .card-notif .reading {
     border-radius: 0.25rem;
-    background-color: #F1F3F4;
+    background-color: #E9E8E8;
     /* background-color: #F7FAFF; */
 }
 
@@ -22890,7 +22894,61 @@ body[data-background-color="dark"] .board {
     color: #fff;
 } */
 
-.notif-style {
-    /* background-color: pink; */
-    padding: 0 10px;
+.card-notif {
+    /* padding: 10px; */
+    overflow-y: auto;
+    max-height: 230px;
+    /* box-shadow: none; */
+}
+
+.card-notifikasi .card-notif {
+    /* padding: 10px; */
+    overflow-y: auto;
+    max-height: 230px;
+    box-shadow: none;
+}
+
+.card-notif::-webkit-scrollbar {
+    width: 8px;
+}
+
+.card-notif::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+.card-notif::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+.card-notifikasi .notif-app {
+    cursor: pointer;
+    position: relative;
+    padding: 7px 15px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    background-color: #E9E8E8;
+    /* border-bottom: 1px solid #C1D0B5;
+    border-top: 1px solid #C1D0B5; */
+    /* margin-bottom: 15px;
+    padding-bottom: 13px;
+    padding-top: 10px; */
+}
+
+.card-notifikasi .notif-app .alert-notif {
+    font-size: 10px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-radius: 0 10px 0 10px;
+    padding: 10px 8px;
+    background-color: #DC3545;
+}
+
+.card-notifikasi .notif-app h4 {
+    color: #1F1D62;
+    width: 80%;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0;
 }

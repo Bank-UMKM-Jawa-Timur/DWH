@@ -61,6 +61,9 @@ class DashboardController extends Controller
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
                     return $query->whereBetween('kkb.tgl_ketersediaan_unit', [$request->tAwal, $request->tAkhir]);
                 })
+                ->when($request->cabang,function($query,$cbg){
+                    return $query->where('kredits.kode_cabang',$cbg);
+                })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
 
@@ -150,7 +153,6 @@ class DashboardController extends Controller
                     ->where('notifications.read', false)
                     ->orderBy('notifications.read')
                     ->orderBy('notifications.created_at', 'DESC')
-                    ->limit(3)
                     ->get();
             }
 

@@ -36,6 +36,14 @@
                                 <option value="done">Done</option>
                             </select>
                         </div>
+                        @if (Auth::user()->role_id == 4 || Auth::user()->role_id == 1)
+                            <div class="col-sm-6 mt-2">
+                                <h5 class="modal-title penyerahan-unit-title">Cabang</h5>
+                                <select class="custom-select form-control" id="cabang" name="cabang">
+                                </select>
+                            </div>
+                        @endif
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -54,6 +62,32 @@
             if (result != null) {
                 $("#tAkhir").prop("required", true)
             }
+        });
+
+        $(document).ready(function() {
+            $("#buttonFilter").on("click", function() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ env('LOS_API_HOST') }}/kkb/get-cabang",
+                    headers: {
+                        'token': "{{ env('LOS_API_TOKEN') }}",
+                    },
+                    success: function(data) {
+                        for (i in data) {
+                            if (data[i].kode_cabang == `{{ Request()->cabang }}`)
+                                $("#cabang").append(`<option value="` +
+                                    data[i].kode_cabang +
+                                    `" selected>` + data[i].cabang +
+                                    `</option>`);
+                            else
+                                $("#cabang").append(`<option value="` +
+                                    data[i].kode_cabang + `">` + data[i]
+                                    .cabang +
+                                    `</option>`);
+                        }
+                    }
+                });
+            });
         });
     </script>
 @endpush
