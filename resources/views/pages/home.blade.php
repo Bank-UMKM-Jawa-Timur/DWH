@@ -160,8 +160,21 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="row" style="margin-left: 3px">
+                            {{-- <p>Show</p>
+                            &nbsp;
+                            <select class="form-select" name="entries_table" id="entries_table" style="width: 50px; height: 30px;" aria-label=".form-select-lg example">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="all">All</option>
+                            </select>
+                            &nbsp;
+                            <p>Entries</p> --}}
+                        </div>
                         <div class="table-responsive">
-                            <table class="mt-3" id="basic-datatables">
+                            <table class="mt-1" id="basic-datatables">
                                 <thead>
                                     <tr class="bg-danger text-light">
                                         <th class="px-2 text-center" scope="col">No</th>
@@ -687,8 +700,11 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="paginated">
-                            {{ $data->links('pagination::bootstrap-4') }}
+                        <div class="pagination-links mt-4">
+                            <div class=""></div>
+                            <div class="">
+                              {{-- {{ $data->links('pagination::bootstrap-5') }} --}}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1062,6 +1078,7 @@
         <script src="{{ asset('template') }}/assets/js/plugin/chart.js/chart.min.js"></script>
 
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
+
         <!-- DateTimePicker -->
         <script src="{{ asset('template') }}/assets/js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
         <script>
@@ -1078,6 +1095,19 @@
             var label = {{ Js::from($barChartLabel) }};
             var data = {{ Js::from($barChartData) }};
             $(document).ready(function() {
+
+                // From index kkb
+                $('#basic-datatables').DataTable({
+                    lengthMenu: [
+                        [5, 10, 15, 20, -1],
+                        [5, 10, 15, 20, 'All']
+                    ]
+                    // 'paging':true,
+                    // 'bInfo':false,
+                    // 'bFilter':true,
+                    // "paging": true
+                });
+
                 const ctx = document.getElementById('chart').getContext('2d');
 
                 new Chart(ctx, {
@@ -1159,6 +1189,27 @@
                     }
                 })
             })
+            // Select option entries_table
+            // const urlParams = new URLSearchParams(window.location.search);
+            // const entriesTableValue = urlParams.get('entries_table');
+            
+            // if (entriesTableValue) {
+            //     $('#entries_table').val(entriesTableValue);
+            // }
+
+            // $('#entries_table').on('change', function(e) {
+            //     const selected = $(this).val();
+            //     const url = new URL(window.location.href);
+            //     const params = new URLSearchParams(url.search);
+
+            //     params.delete('entries_table');
+            //     params.append('entries_table', selected);
+
+            //     url.search = params.toString();
+            //     window.location.href = url.toString();
+
+            //     console.log(selected);
+            // })
 
             $(document).on("click", ".link-po", function() {
                 // console.log('bisa');
@@ -1171,8 +1222,7 @@
                 $("#filePo").attr("src", filePo);
             });
 
-            // From index kkb
-            $('#basic-datatables').DataTable({});
+            
             // Initial datepicker
             $('#tgl_ketersediaan_unit').datetimepicker({
                 format: 'MM/DD/YYYY',

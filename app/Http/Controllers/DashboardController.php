@@ -70,7 +70,21 @@ class DashboardController extends Controller
             if (Auth::user()->role_id == 2) {
                 $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
             }
-            $data = $data->paginate(5);
+
+            $data = $data->get();
+
+
+            // if ($request->entries_table == 10) {
+            //     $data = $data->paginate(10);
+            // }elseif($request->entries_table == 15){
+            //     $data = $data->paginate(15);
+            // }elseif($request->entries_table == 20){
+            //     $data = $data->paginate(20);
+            // }elseif($request->entries_table == 'all'){
+            //     $data = $data->paginate();
+            // }else{
+            //     $data = $data->paginate(5);   
+            // }
 
             foreach ($data as $key => $value) {
                 // retrieve from api
