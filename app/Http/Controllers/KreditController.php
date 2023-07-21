@@ -91,7 +91,7 @@ class KreditController extends Controller
                 if (Auth::user()->role_id == 2) {
                     $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
                 }
-                $data = $data->paginate(5);
+                $data = $data->get();
 
                 foreach ($data as $key => $value) {
                     // retrieve from api

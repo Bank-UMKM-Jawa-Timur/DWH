@@ -57,7 +57,8 @@
                     <div class="card-header d-flex justify-content-between">
                         Data KKB
                         <div>
-                            <button type="button" class="btn btn-sm btn-primary" id="buttonFilter" data-toggle="modal" data-target="#filter">
+                            <button type="button" class="btn btn-sm btn-primary" id="buttonFilter" data-toggle="modal"
+                                data-target="#filter">
                                 Filter Data
                             </button>
                             @if (Request()->query() != null)
@@ -595,9 +596,9 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="paginated">
+                        {{-- <div class="paginated">
                             {{ $data->links('pagination::bootstrap-4') }}
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -1001,7 +1002,10 @@
         <script src="{{ asset('template') }}/assets/js/plugin/datepicker/bootstrap-datetimepicker.min.js"></script>
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
-            $('#basic-datatables').DataTable({});
+            $('#basic-datatables').DataTable({
+                "pageLength": 5,
+                lengthMenu: [5, 10, 20, 50, 100],
+            });
             // Initial datepicker
             $('#tgl_ketersediaan_unit').datetimepicker({
                 format: 'MM/DD/YYYY',
