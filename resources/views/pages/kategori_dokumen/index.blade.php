@@ -39,22 +39,22 @@
                                             <td>{{ $item->name }}</td>
                                             <td>
                                                 @if ($item->id > 5)
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-expanded="false">
-                                                        Selengkapnya
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" data-toggle="modal"
-                                                            data-target="#editModal" data-id="{{ $item->id }}"
-                                                            data-name="{{ $item->name }}" href="#">Edit</a>
-                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
-                                                            data-target="#deleteModal" data-name="{{ $item->name }}"
-                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" aria-expanded="false">
+                                                            Selengkapnya
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" data-toggle="modal"
+                                                                data-target="#editModal" data-id="{{ $item->id }}"
+                                                                data-name="{{ $item->name }}" href="#">Edit</a>
+                                                            <a class="dropdown-item deleteModal" data-toggle="modal"
+                                                                data-target="#deleteModal" data-name="{{ $item->name }}"
+                                                                data-id="{{ $item->id }}" href="#">Hapus</a>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 @else
-                                                -
+                                                    -
                                                 @endif
                                             </td>
                                         </tr>

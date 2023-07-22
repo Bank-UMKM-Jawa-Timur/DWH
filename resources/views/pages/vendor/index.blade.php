@@ -136,7 +136,7 @@
                         </div>
 
                         <div class="form-group">
-                            <button id="add-button" class="btn btn-primary">Simpan</button>
+                            <button id="simpanButton" class="btn btn-primary">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -266,19 +266,82 @@
             </script>
         @endif
         <script>
-            $('#add-button').click(function(e) {
-                e.preventDefault()
-
-                store();
-            })
-
-            $('#edit-button').click(function(e) {
-                e.preventDefault()
-
-                update();
-            })
-
             function store() {
+                alert("helloworld");
+                // const req_name = document.getElementById('add-name')
+                // const req_phone = document.getElementById('add-phone')
+                // const req_email = document.getElementById('add-email')
+                // const req_address = document.getElementById('add-address')
+                // const req_cabang_id = document.getElementById('add-cabang')
+
+                // if (req_name == '') {
+                //     showError(req_name, 'Nama harus diisi.');
+                //     return false;
+                // }
+                // if (req_phone == '') {
+                //     showError(req_phone, 'Nomor HP harus diisi.');
+                //     return false;
+                // }
+                // if (req_email == '') {
+                //     showError(req_email, 'Email harus diisi.');
+                //     return false;
+                // }
+                // if (req_address == '') {
+                //     showError(req_address, 'Alamat harus diisi.');
+                //     return false;
+                // }
+                // if (req_cabang_id == '' || req_cabang_id == 0) {
+                //     showError(req_cabang_id, 'Role harus dipilih.');
+                //     return false;
+                // }
+
+                // $.ajax({
+                //     type: "POST",
+                //     url: "{{ route('vendor.store') }}",
+                //     data: {
+                //         _token: "{{ csrf_token() }}",
+                //         name: req_name.value,
+                //         phone: req_phone.value,
+                //         email: req_email.value,
+                //         address: req_address.value,
+                //         cabang_id: req_cabang_id.value,
+                //     },
+                //     success: function(data) {
+                //         console.log(data);
+                //         if (Array.isArray(data.error)) {
+                //             for (var i = 0; i < data.error.length; i++) {
+                //                 var message = data.error[i];
+
+                //                 if (message.toLowerCase().includes('name'))
+                //                     showError(req_name, message)
+                //                 if (message.toLowerCase().includes('nomor'))
+                //                     showError(req_phone, message)
+                //                 if (message.toLowerCase().includes('email'))
+                //                     showError(req_email, message)
+                //                 if (message.toLowerCase().includes('address'))
+                //                     showError(req_address, message)
+                //                 if (message.toLowerCase().includes('cabang'))
+                //                     showError(req_cabang_id, message)
+                //             }
+                //         } else {
+                //             if (data.status == 'success') {
+                //                 SuccessMessage(data.message);
+                //             } else {
+                //                 ErrorMessage(data.message)
+                //             }
+                //             $('#addModal').modal().hide()
+                //             $('body').removeClass('modal-open');
+                //             $('.modal-backdrop').remove();
+                //         }
+                //     },
+                //     error: function(e) {
+                //         console.log(e)
+                //     }
+                // });
+            }
+
+            $("#simpanButton").on('click', function(e) {
+                e.preventDefault();
                 const req_name = document.getElementById('add-name')
                 const req_phone = document.getElementById('add-phone')
                 const req_email = document.getElementById('add-email')
@@ -349,9 +412,14 @@
                         console.log(e)
                     }
                 });
-            }
+            });
+            // $('#simpanButton').click(function(e) {
+            //     e.preventDefault()
+            //     store();
+            // })
 
-            function update() {
+            $('#edit-button').click(function(e) {
+                e.preventDefault()
                 const req_id = document.getElementById('edit-id')
                 const req_name = document.getElementById('edit-name')
                 const req_phone = document.getElementById('edit-phone')
@@ -424,6 +492,10 @@
                         console.log(e)
                     }
                 });
+            })
+
+            function update() {
+
             }
 
             function SuccessMessage(message) {

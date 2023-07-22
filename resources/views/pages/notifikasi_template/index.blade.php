@@ -242,7 +242,10 @@
             $(document).ready(function() {
                 $('.select-role').select2();
             });
-            $('#basic-datatables').DataTable({});
+            $('#basic-datatables').DataTable({
+                "pageLength": 5,
+                lengthMenu: [5, 10, 20, 50, 100],
+            });
         </script>
         @if (session('status'))
             <script>
