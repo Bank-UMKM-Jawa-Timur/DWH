@@ -370,7 +370,12 @@
                 input.focus();
             }
 
-            $('#basic-datatables').DataTable({});
+            $('#basic-datatables').DataTable({
+                lengthMenu: [
+                    [5, 10, 15, 20, -1],
+                    [5, 10, 15, 20, 'All']
+                ]
+            });
         </script>
     @endpush
 @endsection
