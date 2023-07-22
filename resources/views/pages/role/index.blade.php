@@ -157,7 +157,12 @@
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
-            $('#basic-datatables').DataTable({});
+            $('#basic-datatables').DataTable({
+                lengthMenu: [
+                    [5, 10, 15, 20, -1],
+                    [5, 10, 15, 20, 'All']
+                ]
+            });
 
             // Form
             $('#add-button').click(function(e) {
