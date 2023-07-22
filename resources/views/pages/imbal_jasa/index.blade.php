@@ -332,7 +332,12 @@
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
-            $('#basic-datatables').DataTable({});
+            $('#basic-datatables').DataTable({
+                lengthMenu: [
+                    [5, 10, 15, 20, -1],
+                    [5, 10, 15, 20, 'All']
+                ]
+            });
             var plafond1 = document.getElementById('add-plafond1');
             plafond1.addEventListener('keyup', function(e) {
                 plafond1.value = formatRupiah(this.value);
