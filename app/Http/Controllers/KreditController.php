@@ -50,6 +50,7 @@ class KreditController extends Controller
          */
 
             try {
+                $page_length = $request->page_length ? $request->page_length : 5;
                 $this->param['role'] = $this->dashboardContoller->getRoleName();
                 $this->param['title'] = 'KKB';
                 $this->param['pageTitle'] = 'KKB';
@@ -91,7 +92,11 @@ class KreditController extends Controller
                 if (Auth::user()->role_id == 2) {
                     $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
                 }
-                $data = $data->get();
+
+                if (is_numeric($page_length))
+                    $data = $data->paginate($page_length);
+                else
+                    $data = $data->get();
 
                 foreach ($data as $key => $value) {
                     // retrieve from api
@@ -108,12 +113,14 @@ class KreditController extends Controller
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
                         // input file path
-                        if (array_key_exists('sppk', $responseBody))
-                            $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
-                        if (array_key_exists('po', $responseBody))
-                            $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
-                        if (array_key_exists('pk', $responseBody))
-                            $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                        if ($responseBody) {
+                            if (array_key_exists('sppk', $responseBody))
+                                $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                            if (array_key_exists('po', $responseBody))
+                                $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                            if (array_key_exists('pk', $responseBody))
+                                $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                        }
 
                         // insert response to object
                         $value->detail = $responseBody;
@@ -134,6 +141,28 @@ class KreditController extends Controller
                     $this->param['data'] = $data;
                 }
 
+                // Search query
+                $search_q = strtolower($request->get('query'));
+                if ($search_q) {
+                    foreach ($data as $key => $value) {
+                        $exists = 0;
+                        if ($value->detail) {
+                            if ($value->detail['nama']) {
+                                if (str_contains(strtolower($value->detail['nama']), $search_q)) {
+                                    $exists++;
+                                }
+                            }
+                            if ($value->detail['no_po']) {
+                                if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
+                                    $exists++;
+                                }
+                            }
+                        }
+                        if ($exists == 0)
+                            unset($data[$key]); // remove data
+                    }
+                }
+                $param['data'] = $data;
 
                 return view('pages.kredit.index', $this->param);
             } catch (\Exception $e) {

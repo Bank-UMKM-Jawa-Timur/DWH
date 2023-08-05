@@ -713,11 +713,10 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="pagination-links mt-4">
-                            <div class=""></div>
-                            <div class="">
-                                {{ $data->links('pagination::bootstrap-5') }}
-                            </div>
+                        <div class="paginated">
+                            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                            {{ $data->links('pagination::bootstrap-5') }}
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -1197,28 +1196,6 @@
                     }
                 })
             })
-            // Select option entries_table
-            // const urlParams = new URLSearchParams(window.location.search);
-            // const entriesTableValue = urlParams.get('entries_table');
-            
-            // if (entriesTableValue) {
-            //     $('#entries_table').val(entriesTableValue);
-            // }
-
-            // $('#entries_table').on('change', function(e) {
-            //     const selected = $(this).val();
-            //     const url = new URL(window.location.href);
-            //     const params = new URLSearchParams(url.search);
-
-            //     params.delete('entries_table');
-            //     params.append('entries_table', selected);
-
-            //     url.search = params.toString();
-            //     window.location.href = url.toString();
-
-            //     console.log(selected);
-            // })
-
             $(document).on("click", ".link-po", function() {
                 // console.log('bisa');
                 var nomorPo = $(this).data('nomorpo');

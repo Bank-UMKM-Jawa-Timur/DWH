@@ -72,7 +72,10 @@ class DashboardController extends Controller
                 $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
             }
 
-            $data = $data->paginate($page_length);
+            if (is_numeric($page_length))
+                $data = $data->paginate($page_length);
+            else
+                $data = $data->get();
 
             foreach ($data as $key => $value) {
                 // retrieve from api
@@ -204,6 +207,7 @@ class DashboardController extends Controller
                 $param['data'] = $data;
             }
 
+            // Search query
             $search_q = strtolower($request->get('query'));
             if ($search_q) {
                 foreach ($data as $key => $value) {
@@ -225,6 +229,7 @@ class DashboardController extends Controller
                 }
             }
             $param['data'] = $data;
+            // return $data;
 
             return view('pages.home', $param);
         } catch (\Exception $e) {

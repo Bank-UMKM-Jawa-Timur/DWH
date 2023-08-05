@@ -1664,11 +1664,23 @@ body {
     align-items: center;
 }
 
+.paginated {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
 .paginated .page-item.active .page-link {
     border-radius: 0;
     background-color: #1F1D62;
     width: 35px;
     height: 35px;
+}
+.paginated .page-link:hover {
+    z-index:2;
+    color:#1F1D62;
+    text-decoration:none;
+    background-color:#e9ecef;
+    border-color:#dee2e6;
 }
 
 .paginated .page-item.disabled .page-link {
