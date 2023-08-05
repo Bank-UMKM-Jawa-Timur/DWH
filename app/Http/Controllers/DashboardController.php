@@ -21,6 +21,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         try {
+            $page_length = $request->page_length ? $request->page_length : 5;
             $param['title'] = 'Dashboard';
             $param['pageTitle'] = 'Dashboard';
             $param['karyawan'] = null;
@@ -71,20 +72,7 @@ class DashboardController extends Controller
                 $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
             }
 
-            $data = $data->get();
-
-
-            // if ($request->entries_table == 10) {
-            //     $data = $data->paginate(10);
-            // }elseif($request->entries_table == 15){
-            //     $data = $data->paginate(15);
-            // }elseif($request->entries_table == 20){
-            //     $data = $data->paginate(20);
-            // }elseif($request->entries_table == 'all'){
-            //     $data = $data->paginate();
-            // }else{
-            //     $data = $data->paginate(5);   
-            // }
+            $data = $data->paginate($page_length);
 
             foreach ($data as $key => $value) {
                 // retrieve from api
@@ -205,16 +193,38 @@ class DashboardController extends Controller
             $param['barChartLabel'] = $arrLabelChartLabel;
 
             $data_array = [];
-                if($request->status != null){
-                    foreach($data as $rows){
-                        if($rows->status == $request->status){
-                            array_push($data_array,$rows);
+            if($request->status != null){
+                foreach($data as $rows){
+                    if($rows->status == $request->status){
+                        array_push($data_array,$rows);
+                    }
+                }
+                $param['data'] = $this->paginate($data_array);
+            }else{
+                $param['data'] = $data;
+            }
+
+            $search_q = strtolower($request->get('query'));
+            if ($search_q) {
+                foreach ($data as $key => $value) {
+                    $exists = 0;
+                    if ($value->detail) {
+                        if ($value->detail['nama']) {
+                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
+                                $exists++;
+                            }
+                        }
+                        if ($value->detail['no_po']) {
+                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
+                                $exists++;
+                            }
                         }
                     }
-                    $param['data'] = $this->paginate($data_array);
-                }else{
-                    $param['data'] = $data;
+                    if ($exists == 0)
+                        unset($data[$key]); // remove data
                 }
+            }
+            $param['data'] = $data;
 
             return view('pages.home', $param);
         } catch (\Exception $e) {

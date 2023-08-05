@@ -8,7 +8,6 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="" method="get">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-6">
@@ -50,7 +49,6 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary">Filter</button>
                 </div>
-            </form>
         </div>
     </div>
 </div>
@@ -73,6 +71,7 @@
                         'token': "{{ env('LOS_API_TOKEN') }}",
                     },
                     success: function(data) {
+                        $("#cabang").append(`<option value="" selected>Semua</option>`);
                         for (i in data) {
                             if (data[i].kode_cabang == `{{ Request()->cabang }}`)
                                 $("#cabang").append(`<option value="` +

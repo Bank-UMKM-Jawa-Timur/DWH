@@ -160,19 +160,35 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="row" style="margin-left: 3px">
-                            {{-- <p>Show</p>
-                            &nbsp;
-                            <select class="form-select" name="entries_table" id="entries_table" style="width: 50px; height: 30px;" aria-label=".form-select-lg example">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="all">All</option>
-                            </select>
-                            &nbsp;
-                            <p>Entries</p> --}}
-                        </div>
+                        <form id="form" action="" method="get">
+                            @include('pages.kredit.modal.filter-modal')
+                            <input type="hidden" name="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}">
+                            <div class="d-flex justify-content-between" style="padding-left: 15px;padding-right: 15px;">
+                                <div>
+                                    <div class="form-inline">
+                                        <label>Show</label>
+                                        &nbsp;
+                                        <select class="form-control form-control-sm" name="page_length" id="page_length" >
+                                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                                        </select>
+                                        &nbsp;
+                                        <label>entries</label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-inline">
+                                        <label>Search : </label>
+                                        &nbsp;
+                                        <input type="search" class="form-control form-control-sm"
+                                            name="query" id="query" value="{{ old('query', Request::get('query')) }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                         <div class="table-responsive">
                             <table class="mt-1" id="basic-datatables">
                                 <thead>
@@ -183,9 +199,6 @@
                                         <th class="px-2 text-center" scope="col">Ketersediaan Unit</th>
                                         <th class="px-2 text-center" scope="col">Bukti Pembayaran</th>
                                         <th class="px-2 text-center" scope="col">Penyerahan Unit</th>
-                                        {{--  <th scope="col">STNK</th>
-                                        <th scope="col">Polis</th>
-                                        <th scope="col">BPKB</th>  --}}
                                         @foreach ($documentCategories as $item)
                                             <th class="px-2 text-center" scope="col">{{ $item->name }}</th>
                                         @endforeach
@@ -703,7 +716,7 @@
                         <div class="pagination-links mt-4">
                             <div class=""></div>
                             <div class="">
-                              {{-- {{ $data->links('pagination::bootstrap-5') }} --}}
+                                {{ $data->links('pagination::bootstrap-5') }}
                             </div>
                         </div>
                     </div>
@@ -1071,7 +1084,6 @@
     </div>
 
     @include('pages.kredit.modal.detail-modal')
-    @include('pages.kredit.modal.filter-modal')
 
     @push('extraScript')
         <!-- Chart JS -->
@@ -1098,14 +1110,10 @@
 
                 // From index kkb
                 $('#basic-datatables').DataTable({
-                    lengthMenu: [
-                        [5, 10, 15, 20, -1],
-                        [5, 10, 15, 20, 'All']
-                    ]
-                    // 'paging':true,
-                    // 'bInfo':false,
-                    // 'bFilter':true,
-                    // "paging": true
+                    searching: false,
+                    bLengthChange : false, //thought this line could hide the LengthMenu
+                    paging: false,
+                    bInfo: false,
                 });
 
                 const ctx = document.getElementById('chart').getContext('2d');
@@ -1742,6 +1750,13 @@
                 input.value = '';
             }
         </script>
+        // Datatable actions
+        <script>
+            $('#page_length').on('change', function() {
+                $('#form').submit()
+            })
+        </script>
+        // End datatable actions
         @if (Auth::user()->role_id != 3)
             <script>
                 $(document).ready(function() {
