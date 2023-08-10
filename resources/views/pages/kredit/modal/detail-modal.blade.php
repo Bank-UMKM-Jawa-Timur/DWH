@@ -68,16 +68,25 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col">
-                                            @if (Auth::user()->role_id != 3)
-                                                <h4 class="m-0 title-detailpo">Data Pengajuan</h4>
+                                            <h4 class="m-0 title-detailpo">Data Pengajuan</h4>
+                                            <table>
                                                 <tr>
-                                                    <td>Nama</td>
+                                                    <td class="tabel-bold">Nama</td>
                                                     <td>:</td>
-                                                    <td><label id="detail_nama_pengaju"
-                                                            style="font-weight: 400 !important;">undifined</label></td>
+                                                    <td id="detail_nama_pengaju">undifined</td>
                                                 </tr>
-                                                <hr>
-                                            @endif
+                                                <tr>
+                                                    <td class="tabel-bold">Alamat</td>
+                                                    <td>:</td>
+                                                    <td id="detail_alamat_pengaju">undifined</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="tabel-bold">Cabang</td>
+                                                    <td>:</td>
+                                                    <td id="detail_cabang">undifined</td>
+                                                </tr>
+                                            </table>
+                                            <hr>
                                             <h4 class="m-0 title-detailpo">Data PO</h4>
                                             <table>
                                                 <tr>
@@ -344,6 +353,8 @@
                     if (response.data.pengajuan) {
                         var data = response.data.pengajuan;
                         $('#detail_nama_pengaju').html(data.nama);
+                        $('#detail_alamat_pengaju').html(data.alamat_rumah);
+                        $('#detail_cabang').html(data.cabang);
                         $('#detail_no_po').html(data.no_po);
                         $('#detail_merk').html(data.merk);
                         $('#detail_tipe').html(data.tipe);
