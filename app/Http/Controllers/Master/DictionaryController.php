@@ -111,13 +111,13 @@ class DictionaryController extends Controller
 
                     DB::commit();
         
-                    Alert('Sukses', 'Berhasil menyimpan data');
+                    Alert::success('Sukses', 'Berhasil menyimpan data');
                     return redirect()->route('dictionary.index');
                 }
             }
             DB::commit();
 
-            Alert('Gagal', 'Item kosong');
+            Alert::error('Gagal', 'Item kosong');
             return back();
         } catch (\Exception $e) {
             DB::commit();
@@ -261,13 +261,13 @@ class DictionaryController extends Controller
 
                     DB::commit();
         
-                    Alert('Sukses', 'Berhasil menyimpan data');
+                    Alert::success('Sukses', 'Berhasil menyimpan data');
                     return redirect()->route('dictionary.index');
                 }
             }
             DB::commit();
 
-            Alert('Gagal', 'Item kosong');
+            Alert::error('Gagal', 'Item kosong');
             return back();
         } catch (\Exception $e) {
             DB::commit();
@@ -295,7 +295,7 @@ class DictionaryController extends Controller
                 $dictionary->delete();
 
             DB::commit();
-            Alert::error('Sukses', 'Berhasil menghapus data');
+            Alert::success('Sukses', 'Berhasil menghapus data');
             return back();
         }  catch (\Exception $e) {
             DB::commit();

@@ -106,32 +106,6 @@
         </div>
     </div>
 
-    <!-- Modal-tambah -->
-    <div class="modal hide" id="addModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Tambah {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-add-form">
-                        <div class="form-group name">
-                            <label for="add-name">Nama Peran</label>
-                            <input type="text" class="form-control add-name" id="add-name" name="name">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="add-button">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{-- Modal Delete --}}
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -139,7 +113,7 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="form-group name" id="konfirmasi">
-                        Apakah Anda Ingin Menghapus Role?
+                        Apakah anda akan menghapus data ini?
                     </div>
                     <div class="form-inline">
                         <button data-dismiss="modal" class="btn btn-danger mr-2">Batal</button>
@@ -159,6 +133,14 @@
             $('#page_length').on('change', function() {
                 $('#form').submit()
             })
+
+            $(document).on("click", ".deleteModal", function() {
+                var data_id = $(this).data('id');
+                var url = "{{ url('/master/dictionary') }}/" + data_id;
+                $('#konfirmasi').text("Apakah anda akan menghapus data ini?");
+                $('#delete-form').attr("action", url);
+                ("action", url);
+            });
         </script>
         // End datatable actions
     @endpush
