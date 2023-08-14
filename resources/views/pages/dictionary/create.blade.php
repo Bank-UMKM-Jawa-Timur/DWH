@@ -16,7 +16,7 @@
     <div class="page-inner mt--5">
         <div class="row mt--2">
             <div class="col-md-12">
-                <form id="form" action="{{ route('dictionary.store') }}" method="post">
+                <form action="{{ route('dictionary.store') }}" method="post">
                     @csrf
                     <div class="card">
                         <div class="card-header">
@@ -27,7 +27,7 @@
                                 <div class="col-md-6 col-lg-6">
                                     <div class="form-group name">
                                         <label for="filename">File</label>
-                                        <input type="text" class="form-control" id="filename" name="name" required>
+                                        <input type="text" class="form-control" id="filename" name="filename" required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
@@ -48,6 +48,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
+                                                    <th>Field</th>
                                                     <th>From</th>
                                                     <th>To</th>
                                                     <th>Length</th>
@@ -61,15 +62,21 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td>1</td>
                                                     <td>
-                                                        <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm">
+                                                        <input type="hidden" name="numbers[]" id="numbers[]">
+                                                        <span id="number[]">1</span>
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm">
+                                                        <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm">
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm">
+                                                        <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm only-number">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm only-number">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm only-number">
                                                     </td>
                                                     <td>
                                                         <input type="text" name="input_description[]" id="input_description[]" class="form-control-sm">
@@ -98,18 +105,33 @@
 
     @push('extraScript')
         <script>
+            $(".only-number").keyup(function (e) {
+                this.value = this.value.replace(/[^\d]/, "");
+            });
+
+            function updateNumber() {
+                var tbody = $("#table_item tbody").children().length
+                for (var i = 0; i < tbody; i++) {
+                    
+                }
+            }
+
             $('.btn-plus').on('click', function(e) {
+                var number = $("#table_item tbody").children().length + 1
                 var new_tr = `
                 <tr>
-                    <td>1</td>
+                    <td><span id="number[]">${number}</span></td>
                     <td>
-                        <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm">
+                        <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm">
                     </td>
                     <td>
-                        <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm">
+                        <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm only-number">
                     </td>
                     <td>
-                        <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm">
+                        <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm only-number">
+                    </td>
+                    <td>
+                        <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm only-number">
                     </td>
                     <td>
                         <input type="text" name="input_description[]" id="input_description[]" class="form-control-sm">
@@ -121,7 +143,7 @@
                     </td>
                 </tr>
                 `;
-                $('#table_item tr:last').after(new_tr);
+                $('#table_item tbody tr:last').after(new_tr);
             })
 
             $("#table_item").on('click', '.btn-minus', function () {

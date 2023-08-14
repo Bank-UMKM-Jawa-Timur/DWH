@@ -1,4 +1,5 @@
 @include('layout.head')
+@include('sweetalert::alert')
 <div class="wrapper">
     @include('components.main-header')
     <!-- Sidebar -->
