@@ -191,12 +191,19 @@ body[data-background-color="dark"] .demo-icon .icon-class {
 	color: #a9a8a8;
 }
 
-.form-show-notify .form-control {
+.form-show-notify .form-control .form-control-sm {
 	margin-bottom: 15px;
 }
 
 .form-show-notify label {
 	padding-top: 0.65rem;
+}
+
+.form-control-sm {
+	font-size: 12px;
+	border: 1px solid #ced4da;
+	background-color: #F2F2F2;
+	padding: 0.6rem 1rem !important;
 }
 
 .map-demo {

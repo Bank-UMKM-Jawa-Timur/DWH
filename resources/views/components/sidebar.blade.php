@@ -78,6 +78,11 @@
                                         <span class="sub-item">Template Notifikasi</span>
                                     </a>
                                 </li>
+                                <li class="{{ request()->is('master/dictionary') ? 'active' : '' }}">
+                                    <a href="{{ route('dictionary.index') }}">
+                                        <span class="sub-item">Dictionary</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </li>

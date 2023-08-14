@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KreditController;
 use App\Http\Controllers\LogActivitesController;
+use App\Http\Controllers\Master\DictionaryController;
 use App\Http\Controllers\Master\DocumenCategoryController;
 use App\Http\Controllers\Master\ImbalJasaController;
 use App\Http\Controllers\Master\NotificationTemplateController;
@@ -90,6 +91,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/kategori-dokumen', DocumenCategoryController::class);
         Route::resource('/template-notifikasi', NotificationTemplateController::class);
         Route::resource('/imbal-jasa', ImbalJasaController::class);
+        Route::resource('/dictionary', DictionaryController::class);
     });
 
 
