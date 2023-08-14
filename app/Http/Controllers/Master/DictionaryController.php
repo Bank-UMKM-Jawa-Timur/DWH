@@ -121,14 +121,12 @@ class DictionaryController extends Controller
             return back();
         } catch (\Exception $e) {
             DB::commit();
-            return $e->getMessage();
             Alert::error('Error', $e->getMessage());
-            // return back();
+            return back();
         } catch (\Illuminate\Database\QueryException $e) {
             DB::commit();
-            return $e->getMessage();
             Alert::error('Error', $e->getMessage());
-            // return back();
+            return back();
         }
     }
 
@@ -142,6 +140,24 @@ class DictionaryController extends Controller
     {
         $param['title'] = 'Detail Dictionary';
         $param['pageTitle'] = 'Dictionary';
+
+        try {
+            $fileDictionary = MstFileDictionary::find($id);
+
+            if ($fileDictionary)
+                $itemDictionary = MstFileContentDictionary::where('file_dictionary_id', $id)->get();
+            
+            $param['fileDictionary'] = $fileDictionary;
+            $param['itemDictionary'] = $itemDictionary;
+
+            return view('pages.dictionary.show', $param);
+        } catch (\Exception $e) {
+            Alert::error('Error', $e->getMessage());
+            return back();
+        } catch (\Illuminate\Database\QueryException $e) {
+            Alert::error('Error', $e->getMessage());
+            return back();
+        }
     }
 
     /**
@@ -154,6 +170,24 @@ class DictionaryController extends Controller
     {
         $param['title'] = 'Edit Dictionary';
         $param['pageTitle'] = 'Dictionary';
+
+        try {
+            $fileDictionary = MstFileDictionary::find($id);
+
+            if ($fileDictionary)
+                $itemDictionary = MstFileContentDictionary::where('file_dictionary_id', $id)->get();
+            
+            $param['fileDictionary'] = $fileDictionary;
+            $param['itemDictionary'] = $itemDictionary;
+
+            return view('pages.dictionary.edit', $param);
+        } catch (\Exception $e) {
+            Alert::error('Error', $e->getMessage());
+            return back();
+        } catch (\Illuminate\Database\QueryException $e) {
+            Alert::error('Error', $e->getMessage());
+            return back();
+        }
     }
 
     /**
@@ -170,12 +204,13 @@ class DictionaryController extends Controller
             $fileDictionary = MstFileDictionary::find($id);
             $fileDictionary->filename = $request->filename;
             $fileDictionary->description = $request->description;
-            $file_dictionary_id = $fileDictionary->save();
+            $fileDictionary->save();
 
             $item_id = $request->get('item_id');
             /**
              * NOTE : item id 0 = Data baru, selain 0 data lama
              */
+            // return $request;
             $input_field = $request->get('input_field');
             $input_from = $request->get('input_from');
             $input_to = $request->get('input_to');
@@ -184,11 +219,26 @@ class DictionaryController extends Controller
 
             if ($input_field) {
                 if (is_array($input_field)) {
-                    for ($i=0; $i < count($item_id); $i++) { 
-                        if ($item_id != 0) {
+                    /**
+                     * 1. Get old items
+                     * 2. If old item doesn't in new item then delete the item
+                     */
+                    $oldItemId = MstFileContentDictionary::where('file_dictionary_id', $id)->pluck('id');
+                    for ($i=0; $i < count($oldItemId); $i++) { 
+                        if (!in_array($oldItemId[$i], $item_id)) {
+                            // Delete old item
+                            // return 'old item : '.$oldItemId[$i];
+                            $oldItem = MstFileContentDictionary::find($oldItemId[$i]);
+                            if ($oldItem)
+                                $oldItem->delete();
+                        }
+                    }
+
+                    // Loop for new item or old item
+                    for ($i = 0; $i < count($item_id); $i++) {
+                        if ($item_id[$i] != 0) {
                             // Data lama
                             $contentDictionary = MstFileContentDictionary::find($item_id[$i]);
-                            $contentDictionary->file_dictionary_id = $file_dictionary_id;
                             $contentDictionary->field = $input_field[$i];
                             $contentDictionary->from = $input_from[$i];
                             $contentDictionary->to = $input_to[$i];
@@ -199,7 +249,7 @@ class DictionaryController extends Controller
                         else {
                             // Data baru
                             $newContentDictionary = new MstFileContentDictionary;
-                            $newContentDictionary->file_dictionary_id = $file_dictionary_id;
+                            $newContentDictionary->file_dictionary_id = $id;
                             $newContentDictionary->field = $input_field[$i];
                             $newContentDictionary->from = $input_from[$i];
                             $newContentDictionary->to = $input_to[$i];
@@ -212,7 +262,7 @@ class DictionaryController extends Controller
                     DB::commit();
         
                     Alert('Sukses', 'Berhasil menyimpan data');
-                    return route('dictionary.index');
+                    return redirect()->route('dictionary.index');
                 }
             }
             DB::commit();

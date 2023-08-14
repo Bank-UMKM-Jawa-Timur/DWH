@@ -16,8 +16,9 @@
     <div class="page-inner mt--5">
         <div class="row mt--2">
             <div class="col-md-12">
-                <form action="{{ route('dictionary.store') }}" method="post">
+                <form action="{{ route('dictionary.update', $fileDictionary->id) }}" method="post">
                     @csrf
+                    @method('PUT')
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">{{$title}}</div>
@@ -27,14 +28,16 @@
                                 <div class="col-md-6 col-lg-6">
                                     <div class="form-group name">
                                         <label for="filename">File</label>
-                                        <input type="text" class="form-control" id="filename" name="filename" required>
+                                        <input type="text" class="form-control" id="filename" name="filename"
+                                            value="{{old('filename', $fileDictionary->filename)}}" required>
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-lg-6">
                                     <div class="form-group name">
                                         <label for="description">Deskripsi</label>
-                                        <input type="text" class="form-control" id="description" name="description">
+                                        <input type="text" class="form-control" id="description" name="description"
+                                            value="{{old('filename', $fileDictionary->description)}}">
                                         <small class="form-text text-danger error"></small>
                                     </div>
                                 </div>
@@ -61,31 +64,43 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <span id="number[]">1</span>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm only-number">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm only-number">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm only-number">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_description[]" id="input_description[]" class="form-control-sm">
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-sm btn-icon btn-round btn-danger btn-minus">
-                                                            <i class="fas fa-minus"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                                @forelse ($itemDictionary as $item)
+                                                    <tr>
+                                                        <td>
+                                                            <input type="hidden" name="item_id[]" id="item_id[]" value="{{$item->id}}">
+                                                            <span id="number[]">{{$loop->iteration}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="input_field[]" id="input_field[]"
+                                                                class="form-control-sm" value="{{$item->field}}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="input_from[]" id="input_from[]"
+                                                                class="form-control-sm only-number" value="{{$item->from}}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="input_to[]" id="input_to[]"
+                                                                class="form-control-sm  only-number" value="{{$item->to}}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="input_length[]" id="input_length[]"
+                                                                class="form-control-sm  only-number" value="{{$item->length}}">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="input_description[]" id="input_description[]"
+                                                                class="form-control-sm" value="{{$item->description}}">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-icon btn-round btn-danger btn-minus">
+                                                                <i class="fas fa-minus"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="7">Tidak ada item.</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>
@@ -119,7 +134,10 @@
                 var number = $("#table_item tbody").children().length + 1
                 var new_tr = `
                 <tr>
-                    <td><span id="number[]">${number}</span></td>
+                    <td>
+                        <input type="hidden" name="item_id[]" id="item_id[]" value="0">
+                        <span id="number[]">${number}</span>
+                    </td>
                     <td>
                         <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm">
                     </td>

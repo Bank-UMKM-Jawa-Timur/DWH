@@ -76,8 +76,8 @@
                                                         Selengkapnya
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Edit</a>
-                                                        <a class="dropdown-item" href="#">Detail</a>
+                                                        <a class="dropdown-item" href="{{route('dictionary.edit', $item->id)}}">Edit</a>
+                                                        <a class="dropdown-item" href="{{route('dictionary.show', $item->id)}}">Detail</a>
                                                         <a class="dropdown-item deleteModal" data-toggle="modal"
                                                             data-target="#deleteModal" data-name="{{ $item->name }}"
                                                             data-id="{{ $item->id }}" href="#">Hapus</a>
