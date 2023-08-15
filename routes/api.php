@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\v1\DictionaryController;
 use App\Http\Controllers\API\v1\KreditController;
 use App\Http\Middleware\CheckLogin;
 use Illuminate\Http\Request;
@@ -23,5 +24,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::middleware([CheckLogin::class])->group(function () {
         Route::post('store-kredit', [KreditController::class, 'store']);
+        Route::get('dictionary', [DictionaryController::class, 'index']);
     });
 });
