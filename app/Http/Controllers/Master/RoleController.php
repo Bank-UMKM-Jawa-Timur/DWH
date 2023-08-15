@@ -30,35 +30,51 @@ class RoleController extends Controller
     {
         $param['title'] = 'Role/Peran';
         $param['pageTitle'] = 'Role/Peran';
+        $page_length = $request->page_length ? $request->page_length : 5;
+
+        $searchQuery = $request->query('query');
+        $searchBy = $request->query('search_by');
+
+        $param['page_length'] = $page_length;
+
         if($request->ajax()){
-            $data =$this->search($request->search);
+            $data = $this->list($page_length, $searchQuery, $searchBy);
             return response()->json(['data'=>$data]);
         }else{
-            $data = $this->list();
+            $data = $this->list($page_length, $searchQuery, $searchBy);
             $param['data'] = $data;
             return view('pages.role.index', $param);
         }
     }
 
-    public function list()
+    public function list($page_length =5, $searchQuery, $searchBy)
     {
-        return Role::orderBy('name')->get();
+        $data = Role::orderBy('name');
+
+        if ($searchQuery && $searchBy === 'field') {
+            $data->where(function ($q) use ($searchQuery) {
+                $q->where('name', '=', $searchQuery);
+            });
+        }
+
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
+        return $data;
     }
 
-    public function listOptions()
+    public function search($req, $page_length = 5)
     {
-        return Role::where('name', '!=', 'Vendor')->orderBy('name')->get();
-    }
+        $data = Role::orderBy('name')
+            ->where('name', 'LIKE', '%' . $req . '%');
 
-    public function search($req){
-        return Role::orderBy('name')
-            ->where('name','LIKE','%'.$req.'%')
-            ->get();
-    }
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
 
-    public function paginasi()
-    {
-        return Role::orderBy('name')->paginate(5);
+        return $data;
     }
 
     /**
