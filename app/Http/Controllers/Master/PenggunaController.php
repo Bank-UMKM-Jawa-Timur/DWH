@@ -23,42 +23,42 @@ class PenggunaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $param['title'] = 'Pengguna';
         $param['pageTitle'] = 'Pengguna';
-        $data = $this->paginasi();
+        $page_length = $request->page_length ? $request->page_length : 5;
+
+        $searchQuery = $request->query('query');
+        $searchBy = $request->query('search_by');
+
+        $data = $this->list($page_length, $searchQuery, $searchBy );
         $param['data'] = $data;
 
         return view('pages.pengguna.index', $param);
     }
 
-    public function paginasi()
+    public function list($page_length = 5, $searchQuery, $searchBy)
     {
         $user = User::select(
             'users.*',
             'r.name AS role',
         )
         ->join('roles AS r', 'r.id', 'users.role_id')
-        ->orderBy('users.id')
-        ->get();
-        foreach ($user as $key => $value) {
-            if ($value->nip) {
-                $karyawan = $this->getKaryawan($value->nip);
-                if (gettype($karyawan) == 'string')
-                    $value->detail = null;
-                else {
-                    if ($karyawan) {
-                        if (array_key_exists('nama', $karyawan))
-                            $value->detail = $karyawan;
-                        else
-                            $value->detail = null;
-                    }
-                }
-            }
+        ->orderBy('users.id');
+        if ($searchQuery && $searchBy === 'field') {
+            $user->where(function ($q) use ($searchQuery) {
+                $q->where('nip', '=', $searchQuery)
+                    ->orWhere('email', '=', $searchQuery);
+            });
+        }
+        if (is_numeric($page_length)) {
+            $data = $user->paginate($page_length);
+        } else {
+            $data = $user->get();
         }
 
-        return $user;
+        return $data;
     }
 
     public function listCabang()

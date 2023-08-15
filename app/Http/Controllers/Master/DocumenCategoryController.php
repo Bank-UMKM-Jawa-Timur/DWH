@@ -22,18 +22,51 @@ class DocumenCategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $param['title'] = 'Kategori Dokumen';
         $param['pageTitle'] = 'Kategori Dokumen';
-        $param['data'] = $this->list();
+        $page_length = $request->page_length ? $request->page_length : 5;
+
+        $searchQuery = $request->query('query');
+        $searchBy = $request->query('search_by');
+
+        $data = $this->list($page_length, $searchQuery, $searchBy);
+
+        $param['data'] = $data;
 
         return view('pages.kategori_dokumen.index', $param);
     }
 
-    public function list()
+    public function list($page_length =5, $searchQuery, $searchBy)
     {
-        return DocumentCategory::orderBy('name')->get();
+        $query = DocumentCategory::orderBy('name');
+
+        if ($searchQuery && $searchBy === 'field') {
+            $query->where(function ($q) use ($searchQuery) {
+                $q->where('name', '=', $searchQuery);
+            });
+        }
+
+        if (is_numeric($page_length)) {
+            $data = $query->paginate($page_length);
+        } else {
+            $data = $query->get();
+        }
+
+        return $data;
+    }
+
+    public function search($req, $page_length = 5)
+    {
+        $data = DocumentCategory::orderBy('name')
+        ->where('name', 'LIKE', '%' . $req . '%');
+
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
+        return $data;
     }
 
     /**

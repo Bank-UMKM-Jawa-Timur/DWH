@@ -22,18 +22,53 @@ class VendorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $param['title'] = 'Vendor';
         $param['pageTitle'] = 'Vendor';
-        $param['data'] = $this->list();
+        $page_length = $request->page_length ? $request->page_length : 5;
+
+        $searchQuery = $request->query('query');
+        $searchBy = $request->query('search_by');
+
+        $data = $this->list($page_length, $searchQuery, $searchBy);
+        $param['data'] = $data;
+        $param['page_length'] = $page_length;
 
         return view('pages.vendor.index', $param);
     }
 
-    public function list()
+    public function list($page_length = 5 , $searchQuery, $searchBy)
     {
-        return Vendor::orderBy('name')->get();
+        $query = Vendor::orderBy('name');
+        if ($searchQuery && $searchBy === 'field') {
+            $query->where(function ($q) use ($searchQuery) {
+                $q->where('name', '=', $searchQuery)
+                    ->orWhere('address', '=', $searchQuery)
+                    ->orWhere('phone', '=', $searchQuery);
+            });
+        }
+        if (is_numeric($page_length)) {
+            $data = $query->paginate($page_length);
+        } else {
+            $data = $query->get();
+        }
+
+        return $data;
+    }
+
+    public function search($req, $page_length = 5)
+    {
+        $data = Vendor::orderBy('name')
+        ->where('name', 'LIKE', '%' . $req . '%')
+            ->orWhere('address', 'LIKE', '%' . $req . '%')
+            ->orWhere('phone', 'LIKE', '%' . $req . '%');
+
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
+        return $data;
     }
 
     /**
@@ -83,7 +118,7 @@ class VendorController extends Controller
 
         try {
             \DB::beginTransaction();
-            
+
             $newVendor = new Vendor();
             $newVendor->name = $request->name;
             $newVendor->phone = $request->phone;
@@ -164,7 +199,7 @@ class VendorController extends Controller
 
         try {
             \DB::beginTransaction();
-            
+
             $currentVendor->name = $request->name;
             $currentVendor->phone = $request->phone;
             $currentVendor->address = $request->address;
@@ -218,7 +253,7 @@ class VendorController extends Controller
                 $currentVendor->delete();
                 User::where('vendor_id', $id)->delete();
                 $this->logActivity->store("Menghapus data vendor '$currentName'.");
-                
+
                 $status = 'success';
                 $message = 'Berhasil menghapus data.';
             }
