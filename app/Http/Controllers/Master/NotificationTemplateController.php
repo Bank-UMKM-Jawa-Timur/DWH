@@ -23,11 +23,18 @@ class NotificationTemplateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $param['title'] = 'Notifikasi Template';
         $param['pageTitle'] = 'Notifikasi Template';
-        $param['data'] = $this->list();
+        $page_length = $request->page_length ? $request->page_length : 5;
+
+        $searchQuery = $request->query('query');
+        $searchBy = $request->query('search_by');
+
+        $data = $this->list($page_length, $searchQuery, $searchBy);
+        $param['data'] = $data;
+        $param['page_length'] = $page_length;
         $param['roles'] = Role::orderBy('name', 'ASC')->get();
         $param['actions'] = DB::table('actions')
             ->where('name', 'like', '%KKB-%')
@@ -39,10 +46,32 @@ class NotificationTemplateController extends Controller
         return view('pages.notifikasi_template.index', $param);
     }
 
-    public function list()
+    public function list($page_length =5, $searchQuery, $searchBy)
     {
-        $data = NotificationTemplate::orderBy('notification_templates.id')->get();
+        $data = NotificationTemplate::orderBy('notification_templates.id');
+        if ($searchQuery && $searchBy === 'field') {
+            $data->where(function ($q) use ($searchQuery) {
+                $q->where('title', '=', $searchQuery)
+                    ->orWhere('content', '=', $searchQuery);
+            });
+        }
 
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
+        return $data;
+    }
+    public function search($req, $page_length = 5)
+    {
+        $data = NotificationTemplate::orderBy('notification_templates.id')
+        ->where('tittle', 'LIKE', '%' . $req . '%')
+            ->orWhere('content', 'LIKE', '%' . $req . '%');
+
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
         return $data;
     }
 

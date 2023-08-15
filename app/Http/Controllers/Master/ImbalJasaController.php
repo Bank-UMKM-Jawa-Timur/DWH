@@ -23,18 +23,42 @@ class ImbalJasaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $param['title'] = 'Imbal Jasa';
         $param['pageTitle'] = 'Imbal Jasa';
-        $param['data'] = $this->list();
+        $page_length = $request->page_length ? $request->page_length : 5;
+        $searchQuery = $request->query('query');
+        $searchBy = $request->query('search_by');
 
+        $data = $this->list($page_length, $searchQuery, $searchBy);
+        $param['data'] = $data;
         return view('pages.imbal_jasa.index', $param);
     }
 
-    public function list()
+    public function list($page_length = 5)
     {
-        return ImbalJasa::orderBy('plafond1')->get();
+        $data = ImbalJasa::orderBy('plafond1');
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
+        return $data;
+    }
+
+    public function search($req, $page_length =5, $searchQuery, $searchBy)
+    {
+        $data = ImbalJasa::orderBy('plafond1');
+        if ($searchQuery && $searchBy === 'field') {
+            $data->where(function ($q) use ($searchQuery) {
+                $q->where('plafond1' + 'plafond2', '=', $searchQuery);
+            });
+        }
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
+        return $data;
     }
 
     /**

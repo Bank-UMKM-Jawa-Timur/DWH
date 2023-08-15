@@ -20,14 +20,39 @@ class TargetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->param['title'] = 'Target Cabang';
         $this->param['pageTitle'] = 'Target';
-        $this->param['data'] = Target::select('id', 'total_unit', 'is_active')->orderBy('is_active', 'desc')->paginate(5);
+        $page_length = $request->page_length ? $request->page_length : 5;
+
+        $searchQuery = $request->query('query');
+        $searchBy = $request->query('search_by');
+
+        $data = $this->list($page_length, $searchQuery, $searchBy);
+
+        $this->param['data'] = $data;
 
         return view('pages.target.index', $this->param);
     }
+
+    public function list($page_length = 5, $searchQuery, $searchBy)
+    {
+        $user = Target::select('id', 'total_unit', 'is_active')->orderBy('is_active', 'desc');
+        if ($searchQuery && $searchBy === 'field') {
+            $user->where(function ($q) use ($searchQuery) {
+                $q->where('total_unit', '=', $searchQuery);
+            });
+        }
+        if (is_numeric($page_length)) {
+            $data = $user->paginate($page_length);
+        } else {
+            $data = $user->get();
+        }
+
+        return $data;
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -240,9 +265,9 @@ class TargetController extends Controller
                 if ($currentData) {
                     $currentData->is_active = 0;
                     $currentData->save();
-    
+
                     $this->logActivity->store("Menonaktifkan target yang bernilai ".number_format($currentData->nominal, 0, ',', '.').".");
-    
+
                     $status = 'success';
                     $message = 'Berhasil menonaktifkan target.';
                 }

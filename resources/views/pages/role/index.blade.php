@@ -23,6 +23,36 @@
                         </button>
                     </div>
                     <div class="card-body">
+                        <form id="form" action="" method="get">
+                            <input type="hidden" name="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}">
+                            <div class="d-flex justify-content-between" style="padding-left: 15px;padding-right: 15px;">
+                                <div>
+                                    <div class="form-inline">
+                                        <label>Show</label>
+                                        &nbsp;
+                                        <select class="form-control form-control-sm" name="page_length" id="page_length" >
+                                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                                        </select>
+                                        &nbsp;
+                                        <label>entries</label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-inline">
+                                        <label>Search : </label>
+                                        &nbsp;
+                                        <form action="{{ route('role.index') }}" method="GET">
+                                            <input class="form-control form-control-sm" name="query" value="{{ old('query', Request()->query('query')) }}">
+                                            <input type="hidden" name="search_by" value="field">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                         <div class="table-responsive">
                             <table class="table mt-2" id="basic-datatables">
                                 <thead>
@@ -69,9 +99,11 @@
                                 </tbody>
                             </table>
                         </div>
-                        {{-- <div class="paginated">
-                            {{ $data->links('pagination::bootstrap-4') }}
-                        </div> --}}
+                        <div class="paginated">
+                            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                            {{ $data->links('pagination::bootstrap-5') }}
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -157,12 +189,9 @@
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
         <script>
-            $('#basic-datatables').DataTable({
-                lengthMenu: [
-                    [5, 10, 15, 20, -1],
-                    [5, 10, 15, 20, 'All']
-                ]
-            });
+            $('#page_length').on('change', function() {
+                $('#form').submit()
+            })
 
             // Form
             $('#add-button').click(function(e) {
