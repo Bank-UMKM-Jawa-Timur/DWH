@@ -202,7 +202,10 @@
                     var row = data[i]
                     var new_tr = `
                     <tr>
-                        <td><span id="number[]">${(i+1)}</span></td>
+                        <td>
+                            <input type="hidden" name="item_id[]" id="item_id[]" value="0">
+                            <span id="number[]">${(i+1)}</span>
+                        </td>
                         <td>
                             <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm" value="${row[0]}">
                         </td>
