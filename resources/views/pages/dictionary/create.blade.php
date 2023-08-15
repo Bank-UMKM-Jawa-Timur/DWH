@@ -1,7 +1,10 @@
 @extends('layout.master')
 
 @section('title', $title)
-
+@push('extraStyle')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>  
+@endpush
 @section('content')
 
     <div class="panel-header">
@@ -42,7 +45,26 @@
                             <hr>
                             <div class="row">
                                 <div class="col">
-                                    <span class="h4 ml-2">Item</span>
+                                    <span class="h4">Item</span>
+                                    <div class="form-group form-inline">
+                                        <div class=" p-0">
+                                            <input type="file" name="file" id="file" class="form-control-file"
+                                                accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                                        </div>
+                                        <div>
+                                            
+                                            <button type="button" class="btn btn-sm btn-info btn-import">
+                                                <i class="fas fa-file-excel"></i>
+                                                Import
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <a style="text-decoration: underline;" href="#formatExcelModal"
+                                        class="ml-2" data-toggle="modal" data-target="#formatExcelModal">
+                                        Lihat Contoh Format
+                                    </a>
+                                    <br>
+                                    <span class="ml-2">Catatan! Jika menggunakan fitur import, maka data pada tabel akan dikosongkan terlebih dahulu.</span>
                                     <div class="table-responsive">
                                         <table class="table mt-2" id="table_item">
                                             <thead>
@@ -61,7 +83,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
+                                                {{--  <tr>
                                                     <td>
                                                         <span id="number[]">1</span>
                                                     </td>
@@ -85,7 +107,7 @@
                                                             <i class="fas fa-minus"></i>
                                                         </button>
                                                     </td>
-                                                </tr>
+                                                </tr>  --}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -98,6 +120,40 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="formatExcelModal" tabindex="-1" role="dialog" aria-labelledby="formatExcelModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="formatExcelModalLabel">Format Excel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td>CYSTAT</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>Status Record</td>
+                            </tr>
+                            <tr>
+                                <td>CYCODE</td>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>1</td>
+                                <td>Currency Code</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -142,12 +198,118 @@
                     </td>
                 </tr>
                 `;
-                $('#table_item tbody tr:last').after(new_tr);
+                $('#table_item tbody').append(new_tr);
             })
 
             $("#table_item").on('click', '.btn-minus', function () {
                 $(this).closest('tr').remove();
             })
+
+            $('.btn-import').on('click', function(e) {
+                var file = $('#file').val()
+                if (file)
+                    importExcel();
+                else
+                    alert('please select the file')
+            })
+
+            function showToTable(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i]
+                    var new_tr = `
+                    <tr>
+                        <td><span id="number[]">${(i+1)}</span></td>
+                        <td>
+                            <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm" value="${row[0]}">
+                        </td>
+                        <td>
+                            <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm only-number" value="${row[[1]]}">
+                        </td>
+                        <td>
+                            <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm only-number" value="${row[[2]]}">
+                        </td>
+                        <td>
+                            <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm only-number" value="${row[[3]]}">
+                        </td>
+                        <td>
+                            <input type="text" name="input_description[]" id="input_description[]" class="form-control-sm" value="${row[[4]]}">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-icon btn-round btn-danger btn-minus">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    `;
+                    $('#table_item tbody').append(new_tr);
+                }
+            }
+
+            function importExcel() {
+                $('#table_item tbody').empty()
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls)$/;  
+                /*Checks whether the file is a valid excel file*/  
+                if (regex.test($("#file").val().toLowerCase())) {  
+                    var xlsxflag = false; /*Flag for checking whether excel is .xls format or .xlsx format*/  
+                    if ($("#file").val().toLowerCase().indexOf(".xlsx") > 0) {  
+                        xlsxflag = true;  
+                    }  
+                    /*Checks whether the browser supports HTML5*/  
+                    if (typeof (FileReader) != "undefined") {  
+                        var reader = new FileReader();  
+                        reader.onload = function (e) {  
+                            var data = e.target.result;
+                            /*Converts the excel data in to object*/  
+                            if (xlsxflag) {  
+                                var workbook = XLSX.read(data, { type: 'binary' });  
+                            }
+                            /*Gets all the sheetnames of excel in to a variable*/  
+                            var sheet_name_list = workbook.SheetNames;
+                            var cnt = 0; /*This is used for restricting the script to consider only first sheet of excel*/  
+                            sheet_name_list.forEach(function (y) { /*Iterate through all sheets*/  
+                                var exceljson = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[y]);
+                                var excel = workbook.Sheets[y];
+                                var cell_range = excel['!ref'] != '' ? excel['!ref'].split(':') : [];
+                                var cell_from = cell_range.length == 2 ? cell_range[0] : ''
+                                var cell_to = cell_range.length == 2 ? cell_range[1] : ''
+                                var letterPattern = /[a-z]+/gi;
+                                var cell_from_letter = cell_from.match(letterPattern)[0]
+                                var cell_to_letter = cell_to.match(letterPattern)[0]
+                                var numberPattern = /\d+/g;
+                                var cell_from_number = cell_from.match(numberPattern)[0]
+                                var cell_to_number = cell_to.match(numberPattern)[0]
+                                var cell_range_letter = ['A', 'B', 'C', 'D', 'E']
+
+                                var arr_data = [];
+
+                                for (var i = 1; i <= cell_to_number; i++) {
+                                    var arr_row = [];
+                                    for (var j = 0; j < cell_range_letter.length; j++) {
+                                        var index = `${cell_range_letter[j]}${i}`
+                                        arr_row.push(excel[index].v)
+                                    }
+                                    arr_data.push(arr_row)
+                                }
+
+                                // Show excel data to html table
+                                showToTable(arr_data)
+                            }); 
+                        }  
+                        if (xlsxflag) {/*If excel file is .xlsx extension than creates a Array Buffer from excel*/  
+                            reader.readAsArrayBuffer($("#file")[0].files[0]);  
+                        }  
+                        else {  
+                            reader.readAsBinaryString($("#file")[0].files[0]);  
+                        }  
+                    }  
+                    else {  
+                        alert("Maaf! Browser Anda tidak mendukung HTML5!");  
+                    }  
+                }  
+                else {  
+                    alert("Unggah file Excel yang valid!");  
+                }  
+            }
         </script>
     @endpush
 @endsection
