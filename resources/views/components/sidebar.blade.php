@@ -123,6 +123,12 @@
                         <p>Notifikasi</p>
                     </a>
                 </li>
+                <li class="nav-item {{ request()->is('collection') ? 'active' : '' }}">
+                    <a href="{{ route('collection.index') }}">
+                        <i class="icon-folder-alt"></i>
+                        <p>Collection</p>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

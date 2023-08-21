@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KreditController;
 use App\Http\Controllers\LogActivitesController;
@@ -112,6 +113,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/kredit/confirm-imbal-jasa', [KreditController::class, 'confirmUploadUImbalJasa'])->name('kredit.confirm-imbal-jasa');
 
     Route::get('/log_aktivitas', [LogActivitesController::class, 'index'])->name('log_aktivitas.index');
+
+    // Collection
+    Route::get('/collection', [CollectionController::class, 'index'])->name('collection.index');
+    Route::post('/collection/upload', [CollectionController::class, 'upload'])->name('collection.upload');
+    Route::post('/collection', [CollectionController::class, 'store'])->name('collection.store');
 });
 
 

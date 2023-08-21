@@ -12,6 +12,7 @@
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.7",
+        "league/flysystem-ftp": "^3.15",
         "realrashid/sweet-alert": "^7.1"
     },
     "require-dev": {
