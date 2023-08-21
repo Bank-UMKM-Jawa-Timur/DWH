@@ -18,58 +18,31 @@ class CollectionController extends Controller
         return view('pages.collection.index', $param);
     }
 
+    public function setupFTP()
+	{
+		return [
+				'ftp' => [
+					'driver' => 'ftp',
+					'host'     => env('FTP_HOST'),
+                    'username' => env('FTP_USERNAME'),
+                    'password' => env('FTP_PASSWORD'),
+                    'port'     => (int)env('FTP_PORT'),
+					'root' => env('FTP_ROOT')
+				],
+		];
+	}
+
     public function upload(Request $request) {
+        $start = date('H:i:s');
         if ($request->hasFile('file')) {
             $filename = $request->file('file')->getClientOriginalName();
             $save_dir = 'collection/'.$filename;
-            // Storage::disk('public')->put($save_dir, fopen($request->file('file'), 'r+'));
-            // Storage::disk('ftp')->put($filename, fopen($request->file('file'), 'w'));
-            // connect to FTP server
-            // $ftp_server = env('FTP_HOST');
-            // $ftp_conn = ftp_connect($ftp_server) or die("Could not connect to $ftp_server");
-
-            // if ($ftp_conn) {
-            //     //login to FTP server
-            //     $ftp_username = env('FTP_USERNAME');
-            //     $ftp_password = env('FTP_PASSWORD');
-            //     $login = ftp_login($ftp_conn, $ftp_username, $ftp_password);
-            //     ftp_pasv($ftp_conn, true) or die("Cannot switch to passive mode"); 
-            //     ftp_set_option($ftp_conn, FTP_USEPASVADDRESS, false);
-
-            //     if ($login) {
-            //         // upload file
-            //         if (ftp_put($ftp_conn, "serverfile.txt", $request->file('file'), FTP_ASCII))
-            //         {
-            //             return "Successfully uploaded $filename.";
-            //         }
-            //         else
-            //         {
-            //             return "Error uploading $filename.";
-            //         }
-            //     }
-            //     else {
-            //         return 'login failed';
-            //     }
-            // }
-            // else {
-            //     return 'failed to connect';
-            // }
             try {
-                $host = env('COLLECTION_API_HOST');
-                $apiURL = $host . '/upload';
+                Storage::disk('ftp')->put($filename, fopen($request->file('file'), 'r+'));
+                $end = date('H:i:s');
                 
-                $response = Http::timeout(360)->post($apiURL, [
-                    'file' => $request->file('file')
-                ]);
-                $response = Http::attach('file', fopen($request->file('file'), 'r+'), $filename)->post($apiURL);
-                
-                $statusCode = $response->status();
-                $responseBody = json_decode($response->getBody(), true);
-
-                return $responseBody;
-            } catch (\Exception $e) {
-                return 'err'.$e->getMessage();
-            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                return back()->withStatus('Berhasil upload file');
+            } catch (\Exception $e) { // If I looked correctly it is RuntimeException so you can be more explicit
                 return $e->getMessage();
             }
             return back();
