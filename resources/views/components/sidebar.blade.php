@@ -78,11 +78,11 @@
                                         <span class="sub-item">Template Notifikasi</span>
                                     </a>
                                 </li>
-                                <li class="{{ request()->is('master/dictionary') ? 'active' : '' }}">
+                                {{--  <li class="{{ request()->is('master/dictionary') ? 'active' : '' }}">
                                     <a href="{{ route('dictionary.index') }}">
                                         <span class="sub-item">Dictionary</span>
                                     </a>
-                                </li>
+                                </li>  --}}
                             </ul>
                         </div>
                     </li>
@@ -123,12 +123,12 @@
                         <p>Notifikasi</p>
                     </a>
                 </li>
-                <li class="nav-item {{ request()->is('collection') ? 'active' : '' }}">
+                {{--  <li class="nav-item {{ request()->is('collection') ? 'active' : '' }}">
                     <a href="{{ route('collection.index') }}">
                         <i class="icon-folder-alt"></i>
                         <p>Collection</p>
                     </a>
-                </li>
+                </li>  --}}
             </ul>
         </div>
     </div>
