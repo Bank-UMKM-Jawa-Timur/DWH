@@ -13,7 +13,70 @@ class CollectionController extends Controller
     public function index(Request $request) {
         $param['title'] = 'Collection';
         $param['pageTitle'] = 'Collection';
+        $param['total_data'] = 0;
+        $param['total_per_page'] = 1000;
         
+        if ($request->has('filename')) {
+            // retrieve from api
+            $host = env('COLLECTION_API_HOST');
+            $apiURL = $host . '/';
+
+            $filename = '';
+            $finalResponse = null;
+
+            try {
+                $dictionary = $this->getDictionary($request->filename);
+                $param['fields'] = $dictionary['fields'];
+                $response = Http::timeout(360)->post($apiURL, [
+                    'file' => $request->filename.'.txt',
+                    'dictionary' => $dictionary['item']
+                ]);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+                if ($responseBody) {
+                    if ($responseBody['status'] == 'success') {
+                        $filename = $responseBody['filename'];
+                        $param['filename'] = $filename;
+                    }
+                }
+
+                if ($filename != '') {
+                    $apiURL = $host . '/json';
+                    $res2 = Http::timeout(360)->get($apiURL, [
+                        'filename' => $filename
+                    ]);
+
+                    $statusCode2 = $res2->status();
+                    $responseBody2 = json_decode($res2->getBody(), true);
+                    if ($statusCode2 == 200) {
+                        if ($responseBody2) {
+                            $finalResponse = $responseBody2;
+                        }
+                    }
+                }
+
+                if ($finalResponse) {
+                    $param['total_data'] = $finalResponse['total'];
+                    $offset = 0;
+                    if ($request->has('page')) {
+                        $page = $request->page;
+                        if ($page > 1) {
+                            $offset = ($param['total_per_page'] * $page - $param['total_per_page']) + 1;
+                        }
+                    }
+
+                    $finalResponse['data'] = array_slice($finalResponse['data'], $offset, $param['total_per_page']);
+                    $param['result'] = $finalResponse;
+                }
+
+                return view('pages.collection.index', $param);
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                return $e->getMessage();
+            }
+        }
 
         return view('pages.collection.index', $param);
     }
@@ -127,7 +190,7 @@ class CollectionController extends Controller
             }
 
             if ($finalResponse) {
-                // $finalResponse['data'] = array_slice($finalResponse['data'], 0, 100);
+                $finalResponse['data'] = array_slice($finalResponse['data'], 0, 1000);
                 $param['result'] = $finalResponse;
             }
 

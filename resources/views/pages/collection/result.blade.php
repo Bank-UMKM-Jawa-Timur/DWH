@@ -14,8 +14,7 @@
 <div class="page-inner">
     <div class="row">
         <div class="col-md-12">
-            <form action="{{route('collection.store')}}" method="post">
-                @csrf
+            <form action="{{route('collection.index')}}" method="get">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">{{$title}}</div>
