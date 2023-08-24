@@ -1,5 +1,11 @@
 @extends('layout.master')
-
+@push('extraStyle')
+    <style>
+        #upload-form .card-action {
+            display: none;
+        }
+    </style>
+@endpush
 @section('title', $title)
 @section('content')
 <div class="panel-header">
@@ -14,169 +20,117 @@
 <div class="page-inner">
     <div class="row">
         <div class="col-md-12">
-            <form action="{{route('collection.upload')}}" enctype="multipart/form-data" method="POST">
+            <form id="upload-form" action="{{route('collection.store')}}" method="POST">
                 @csrf
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Upload {{$title}}</div>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group name">
-                                    <label for="file">File</label>
-                                    <input type="file" class="form-control" id="file" name="file" required>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
-                            </div>
+                        <div id="upload-container" class="text-center">
+                            <button type="button" id="browse_file" class="btn btn-primary">Pilih Berkas</button>
+                            <p class="text-filename">File : </p>
+                            <input type="hidden" name="file" id="file">
+                            <input type="hidden" name="result_filename" id="result_filename">
+                        </div>
+                        <div class="progress mt-3 position-relative" style="height: 25px; width: 100%;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%; height: 100%"></div>
                         </div>
                     </div>
                     <div class="card-action">
                         <button type="submit" class="btn btn-success">Proses</button>
-                        <button type="reset" class="btn btn-danger">Reset</button>
+                        <button type="reset" class="btn btn-danger" id="btn-reset">Reset</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
-    <form action="{{route('collection.index')}}" method="get">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">{{$title}}</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group name">
-                                    <label for="filename">Filename</label>
-                                    <input type="text" class="form-control" id="filename" name="filename"
-                                        value="{{old('filename', isset($_GET['filename']) ? $_GET['filename'] : '')}}" required>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-action">
-                        <button type="submit" class="btn btn-success">Proses</button>
-                        <button type="reset" class="btn btn-danger">Reset</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        @isset($result)
-        <div class="row mt-2">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">{{$title}} Result</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="p-3">
-                            <p class="h4">
-                                Total Data : {{number_format($total_data, 0, ',', '.')}}(Data per halaman {{number_format($total_per_page, 0, ',', '.')}})
-                            </p>
-                            <div class="form-inline d-flex">
-                                <label class="mr-2" for="page">Halaman: </label>
-                                <select name="page" id="page">
-                                    @for($i = 1;$i <= ($total_data / $total_per_page); $i++)
-                                    <option value="{{$i}}" @if($i == $_GET['page']) selected @endif>{{$i}}</option>
-                                    @endfor
-                                </select>
-                                <button class="btn btn-sm btn-info ml-2">Tampilkan</button>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table" id="basic-datatables">
-                                {{--  <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Field</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>CYSTAT</td>
-                                    </tr>
-                                </tbody>  --}}
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        @for($i = 0; $i < count($fields); $i++)
-                                            <th>{{$fields[$i]}}</th>
-                                        @endfor
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($result['data'] as $key => $item)
-                                        <tr>
-                                            <td>{{$loop->iteration}}</td>
-                                            @for($i = 0; $i < count($fields); $i++)
-                                                <td>{{$result['data'][$key][$fields[$i]]}}</td>
-                                            @endfor
-                                        </tr>
-                                    @empty
-                                        
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endisset
-    </form>
 </div>
 @push('extraScript')
-<script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/resumable.js/1.1.0/resumable.min.js"></script>
 <script>
-    $('#basic-datatables').DataTable({});
-    $('#page').select2();
+    let browseFile = $("#browse_file")
+    var resumable = new Resumable({
+        target: "{{route('collection.upload')}}",
+        query: {_token: '{{csrf_token()}}'},
+        filetype: ['txt'],
+        headers: {
+            'Accept': 'application/json'
+        },
+        testChunks: false,
+        throttleProgressCallbacks: 1,
+    });
+
+    resumable.assignBrowse(browseFile[0]);
+
+    resumable.on('fileAdded', function(file) { // trigger when file picked
+        console.log('File picked')
+        const filename = file.fileName
+        $('.text-filename').html(`File : ${filename}`)
+        $('#file').val(filename)
+        showProgress();
+        resumable.upload() // to actually start uploading
+    })
+
+    resumable.on('fileProgress', function(file) { // trigger when file progress update
+        updateProgress(Math.floor(file.progress() * 100))
+    })
+
+    resumable.on('fileSuccess', function(file, response) { // trigger when file upload complete
+        successMessage('Berhasil mengupload file')
+        console.log('file uploaded')
+        var res = JSON.parse(response)
+        const filename = res.filename
+        $('#result_filename').val(filename)
+        $('#upload-form').find('.card-action').show()
+    })
+
+    resumable.on('fileError', function(file, response) { // trigger when file upload error
+        console.log(`upload error : ${response}`)
+        errorMessage('Terjadi kesalahan')
+    })
+
+    let progress = $('.progress')
+
+    function showProgress() {
+        progress.find('.progress-bar').css('width', '0%')
+        progress.find('.progress-bar').html('0%')
+        progress.find('.progress-bar').removeClass('bg-success')
+        progress.show()
+    }
+
+    function updateProgress(value) {
+        progress.find('.progress-bar').css('width', `${value}%`)
+        progress.find('.progress-bar').html(`${value}%`)
+        //$('.progres-val').html(`${value}%`)
+    }
+
+    function hideProgress() {
+        progress.hide()
+    }
+
+    function successMessage(message) {
+        swal("Berhasil!", message, {
+            icon: "success",
+            timer: 3000,
+            closeOnClickOutside: false
+        })
+    }
+
+    function errorMessage(message) {
+        swal("Gagal!", message, {
+            icon: "error",
+            timer: 3000,
+            closeOnClickOutside: false
+        })
+    }
+
+    $('#btn-reset').on('click', function(e) {
+        $('#file').val('')
+        $('.text-filename').html('File : ')
+        progress.find('.progress-bar').css('width', '0%')
+        progress.find('.progress-bar').html('0%')
+    })
 </script>
 @endpush
 @endsection

@@ -14,29 +14,28 @@
 <div class="page-inner">
     <div class="row">
         <div class="col-md-12">
-            <form action="{{route('collection.index')}}" method="get">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">{{$title}}</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group name">
-                                    <label for="filename">File</label>
-                                    <input type="text" class="form-control" id="filename" name="filename"
-                                        value="{{old('filename', isset($filename) ? $filename : '')}}" required>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">{{$title}}</div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-6">
+                            <div class="form-group name">
+                                <label for="filename">File</label>
+                                <input type="text" class="form-control" id="filename" name="filename"
+                                    value="{{old('filename', isset($filename) ? $filename : '')}}" readonly>
+                                <input type="hidden" name="filenametime" id="filenametime" value="{{old('filenametime', isset($filenametime) ? $filenametime : '')}}">
+                                <small class="form-text text-danger error"></small>
                             </div>
                         </div>
                     </div>
-                    <div class="card-action">
-                        <button type="submit" class="btn btn-success">Proses</button>
-                        <button type="reset" class="btn btn-danger">Reset</button>
-                    </div>
                 </div>
-            </form>
+                <div class="card-action">
+                    <button type="button" class="btn btn-success" id="btn-process">Proses</button>
+                    <button type="reset" class="btn btn-danger">Reset</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -45,11 +44,77 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">{{$title}}</div>
+                    <div class="card-title">{{$title}} Result</div>
                 </div>
                 <div class="card-body">
+                    <div class="p-3">
+                        <p class="h4">
+                            Total Data : {{number_format($total_data, 0, ',', '.')}}(Data per halaman {{number_format($total_per_page, 0, ',', '.')}})
+                        </p>
+                        <div class="form-inline d-flex">
+                            <label class="mr-2" for="page">Halaman: </label>
+                            <select name="page" id="page">
+                                @for($i = 1;$i <= ($total_data / $total_per_page); $i++)
+                                <option value="{{$i}}" @if($i == $_GET['page']) selected @endif>{{$i}}</option>
+                                @endfor
+                            </select>
+                            <button class="btn btn-sm btn-info ml-2">Tampilkan</button>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table" id="basic-datatables">
+                            {{--  <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Field</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>CYSTAT</td>
+                                </tr>
+                            </tbody>  --}}
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -82,6 +147,40 @@
 <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
 <script>
     $('#basic-datatables').DataTable({});
+    $('#basic-datatables').DataTable({});
+    $('#page').select2();
+
+    $('#btn-process').on('click', function(e) {
+        e.preventDefault()
+        const filenametime = "{{$filenametime}}"
+        const file_url = "{{$file_url}}"
+        var dictionary = "{{$dictionary}}"
+
+        var request = {
+            'file': filenametime,
+            'file_url': file_url,
+            'dictionary': dictionary
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "{{env('COLLECTION_API_HOST')}}/extract",
+            dataType: "json",
+            data: JSON.stringify(request),
+            headers: {
+                'Access-Control-Request-Headers': 'x-requested-with',
+            },
+            success: function(data) {
+                console.log(`Response : ${data}`)
+                alert('berhasil')
+            },
+            error: function(error) {
+                console.log(`Error : `)
+                console.log(error)
+                alert(error)
+            }
+        });
+    })
 </script>
 @endpush
 @endsection
