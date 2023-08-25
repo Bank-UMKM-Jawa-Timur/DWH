@@ -118,6 +118,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/collection', [CollectionController::class, 'index'])->name('collection.index');
     Route::post('/collection/upload', [CollectionController::class, 'upload'])->name('collection.upload');
     Route::post('/collection', [CollectionController::class, 'store'])->name('collection.store');
+    Route::post('/collection/page', [CollectionController::class, 'getPage'])->name('collection.page');
 });
 
 

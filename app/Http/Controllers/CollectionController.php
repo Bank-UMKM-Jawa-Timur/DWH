@@ -114,8 +114,11 @@ class CollectionController extends Controller
         $param['total_data'] = 0;
         $limit = 1000;
         $param['total_per_page'] = $limit;
+        $param['page'] = 1;
         
         if ($request->has('file') && $request->has('result_filename')) {
+            $param['file'] = $request->file;
+            $param['result_filename'] = $request->result_filename;
             $inp_filename = explode('.', $request->file)[0]; // Only filename
             $result_filename = $request->result_filename; // Filename + time + ext
             $filenametime = str_replace('.txt', '', $result_filename); // Filename + time
@@ -157,8 +160,9 @@ class CollectionController extends Controller
             if (Storage::fileExists("txt-files/$filenametime"))
                 Storage::disk('public')->deleteDirectory("txt-files/$filenametime");
             
-            $file_url = asset("storage/json-files/$filenametime").'/'.$filenametime.'_1.json';
-            $param['file_url'] = $file_url;
+            $json_path = "public/json-files/$filenametime".'/'.$filenametime.'_1.json';
+            $file_json = json_decode(Storage::get($json_path), true);
+            $param['file_json'] = $file_json;
             $dictionary = $this->getDictionary($inp_filename);
             $param['dictionary'] = $dictionary['item'];
 
@@ -173,7 +177,9 @@ class CollectionController extends Controller
             try {
                 $reqBody = [
                     'file' => $filenametime,
-                    'file_url' => $file_url,
+                    'file_json' => $file_json,
+                    'total' => $total_data_txt,
+                    'page' => 1,
                     'dictionary' => $dictionary['item']
                 ];
                 $param['fields'] = $dictionary['fields'];
@@ -185,9 +191,7 @@ class CollectionController extends Controller
                 ->post($apiURL);
 
                 $statusCode = $response->status();
-                return $statusCode;
                 $responseBody = json_decode($response->getBody(), true);
-                return $responseBody;
                 if ($responseBody) {
                     if ($responseBody['status'] == 'success') {
                         $filename = $responseBody['filename'];
@@ -205,7 +209,6 @@ class CollectionController extends Controller
                             
                             $statusCode2 = $res2->status();
                             $responseBody2 = json_decode($res2->getBody(), true);
-                            return $statusCode2;
                             if ($statusCode2 == 200) {
                                 if ($responseBody2) {
                                     $finalResponse = $responseBody2;
@@ -213,6 +216,115 @@ class CollectionController extends Controller
                                     if ($finalResponse) {
                                         if (array_key_exists('total', $finalResponse) && array_key_exists('data', $finalResponse)) {
                                             $param['total_data'] = $finalResponse['total'];
+                                            $param['total_all_data'] = $finalResponse['total_all_data'];
+                                            $param['result'] = $finalResponse['data'];
+                                        }
+                                        else {
+                                            Alert::error('Gagal', 'Terjadi kesalahan saat mengambil data');
+                                        }
+                                    }
+                                }
+                            }
+                            else if ($statusCode2 == 404) {
+                                Alert::error('Gagal', 'Data tidak ditemukan');
+                                return back();
+                            }
+                            else {
+                                Alert::error('Gagal', 'Terjadi kesalahan saat mengambil data');
+                                return back();
+                            }
+                        }
+                    }
+                }
+                else {
+                    Alert::error('Gagal', 'Gagal mengunggah berkas');
+                    return back();
+                }
+
+                return view('pages.collection.result', $param);
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                return $e->getMessage();
+            }
+        }
+    }
+
+    public function getPage(Request $request) {
+        $param['title'] = 'Collection Result';
+        $param['pageTitle'] = 'Collection';
+        $param['total_data'] = 0;
+        $limit = 1000;
+        $param['total_per_page'] = $limit;
+        
+        if ($request->has('file') && $request->has('result_filename') && $request->has('page')) {
+            $page = $request->page;
+            $inp_filename = explode('.', $request->file)[0]; // Only filename
+            $result_filename = $request->result_filename; // Filename + time + ext
+            $filenametime = str_replace('.txt', '', $result_filename); // Filename + time
+            $param['file'] = $request->file;
+            $param['page'] = $page;
+            $param['result_filename'] = $request->result_filename;
+            $param['filename'] = $request->file;
+            $param['filenametime'] = $filenametime;
+            $total_data_txt = $request->total_all_data;
+            $param['total_all_data'] = $total_data_txt;
+            
+            $json_path = "public/json-files/$filenametime".'/'.$filenametime."_$page.json";
+            $file_json = json_decode(Storage::get($json_path), true);
+            $param['file_json'] = $file_json;
+            $dictionary = $this->getDictionary($inp_filename);
+            $param['dictionary'] = $dictionary['item'];
+
+            // retrieve from api
+            $host = env('COLLECTION_API_HOST');
+            $apiURL = $host . '/extract';
+
+            $filename = '';
+            $finalResponse = null;
+
+            try {
+                $reqBody = [
+                    'file' => $filenametime,
+                    'file_json' => $file_json,
+                    'total' => $total_data_txt,
+                    'page' => $page,
+                    'dictionary' => $dictionary['item'],
+                ];
+                $param['fields'] = $dictionary['fields'];
+                $response = Http::withHeaders([
+                    'Accept' => '*/*',
+                    'Content-Type' => 'application/json'
+                ])->timeout(360)
+                ->withBody(json_encode($reqBody), 'application/json')
+                ->post($apiURL);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+                if ($responseBody) {
+                    if ($responseBody['status'] == 'success') {
+                        $filename = $responseBody['filename'];
+                        $param['filename'] = $filename;
+                        if ($filename != '') {
+                            $apiURL2 = $host . '/json';
+                            $res2 = Http::withHeaders([
+                                'Accept' => '*/*',
+                                'Content-Type' => 'application/json'
+                            ])->timeout(360)->get($apiURL2, [
+                                'filename' => $filename,
+                                'page' => $page
+                            ]);
+                            
+                            $statusCode2 = $res2->status();
+                            $responseBody2 = json_decode($res2->getBody(), true);
+                            if ($statusCode2 == 200) {
+                                if ($responseBody2) {
+                                    $finalResponse = $responseBody2;
+        
+                                    if ($finalResponse) {
+                                        if (array_key_exists('total', $finalResponse) && array_key_exists('data', $finalResponse)) {
+                                            $param['total_data'] = $finalResponse['total'];
+                                            $param['total_all_data'] = $finalResponse['total_all_data'];
                                             $param['result'] = $finalResponse['data'];
                                         }
                                         else {

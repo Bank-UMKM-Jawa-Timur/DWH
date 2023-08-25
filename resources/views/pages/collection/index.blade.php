@@ -8,16 +8,12 @@
 @endpush
 @section('title', $title)
 @section('content')
-<div class="panel-header">
-    <div class="page-inner py-5">
-        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-            <div>
-                <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-            </div>
+<div class="page-inner">
+    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+        <div>
+            <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
         </div>
     </div>
-</div>
-<div class="page-inner">
     <div class="row">
         <div class="col-md-12">
             <form id="upload-form" action="{{route('collection.store')}}" method="POST">
