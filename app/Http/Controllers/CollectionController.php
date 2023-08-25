@@ -132,7 +132,6 @@ class CollectionController extends Controller
             while(!feof($content)){
                 $line = fgets($content);
                 if (!str_contains($line, "")) {
-                    // echo $line."<br>";
                     array_push($txt_data, utf8_encode($line));
                 }
             }
@@ -143,12 +142,13 @@ class CollectionController extends Controller
 
             if ($total_data_txt > $limit) {
                 $offset = 0;
-                $total_page  = (int) $total_data_txt / $limit;
+                $total_page  = (int) round($total_data_txt / $limit);
                 for ($i=1; $i <= $total_page; $i++) { 
                     if ($i > 1) {
                         $offset = ($limit * $i - $limit) + 1;
                     }
-                    $value = array_splice($txt_data, $offset, $limit);
+                    $value = array_slice($txt_data, $offset, $limit);
+                    
                     Storage::disk('public')->put("json-files/$filenametime/$filenametime"."_$i.json", json_encode($value));
                 }
             }
@@ -166,7 +166,6 @@ class CollectionController extends Controller
             $dictionary = $this->getDictionary($inp_filename);
             $param['dictionary'] = $dictionary['item'];
 
-            // return view('pages.collection.result', $param);
             // retrieve from api
             $host = env('COLLECTION_API_HOST');
             $apiURL = $host . '/extract';

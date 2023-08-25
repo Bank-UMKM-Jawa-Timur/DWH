@@ -62,10 +62,16 @@
     resumable.on('fileAdded', function(file) { // trigger when file picked
         console.log('File picked')
         const filename = file.fileName
-        $('.text-filename').html(`File : ${filename}`)
-        $('#file').val(filename)
-        showProgress();
-        resumable.upload() // to actually start uploading
+        const ext = file.fileName.split(".")[1]
+        if (ext == 'txt') {
+            $('.text-filename').html(`File : ${filename}`)
+            $('#file').val(filename)
+            showProgress();
+            resumable.upload() // to actually start uploading
+        }
+        else {
+            errorMessage('Hanya bisa memilih file berekstensi .txt')
+        }
     })
 
     resumable.on('fileProgress', function(file) { // trigger when file progress update
@@ -98,7 +104,6 @@
     function updateProgress(value) {
         progress.find('.progress-bar').css('width', `${value}%`)
         progress.find('.progress-bar').html(`${value}%`)
-        //$('.progres-val').html(`${value}%`)
     }
 
     function hideProgress() {
