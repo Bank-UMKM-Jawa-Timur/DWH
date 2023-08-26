@@ -247,6 +247,10 @@ class CollectionController extends Controller
                 return $e->getMessage();
             }
         }
+        else {
+            Alert::error('Gagal', 'Tidak ada berkas yang dipilih');
+            return back();
+        }
     }
 
     public function getPage(Request $request) {
