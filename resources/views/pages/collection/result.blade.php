@@ -66,7 +66,7 @@
                                     <input type="hidden" name="result_filename" id="result_filename" value="{{$result_filename}}">
                                     <input type="hidden" name="total_all_data" value="{{$total_all_data}}">
                                     <label class="mr-2" for="page">Halaman: </label>
-                                    <select name="page" id="page">
+                                    <select name="page" id="page" class="pl-2 pr-2">
                                         @for($i = 1;$i <= ($total_all_data / $total_per_page); $i++)
                                             <option value="{{$i}}" @if($i == $page) selected @endif>{{$i}}</option>
                                         @endfor

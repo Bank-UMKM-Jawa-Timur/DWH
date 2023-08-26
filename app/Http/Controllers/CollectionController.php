@@ -168,6 +168,10 @@ class CollectionController extends Controller
 
             // retrieve from api
             $host = env('COLLECTION_API_HOST');
+            if (!$host) {
+                Alert::error('Gagal', 'API host belum diatur');
+                return back();
+            }
             $apiURL = $host . '/extract';
 
             $filename = '';
@@ -242,9 +246,11 @@ class CollectionController extends Controller
 
                 return view('pages.collection.result', $param);
             } catch (\Exception $e) {
-                return $e->getMessage();
+                Alert::error('Error', $e->getMessage());
+                return back();
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                return $e->getMessage();
+                Alert::error('Error', $e->getMessage());
+                return back();
             }
         }
         else {
@@ -281,6 +287,10 @@ class CollectionController extends Controller
 
             // retrieve from api
             $host = env('COLLECTION_API_HOST');
+            if (!$host) {
+                Alert::error('Gagal', 'API host belum diatur');
+                return back();
+            }
             $apiURL = $host . '/extract';
 
             $filename = '';
@@ -354,10 +364,16 @@ class CollectionController extends Controller
 
                 return view('pages.collection.result', $param);
             } catch (\Exception $e) {
-                return $e->getMessage();
+                Alert::error('Error', $e->getMessage());
+                return back();
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                return $e->getMessage();
+                Alert::error('Error', $e->getMessage());
+                return back();
             }
+        }
+        else {
+            Alert::error('Gagal', 'Tidak ada berkas yang dipilih');
+            return back();
         }
     }
 }
