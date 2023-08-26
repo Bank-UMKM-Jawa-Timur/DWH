@@ -59,15 +59,16 @@
                             Total Data : {{number_format($total_all_data, 0, ',', '.')}}(Data per halaman {{number_format($total_per_page, 0, ',', '.')}})
                         </p>
                         @if ($total_all_data > $total_per_page)
-                            <form action="{{route('collection.page')}}" method="POST">
+                            <form id="show-by-page-form" action="{{route('collection.page')}}" method="POST">
                                 @csrf
                                 <div class="form-inline d-flex">
                                     <input type="hidden" name="file" id="file" value="{{$file}}">
                                     <input type="hidden" name="result_filename" id="result_filename" value="{{$result_filename}}">
                                     <input type="hidden" name="total_all_data" value="{{$total_all_data}}">
+                                    <input type="hidden" name="total_page" value="{{$total_page}}">
                                     <label class="mr-2" for="page">Halaman: </label>
                                     <select name="page" id="page" class="pl-2 pr-2">
-                                        @for($i = 1;$i <= ($total_all_data / $total_per_page); $i++)
+                                        @for($i = 1;$i <= $total_page; $i++)
                                             <option value="{{$i}}" @if($i == $page) selected @endif>{{$i}}</option>
                                         @endfor
                                     </select>
@@ -78,58 +79,6 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table" id="basic-datatables">
-                            {{--  <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Field</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>CYSTAT</td>
-                                </tr>
-                            </tbody>  --}}
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -163,6 +112,9 @@
 <script>
     $('#basic-datatables').DataTable({});
     $('#page').select2();
+    $('#show-by-page-form').on('submit', function() {
+        $('#loadingModal').modal('show')
+    })
 </script>
 @endpush
 @endsection

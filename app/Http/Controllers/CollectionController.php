@@ -142,10 +142,10 @@ class CollectionController extends Controller
 
             if ($total_data_txt > $limit) {
                 $offset = 0;
-                $total_page  = (int) round($total_data_txt / $limit);
+                $total_page  = (int) ceil($total_data_txt / $limit);
                 for ($i=1; $i <= $total_page; $i++) { 
                     if ($i > 1) {
-                        $offset = ($limit * $i - $limit) + 1;
+                        $offset = ($limit * $i - $limit);
                     }
                     $value = array_slice($txt_data, $offset, $limit);
                     
@@ -220,6 +220,7 @@ class CollectionController extends Controller
                                         if (array_key_exists('total', $finalResponse) && array_key_exists('data', $finalResponse)) {
                                             $param['total_data'] = $finalResponse['total'];
                                             $param['total_all_data'] = $finalResponse['total_all_data'];
+                                            $param['total_page'] = $total_page;
                                             $param['result'] = $finalResponse['data'];
                                         }
                                         else {
@@ -277,7 +278,9 @@ class CollectionController extends Controller
             $param['filename'] = $request->file;
             $param['filenametime'] = $filenametime;
             $total_data_txt = $request->total_all_data;
+            $total_page = $request->total_page;
             $param['total_all_data'] = $total_data_txt;
+            $param['total_page'] = $total_page;
             
             $json_path = "public/json-files/$filenametime".'/'.$filenametime."_$page.json";
             $file_json = json_decode(Storage::get($json_path), true);

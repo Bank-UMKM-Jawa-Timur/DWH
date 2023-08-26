@@ -137,6 +137,10 @@
         })
     }
 
+    $('#upload-form').on('submit', function() {
+        $('#loadingModal').modal('show')
+    })
+
     $('#btn-reset').on('click', function(e) {
         $('#file').val('')
         $('.text-filename').html('File : ')
