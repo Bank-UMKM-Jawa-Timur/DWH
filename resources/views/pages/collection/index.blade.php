@@ -4,6 +4,10 @@
         #upload-form .card-action {
             display: none;
         }
+
+        #loading {
+            display: none;
+        }
     </style>
 @endpush
 @section('title', $title)
@@ -24,6 +28,7 @@
                     </div>
                     <div class="card-body">
                         <div id="upload-container" class="text-center">
+                            <img src="{{asset('template/assets/img/loading.gif')}}" alt="loading" id="loading">
                             <button type="button" id="browse_file" class="btn btn-primary">Pilih Berkas</button>
                             <p class="text-filename">File : </p>
                             <input type="hidden" name="file" id="file">
@@ -68,6 +73,8 @@
             $('#file').val(filename)
             showProgress();
             resumable.upload() // to actually start uploading
+            $('#browse_file').hide()
+            $('#loading').show()
         }
         else {
             errorMessage('Hanya bisa memilih file berekstensi .txt')
@@ -85,11 +92,15 @@
         const filename = res.filename
         $('#result_filename').val(filename)
         $('#upload-form').find('.card-action').show()
+        $('#browse_file').show()
+        $('#loading').hide()
     })
 
     resumable.on('fileError', function(file, response) { // trigger when file upload error
         console.log(`upload error : ${response}`)
         errorMessage('Terjadi kesalahan')
+        $('#browse_file').show()
+        $('#loading').hide()
     })
 
     let progress = $('.progress')
