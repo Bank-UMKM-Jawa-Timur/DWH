@@ -110,6 +110,12 @@
                             <p>Target</p>
                         </a>
                     </li>
+                    <li class="nav-item {{ request()->is('collection') ? 'active' : '' }}">
+                        <a href="{{ route('collection.index') }}">
+                            <i class="icon-folder-alt"></i>
+                            <p>Collection</p>
+                        </a>
+                    </li>
                 @endif
                 {{-- <li class="nav-section">
                     <span class="sidebar-mini-icon">
@@ -121,12 +127,6 @@
                     <a href="{{ route('notification.index') }}">
                         <i class="icon-bell"></i>
                         <p>Notifikasi</p>
-                    </a>
-                </li>
-                <li class="nav-item {{ request()->is('collection') ? 'active' : '' }}">
-                    <a href="{{ route('collection.index') }}">
-                        <i class="icon-folder-alt"></i>
-                        <p>Collection</p>
                     </a>
                 </li>
             </ul>

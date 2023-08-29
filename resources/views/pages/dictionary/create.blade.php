@@ -6,20 +6,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>  
 @endpush
 @section('content')
-
-    <div class="panel-header">
-        <div class="page-inner py-5">
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-                <div>
-                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                </div>
+    <div class="page-inner">
+        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+            <div>
+                <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
             </div>
         </div>
-    </div>
-    <div class="page-inner mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{{route('dictionary.index')}}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-arrow-left"></i>
+                    Kembali
+                </a>
+                <button type="button" class="btn btn-sm btn-warning btn-tes">
+                    <i class="fas fa-arrow-left"></i>
+                    klik
+                </button>
+                <div class="new-content"></div>
+            </div>
+        </div>
         <div class="row mt-2">
             <div class="col-md-12">
-                <form action="{{ route('dictionary.store') }}" method="post">
+                <form id="form" action="{{ route('dictionary.store') }}" method="post">
                     @csrf
                     <div class="card">
                         <div class="card-header">
@@ -29,16 +37,22 @@
                             <div class="row">
                                 <div class="col-md-6 col-lg-6">
                                     <div class="form-group name">
-                                        <label for="filename">File</label>
-                                        <input type="text" class="form-control" id="filename" name="filename" required>
-                                        <small class="form-text text-danger error"></small>
+                                        <label for="filename">Filename</label><span class="text-danger text-sm">*</span>
+                                        <input type="text" class="form-control @error('filename') is-invalid @enderror"
+                                            id="filename" name="filename">
+                                        @error('filename')
+                                            <small class="form-text text-danger error">{{$message}}</small>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-lg-6">
                                     <div class="form-group name">
-                                        <label for="description">Deskripsi</label>
-                                        <input type="text" class="form-control" id="description" name="description">
-                                        <small class="form-text text-danger error"></small>
+                                        <label for="description">Deskripsi</label><span class="text-danger text-sm">*</span>
+                                        <input type="text" class="form-control @error('description') is-invalid @enderror"
+                                            id="description" name="description">
+                                        @error('description')
+                                            <small class="form-text text-danger error">{{$message}}</small>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -83,31 +97,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {{--  <tr>
-                                                    <td>
-                                                        <span id="number[]">1</span>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm only-number">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm only-number">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm only-number">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="input_description[]" id="input_description[]" class="form-control-sm">
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-sm btn-icon btn-round btn-danger btn-minus">
-                                                            <i class="fas fa-minus"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>  --}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -178,18 +167,23 @@
                     <td><span id="number[]">${number}</span></td>
                     <td>
                         <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm">
+                        <small class="form-text text-danger error"></small>
                     </td>
                     <td>
                         <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm only-number">
+                        <small class="form-text text-danger error"></small>
                     </td>
                     <td>
                         <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm only-number">
+                        <small class="form-text text-danger error"></small>
                     </td>
                     <td>
                         <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm only-number">
+                        <small class="form-text text-danger error"></small>
                     </td>
                     <td>
                         <input type="text" name="input_description[]" id="input_description[]" class="form-control-sm">
+                        <small class="form-text text-danger error"></small>
                     </td>
                     <td>
                         <button type="button" class="btn btn-sm btn-icon btn-round btn-danger btn-minus">
@@ -221,18 +215,23 @@
                         <td><span id="number[]">${(i+1)}</span></td>
                         <td>
                             <input type="text" name="input_field[]" id="input_field[]" class="form-control-sm" value="${row[0]}">
+                            <small class="form-text text-danger error"></small>
                         </td>
                         <td>
                             <input type="text" name="input_from[]" id="input_from[]" class="form-control-sm only-number" value="${row[[1]]}">
+                            <small class="form-text text-danger error"></small>
                         </td>
                         <td>
                             <input type="text" name="input_to[]" id="input_to[]" class="form-control-sm only-number" value="${row[[2]]}">
+                            <small class="form-text text-danger error"></small>
                         </td>
                         <td>
                             <input type="text" name="input_length[]" id="input_length[]" class="form-control-sm only-number" value="${row[[3]]}">
+                            <small class="form-text text-danger error"></small>
                         </td>
                         <td>
                             <input type="text" name="input_description[]" id="input_description[]" class="form-control-sm" value="${row[[4]]}">
+                            <small class="form-text text-danger error"></small>
                         </td>
                         <td>
                             <button type="button" class="btn btn-sm btn-icon btn-round btn-danger btn-minus">
@@ -310,6 +309,27 @@
                     alert("Unggah file Excel yang valid!");  
                 }  
             }
+
+            $('#form').on('submit', function(e) {
+                //e.preventDefault()
+                var values = $("input[name='input_field[]']").map(function(){
+                    const val = $(this).val()
+                    if (val == '') {
+                        var small = $(this).find('.form-text')
+                        console.log($(this))
+                        console.log(small)
+                        small.html('Kosong')
+                        small.val('Kosong')
+                    }
+                    return val;
+                }).get();
+                console.log(values)
+            })
+
+            $('.btn-tes').on('click', function() {
+                const content = `<marquee>Hi sahrul</marquee>`
+                $('.new-content').append(content)
+            })
         </script>
     @endpush
 @endsection
