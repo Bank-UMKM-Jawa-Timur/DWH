@@ -136,12 +136,15 @@
         @apply border-b text-theme-text;
     }
     .pagination {
-        @apply mt-2;
+        @apply mt-2 border-none;
     }
-    .pagination .btn-pagination {
+    .ui .menu {
+        @apply border-none;
+    }
+    .pagination .item {
         @apply px-5 py-2 border rounded-md;
     }
-    .pagination .btn-pagination.is-active {
+    .pagination .item.active {
         @apply bg-theme-primary text-white;
     }
     .dropdown {

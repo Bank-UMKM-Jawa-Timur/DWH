@@ -106,27 +106,41 @@
       <div class="dropdown-menu-link  {{ request()->is('master/template-notifikasi', 'master/template-notifikasi/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'show' : 'hidden' }}">
         <ul class="menu-dropdown">
           <!-- add rule class active-dropdown-link for active navigation -->
-          <li class="dropdown-item-link {{ request()->is('master/role') ? 'active-dropdown-link' : '' }}">
-            <a href="{{ route('role.index') }}">Role / Peran</a>
-          </li>
-          <li class="dropdown-item-link {{ request()->is('master/pengguna') ? 'active-dropdown-link' : '' }}">
-            <a href="{{ route('pengguna.index') }}">Pengguna</a>
-          </li>
-          <li class="dropdown-item-link {{ request()->is('master/vendor') ? 'active-dropdown-link' : '' }}">
-            <a href="{{ route('vendor.index') }}">Vendor</a>
-          </li>
-          <li class="dropdown-item-link {{ request()->is('master/kategori-dokumen') ? 'active-dropdown-link' : '' }}">
-            <a href="{{ route('kategori-dokumen.index') }}">Kategori Dokumen</a>
-          </li>
-          <li class="dropdown-item-link {{ request()->is('master/imbal-jasa') ? 'active-dropdown-link' : '' }}">
-            <a href="{{ route('imbal-jasa.index') }}">Imbal jasa</a>
-          </li>
-          <li class="dropdown-item-link {{ request()->is('master/template-notifikasi') ? 'active-dropdown-link' : '' }}">
-            <a href="{{ route('template-notifikasi.index') }}">Template notifikasi</a>
-          </li>
-          <li class="dropdown-item-link {{ request()->is('master/dictionary') ? 'active-dropdown-link' : '' }}">
-            <a href="{{ route('dictionary.index') }}">Dictionary</a>
-          </li>
+          <a href="{{ route('role.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/role') ? 'active-dropdown-link' : '' }}">
+              Role / Peran
+            </li>
+          </a>
+          <a href="{{ route('pengguna.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/pengguna') ? 'active-dropdown-link' : '' }}">
+              Pengguna
+            </li>
+          </a>
+          <a href="{{ route('vendor.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/vendor') ? 'active-dropdown-link' : '' }}">
+              Vendor
+            </li>
+          </a>
+          <a href="{{ route('kategori-dokumen.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/kategori-dokumen') ? 'active-dropdown-link' : '' }}">
+              Kategori Dokumen
+            </li>
+          </a>
+          <a href="{{ route('imbal-jasa.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/imbal-jasa') ? 'active-dropdown-link' : '' }}">
+              Imbal jasa
+            </li>
+          </a>
+          <a href="{{ route('template-notifikasi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/template-notifikasi') ? 'active-dropdown-link' : '' }}">
+              Template notifikasi
+            </li>
+          </a>
+          <a href="{{ route('dictionary.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/dictionary') ? 'active-dropdown-link' : '' }}">
+              Dictionary
+            </li>
+          </a>
         </ul>
       </div>
       @endif

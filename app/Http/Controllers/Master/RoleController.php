@@ -219,13 +219,16 @@ class RoleController extends Controller
             }
         } catch (\Exception $e) {
             $status = 'error';
-            $message = 'Terjadi kesalahan.';
+            $message = 'Terjadi kesalahan.'.$e->getMessage();
 
         } catch (\Illuminate\Database\QueryException $e) {
             $status = 'error';
             $message = 'Terjadi kesalahan pada database.';
         } finally {
-            return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
+            return  [
+                'status' => $status,
+                'message' => $message,
+            ];
         }
     }
 
