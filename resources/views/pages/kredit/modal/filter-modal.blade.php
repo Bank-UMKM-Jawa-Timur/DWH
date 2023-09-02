@@ -35,7 +35,7 @@
                                 <option value="done">Done</option>
                             </select>
                         </div>
-                        @if (Auth::user()->role_id == 4 || Auth::user()->role_id == 1)
+                        @if (\Session::get(config('global.role_id_session')) == 4 || \Session::get(config('global.role_id_session')) == 1)
                             <div class="col-sm-6 mt-2">
                                 <h5 class="modal-title penyerahan-unit-title">Cabang</h5>
                                 <select class="custom-select form-control" id="cabang" name="cabang">

@@ -1,5 +1,5 @@
 @php
-    $total_notifications = \App\Models\Notification::where('user_id', Auth::user()->id)
+    $total_notifications = \App\Models\Notification::where('user_id', \Session::get(config('global.user_id_session')))
         ->where('read', false)
         ->count();
 @endphp
@@ -71,10 +71,15 @@
                                     <div class="avatar-lg"><img src="{{ asset('template') }}/assets/img/profile.jpg"
                                             alt="image profile" class="avatar-img rounded"></div>
                                     <div class="u-text">
-                                        <h4>{{ Auth::user()->nip ? Auth::user()->nip : (Auth::user()->email ? Auth::user()->email : 'Undinfined') }}
+                                        @php
+                                            $role_id = \Session::get(config('global.role_id_session'));
+                                            $nip = \Session::get(config('global.user_nip_session'));
+                                            $name = \Session::get(config('global.user_name_session'));
+                                        @endphp
+                                        <h4>{{ $role_id == 3 ? Auth::user()->email : $nip }}
                                         </h4>
-                                        @if (Auth::user()->nip && Session::has('nama_karyawan'))
-                                            <p class="text-muted">{{ Session::get('nama_karyawan') }}</p>
+                                        @if ($nip && $name)
+                                            <p class="text-muted">{{ $name }}</p>
                                         @else
                                             <p class="text-muted">undifined</p>
                                         @endif

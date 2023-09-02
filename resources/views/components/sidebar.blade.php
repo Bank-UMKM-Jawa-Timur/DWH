@@ -6,7 +6,7 @@
    <img src="{{ asset('template') }}/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
   </div> -->
                 @php
-                    $role = \App\Models\Role::where('id', Auth::user()->role_id)->pluck('name')[0];
+                    $role = \App\Models\Role::where('id', \Session::get(config('global.role_id_session')))->pluck('name')[0];
                 @endphp
                 <div class="info">
                     <a data-toggle="collapse">
@@ -36,7 +36,7 @@
                         <p>KKB</p>
                     </a>
                 </li>
-                @if (Auth::user()->role_id == 4)
+                @if (\Session::get(config('global.role_id_session')) == 4)
                     <li
                         class="nav-item {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'active' : '' }}">
                         <a data-toggle="collapse" href="#base">
@@ -87,7 +87,7 @@
                         </div>
                     </li>
                 @endif
-                @if (Auth::user()->role_id == 4)
+                @if (\Session::get(config('global.role_id_session')) == 4)
                     <li class="nav-item {{ request()->is('log_aktivitas') ? 'active' : '' }}">
                         <a href="{{ route('log_aktivitas.index') }}">
                             <i class="icon-clock"></i>
@@ -95,7 +95,7 @@
                         </a>
                     </li>
                 @endif
-                @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 4)
+                @if (\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
                     <li class="nav-item">
                         <a href="/laporan">
                             <i class="icon-printer"></i>
@@ -103,7 +103,7 @@
                         </a>
                     </li>
                 @endif
-                @if (Auth::user()->role_id == 4)
+                @if (\Session::get(config('global.role_id_session')) == 4)
                     <li class="nav-item {{ request()->is('target') ? 'active' : '' }}">
                         <a href="{{ route('target.index') }}">
                             <i class="icon-graph"></i>

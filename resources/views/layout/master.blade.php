@@ -2,6 +2,7 @@
 @include('sweetalert::alert')
 @include('components.loading-modal')
 <div class="wrapper">
+    @include('components.alert')
     @include('components.main-header')
     <!-- Sidebar -->
     @include('components.sidebar')

@@ -89,7 +89,7 @@ class KreditController extends Controller
                     ->orderBy('total_file_confirmed');
 
 
-                if (Auth::user()->role_id == 2) {
+                if (\Session::get(config('global.role_id_session')) == 2) {
                     $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
                 }
 
@@ -679,7 +679,7 @@ class KreditController extends Controller
         $message = '';
 
         try {
-            if (Auth::user()->role_id == 2) {
+            if (\Session::get(config('global.role_id_session')) == 2) {
                 // Cabang
                 // stnk
                 if (is_numeric($request->id_stnk)) {
@@ -692,7 +692,7 @@ class KreditController extends Controller
 
                     $stnk->is_confirm = 1;
                     $stnk->confirm_at = date('Y-m-d');
-                    $stnk->confirm_by = Auth::user()->id;
+                    $stnk->confirm_by = \Session::get(config('global.user_id_session'));
                     $stnk->save();
 
                 }
@@ -708,7 +708,7 @@ class KreditController extends Controller
 
                     $polis->is_confirm = 1;
                     $polis->confirm_at = date('Y-m-d');
-                    $polis->confirm_by = Auth::user()->id;
+                    $polis->confirm_by = \Session::get(config('global.user_id_session'));
                     $polis->save();
 
                 }
@@ -724,7 +724,7 @@ class KreditController extends Controller
 
                     $bpkb->is_confirm = 1;
                     $bpkb->confirm_at = date('Y-m-d');
-                    $bpkb->confirm_by = Auth::user()->id;
+                    $bpkb->confirm_by = \Session::get(config('global.user_id_session'));
                     $bpkb->save();
 
                 }
@@ -779,14 +779,14 @@ class KreditController extends Controller
         }
 
         try {
-            if (Auth::user()->role_id == 2) {
+            if (\Session::get(config('global.role_id_session')) == 2) {
                 // Cabang
                 $document = Document::find($request->id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
 
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
-                $document->confirm_by = Auth::user()->id;
+                $document->confirm_by = \Session::get(config('global.user_id_session'));
                 $document->save();
 
                 if ($request->category_id == 3)
@@ -848,14 +848,14 @@ class KreditController extends Controller
         }
 
         try {
-            if (Auth::user()->role_id == 3) {
+            if (\Session::get(config('global.role_id_session')) == 3) {
                 // Vendor
                 $document = Document::find($request->id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
 
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
-                $document->confirm_by = Auth::user()->id;
+                $document->confirm_by = \Session::get(config('global.user_id_session'));
                 $document->save();
 
                 if ($request->category_id == 1) {
@@ -912,14 +912,14 @@ class KreditController extends Controller
         }
 
         try {
-            if (Auth::user()->role_id == 2) {
+            if (\Session::get(config('global.role_id_session')) == 2) {
                 // Cabang
                 $document = Document::find($request->id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
 
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
-                $document->confirm_by = Auth::user()->id;
+                $document->confirm_by = \Session::get(config('global.user_id_session'));
                 $document->save();
 
                 if ($request->category_id == 2) {
@@ -1133,7 +1133,7 @@ class KreditController extends Controller
             $document = Document::find($request->id);
             $document->is_confirm = true;
             $document->confirm_at = Carbon::now();
-            $document->confirm_by = Auth::user()->id;
+            $document->confirm_by = \Session::get(config('global.user_id_session'));
             $document->save();
 
             $this->logActivity->store('Pengguna ' . Auth::user()->name . ' mengkonfirmasi berkas imbal jasa.');

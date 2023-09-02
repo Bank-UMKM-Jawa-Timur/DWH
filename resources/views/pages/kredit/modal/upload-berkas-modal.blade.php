@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title" id="uploadBerkasModalLabel">
-                    @if (Auth::user()->role_id == 3)
+                    @if (\Session::get(config('global.role_id_session')) == 3)
                         Upload Berkas
                     @else
                         Konfirmasi Berkas
@@ -41,7 +41,7 @@
                                 <div class="form-group input-no-stnk">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="no_stnk" name="no_stnk" @if (Auth::user()->role_id == 2) readonly @endif>
+                                        <input type="text" class="form-control" id="no_stnk" name="no_stnk" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -51,7 +51,7 @@
                                     <p class="m-0" id="status_confirm_stnk"></p>
                                 </div>
                                 <iframe id="preview_stnk" src="" width="100%" height="450px"></iframe>
-                                @if (Auth::user()->role_id == 3)
+                                @if (\Session::get(config('global.role_id_session')) == 3)
                                     <div class="form-group input-stnk">
                                         <label>Scan Berkas (pdf)</label>
                                         <div class="input-group">
@@ -74,7 +74,7 @@
                                 <div class="form-group input-no-polis">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="no_polis" name="no_polis" @if (Auth::user()->role_id == 2) readonly @endif>
+                                        <input type="text" class="form-control" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -84,7 +84,7 @@
                                     <p class="m-0" id="status_confirm_polis"></p>
                                 </div>
                                 <iframe id="preview_polis" src="" width="100%" height="450px"></iframe>
-                                @if (Auth::user()->role_id == 3)
+                                @if (\Session::get(config('global.role_id_session')) == 3)
                                     <div class="form-group input-polis">
                                         <label>Scan Berkas (pdf)</label>
                                         <div class="input-group">
@@ -107,7 +107,7 @@
                                 <div class="form-group input-no-bpkb">
                                     <label>Nomor</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="no_bpkb" name="no_bpkb" @if (Auth::user()->role_id == 2) readonly @endif>
+                                        <input type="text" class="form-control" id="no_bpkb" name="no_bpkb" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif>
                                     </div>
                                     <small class="form-text text-danger error"></small>
                                 </div>
@@ -117,7 +117,7 @@
                                     <p class="m-0" id="status_confirm_bpkb"></p>
                                 </div>
                                 <iframe id="preview_bpkb" src="" width="100%" height="450px"></iframe>
-                                @if (Auth::user()->role_id == 3)
+                                @if (\Session::get(config('global.role_id_session')) == 3)
                                     <div class="form-group input-bpkb">
                                         <label>Scan Berkas (pdf)</label>
                                         <div class="input-group">
@@ -138,10 +138,10 @@
                 <div class="modal-footer">
                     <div class="form-group form-submit-berkas">
                         <button type="submit" class="btn btn-primary">
-                            @if (Auth::user()->role_id == 2)
+                            @if (\Session::get(config('global.role_id_session')) == 2)
                                 Konfirmasi
                             @endif
-                            @if (Auth::user()->role_id == 3)
+                            @if (\Session::get(config('global.role_id_session')) == 3)
                                 Kirim
                             @endif
                         </button>
@@ -154,7 +154,7 @@
 
 @push('extraScript')
     <script>
-        const user_role = "{{Auth::user()->role_id}}";
+        const user_role = "{{\Session::get(config('global.role_id_session'))}}";
         var id = '';
         var id_stnk = '';
         var id_polis = '';
@@ -395,7 +395,7 @@
 
         $('#modal-berkas').on("submit", function(event) {
             event.preventDefault();
-            var is_confirm = "{{ Auth::user()->role_id }}" == 2;
+            var is_confirm = "{{ \Session::get(config('global.role_id_session')) }}" == 2;
 
             if (!is_confirm) {
                 // Upload

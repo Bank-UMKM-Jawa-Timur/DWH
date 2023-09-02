@@ -30,12 +30,12 @@
     <link rel="stylesheet" href="{{ asset('template') }}/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('template') }}/assets/css/atlantis.css">
 </head>
-
 <body class="login">
     <div class="wrapper wrapper-login">
         <div class="container container-login animated fadeIn">
             <img src="{{ asset('template') }}/assets/img/logo.png" alt="navbar brand" class="login-logo">
-            <form class="login-form" action="{{ route('login') }}" method="POST">
+            @include('components.alert')
+            <form class="login-form mt-4" action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="form-group form-floating-label">
                     <input id="input_type" autofocus name="input_type" type="text"

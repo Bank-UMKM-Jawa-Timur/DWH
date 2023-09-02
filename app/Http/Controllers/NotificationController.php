@@ -33,13 +33,13 @@ class NotificationController extends Controller
                                     'nt.role_id',
                                 )
                                 ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
-                                ->where('notifications.user_id', Auth::user()->id)
+                                ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                 ->orderBy('notifications.read')
                                 ->orderBy('notifications.created_at', 'DESC')
                                 ->get();
             $param['total_belum_dibaca'] = Notification::select('notifications.id')
                                             ->join('users AS u', 'u.id', 'notifications.user_id')
-                                            ->where('u.id', Auth::user()->id)
+                                            ->where('u.id', \Session::get(config('global.user_id_session')))
                                             ->where('notifications.read', false)
                                             ->count();
 
@@ -71,7 +71,7 @@ class NotificationController extends Controller
                                     'nt.role_id',
                                 )
                                 ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
-                                ->where('notifications.user_id', Auth::user()->id)
+                                ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                 ->where('notifications.read', false)
                                 ->orderBy('notifications.read')
                                 ->orderBy('notifications.created_at', 'DESC')
@@ -126,7 +126,7 @@ class NotificationController extends Controller
             $data->save();
             $total_belum_dibaca = Notification::select('notifications.id')
                                             ->join('users AS u', 'u.id', 'notifications.user_id')
-                                            ->where('u.id', Auth::user()->id)
+                                            ->where('u.id', \Session::get(config('global.user_id_session')))
                                             ->where('notifications.read', false)
                                             ->count();
 

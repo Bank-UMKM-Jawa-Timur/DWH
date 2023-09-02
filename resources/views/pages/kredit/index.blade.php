@@ -169,7 +169,7 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($item->tgl_ketersediaan_unit)
-                                                    @if (Auth::user()->role_id == 3)
+                                                    @if (\Session::get(config('global.role_id_session')) == 3)
                                                         {{--  vendor  --}}
                                                         @if ($buktiPembayaran)
                                                             @if (!$buktiPembayaran->is_confirm)
@@ -241,7 +241,7 @@
                                                                 data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
                                                                 href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 <span>Menunggu konfirmasi cabang</span>
                                                             @else
                                                                 <a style="text-decoration: underline; cursor: pointer;"
@@ -279,7 +279,7 @@
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
                                                                     <span class="text-info">Maksimal
                                                                         {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
@@ -314,7 +314,7 @@
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
                                                                     <span class="text-info">Maksimal
                                                                         {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
@@ -349,7 +349,7 @@
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
                                                                     <span class="text-info">Maksimal
                                                                         {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
@@ -369,7 +369,7 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                @if (Auth::user()->role_id == 3)
+                                                @if (\Session::get(config('global.role_id_session')) == 3)
                                                     {{--  vendor  --}}
                                                     @if ($imbalJasa)
                                                         @if (!$imbalJasa->is_confirm)
@@ -432,7 +432,7 @@
                                                                 data-file="{{ $imbalJasa->file }}" --}}>Rp.
                                                                 {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 <span class="text-info">Silahkan konfirmasi bukti transfer
                                                                     imbal
                                                                     jasa</span>
@@ -445,7 +445,7 @@
                                                         @if ($imbalJasa)
                                                             @if ($imbalJasa->file && $imbalJasa->is_confirm)
                                                                 @if ($stnk && $polis && $bpkb)
-                                                                    @if (Auth::user()->role_id == 2)
+                                                                    @if (\Session::get(config('global.role_id_session')) == 2)
                                                                         <span class="text-info">Silahkan upload bukti
                                                                             transfer imbal
                                                                             jasa</span>
@@ -497,7 +497,7 @@
                                                             @endif
                                                         @endif
                                                         {{--  Upload Berkas  --}}
-                                                        @if (Auth::user()->role_id == 3 && $penyerahanUnit)
+                                                        @if (\Session::get(config('global.role_id_session')) == 3 && $penyerahanUnit)
                                                             @if ($penyerahanUnit->is_confirm)
                                                                 @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
                                                                     {{--  Vendor  --}}
@@ -526,7 +526,7 @@
                                                                 @endif
                                                             @endif
                                                         @endif
-                                                        @if (Auth::user()->role_id == 2)
+                                                        @if (\Session::get(config('global.role_id_session')) == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
                                                                 @if (
@@ -561,7 +561,7 @@
                                                                 @endif
                                                             @endif
                                                         @endif
-                                                        @if (Auth::user()->role_id == 2)
+                                                        @if (\Session::get(config('global.role_id_session')) == 2)
                                                             {{--  @if ($stnk && $polis && $bpkb && !$imbalJasa)  --}}
                                                             @if (isset($stnk->is_confirm) &&
                                                                     !$stnk->is_confirm &&
@@ -911,7 +911,7 @@
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
                     </div>
-                    @if (Auth::user()->role_id == 3)
+                    @if (\Session::get(config('global.role_id_session')) == 3)
                         <iframe id="preview_bukti_tf" class="mt-2" width="100%" height="500"></iframe>
                     @endif
                     <div class="form-inline">

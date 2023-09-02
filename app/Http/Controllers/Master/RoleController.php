@@ -281,7 +281,7 @@ class RoleController extends Controller
                         $permission->delete();
                 }
             }
-            $username = Auth::user()->role_id == 3 ? Auth()->user()->email : Auth()->user()->nip;
+            $username = \Session::get(config('global.role_id_session')) == 3 ? Auth()->user()->email : Auth()->user()->nip;
             $this->logActivity->store("Pengguna '$username' menyimpan pengaturan hak akses.");
             DB::commit();
 

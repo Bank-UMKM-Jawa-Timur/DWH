@@ -8,89 +8,12 @@
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                 <div>
                     <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }} {{ $role }}</h2>
-                    {{-- <h5 class="text-primary op-7">6819456 | Cabang Bondowoso</h5> --}}
                 </div>
             </div>
         </div>
     </div>
     <div class="page-inner mt--5">
-        {{-- <div class="card welcome">
-            <div class="card-body ">
-                <div class="d-flex justify-content-start align-items-end">
-                    <img src="{{ asset('template') }}/assets/img/flat_welcome.png" class="img-fluid img-welcome">
-                    <div class="box">
-                        <h2 class="title-welcome">Hai,Selamat Datang SuperAdmin</h2>
-                        <p class="lead-welcome">Senang Betermu dengan SuperAdmin,Selamat Datang di website
-                            data
-                            warehouse
-                            kamu memiliki 3 notifikasi</p>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-        {{-- <div class="row">
-            @if (strtolower($role) != 'vendor')
-                <div class="col-sm">
-                    <div class="card card-stats card-round">
-                        <div class="card-body ">
-                            <div class="row align-items-center">
-                                <div class="col-icon">
-                                    <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                        <i class="icon-people"></i>
-                                    </div>
-                                </div>
-                                <div class="col col-stats ml-3 ml-sm-0">
-                                    <div class="numbers">
-                                        <p class="card-category">{{ $total_pengguna }}</p>
-                                        <h4 class="card-title">Pengguna</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-            <div class="col-sm">
-                <div class="card card-stats card-round">
-                    <div class="card-body ">
-                        <div class="row align-items-center">
-                            <div class="col-icon">
-                                <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                    <i class="icon-briefcase"></i>
-                                </div>
-                            </div>
-                            <div class="col col-stats ml-3 ml-sm-0">
-                                <div class="numbers">
-                                    <p class="card-category">{{ $total_vendor }}</p>
-                                    <h4 class="card-title">Vendor</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm">
-                <div class="card card-stats card-round">
-                    <div class="card-body ">
-                        <div class="row align-items-center">
-                            <div class="col-icon">
-                                <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                    <i class="icon-earphones-alt"></i>
-                                </div>
-                            </div>
-                            <div class="col col-stats ml-3 ml-sm-0">
-                                <div class="numbers">
-                                    <p class="card-category">{{ $total_cabang }}</p>
-                                    <h4 class="card-title">Cabang</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
         @if (strtolower($role) == 'cabang')
-            {{-- <div class="col-sm-12"> --}}
             <div class="row">
                 <div class="col-sm-6">
                     <div class="card">
@@ -130,7 +53,6 @@
                     </div>
                 </div>
             </div>
-            {{-- </div> --}}
         @endif
         @if (strtolower($role) == 'pemasaran')
             <div class="card">
@@ -264,7 +186,7 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                @if (Auth::user()->vendor_id)
+                                                @if (\Session::get(config('global.role_id_session')) == 3)
                                                     @if (!$item->tgl_ketersediaan_unit)
                                                         <a style="text-decoration: underline;" data-toggle="modal"
                                                             data-target="#tglModal" data-id_kkb="{{ $item->kkb_id }}"
@@ -280,7 +202,7 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($item->tgl_ketersediaan_unit)
-                                                    @if (Auth::user()->role_id == 3)
+                                                    @if (\Session::get(config('global.role_id_session')) == 3)
                                                         {{--  vendor  --}}
                                                         @if ($buktiPembayaran)
                                                             @if (!$buktiPembayaran->is_confirm)
@@ -352,7 +274,7 @@
                                                                 data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
                                                                 href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 <span>Menunggu konfirmasi cabang</span>
                                                             @else
                                                                 <a style="text-decoration: underline; cursor: pointer;"
@@ -391,7 +313,7 @@
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
                                                                     <span class="text-info">Maksimal
                                                                         {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
@@ -426,7 +348,7 @@
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
                                                                     <span class="text-info">Maksimal
                                                                         {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
@@ -461,7 +383,7 @@
                                                                 <span class="text-warning">Menunggu konfirmasi</span>
                                                             @endif
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 @if ($penyerahanUnit->is_confirm)
                                                                     <span class="text-info">Maksimal
                                                                         {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
@@ -481,7 +403,7 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                @if (Auth::user()->role_id == 3)
+                                                @if (\Session::get(config('global.role_id_session')) == 3)
                                                     {{--  vendor  --}}
                                                     @if ($imbalJasa)
                                                         @if (!$imbalJasa->is_confirm)
@@ -544,7 +466,7 @@
                                                                 data-file="{{ $imbalJasa->file }}" --}}>Rp.
                                                                 {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
                                                         @else
-                                                            @if (Auth::user()->role_id == 3)
+                                                            @if (\Session::get(config('global.role_id_session')) == 3)
                                                                 <span class="text-info">Silahkan konfirmasi bukti transfer
                                                                     imbal
                                                                     jasa</span>
@@ -557,7 +479,7 @@
                                                         @if ($imbalJasa)
                                                             @if ($imbalJasa->file && $imbalJasa->is_confirm)
                                                                 @if ($stnk && $polis && $bpkb)
-                                                                    @if (Auth::user()->role_id == 2)
+                                                                    @if (\Session::get(config('global.role_id_session')) == 2)
                                                                         <span class="text-info">Silahkan upload bukti
                                                                             transfer imbal
                                                                             jasa</span>
@@ -598,7 +520,7 @@
                                                     <div class="dropdown-menu">
                                                         @if ($item->tgl_ketersediaan_unit)
                                                             @if ($buktiPembayaran)
-                                                                @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && Auth::user()->vendor_id)
+                                                                @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && \Session::get(config('global.role_id_session')) == 3)
                                                                     <a data-toggle="modal"
                                                                         data-target="#tglModalPenyerahan"
                                                                         data-id_kkb="{{ $item->kkb_id }}" href="#"
@@ -609,7 +531,7 @@
                                                             @endif
                                                         @endif
                                                         {{--  Upload Berkas  --}}
-                                                        @if (Auth::user()->role_id == 3 && $penyerahanUnit)
+                                                        @if (\Session::get(config('global.role_id_session')) == 3 && $penyerahanUnit)
                                                             @if ($penyerahanUnit->is_confirm)
                                                                 @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
                                                                     {{--  Vendor  --}}
@@ -638,7 +560,7 @@
                                                                 @endif
                                                             @endif
                                                         @endif
-                                                        @if (Auth::user()->role_id == 2)
+                                                        @if (\Session::get(config('global.role_id_session')) == 2)
                                                             {{--  Cabang  --}}
                                                             @if ($stnk || $polis || $bpkb)
                                                                 @if (
@@ -673,7 +595,7 @@
                                                                 @endif
                                                             @endif
                                                         @endif
-                                                        @if (Auth::user()->role_id == 2)
+                                                        @if (\Session::get(config('global.role_id_session')) == 2)
                                                             {{--  @if ($stnk && $polis && $bpkb && !$imbalJasa)  --}}
                                                             @if (isset($stnk->is_confirm) &&
                                                                     !$stnk->is_confirm &&
@@ -1023,7 +945,7 @@
                     <div class="form-group name" id="konfirmasi">
                         Yakin ingin mengkonfirmasi data ini?
                     </div>
-                    @if (Auth::user()->role_id == 3)
+                    @if (\Session::get(config('global.role_id_session')) == 3)
                         <iframe id="preview_bukti_tf" class="mt-2" width="100%" height="500"></iframe>
                     @endif
                     <div class="form-inline">
@@ -1734,7 +1656,7 @@
             })
         </script>
         // End datatable actions
-        @if (Auth::user()->role_id != 3)
+        @if (\Session::get(config('global.role_id_session')) != 3)
             <script>
                 $(document).ready(function() {
                     var doughnutChart = document.getElementById('chartCabang').getContext('2d');
