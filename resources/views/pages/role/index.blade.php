@@ -13,7 +13,7 @@
 <div class="head-pages">
     <p class="text-sm">Dashboard</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-        Superadmin
+        {{\App\Models\Role::select('name')->where('id', Auth::user()->role_id)->first()->name}}
     </h2>
 </div>
 <div class="body-pages">
