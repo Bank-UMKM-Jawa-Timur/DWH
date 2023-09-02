@@ -16,10 +16,10 @@
       <li class="menu-category-link">
         <p>MENU</p>
       </li>
-      <li class="item-link active-link">
+      <li class="item-link {{ request()->is('/', 'dashboard') ? 'active-link' : '' }}">
         <a
           href="{{ route('dashboard') }}"
-          class="nav-link {{ request()->is('/', 'dashboard') ? 'active-link' : '' }}""
+          class="nav-link"
         >
           <span>
             <svg
@@ -43,10 +43,10 @@
       <li class="menu-category-link">
         <p>FITUR APLIKASI</p>
       </li>
-      <li class="item-link">
+      <li class="item-link {{ request()->is('kredit') ? 'active-link' : '' }}">
         <a
           href="{{ route('kredit.index') }}"
-          class="nav-link {{ request()->is('kredit') ? 'active-link' : '' }}"
+          class="nav-link"
         >
           <span>
             <svg
