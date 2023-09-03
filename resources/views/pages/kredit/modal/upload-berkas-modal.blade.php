@@ -1,8 +1,8 @@
-<div class="modal-overlay hidden font-lexend overflow-auto" id="uploadBerkasModal">
+<div class="modal-overlay hidden font-lexend overflow-auto" id="modalUploadBerkas">
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
             <div class="title-modal">Upload Berkas</div>
-            <button data-dismiss-id="uploadBerkasModal">
+            <button data-dismiss-id="modalUploadBerkas">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                         stroke-width="2" d="M17 7L7 17M7 7l10 10" />
@@ -26,16 +26,16 @@
                         </li>
                         <li class="tab-li">
                             <a data-tab="tab3"
-                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BKPB</a>
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BPKB</a>
                         </li>
                     </ul>
                 </div>
     
-                <div class="mt-5 p-2">
+                <div class="p-2">
                     <div id="tab1" class="tab-content hidden">
                         <div class="input-box space-y-3">
                             <input type="hidden" name="id_stnk" id="id_stnk">
-                            <div class="p-5 space-y-4">
+                            <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_stnk" name="no_stnk" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                                 <div class="form-group status-stnk">
@@ -48,7 +48,7 @@
                         <iframe id="preview_stnk" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3">
-                                <div class="p-5 space-y-4">
+                                <div class="p-3 space-y-4">
                                     <label for="" class="uppercase">Scan Berkas (PDF)</label>
                                     <input type="file" class="p-2 w-full border bg-gray-100" id="stnk_scan" name="stnk_scan"
                                     accept="application/pdf" />
@@ -57,9 +57,9 @@
                         @endif
                     </div>
                     <div id="tab2" class="tab-content hidden">
-                        <input type="hidden" name="id_polis" id="id_polis">
                         <div class="input-box space-y-3">
-                            <div class="p-5 space-y-4">
+                            <input type="hidden" name="id_polis" id="id_polis">
+                            <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                                 <div class="form-group status-polis">
@@ -72,7 +72,7 @@
                         <iframe id="preview_polis" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3">
-                                <div class="p-5 space-y-4">
+                                <div class="p-3 space-y-4">
                                     <label for="" class="uppercase">Scan Berkas (PDF)</label>
                                     <input type="file" class="p-2 w-full border bg-gray-100" id="polis_scan" name="polis_scan"
                                     accept="application/pdf" />
@@ -81,10 +81,9 @@
                         @endif
                     </div>
                     <div id="tab3" class="tab-content hidden">
-                        <input type="hidden" name="id_bpkb" id="id_bpkb">
-                        <p class="mt-2" id="bpkb_belum_diunggah"></p>
                         <div class="input-box space-y-3">
-                            <div class="p-5 space-y-4">
+                            <input type="hidden" name="id_bpkb" id="id_bpkb">
+                            <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_bpkb" name="no_bpkb" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                                 <div class="form-group status-bpkb">
@@ -97,7 +96,7 @@
                         <iframe id="preview_bpkb" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3">
-                                <div class="p-5 space-y-4">
+                                <div class="p-3 space-y-4">
                                     <label for="" class="uppercase">Scan Berkas (PDF)</label>
                                     <input type="file" class="p-2 w-full border bg-gray-100" id="bpkb_scan" name="bpkb_scan"
                                     accept="application/pdf" />
@@ -372,7 +371,7 @@
                             } else {
                                 ErrorMessage(data.message)
                             }
-                            $('#uploadBerkasModal').modal().hide()
+                            $('#modalUploadBerkas').modal().hide()
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                         }
@@ -408,7 +407,7 @@
                             } else {
                                 ErrorMessage(data.message)
                             }
-                            $('#uploadBerkasModal').modal().hide()
+                            $('#modalUploadBerkas').modal().hide()
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                         }

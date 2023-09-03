@@ -449,7 +449,7 @@
                                         {{--  Vendor  --}}
                                         <li>
                                             <a class="item-dropdown toggle-modal"
-                                                data-target-id="uploadBerkasModal"
+                                                data-target-id="modalUploadBerkas"
                                                 data-id_kkb="{{ $item->kkb_id }}"
                                                 data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
                                                 data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
@@ -482,7 +482,7 @@
                                             (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
                                         <li>
                                             <a class="item-dropdown toggle-modal"
-                                                data-target-id="uploadBerkasModal"
+                                                data-target-id="modalUploadBerkas"
                                                 data-id_kkb="{{ $item->kkb_id }}"
                                                 data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
                                                 data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"

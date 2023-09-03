@@ -614,7 +614,7 @@
                                                                 @if (!isset($stnk->file) || !isset($polis->file) || !isset($bpkb->is_confirm))
                                                                     {{--  Vendor  --}}
                                                                     <a data-toggle="modal"
-                                                                        data-target="#uploadBerkasModal"
+                                                                        data-target="#modalUploadBerkas"
                                                                         data-id_kkb="{{ $item->kkb_id }}"
                                                                         data-no-stnk="@isset($stnk->text){{ $stnk->text }}@endisset"
                                                                         data-file-stnk="@isset($stnk->file){{ $stnk->file }}@endisset"
@@ -646,7 +646,7 @@
                                                                         (isset($polis->is_confirm) && !$polis->is_confirm) ||
                                                                         (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
                                                                     <a data-toggle="modal"
-                                                                        data-target="#uploadBerkasModal"
+                                                                        data-target="#modalUploadBerkas"
                                                                         data-id_kkb="{{ $item->kkb_id }}"
                                                                         data-id-stnk="@if ($stnk) {{ $stnk->id }}@else- @endif"
                                                                         data-id-polis="@if ($polis) {{ $polis->id }}@else- @endif"
@@ -904,7 +904,7 @@
     <!-- Upload Berkas Modal -->
     @include('pages.kredit.modal.upload-berkas-modal')
 
-    <!-- Upload BKPB Modal -->
+    <!-- Upload BPKB Modal -->
     <div class="modal fade" id="uploadBpkbModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">

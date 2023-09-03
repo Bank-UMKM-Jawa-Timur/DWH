@@ -95,7 +95,7 @@
                         <th>Penyerahan Unit</th>
                         <th>STNK</th>
                         <th>POLIS</th>
-                        <th>BKPB</th>
+                        <th>BPKB</th>
                         <th>Bukti Pembayaran imbal jasa</th>
                         <th>Imbal jasa</th>
                         <th>Status</th>

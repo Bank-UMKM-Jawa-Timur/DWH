@@ -58,7 +58,7 @@
                         </li>
                         <li class="tab-li">
                             <a data-tab="tab-bpkb"
-                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BKPB</a>
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BPKB</a>
                         </li>
                     </ul>
                 </div>
@@ -204,7 +204,7 @@
                                     <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">
-                                        File BKPB belum di upload
+                                        File BPKB belum di upload
                                     </p>
                                 </div>
                             </div>
