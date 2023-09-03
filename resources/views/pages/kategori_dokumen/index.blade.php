@@ -44,16 +44,20 @@
                     <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
                 </div>
                 <div class="search-table lg:w-96 w-full">
-                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                        <span class="mt-2 ml-3">
-                            @include('components.svg.search')
-                        </span>
-                        <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                            autocomplete="off" />
-                    </div>
+                    <form action="{{ route('kategori-dokumen.index') }}" method="GET">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                @include('components.svg.search')
+                            </span>
+                                <input type="hidden" name="search_by" value="field">
+                                <input type="text" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                    name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div class="tables mt-2">
+            @include('pages.kategori_dokumen.partial._table')
+            {{-- <div class="tables mt-2">
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
@@ -163,7 +167,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </div> --}}
             <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
                 <div class="w-full">
                     <div class="pagination">
@@ -175,4 +179,166 @@
             </div>
         </div>
     </div>
+
+    @push('extraScript')
+        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
+        <script>
+            $('#page_length').on('change', function() {
+                $('#form').submit()
+            })
+        </script>
+        <script>
+            // Form
+            $('#add-button').click(function(e) {
+                e.preventDefault()
+
+                store();
+            })
+
+            $('#edit-button').click(function(e) {
+                e.preventDefault()
+
+                update();
+            })
+
+            $('#add-name').keypress(function(e) {
+                var key = e.which;
+                if (key == 13) // the enter key code
+                {
+                    store()
+                    return false;
+                }
+            })
+
+            $('#edit-name').keypress(function(e) {
+                var key = e.which;
+                if (key == 13) // the enter key code
+                {
+                    update()
+                    return false;
+                }
+            })
+
+            function store() {
+                const req_name = document.getElementById('add-name');
+
+                if (req_name == '') {
+                    showError(req_name, 'Nama Dokumen Kategori Wajib Diisi');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('kategori-dokumen.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        name: req_name.value
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            showError(req_name, data.error[0])
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#addModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                });
+            }
+
+            function update() {
+                const req_id = document.getElementById('edit-id')
+                const req_name = document.getElementById('edit-name')
+
+                if (req_name == '') {
+                    showError(req_name, 'Nama Dokumen Kategori Wajib Diisi');
+                    return false;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/master/kategori-dokumen') }}/" + req_id.value,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'PUT',
+                        name: req_name.value
+                    },
+                    success: function(data) {
+                        if (Array.isArray(data.error)) {
+                            showError(req_name, data.error[0])
+                        } else {
+                            if (data.status == 'success') {
+                                SuccessMessage(data.message);
+                            } else {
+                                alert(data.message)
+                            }
+                            $('#editModal').modal().hide()
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    }
+                });
+            }
+
+            // Modal
+            $(document).ready(function() {
+                $('a[data-toggle=modal], button[data-toggle=modal]').click(function() {
+                    var data_id = '';
+                    var data_name = '';
+                    if (typeof $(this).data('id') !== 'undefined') {
+                        data_id = $(this).data('id');
+                    }
+                    if (typeof $(this).data('name') !== 'undefined') {
+                        data_name = $(this).data('name');
+                    }
+                    $('#edit-id').val(data_id);
+                    $('.edit-name').val(data_name);
+
+                    var url = "{{ url('/master/kategori-dokumen') }}/" + data_id;
+                    $('.edit-form').attr("action", url);
+                })
+
+            });
+            $(document).on("click", ".deleteModal", function(e) {
+                console.log('test');
+                var data_id = $(this).data('id');
+                var data_name = $(this).data('name');
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    html: 'Anda yakin akan menghapus data ini?',
+                    icon: 'question',
+                    iconColor: '#DC3545',
+                    showCancelButton: true,
+                    confirmButtonText: 'Lanjutkan',
+                    cancelButtonText: `Batal`,
+                    confirmButtonColor: '#DC3545'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ url('/master/kategori-dokumen') }}/"+data_id,
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                _method: 'DELETE',
+                            },
+                            success: function(data) {
+                                console.log(data);
+                                if (data.status == 'success') {
+                                    SuccessMessage(data.message);
+                                    //Swal.fire('Saved!', '', 'success')
+                                } else {
+                                    ErrorMessage(data.message)
+                                }
+                            }
+                        });
+                    }
+                })
+            });
+        </script>
+    @endpush
 @endsection
