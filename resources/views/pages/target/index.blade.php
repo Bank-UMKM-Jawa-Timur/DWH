@@ -72,83 +72,72 @@
                         <th>Aksi</th>
                     </tr>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>20</td>
-                            <td>
-                                <div class="flex items-center justify-center w-full">
-                                    <label for="toogleA" class="flex items-center cursor-pointer">
-                                        <!-- toggle -->
-                                        <div class="relative">
-                                            <!-- input -->
-                                            <input id="toogleA" type="checkbox" class="sr-only" />
-                                            <input id="toogleA"  @if ($item->is_active) checked @endif type="checkbox" class="sr-only" />
-                                            <!-- line -->
-                                            <div class="line w-10 h-4 bg-gray-400 rounded-full shadow-inner transition">
+                        @forelse ($data as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->total_unit }}</td>
+                                <td>
+                                    <div class="flex items-center justify-center w-full">
+                                        <label for="toogleA" class="flex items-center cursor-pointer">
+                                            <!-- toggle -->
+                                            <div class="relative">
+                                                <!-- input -->
+                                                <input id="toogleA"  @if ($item->is_active) checked @endif type="checkbox" class="sr-only" />
+                                                <!-- line -->
+                                                <div class="line w-10 h-4 bg-gray-400 rounded-full shadow-inner transition">
+                                                </div>
+                                                <!-- dot -->
+                                                <div
+                                                    class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition">
+                                                </div>
                                             </div>
-                                            <!-- dot -->
-                                            <div
-                                                class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition">
+                                            <!-- label -->
+                                            <div id="type-check" class="ml-3 text-gray-700 font-medium">
+                                                @if ($item->is_active)
+                                                    ON
+                                                @else
+                                                    OFF
+                                                @endif
                                             </div>
-                                        </div>
-                                        <!-- label -->
-                                        <div class="ml-3 text-gray-700 font-medium">
-                                            OFF
-                                            @if ($item->is_active)
-                                                ON
-                                            @else
-                                                OFF
-                                            @endif
-                                        </div>
-                                    </label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown toggle-modal" data-target-id="edit-target"  href="#">Edit</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" data-id="{{ $item->id }}" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown"data-id="{{ $item->id }}"
-                                                href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Selangkapnya
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li class="">
+                                                <a class="item-dropdown toggle-modal" data-target-id="edit-target"  href="#">Edit</a>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown" href="#">Hapus</a>
+                                            Selengkapnya
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li class="">
+                                                <a class="item-dropdown" data-id="{{ $item->id }}" href="#">Detail</a>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown"data-id="{{ $item->id }}"
+                                                    href="#">Hapus</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <span class="text-danger">Maaf data belum tersedia.</span>
+                                </td>
+                            </tr>
+                        @endforelse
+                        
                     </tbody>
                 </table>
             </div>
-            <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                <div class="w-full">
-                    <div class="pagination">
-                        @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                            {{ $data->links('pagination::tailwind') }}
-                        @endif
-                    </div>
-                        </tr> 
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center">
-                                <span class="text-danger">Maaf data belum tersedia.</span>
-                            </td>
-                        </tr>
-                    @endforelse
-                  </tbody>
-              </table>
-          </div>
           <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
             <div class="w-full">
                 <div class="pagination">
