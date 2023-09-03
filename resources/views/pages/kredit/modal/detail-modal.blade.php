@@ -38,7 +38,7 @@
                     <ul class="flex tab-wrapping w-full mt-5 border-b-2 p-[6px]">
                         <li class="tab-li">
                             <a data-tab="tab-po"
-                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary py-2 px-4 bg-white text-gray-400">File PO</a>
+                                class="tab-button active-tab cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary py-2 px-4 bg-white text-gray-400">File PO</a>
                         </li>
                         <li class="tab-li lg:block hidden">
                             <a data-tab="tab-bukti"
@@ -215,6 +215,7 @@
 @push('extraScript')
     <script>
         $(".toggle-modals").on("click", function () {
+            $(".active-tab").trigger("click");
             const targetId = $(this).data("target-id");
             Swal.fire({
                 title: 'Memuat data...',

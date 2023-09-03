@@ -27,7 +27,7 @@
 
                         <div class="content space-y-3">
                             <h2 class="lg:text-4xl text-3xl text-theme-text font-bold tracking-tighter">
-                                Selamat datang👋
+                                Selamat datang
                             </h2>
                             <p class="lg:text-sm text-xs text-[#bababa]">
                                 Silahkan login untuk melanjutkan
