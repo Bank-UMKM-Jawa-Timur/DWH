@@ -24,7 +24,7 @@
 </div>  --}}
 <div class="layout-form hidden" id="add-layout-form">
     <div class="head-form p-4 border-b">
-        <h2>Tambah</h2>
+        <h2>TAMBAH ROLE / PERAN</h2>
     </div>
     <form id="modal-add-form">
         <div class="p-4 space-y-8 mt-8">

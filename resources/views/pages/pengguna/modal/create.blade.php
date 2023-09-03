@@ -1,6 +1,6 @@
 <div class="layout-form hidden" id="add-pengguna">
     <div class="head-form p-4 border-b">
-        <h2>TAMBAH PENGUNNA</h2>
+        <h2>TAMBAH PENGGUNA</h2>
     </div>
     <form action="" method="">
         <div class="p-4 space-y-8 mt-8">
