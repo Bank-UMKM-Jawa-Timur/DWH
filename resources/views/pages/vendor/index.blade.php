@@ -45,14 +45,16 @@
                 <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
             </div>
             <div class="search-table lg:w-96 w-full">
-                <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                    <span class="mt-2 ml-3">
-                        @include('components.svg.search')
-                    </span>
-                    <input type="search" placeholder="Search"
-                        class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                        autocomplete="off" />
-                </div>
+                <form action="{{ route('vendor.index') }}" method="GET">
+                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                        <span class="mt-2 ml-3">
+                            @include('components.svg.search')
+                        </span>
+                            <input type="hidden" name="search_by" value="field">
+                            <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+                    </div>
+                </form>
             </div>
         </div>
         <div class="tables mt-2">
