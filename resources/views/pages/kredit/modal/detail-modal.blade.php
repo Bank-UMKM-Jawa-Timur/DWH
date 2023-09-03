@@ -214,15 +214,18 @@
 
 @push('extraScript')
     <script>
- 
         $(".toggle-modals").on("click", function () {
-            $("ul.toggle-wrapping a.tab-button:first").trigger("click");
             const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-            
+            Swal.fire({
+                title: 'Memuat data...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
             const id = $(this).data('id');
-            
             $.ajax({
                 url: "{{ url('/kredit') }}/" + id,
                 method: "GET",
@@ -363,8 +366,13 @@
                             "#navpanes=0";
                         $("#new_detail_filepo").attr("src", file_po_path)
                     }
+                    Swal.close()
+                    
+                    $("#" + targetId).removeClass("hidden");
+                    $(".layout-overlay-edit-form").removeClass("hidden");
                 },
                 error: function(error) {
+                    Swal.close()
                     ErrorMessage('Terjadi kesalahan')
                 }
             })
