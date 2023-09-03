@@ -63,7 +63,7 @@
           <div>KKB</div>
         </a>
       </li>
-      @if (\Session::get(config('global.user_role_id_session')) == 4)
+      @if (\Session::get(config('global.role_id_session')) == 4)
       <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'active-link' : '' }}">
         <div class="relative">
           <a
@@ -144,7 +144,7 @@
         </ul>
       </div>
       @endif
-      @if (\Session::get(config('global.user_role_id_session')) == 4)
+      @if (\Session::get(config('global.role_id_session')) == 4)
       <li class="item-link {{ request()->is('log_aktivitas') ? 'active-link' : '' }}">
         <a
           href="{{ route('log_aktivitas.index') }}"
@@ -166,7 +166,7 @@
         </a>
       </li>
       @endif
-      @if (\Session::get(config('global.user_role_id_session')) == 1 || \Session::get(config('global.user_role_id_session')) == 4)
+      @if (\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
       <li class="item-link">
         <a
           href="/laporan"
@@ -188,7 +188,7 @@
         </a>
       </li>
       @endif
-      @if (\Session::get(config('global.user_role_id_session')) == 4)
+      @if (\Session::get(config('global.role_id_session')) == 4)
       <li class="item-link {{ request()->is('target') ? 'active-link' : '' }}">
         <a
           href="{{ route('target.index') }}"
