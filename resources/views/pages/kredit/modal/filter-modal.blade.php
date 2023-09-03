@@ -15,14 +15,16 @@
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Status</label>
                 <select name="status" class="w-full p-2 border" id="status">
-
                     @if (Request()->status == 'in progress')
                         <option value="in progress" selected>process</option>
                     @elseif(Request()->status == 'done')
                         <option value="done" selected>Done</option>
                     @else
-                        <option selected>-- Pilih Status ---</option>
+                        <option value="" selected disabled>Pilih Status...</option>
                     @endif
+
+                    <option value="in progress">process</option>
+                    <option value="done">Done</option>
                 </select>
             </div>
             @if (\Session::get(config('global.user_role_id_session')) == 4 || \Session::get(config('global.user_role_id_session')) == 1)

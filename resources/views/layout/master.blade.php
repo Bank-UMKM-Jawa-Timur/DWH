@@ -15,35 +15,6 @@
       rel="stylesheet"
       href="{{ asset('css/app.css') }}"
     />
-    {{--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css">  --}}
-    <style>
-      @import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin);
-      i.icon.chevron.circle.down:before {
-        content: "\f13a";
-      }
-      i.icon.chevron.circle.left:before {
-        content: "\f137";
-      }
-      i.icon.chevron.circle.right:before {
-        content: "\f138";
-      }
-      i.icon.chevron.circle.up:before {
-        content: "\f139";
-      }
-      i.icon.chevron.down:before {
-        content: "\f078";
-      }
-      i.icon.chevron.left:before {
-        content: "\f053";
-      }
-      i.icon.chevron.right:before {
-        content: "\f054";
-      }
-      i.icon.chevron.up:before {
-        content: "\f077";
-      }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js"></script>
 
     @stack('extraStyle')
   </head>
@@ -75,6 +46,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="{{ asset('js/app.js') }}"></script>
 
   <script>
   function SuccessMessage(message) {
@@ -104,10 +76,38 @@
         location.reload();
     }, 3000);
   }
-  $("#btn-logout").on('click', function(e) {
-    
+  
+  $("#btn-logout").on('click', function() {
+    Swal.fire({
+        title: 'Konfirmasi',
+        html: 'Anda yakin akan mengakhiri sesi ini?',
+        icon: 'question',
+        iconColor: '#DC3545',
+        showCancelButton: true,
+        confirmButtonText: 'Ya',
+        cancelButtonText: `Batal`,
+        confirmButtonColor: '#DC3545'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "POST",
+                url: "{{ route('logout') }}/",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data.status == 'success') {
+                      const url = "{{route('login')}}"
+                      window.location.href = url;
+                    } else {
+                      ErrorMessage(data.message)
+                  }
+                }
+            });
+        }
+    })
   })
   </script>
-  <script src="{{ asset('js/app.js') }}"></script>
   @stack('extraScript')
 </html>
