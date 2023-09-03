@@ -13,7 +13,7 @@
 <div class="head-pages">
     <p class="text-sm">Role</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-        {{\App\Models\Role::select('name')->where('id', Auth::user()->role_id)->first()->name}}
+        {{\Session::get(config('global.user_name_session'))}}
     </h2>
 </div>
 <div class="body-pages">
@@ -120,7 +120,7 @@
             <div>
                 <div class="pagination">
                     @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                    {{ $data->links('pagination::semantic-ui') }}
+                    {{ $data->links('pagination::simple-tailwind') }}
                     @endif
                 </div>
             </div>

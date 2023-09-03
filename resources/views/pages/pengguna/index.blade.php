@@ -64,153 +64,94 @@
                     <th>Aksi</th>
                 </tr>
                 <tbody>
+                    @forelse ($data as $item)
                     <tr>
-                        <td>1</td>
-                        <td>01497</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>Cabang</td>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $item->nip ? $item->nip : '-' }}</td>
+                        <td>{{ $item->email ? $item->email : '-' }}</td>
+                        <td>
+                            @if ($item->detail != null || property_exists($item, 'detail'))
+                                @if (array_key_exists('entitas', $item->detail))
+                                    @if ($item->detail['entitas']['type'] == 1)
+                                        Pusat
+                                    @else
+                                        {{$item->detail['entitas']['cab']['nama_cabang']}}
+                                    @endif
+                                @else
+                                    undifined
+                                @endif
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>{{ $item->role }}</td>
                         <td>
                             <div class="dropdown">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
+                                    Selengkapnya
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li class="">
                                         <a class="item-dropdown toggle-modal" data-target-id="reset-password" href="#">Reset Password</a>
+                                        {{--  <a class="dropdown-item buttonresetpassword" data-toggle="modal"
+                                        data-target="#resetPasswordModal" data-id="{{ $item->id }}"
+                                        href="#" id="buttonresetpassword">Reset
+                                        Password</a>  --}}
                                     </li>
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="edit-pengguna" href="#">Edit</a>
+                                    <li>
+                                        <a class="item-dropdown toggle-modal btn-edit" data-id="{{ $item->id }}"
+                                            data-name="{{ $item->name }}">
+                                            Edit
+                                        </a>
                                     </li>
-                                    <li class="">
-                                        <a class="item-dropdown" href="#">Hapus</a>
+                                    <li>
+                                        <a class="item-dropdown btn-delete" data-id="{{ $item->id }}"
+                                            data-name="{{ $item->name }}">
+                                            Hapus
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>01497</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>Cabang</td>
-
-                        <td>
-                            <div class="dropdown">
-                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
+                            {{--  <div class="dropdown">
+                                <button class="btn btn-sm btn-info dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-expanded="false">
+                                    Selengkapnya
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="reset-password" href="#">Reset Password</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="edit-pengguna" href="#">Edit</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown" href="#">Hapus</a>
-                                    </li>
-                                </ul>
-                            </div>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item buttonresetpassword" data-toggle="modal"
+                                        data-target="#resetPasswordModal" data-id="{{ $item->id }}"
+                                        href="#" id="buttonresetpassword">Reset
+                                        Password</a>
+                                    <a class="dropdown-item editModal" data-toggle="modal"
+                                        data-target="#editModal" data-id="{{ $item->id }}"
+                                        data-nip="{{ $item->nip }}" data-email="{{ $item->email }}"
+                                        data-role="{{ $item->role_id }}" href="#">Edit</a>
+                                    <a class="dropdown-item deleteModal" data-toggle="modal"
+                                        data-target="#deleteModal" data-id="{{ $item->id }}"
+                                        href="#">Hapus</a>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Edit</a>
+                                </div>
+                            </div>  --}}
                         </td>
                     </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>01497</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>Cabang</td>
-
-                        <td>
-                            <div class="dropdown">
-                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="reset-password" href="#">Reset Password</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="edit-pengguna" href="#">Edit</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown" href="#">Hapus</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>01497</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>Cabang</td>
-
-                        <td>
-                            <div class="dropdown">
-                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="reset-password"  href="#">Reset Password</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="edit-pengguna" href="#">Edit</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown" href="#">Hapus</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>-</td>
-                        <td>bjsc2@mail.com</td>
-                        <td>-</td>
-                        <td>Cabang</td>
-
-                        <td>
-                            <div class="dropdown">
-                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="reset-password" href="#">Reset Password</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="edit-pengguna" href="#">Edit</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown" href="#">Hapus</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <span class="text-danger">Maaf data belum tersedia.</span>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
         <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-            <div>
-                <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-            </div>
-            <div>
+            <div class="w-full">
                 <div class="pagination">
-                    <button class="btn-pagination">Previous</button>
-                    <button class="btn-pagination is-active">1</button>
-                    <button class="btn-pagination">2</button>
-                    <button class="btn-pagination">3</button>
-                    <button class="btn-pagination">4</button>
-                    <button class="btn-pagination">5</button>
-                    <button class="btn-pagination">...</button>
-                    <button class="btn-pagination">100</button>
-                    <button class="btn-pagination">Next</button>
+                    @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                    {{ $data->links('pagination::tailwind') }}
+                    @endif
                 </div>
             </div>
         </div>
@@ -218,3 +159,13 @@
 </div>
 
 @endsection
+
+@push('extraScript')
+<script>
+    $('.pagination span').each(function() {
+        var id = $(this).attr('aria-current', 'page')
+        //var span = $(`#${id}`).find('relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5')
+        console.log(id)
+    })
+</script>
+@endpush
