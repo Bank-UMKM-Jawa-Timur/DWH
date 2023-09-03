@@ -8,7 +8,6 @@
                 <label for="" class="uppercase appearance-none">Tanggal Awal</label>
                 <input type="date" class="p-2 w-full border" id="tAwal" name="tAwal" value="{{ Request()->tAkhir }}" />
             </div>
-<<<<<<< HEAD
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Tanggal Akhir</label>
                 <input type="date" class="p-2 w-full border" id="tAkhir" name="tAkhir" value="{{ Request()->tAwal }}" />
@@ -16,42 +15,6 @@
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Status</label>
                 <select name="status" class="w-full p-2 border" id="status">
-=======
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h5 class="modal-title penyerahan-unit-title">Tanggal Awal</h5>
-                            <input type="date" class="form-control" id="tAwal" name="tAwal"
-                                value="{{ Request()->tAkhir }}">
-                        </div>
-                        <div class="col-sm-6">
-                            <h5 class="modal-title penyerahan-unit-title">Tanggal Akhir</h5>
-                            <input type="date" class="form-control" id="tAkhir" name="tAkhir"
-                                value="{{ Request()->tAwal }}">
-                        </div>
-                        <div class="col-sm-6 mt-2">
-                            <h5 class="modal-title penyerahan-unit-title">Status</h5>
-                            <select class="custom-select form-control" name="status">
-                                @if (Request()->status == 'in progress')
-                                    <option value="in progress" selected>process</option>
-                                @elseif(Request()->status == 'done')
-                                    <option value="done" selected>Done</option>
-                                @else
-                                    <option value="" selected disabled>Pilih Status...</option>
-                                @endif
-
-                                <option value="in progress">process</option>
-                                <option value="done">Done</option>
-                            </select>
-                        </div>
-                        @if (\Session::get(config('global.role_id_session')) == 4 || \Session::get(config('global.role_id_session')) == 1)
-                            <div class="col-sm-6 mt-2">
-                                <h5 class="modal-title penyerahan-unit-title">Cabang</h5>
-                                <select class="custom-select form-control" id="cabang" name="cabang">
-                                </select>
-                            </div>
-                        @endif
->>>>>>> develop
 
                     @if (Request()->status == 'in progress')
                         <option value="in progress" selected>process</option>
@@ -62,7 +25,7 @@
                     @endif
                 </select>
             </div>
-            @if (Auth::user()->role_id == 4 || Auth::user()->role_id == 1)
+            @if (\Session::get(config('global.user_role_id_session')) == 4 || \Session::get(config('global.user_role_id_session')) == 1)
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Cabang</label>
                     <select name="cabang" class="w-full p-2 border" id="cabang">

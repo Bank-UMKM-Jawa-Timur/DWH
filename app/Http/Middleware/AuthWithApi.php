@@ -18,6 +18,10 @@ class AuthWithApi
      */
     public function handle(Request $request, Closure $next)
     {
+        // Check session in laravel application
+        if (!Session::has(config('global.auth_session'))) {
+            return redirect('/login');
+        }
         // Check session in LOS database
         $controller = new Controller;
         $loginSession = $controller->serverSessionCheck();
@@ -26,15 +30,6 @@ class AuthWithApi
             if ($server_session['status'] == 'gagal') {
                 return redirect('/login')->withError('Sesi Anda telah berakhir.');
             }
-        }
-        // else {
-        //     return redirect('/login');
-        // }
-        
-
-        // Check session in laravel application
-        if (!Session::has(config('global.auth_session'))) {
-            return route('login');
         }
         
         return $next($request);
