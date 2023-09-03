@@ -100,67 +100,71 @@ class AuthenticatedSessionController extends Controller
                                     ]);
                     $responseBody = json_decode($response->getBody(), true);
 
-                    if (array_key_exists('status', $responseBody)) {
-                        if ($responseBody['status'] == 'berhasil') {
-                            if ($responseBody['data'] != 'undifined') {
-                                Session::put(config('global.auth_session'), $responseBody);
-                                $role_id = $responseBody['role'] == 'Administrator' ? 4 : 2;
-                                Session::put(config('global.role_id_session'), $role_id);
-                                Session::put(config('global.user_id_session'), $responseBody['id']);
-                                Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
-                                Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
-                                Session::put(config('global.user_token_session'), $responseBody['access_token']);
-                                Session::put(config('global.user_kode_cabang_session'), $responseBody['kode_cabang']);
-    
-                                return redirect()->route('dashboard');
-                            }
-                            else {
-                                $token = \Session::get(config('global.user_token_session'));
-                                $host = env('LOS_API_HOST');
-                                if ($host) {
-                                    $apiURL = $host . '/logout';
-                                    $headers = [
-                                        'token' => env('LOS_API_TOKEN'),
-                                        'Authorization' => "Bearer $token",
-                                    ];
-                        
-                                    try {
-                                        $response = Http::withHeaders($headers)
-                                                        ->withOptions(['verify' => false])
-                                                        ->post($apiURL);
-                                        $responseBody = json_decode($response->getBody(), true);
-                        
-                                        if (array_key_exists('message', $responseBody)) {
-                                            if ($responseBody['message'] == 'Successfully logged out') {
-                                                Session::flush();
-                                                return response()->json([
-                                                    'status' => 'success',
-                                                    'message' => 'Berhasil mengakhiri sesi'
-                                                ]);
+                    if ($responseBody) {
+                        if (array_key_exists('status', $responseBody)) {
+                            if ($responseBody['status'] == 'berhasil') {
+                                if ($responseBody['data'] != 'undifined') {
+                                    Session::put(config('global.auth_session'), $responseBody);
+                                    $role_id = $responseBody['role'] == 'Administrator' ? 4 : 2;
+                                    Session::put(config('global.role_id_session'), $role_id);
+                                    Session::put(config('global.user_id_session'), $responseBody['id']);
+                                    Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
+                                    Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
+                                    Session::put(config('global.user_token_session'), $responseBody['access_token']);
+                                    Session::put(config('global.user_kode_cabang_session'), $responseBody['kode_cabang']);
+        
+                                    return redirect()->route('dashboard');
+                                }
+                                else {
+                                    $token = \Session::get(config('global.user_token_session'));
+                                    $host = env('LOS_API_HOST');
+                                    if ($host) {
+                                        $apiURL = $host . '/logout';
+                                        $headers = [
+                                            'token' => env('LOS_API_TOKEN'),
+                                            'Authorization' => "Bearer $token",
+                                        ];
+                            
+                                        try {
+                                            $response = Http::withHeaders($headers)
+                                                            ->withOptions(['verify' => false])
+                                                            ->post($apiURL);
+                                            $responseBody = json_decode($response->getBody(), true);
+                            
+                                            if (array_key_exists('message', $responseBody)) {
+                                                if ($responseBody['message'] == 'Successfully logged out') {
+                                                    Session::flush();
+                                                    return response()->json([
+                                                        'status' => 'success',
+                                                        'message' => 'Berhasil mengakhiri sesi'
+                                                    ]);
+                                                }
+                                                else
+                                                    return response()->json([
+                                                        'status' => 'failed',
+                                                        'message' => $responseBody['message']
+                                                    ]);
                                             }
                                             else
                                                 return response()->json([
                                                     'status' => 'failed',
-                                                    'message' => $responseBody['message']
+                                                    'message' => 'Terjadi kesalahan'
                                                 ]);
-                                        }
-                                        else
+                                        } catch (\Illuminate\Http\Client\ConnectionException $e) {
                                             return response()->json([
                                                 'status' => 'failed',
-                                                'message' => 'Terjadi kesalahan'
+                                                'message' => 'Terjadi kesalahan. '.$e->getMessage()
                                             ]);
-                                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                                        return response()->json([
-                                            'status' => 'failed',
-                                            'message' => 'Terjadi kesalahan. '.$e->getMessage()
-                                        ]);
+                                        }
                                     }
+                                    return back()->withError('Data tidak ditemukan');
                                 }
-                                return back()->withError('Data tidak ditemukan');
                             }
+                            else
+                                return back()->withError($responseBody['message']);
                         }
                         else
-                            return back()->withError($responseBody['message']);
+                            return back()->withError('Terjadi kesalahan');
                     }
                     else
                         return back()->withError('Terjadi kesalahan');
@@ -189,10 +193,7 @@ class AuthenticatedSessionController extends Controller
                     'token' => env('LOS_API_TOKEN'),
                     'Authorization' => "Bearer $token",
                 ];
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => $token,
-                ]);
+
                 try {
                     $response = Http::withHeaders($headers)
                                     ->withOptions(['verify' => false])
