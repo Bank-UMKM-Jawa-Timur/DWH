@@ -82,6 +82,7 @@
                                         <div class="relative">
                                             <!-- input -->
                                             <input id="toogleA" type="checkbox" class="sr-only" />
+                                            <input id="toogleA"  @if ($item->is_active) checked @endif type="checkbox" class="sr-only" />
                                             <!-- line -->
                                             <div class="line w-10 h-4 bg-gray-400 rounded-full shadow-inner transition">
                                             </div>
@@ -93,6 +94,11 @@
                                         <!-- label -->
                                         <div class="ml-3 text-gray-700 font-medium">
                                             OFF
+                                            @if ($item->is_active)
+                                                ON
+                                            @else
+                                                OFF
+                                            @endif
                                         </div>
                                     </label>
                                 </div>
@@ -108,6 +114,15 @@
                                         </li>
                                         <li class="">
                                             <a class="item-dropdown" href="#">Hapus</a>
+                                        Selengkapnya
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li class="">
+                                            <a class="item-dropdown" data-id="{{ $item->id }}" href="#">Detail</a>
+                                        </li>
+                                        <li class="">
+                                            <a class="item-dropdown"data-id="{{ $item->id }}"
+                                                href="#">Hapus</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -123,6 +138,23 @@
                             {{ $data->links('pagination::tailwind') }}
                         @endif
                     </div>
+                        </tr> 
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <span class="text-danger">Maaf data belum tersedia.</span>
+                            </td>
+                        </tr>
+                    @endforelse
+                  </tbody>
+              </table>
+          </div>
+          <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+            <div class="w-full">
+                <div class="pagination">
+                    @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                    {{ $data->links('pagination::tailwind') }}
+                    @endif
                 </div>
             </div>
         </div>

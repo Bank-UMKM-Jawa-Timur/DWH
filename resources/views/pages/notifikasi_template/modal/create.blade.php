@@ -23,12 +23,12 @@
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Role Peran</label>
               <div>
-                <select name="" class="w-full p-2 border select-role block" id="">
-                    <option selected>-- Pilih Aksi ---</option>
+                <select name="role[]" multiple="multiple" class="w-full p-2 border select-role block" id="">
+                    <option selected>-- Pilih Role ---</option>
                 </select>
               </div>
             </div>
-            <button class="bg-theme-primary px-8 rounded text-white py-2">
+            <button type="submit" class="bg-theme-primary px-8 rounded text-white py-2">
                 Simpan
             </button>
             <button data-dismiss-id="add-template-notifikasi" type="button"

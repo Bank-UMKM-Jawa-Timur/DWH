@@ -27,7 +27,7 @@
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                     <button data-target-id="add-template-notifikasi"
-                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                        class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                         <span class="lg:mt-0 mt-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
                                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
