@@ -147,11 +147,17 @@
     .ui .menu {
         @apply border-none;
     }
-    .pagination .item {
+    .pagination {
+        @apply mt-2;
+    }
+    .pagination .btn-pagination {
         @apply px-5 py-2 border rounded-md;
     }
-    .pagination .item.active {
+    .pagination .btn-pagination.is-active {
         @apply bg-theme-primary text-white;
+    }
+    .pagination .btn-pagination.is-unactive {
+        @apply bg-gray-100 text-gray-500 cursor-not-allowed;
     }
     .dropdown {
         @apply relative z-0 max-w-[150px] mx-auto;
@@ -167,6 +173,20 @@
     }
 }
 
+.select2.select2-container {
+    width: 100% !important;
+}
+.select2.select2-container .select2-selection {
+    height: 45px;
+}
+.select2.select2-container .select2-selection .select2-selection__rendered {
+    margin-top: 0.5rem;
+    margin-left: 0.4rem;
+}
+.select2.select2-container .select2-selection .select2-selection__arrow {
+    margin-top: 0.3rem;
+    margin-right: 0.3rem;
+}
 .layout-collapse {
     animation: slideleft 0.2s ease-out;
 }

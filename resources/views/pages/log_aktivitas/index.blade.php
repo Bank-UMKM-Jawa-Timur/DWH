@@ -20,28 +20,31 @@
           </div>
           <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
               <div class="sorty pl-1 w-full pr-5">
-                  <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                  <select name="" class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                      id="">
-                      <option value="">5</option>
-                      <option value="">10</option>
-                      <option value="">15</option>
-                      <option value="">20</option>
-                  </select>
-                  <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                <form id="form" action="" method="GET">
+                    <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                    <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                    name="page_length" id="page_length">
+                        <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                        <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                        <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                        <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                    </select>
+                    <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                </form>
               </div>
               <div class="search-table lg:w-96 w-full">
-                  <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                      <span class="mt-2 ml-3">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                              <path fill="currentColor"
-                                  d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
-                          </svg>
-                      </span>
-                      <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                          autocomplete="off" />
-                  </div>
-              </div>
+                <form action="{{ route('log_aktivitas.index') }}" method="GET">
+                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                        <span class="mt-2 ml-3">
+                            @include('components.svg.search')
+                        </span>
+                            <input type="hidden" name="search_by" value="field">
+                            <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+                    </div>
+                </form>
+            </div>
           </div>
           <div class="tables mt-2">
               <table class="table-auto w-full">
@@ -52,29 +55,32 @@
                       <th>Waktu</th>
                   </tr>
                   <tbody>
-                      <tr>
-                          <td>1</td>
-                          <td>01474</td>
-                          <td>Pengguna '01474' melakukan log in.</td>
-                          <td>2023-08-31 19:37</td>
-                      </tr>
+                    @forelse ($data as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->nip ? $item->nip : $item->email }}</td>
+                            <td>{{ $item->content }}</td>
+                            <td>{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <span class="text-danger">Maaf data belum tersedia.</span>
+                            </td>
+                        </tr>
+                    @endforelse
                   </tbody>
               </table>
           </div>
           <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-              <div>
-                  <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-              </div>
-              <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                <div class="w-full">
-                    <div class="pagination">
-                        @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                        {{ $data->links('pagination::tailwind') }}
-                        @endif
-                    </div>
+            <div class="w-full">
+                <div class="pagination">
+                    @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                    {{ $data->links('pagination::tailwind') }}
+                    @endif
                 </div>
             </div>
-          </div>
+        </div>
       </div>
   </div>
     @push('extraScript')

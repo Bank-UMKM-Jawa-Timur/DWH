@@ -23,7 +23,7 @@
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <button data-target-id="add-pengguna" class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                <button data-target-id="add-pengguna" id="open-add-modal" class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                     <span class="lg:mt-0 mt-0">
                         @include('components.svg.plus')
                     </span>
@@ -33,24 +33,31 @@
         </div>
         <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
             <div class="sorty pl-1 w-full">
-                <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                <select name="" class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                    id="">
-                    <option value="">5</option>
-                    <option value="">10</option>
-                    <option value="">15</option>
-                    <option value="">20</option>
-                </select>
-                <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                <form id="form" action="" method="GET">
+                    {{-- <input type="hidden" name="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}"> --}}
+                    <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                    <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                    name="page_length" id="page_length">
+                        <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                        <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                        <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                        <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                    </select>
+                    <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                </form>
             </div>
             <div class="search-table lg:w-96 w-full">
-                <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                    <span class="mt-2 ml-3">
-                        @include('components.svg.search')
-                    </span>
-                    <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                        autocomplete="off" />
-                </div>
+                <form action="{{ route('pengguna.index') }}" method="GET">
+                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                        <span class="mt-2 ml-3">
+                            @include('components.svg.search')
+                        </span>
+                            <input type="hidden" name="search_by" value="field">
+                            <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+                    </div>
+                </form>
             </div>
         </div>
         <div class="tables mt-2">
@@ -167,5 +174,86 @@
         //var span = $(`#${id}`).find('relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5')
         console.log(id)
     })
+    $('#page_length').on('change', function() {
+        $('#form').submit()
+    })
+
+    // Modal
+    // $('#open-add-modal').click(function() {
+    //     console.log("open modal");
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "{{ route('role.list') }}",
+    //         success: function(data) {
+    //             console.log(data)
+    //             if (data) {
+    //                 for (i in data) {
+    //                     $("#add-role").append(`<option value="` + data[i].id + `">` + data[i].name +
+    //                         `</option>`);
+    //                 }
+    //             }
+    //         }
+    //     });
+    // });
+
+    // $('#add-button').click(function(e) {
+    //     e.preventDefault()
+
+    //     store();
+    // })
+
+    // function store() {
+    //     const req_nip = document.getElementById('add-nip')
+    //     const req_email = document.getElementById('add-email')
+    //     const req_password = document.getElementById('add-password')
+    //     const req_role_id = document.getElementById('add-role')
+
+    //     if (req_password == '') {
+    //         showError(req_password, 'Password wajib diisi.');
+    //         return false;
+    //     }
+    //     if (req_role_id == '' || req_role_id == 0) {
+    //         showError(req_role_id, 'Role harus dipilih.');
+    //         return false;
+    //     }
+
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "{{ route('pengguna.store') }}",
+    //         data: {
+    //             _token: "{{ csrf_token() }}",
+    //             nip: req_nip.value,
+    //             email: req_email.value,
+    //             password: req_password.value,
+    //             role_id: req_role_id.value,
+    //         },
+    //         success: function(data) {
+    //             console.log(data);
+    //             if (Array.isArray(data.error)) {
+    //                 for (var i = 0; i < data.error.length; i++) {
+    //                     var message = data.error[i];
+
+    //                     if (message.toLowerCase().includes('nip'))
+    //                         showError(req_nip, message)
+    //                     if (message.toLowerCase().includes('email'))
+    //                         showError(req_email, message)
+    //                     if (message.toLowerCase().includes('password'))
+    //                         showError(req_password, message)
+    //                     if (message.toLowerCase().includes('role'))
+    //                         showError(req_role_id, message)
+    //                 }
+    //             } else {
+    //                 if (data.status == 'success') {
+    //                     SuccessMessage(data.message);
+    //                 } else {
+    //                     alert(data.message)
+    //                 }
+    //                 $('#addModal').modal().hide()
+    //                 $('body').removeClass('modal-open');
+    //                 $('.modal-backdrop').remove();
+    //             }
+    //         }
+    //     });
+    // }
 </script>
 @endpush
