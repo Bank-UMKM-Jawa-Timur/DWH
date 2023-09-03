@@ -15,9 +15,17 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
 {
+    private $role_id;
+
+    function __construct()
+    {
+        $this->role_id = Session::get(config('global.role_id_session'));
+    }
+
     public function index(Request $request)
     {
         try {
@@ -25,15 +33,7 @@ class DashboardController extends Controller
             $param['title'] = 'Dashboard';
             $param['pageTitle'] = 'Dashboard';
             $param['karyawan'] = null;
-            $user = User::select(
-                'users.id',
-                'users.nip',
-                'users.role_id',
-                'r.name AS role_name',
-            )
-                ->join('roles AS r', 'r.id', 'users.role_id')
-                ->where('users.id', Auth::user()->id)
-                ->first();
+            $user = $this->getLoginSession();
 
             $param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
             $data = Kredit::select(
@@ -68,7 +68,7 @@ class DashboardController extends Controller
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
 
-            if (Auth::user()->role_id == 2) {
+            if ($this->role_id == 2) {
                 $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
             }
 
@@ -128,19 +128,21 @@ class DashboardController extends Controller
 
             $param['data'] = $data;
 
-            $param['role'] = $user->role_name;
-            $param['total_cabang'] = User::where('role_id', 2)->count();
+            $param['role'] = $user['role'];
+            $all_cabang = $this->getAllCabang();
+            $param['total_cabang'] = $all_cabang['status'] == 'berhasil' ? count($all_cabang['data']) : 0;
             $param['total_vendor'] = User::where('role_id', 3)->count();
             $target = Target::where('is_active', 1)->pluck('total_unit');
             $param['target'] = count($target) ? $target->first() : 0;
-            if (Auth::user()->role_id != 3) {
+
+            if ($this->role_id != 3) {
                 $param['total_kkb_done'] = Kredit::join('documents AS d', 'd.kredit_id', 'kredits.id')
                     ->where('d.document_category_id', 2)
                     ->count();
                 $param['total_pengguna'] = User::count();
             }
 
-            if (Auth::user()->role_id == 2) {
+            if ($this->role_id == 2) {
                 $param['notification'] = Notification::select(
                     'notifications.id',
                     'notifications.user_id',
@@ -154,7 +156,7 @@ class DashboardController extends Controller
                     'nt.role_id',
                 )
                     ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
-                    ->where('notifications.user_id', Auth::user()->id)
+                    ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                     ->where('notifications.read', false)
                     ->orderBy('notifications.read')
                     ->orderBy('notifications.created_at', 'DESC')
@@ -236,6 +238,7 @@ class DashboardController extends Controller
             return $e->getMessage();
             return redirect('/dashboard')->withError('Terjadi kesalahan');
         } catch (\Illuminate\Database\QueryException $e) {
+            return $e->getMessage();
             return redirect('/dashboard')->withError('Terjadi kesalahan pada database');
         }
     }
@@ -255,7 +258,7 @@ class DashboardController extends Controller
             'r.name AS role_name',
         )
             ->join('roles AS r', 'r.id', 'users.role_id')
-            ->where('users.id', Auth::user()->id)
+            ->where('users.id', \Session::get(config('global.user_id_session')))
             ->first();
 
         return $user->role_name;

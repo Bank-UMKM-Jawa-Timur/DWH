@@ -29,7 +29,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required_without:nip', 'string', 'email', 'exists:users,email'],
+            'email' => ['required_without:nip', 'string', 'email'],
             'nip' => ['required_without:email', 'string', 'exists:users,nip'],
             'password' => ['required', 'string'],
         ];

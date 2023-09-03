@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -54,6 +55,27 @@
         @include('components.sidebar')
         <!-- modal -->
         @yield('modal')
+=======
+@include('layout.head')
+@include('sweetalert::alert')
+@include('components.loading-modal')
+<div class="wrapper">
+    @include('components.alert')
+    @include('components.main-header')
+    <!-- Sidebar -->
+    @include('components.sidebar')
+    <div class="main-panel">
+        <div class="container">
+            @yield('content')
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="copyright ml-auto">
+                        @2023 Dashboard KKB | All rights reserved
+                    </div>
+                </div>
+            </footer>
+        </div>
+>>>>>>> develop
 
         <!-- layout overlay -->
         <div class="layout-overlay lg:hidden hidden"></div>
