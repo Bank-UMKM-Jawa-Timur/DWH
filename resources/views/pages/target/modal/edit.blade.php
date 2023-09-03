@@ -2,12 +2,13 @@
     <div class="head-form p-4 border-b">
         <h2>EDIT TARGET</h2>
     </div>
-    <form action="" method="">
+    <form id="modal-edit-form">
         <div class="p-4 space-y-8 mt-8">
       
             <div class="input-box space-y-3">
+                <input type="hidden" id="edit_id">
                 <label for="" class="uppercase appearance-none">TOTAL UNIT</label>
-                <input type="text" class="p-2 w-full border" />
+                <input type="text" class="p-2 w-full border" id="edit_total_unit"/>
             </div>
       
             
