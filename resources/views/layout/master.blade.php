@@ -101,6 +101,9 @@
         location.reload();
     }, 3000);
   }
+  $("#btn-logout").on('click', function(e) {
+    
+  })
   </script>
   <script src="{{ asset('js/app.js') }}"></script>
   @stack('extraScript')

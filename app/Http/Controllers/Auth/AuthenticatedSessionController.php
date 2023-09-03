@@ -89,8 +89,7 @@ class AuthenticatedSessionController extends Controller
                 ];
 
                 try {
-                    $response = Http::timeout(3)
-                                    ->withHeaders($headers)
+                    $response = Http::withHeaders($headers)
                                     ->withOptions(['verify' => false])
                                     ->post($apiURL, [
                                         'email' => $request->input_type,
@@ -142,8 +141,7 @@ class AuthenticatedSessionController extends Controller
                 ];
     
                 try {
-                    $response = Http::timeout(3)
-                                    ->withHeaders($headers)
+                    $response = Http::withHeaders($headers)
                                     ->withOptions(['verify' => false])
                                     ->post($apiURL);
                     $responseBody = json_decode($response->getBody(), true);
