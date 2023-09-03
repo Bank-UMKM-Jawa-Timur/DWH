@@ -132,7 +132,10 @@
                             </div>
                             <div class="w-full">
                                 <div class="space-y-3">
-                                    <div class="h-[528px] max-w-full mx-auto bg-gray-100"></div>
+                                    <div class="h-[528px] max-w-full mx-auto bg-gray-100">
+                                        <iframe id="detail_bukti_pembayaran" src="" class="mt-2 w-full"
+                                        height="500"></iframe>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -211,8 +214,9 @@
 
 @push('extraScript')
     <script>
-        $(".toggle-modal").on("click", function () {
-            $(".tab-wrapping .tab-button:first").trigger("click");
+ 
+        $(".toggle-modals").on("click", function () {
+            $("ul.toggle-wrapping a.tab-button:first").trigger("click");
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -237,7 +241,13 @@
                             }
                         }
 
-                        if (document.file != null) {
+                        if (document.category == "Bukti Pembayaran") {
+                            if (document.file) {
+                                $("#detail_bukti_pembayaran").attr('src', document.file_path+"#navpanes=0")
+                            }
+                        }
+
+                        if (document.file_path != 'not found') {
                             switch (document.category) {
                                 case 'STNK':
                                     $('.alert-stnk').addClass("hidden")
@@ -391,7 +401,5 @@
         
             $("#" + tabId).removeClass("hidden");
         });
-
-  
     </script>
 @endpush

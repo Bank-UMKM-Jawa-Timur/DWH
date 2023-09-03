@@ -56,6 +56,11 @@ class KreditController extends Controller
                 $this->param['pageTitle'] = 'KKB';
                 $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
 
+                $token = \Session::get(config('global.user_token_session'));
+                $user = $token ? $this->getLoginSession() : Auth::user();
+                
+                $user_id = $token ? $user['id'] : $user->id;
+
                 $data = Kredit::select(
                     'kredits.id',
                     'kredits.pengajuan_id',
@@ -101,7 +106,7 @@ class KreditController extends Controller
                 foreach ($data as $key => $value) {
                     // retrieve from api
                     $host = env('LOS_API_HOST');
-                    $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id;
+                    $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
 
                     $headers = [
                         'token' => env('LOS_API_TOKEN')
@@ -123,7 +128,15 @@ class KreditController extends Controller
                         }
 
                         // insert response to object
-                        $value->detail = $responseBody;
+                        if (array_key_exists('message', $responseBody)) {
+                            if ($responseBody['message'] == 'Data not found') {
+                                unset($data[$key]);
+                            }
+                        }
+                        if (array_key_exists('id_pengajuan', $responseBody)) {
+                            $value->detail = $responseBody;
+                        }
+                        // $value->detail = $responseBody;
                     } catch (\Illuminate\Http\Client\ConnectionException $e) {
                         // return $e->getMessage();
                     }
@@ -163,7 +176,7 @@ class KreditController extends Controller
                     }
                 }
                 $param['data'] = $data;
-
+// return dd($data);
                 return view('pages.kredit.index', $this->param);
             } catch (\Exception $e) {
                 return $e->getMessage();
@@ -961,6 +974,11 @@ class KreditController extends Controller
         $message = '';
         $data = null;
         try {
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $user_id = $token ? $user['id'] : $user->id;
+            $user_nip = $token ? $user['data']['nip'] : $user->nip;
+
             $kredit = Kredit::find($id);
             $document = DocumentCategory::select(
                 'd.id',
@@ -1001,7 +1019,7 @@ class KreditController extends Controller
 
              // retrieve from api
             $host = config('global.los_api_host');
-            $apiURL = $host . '/kkb/get-data-pengajuan/' . $kredit->pengajuan_id;
+            $apiURL = $host . '/kkb/get-data-pengajuan/' . $kredit->pengajuan_id.'/'.$user_id;
 
             $headers = [
                 'token' => config('global.los_api_token')
@@ -1024,9 +1042,9 @@ class KreditController extends Controller
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
             }
-
+            
             // retrieve karyawan data
-            $karyawan = $this->penggunaController->getKaryawan(Auth::user()->nip);
+            $karyawan = $this->penggunaController->getKaryawan($user_nip);
 
 
             if(is_array($karyawan)){

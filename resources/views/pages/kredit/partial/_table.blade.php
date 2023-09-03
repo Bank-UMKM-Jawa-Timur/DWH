@@ -517,7 +517,7 @@
                             @else
                             @endif
                             <li>
-                                <a class="item-dropdown toggle-modal"
+                                <a class="item-dropdown toggle-modals"
                                     data-target-id="modalDetailPo" data-id="{{ $item->id }}"
                                     href="#">Detail</a>
                             </li>

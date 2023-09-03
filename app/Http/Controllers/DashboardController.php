@@ -263,6 +263,6 @@ class DashboardController extends Controller
             ->where('users.id', $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id)
             ->first();
 
-        return $user->role_name;
+        return $user ? $user->role_name : '';
     }
 }
