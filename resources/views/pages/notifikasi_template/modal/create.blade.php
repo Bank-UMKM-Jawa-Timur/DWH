@@ -5,26 +5,28 @@
     <form action="" method="">
         <div class="p-4 space-y-8 mt-8">
             <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Nama</label>
-                <input type="text" class="p-2 w-full border" />
-            </div>
-            <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Nomor HP</label>
-                <input type="text" class="p-2 w-full border" />
-            </div>
-            <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Email</label>
-                <input type="password" class="p-2 w-full border" />
-            </div>
-            <div class="input-box space-y-3">
-                <label for="" class="uppercase">NIP CABANG</label>
+                <label for="" class="uppercase">Aksi</label>
                 <select name="" class="w-full p-2 border" id="">
-                    <option selected>-- Pilih Nip Cabang ---</option>
+                    <option selected>-- Pilih Aksi ---</option>
                 </select>
             </div>
             <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Alamat</label>
-                <textarea class="block w-full border" name="" id="" cols="30" rows="10"></textarea>
+                <label for="" class="uppercase appearance-none">Judul</label>
+                <input type="text" class="p-2 w-full border" />
+            </div>
+      
+            <div class="input-box space-y-3">
+                <label for="" class="uppercase">Konten</label>
+                <input type="text" class="p-2 w-full border" />
+            </div>
+         
+            <div class="input-box space-y-3">
+                <label for="" class="uppercase">Role Peran</label>
+              <div>
+                <select name="" class="w-full p-2 border select-role block" id="">
+                    <option selected>-- Pilih Aksi ---</option>
+                </select>
+              </div>
             </div>
             <button class="bg-theme-primary px-8 rounded text-white py-2">
                 Simpan
