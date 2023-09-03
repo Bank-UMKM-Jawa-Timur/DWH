@@ -49,6 +49,7 @@
             $(".layout-overlay-edit-form").removeClass("hidden");
 
             const confirm_id = $(this).data('id-doc')
+            const is_confirm = $(this).data('confirm')
             const confirm_category_id = $(this).data('id-category')
             const file = $(this).data('file');
             const status = $(this).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
@@ -61,6 +62,10 @@
             $('#status_confirm').val(status)
             $('#confirm_id').val(confirm_id)
             $('#confirm_id_category').val(confirm_category_id)
+
+            if (is_confirm) {
+                $('#modalConfirmBuktiPembayaran .modal-footer').css('display', 'none')
+            }
         });
 
         $("[data-dismiss-id]").on("click", function () {

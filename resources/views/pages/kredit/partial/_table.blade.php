@@ -103,9 +103,8 @@
                                         data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
                                         href="#confirmModalVendor">Konfirmasi</a>
                                 @elseif ($buktiPembayaran->is_confirm)
-                                    <a class="m-0 bukti-pembayaran-modal"
+                                    <a class="m-0 bukti-pembayaran-modal toggle-modal"
                                         style="cursor: pointer; text-decoration: underline;"
-                                        class="toggle-modal"
                                         data-target-id="modalConfirmBuktiPembayaran"
                                         data-file="{{ $buktiPembayaran->file }}"
                                         data-confirm="{{ $buktiPembayaran->is_confirm }}"
@@ -120,7 +119,7 @@
                         @else
                             {{--  role selain vendor  --}}
                             @if (!$buktiPembayaran && \Session::get(config('global.role_id_session')) != 3)
-                                <button class="toggle-modal" data-target-id="modalUploadBuktiPembayaran"
+                                <button class="toggle-modal underline" data-target-id="modalUploadBuktiPembayaran"
                                     data-id_kkb="{{ $item->kkb_id }}">
                                     Bayar
                                 </button>
@@ -350,7 +349,7 @@
                             @if (!$imbalJasa)
                                 <a href="#"
                                     style="text-decoration: underline; cursor: pointer;"
-                                    class="toggle-modal"
+                                    class="toggle-modal underline"
                                     data-target-id="uploadImbalJasaModal"
                                     data-id="{{ $item->id }}">Bayar</a>
                             @else
