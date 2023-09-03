@@ -93,19 +93,13 @@
                     _token: "{{ csrf_token() }}",
                 },
                 success: function(data) {
-                    /*console.log(data);
-                    if (Array.isArray(data.error)) {
-                        showError(req_name, data.error[0])
+                    console.log(data);
+                    if (data.status == 'success') {
+                      const url = "{{route('login')}}"
+                      window.location.href = url;
                     } else {
-                        if (data.status == 'success') {
-                            alert(data.message);
-                            //SuccessMessage(data.message);
-                            //Swal.fire('Saved!', '', 'success')
-                        } else {
-                            alert(data.message)
-                            //ErrorMessage(data.message)
-                        }
-                    }*/
+                      ErrorMessage(data.message)
+                  }
                 }
             });
         }
