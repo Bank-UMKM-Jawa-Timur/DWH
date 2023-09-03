@@ -233,7 +233,7 @@
         </a>
       </li>
       @endif
-      <li class="item-link {{ request()->is('notifikasi') ? 'active' : '' }}">
+      <li class="item-link {{ request()->is('notifikasi') ? 'active-link' : '' }}">
         <a
           href="{{ route('notification.index') }}"
           class="nav-link relative"

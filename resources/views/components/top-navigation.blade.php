@@ -7,13 +7,13 @@
             </svg>
         </button>
         <button class="mt-2 ml-3 toggle-fullscreen">
-           <span class="unfullscreen hidden">
-            @include('components.svg.unfullscreen')
-           
-           </span>
-           <span class="fullscreen">
-            @include('components.svg.fullscreen')
-           </span>
+            <span class="unfullscreen hidden">
+                @include('components.svg.unfullscreen')
+            
+            </span>
+            <span class="fullscreen">
+                @include('components.svg.fullscreen')
+            </span>
         </button>
     </div>
     <div class="flex gap-8 relative">
@@ -29,19 +29,49 @@
                 <path fill="none" d="M0 0h36v36H0z" />
             </svg>
         </button>
+        @php
+            $notification = \App\Models\Notification::select(
+                'notifications.id',
+                'notifications.user_id',
+                'notifications.extra',
+                'notifications.read',
+                'notifications.created_at',
+                'notifications.updated_at',
+                'nt.title',
+                'nt.content',
+                'nt.action_id',
+                'nt.role_id',
+            )
+            ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
+            ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
+            ->orderBy('notifications.read')
+            ->orderBy('notifications.created_at', 'DESC')
+            ->limit(5)
+            ->get();
+
+            $notif_belum_dibaca = \App\Models\Notification::select('notifications.id')
+                            ->join('users AS u', 'u.id', 'notifications.user_id')
+                            ->where('u.id', \Session::get(config('global.user_id_session')))
+                            ->where('notifications.read', false)
+                            ->count();
+        @endphp
         <div class="notification-list hidden border lg:w-96 w-80 bg-white absolute top-10 lg:right-20 right-0">
             <div class="head border-b w-full text-center p-3">
                 Notification
                 <span class="ml-3 py-1.5 px-3 text-white rounded-full bg-theme-primary">
-                    5</span>
+                    {{$notif_belum_dibaca}}</span>
             </div>
-            <div class="notif-list grid grid-cols-1 bg-white">
-                <button class="w-full text-left border-b p-3">
-                    <p class="text-xs text-theme-primary">Belum dibaca</p>
-                    <p class="font-bold">Hello world</p>
-                    <p class="text-xs text-theme-text">07-03-2023</p>
-                </button>
-            </div>
+            @forelse ($notification as $item)
+                <div class="notif-list grid grid-cols-1 bg-white">
+                    <button class="w-full text-left border-b p-3">
+                        <p class="text-xs text-theme-primary">{{$item->read ? 'Sudah dibaca' : 'Belum dibaca'}}</p>
+                        <p class="font-bold">{{$item->title}}</p>
+                        <p class="text-xs text-theme-text">{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</p>
+                    </button>
+                </div>
+            @empty
+                <p>Belum ada notifikasi</p>
+            @endforelse
             <div class="footer-notif text-center p-3">
                 <button>Lihat semua</button>
             </div>

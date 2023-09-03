@@ -26,10 +26,17 @@
 @include('pages.kredit.modal.detail-modal')
 @endsection
 @section('content')
+    @php
+        $user = \Session::get(config('global.auth_session'));
+        $token = \Session::get(config('global.user_token_session'));
+        $name = \Session::get(config('global.role_id_session')) == 3 ? Auth::user()->email : $user['data']['nama'];
+        $sub_name = \Session::get(config('global.role_id_session')) == 3 ? '' : $user['data']['nip'];
+        $display_role = \Session::get(config('global.role_id_session')) == 3 ? 'Vendor' : $user['role'];
+    @endphp
     <div class="head-pages">
         <p class="text-sm">Dashboard</p>
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-            {{ $role }}
+            {{ $display_role }}
         </h2>
     </div>
     <div class="body-pages">
@@ -41,23 +48,20 @@
                     </h2>
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                    <button class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
-                        <span class="lg:mt-1.5 mt-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 16 16">
-                                <path fill="currentColor" fill-rule="evenodd"
-                                    d="M5.905.28A8 8 0 0 1 14.5 3.335V1.75a.75.75 0 0 1 1.5 0V6h-4.25a.75.75 0 0 1 0-1.5h1.727a6.5 6.5 0 1 0 .526 5.994a.75.75 0 1 1 1.385.575A8 8 0 1 1 5.905.279Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                        <span class="lg:block hidden"> Reset </span>
-                    </button>
+                    @if (isset($_GET['tglAwal']) || isset($_GET['tglAkhir']) || isset($_GET['status']))
+                    <form action="" method="get">
+                        <button type="submit" class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                            <span class="lg:mt-1.5 mt-0">
+                                @include('components.svg.reset')
+                            </span>
+                            <span class="lg:block hidden"> Reset </span>
+                        </button>
+                    </form>
+                    @endif
                     <button data-target-id="filter-kkb" type="button"
                         class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                         <span class="lg:mt-1 mt-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24">
-                                <path fill="none" stroke="currentColor" stroke-width="1.5"
-                                    d="M19 3H5c-1.414 0-2.121 0-2.56.412C2 3.824 2 4.488 2 5.815v.69c0 1.037 0 1.556.26 1.986c.26.43.733.698 1.682 1.232l2.913 1.64c.636.358.955.537 1.183.735c.474.411.766.895.898 1.49c.064.284.064.618.064 1.285v2.67c0 .909 0 1.364.252 1.718c.252.355.7.53 1.594.88c1.879.734 2.818 1.101 3.486.683c.668-.417.668-1.372.668-3.282v-2.67c0-.666 0-1 .064-1.285a2.68 2.68 0 0 1 .899-1.49c.227-.197.546-.376 1.182-.735l2.913-1.64c.948-.533 1.423-.8 1.682-1.23c.26-.43.26-.95.26-1.988v-.69c0-1.326 0-1.99-.44-2.402C21.122 3 20.415 3 19 3Z" />
-                            </svg>
+                            @include('components.svg.filter')
                         </span>
                         <span class="lg:block hidden"> Filter </span>
                     </button>

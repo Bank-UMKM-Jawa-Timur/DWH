@@ -41,40 +41,46 @@ class AuthenticatedSessionController extends Controller
     {
         if ($request->input_type == 'bjsc@mail.com') {
             // login vendor
-            $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
-            if ($user->nip) {
-                $karyawan = $this->penggunaController->getKaryawan($user->nip);
-    
-                if (gettype($karyawan) == 'string')
-                    session(['nama_karyawan' => 'undifined']);
-                else {
-                    if ($karyawan)
-                        if (array_key_exists('nama', $karyawan))
-                            session(['nama_karyawan' => $karyawan['nama']]);
-                        else
-                            session(['nama_karyawan' => 'undifined']);
-                }
-            }
-            if ($user->role_id != 4) {
-                if ($user->first_login == true) {
-                    return redirect('first-login?id=' . $user->id);
-                } else {
-                    $request->authenticate();
-    
-                    $request->session()->regenerate();
-    
-                    $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
+            try {
+                $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
+                if ($user->nip) {
+                    $karyawan = $this->penggunaController->getKaryawan($user->nip);
+        
+                    if (gettype($karyawan) == 'string')
+                        session(['nama_karyawan' => 'undifined']);
+                    else {
+                        if ($karyawan)
+                            if (array_key_exists('nama', $karyawan))
+                                session(['nama_karyawan' => $karyawan['nama']]);
+                            else
+                                session(['nama_karyawan' => 'undifined']);
                     }
-            } else {
-                $request->authenticate();
-    
-                $request->session()->regenerate();
-    
-                $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
+                }
+                if ($user->role_id != 4) {
+                    if ($user->first_login == true) {
+                        return redirect('first-login?id=' . $user->id);
+                    } else {
+                        $request->authenticate();
+        
+                        $request->session()->regenerate();
+        
+                        $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
+                        }
+                } else {
+                    return $request->input_type;
+                    $request->authenticate();
+        
+                    $request->session()->regenerate();
+        
+                    $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
+                }
+                Session::put(config('global.role_id_session'), $user->role_id);
+                Session::put(config('global.user_id_session'), $user->id);
+                return redirect()->intended(RouteServiceProvider::HOME);
             }
-            Session::put(config('global.role_id_session'), $user->role_id);
-            Session::put(config('global.user_id_session'), $user->id);
-            return redirect()->intended(RouteServiceProvider::HOME);
+            catch (\Exception $e) {
+                return back()->withError('Terjadi kesalahan.'.$e->getMessage());
+            }
         }
         else {
             $host = env('LOS_API_HOST');
@@ -183,25 +189,35 @@ class AuthenticatedSessionController extends Controller
                     'token' => env('LOS_API_TOKEN'),
                     'Authorization' => "Bearer $token",
                 ];
-    
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => $token,
+                ]);
                 try {
                     $response = Http::withHeaders($headers)
                                     ->withOptions(['verify' => false])
                                     ->post($apiURL);
                     $responseBody = json_decode($response->getBody(), true);
     
-                    if (array_key_exists('message', $responseBody)) {
-                        if ($responseBody['message'] == 'Successfully logged out') {
-                            Session::flush();
-                            return response()->json([
-                                'status' => 'success',
-                                'message' => 'Berhasil mengakhiri sesi'
-                            ]);
+                    if ($responseBody) {
+                        if (array_key_exists('message', $responseBody)) {
+                            if ($responseBody['message'] == 'Successfully logged out') {
+                                Session::flush();
+                                return response()->json([
+                                    'status' => 'success',
+                                    'message' => 'Berhasil mengakhiri sesi'
+                                ]);
+                            }
+                            else
+                                return response()->json([
+                                    'status' => 'failed',
+                                    'message' => $responseBody['message']
+                                ]);
                         }
                         else
                             return response()->json([
                                 'status' => 'failed',
-                                'message' => $responseBody['message']
+                                'message' => 'Terjadi kesalahan'
                             ]);
                     }
                     else

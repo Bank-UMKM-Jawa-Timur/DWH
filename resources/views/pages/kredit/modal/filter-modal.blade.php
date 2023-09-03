@@ -6,11 +6,11 @@
         <div class="p-4 space-y-8 mt-8">
             <div class="input-box space-y-3">
                 <label for="" class="uppercase appearance-none">Tanggal Awal</label>
-                <input type="date" class="p-2 w-full border" id="tAwal" name="tAwal" value="{{ Request()->tAkhir }}" />
+                <input type="date" class="p-2 w-full border" id="tAwal" name="tAwal" value="{{ Request()->tAkhir }}" required/>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Tanggal Akhir</label>
-                <input type="date" class="p-2 w-full border" id="tAkhir" name="tAkhir" value="{{ Request()->tAwal }}" />
+                <input type="date" class="p-2 w-full border" id="tAkhir" name="tAkhir" value="{{ Request()->tAwal }}" required/>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Status</label>

@@ -41,12 +41,17 @@
                     </h2>
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                    <button class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
-                        <span class="lg:mt-1.5 mt-0">
-                            @include('components.svg.reset')
-                        </span>
-                        <span class="lg:block hidden"> Reset </span>
-                    </button>
+                    @if (isset($_GET['tglAwal']) || isset($_GET['tglAkhir']) || isset($_GET['status']))
+                    <form action="" method="get">
+                        <button type="submit" class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                            <span class="lg:mt-1.5 mt-0">
+                                @include('components.svg.reset')
+                            </span>
+                            <span class="lg:block hidden"> Reset </span>
+                        </button>
+                    </form>
+                        
+                    @endif
                     <button data-target-id="filter-kkb" type="button"
                         class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                         <span class="lg:mt-1 mt-0">

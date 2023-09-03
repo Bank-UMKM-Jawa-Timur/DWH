@@ -24,7 +24,7 @@
       $token = \Session::get(config('global.user_token_session'));
       $name = \Session::get(config('global.role_id_session')) == 3 ? Auth::user()->email : $user['data']['nama'];
       $sub_name = \Session::get(config('global.role_id_session')) == 3 ? '' : $user['data']['nip'];
-      $role = \Session::get(config('global.role_id_session')) == 3 ? 'Vendor' : $user['role'];
+      $display_role = \Session::get(config('global.role_id_session')) == 3 ? 'Vendor' : $user['role'];
     @endphp
     <div class="layout-wrapper font-lexend">
       <!-- wrapping sidebar and pages -->

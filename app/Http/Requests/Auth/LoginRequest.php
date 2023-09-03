@@ -48,7 +48,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'input_type' => trans('auth.failed'),
+                'input_type' => 'Kredensial ini tidak cocok dengan data kami.',
             ]);
         }
 

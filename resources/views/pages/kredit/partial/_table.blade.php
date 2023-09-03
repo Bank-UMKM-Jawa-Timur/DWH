@@ -96,16 +96,17 @@
                             @if ($buktiPembayaran)
                                 @if (!$buktiPembayaran->is_confirm)
                                     <a style="cursor: pointer; text-decoration: underline;"
-                                        class="confirm-bukti-pembayaran" data-toggle="modal"
+                                        class="confirm-bukti-pembayaran toggle-modal" data-target-id="modalConfirmBuktiPembayaran"
                                         data-id-category="1"
+                                        data-tanggal="{{ date('d-m-Y', strtotime($buktiPembayaran->date)) }}"
                                         data-id-doc="{{ $buktiPembayaran ? $buktiPembayaran->id : 0 }}"
                                         data-file="@isset($buktiPembayaran->file){{ $buktiPembayaran->file }}@endisset"
                                         href="#confirmModalVendor">Konfirmasi</a>
                                 @elseif ($buktiPembayaran->is_confirm)
                                     <a class="m-0 bukti-pembayaran-modal"
                                         style="cursor: pointer; text-decoration: underline;"
-                                        data-toggle="modal"
-                                        data-target="#previewBuktiPembayaranModal"
+                                        class="toggle-modal"
+                                        data-target-id="modalConfirmBuktiPembayaran"
                                         data-file="{{ $buktiPembayaran->file }}"
                                         data-confirm="{{ $buktiPembayaran->is_confirm }}"
                                         data-tanggal="{{ date('d-m-Y', strtotime($buktiPembayaran->date)) }}"
@@ -322,12 +323,19 @@
                                     data-confirm="{{ $imbalJasa->is_confirm }}"
                                     href="#confirmModalImbalJasa">Konfirmasi Bukti Pembayaran</a>
                             @elseif ($imbalJasa->is_confirm)
-                                <a class="bukti-pembayaran-modal toggle-modal"
+                                {{--  <a class="bukti-pembayaran-modal toggle-modal"
                                     style="cursor: pointer; text-decoration: underline;"
                                     data-toggle="modal" data-target="#previewImbalJasaModal"
                                     data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->date)->format('d-m-Y') }}"
                                     data-confirm_at="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
                                     data-confirm="{{ $imbalJasa->is_confirm }}"
+                                    data-file="{{ $imbalJasa->file }}">Selesai</a>  --}}
+                                <a class="bukti-pembayaran-modal toggle-modal"
+                                    style="cursor: pointer; text-decoration: underline;"
+                                    data-target-id="confirmImbalJasa"
+                                    data-confirm="{{ $imbalJasa->is_confirm }}"
+                                    data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->date)->format('d-m-Y') }}"
+                                    data-confirm_at="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
                                     data-file="{{ $imbalJasa->file }}">Selesai</a>
                             @else
                                 Menunggu Pembayaran dari Cabang
@@ -425,7 +433,7 @@
                         <ul class="dropdown-menu w-full">
                             @if ($item->tgl_ketersediaan_unit)
                                 @if ($buktiPembayaran)
-                                    @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && Auth::user()->vendor_id)
+                                    @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && \Session::get(config('global.role_id_session')) == 3)
                                         <li>
                                             <a href="#" class="item-dropdown toggle-modal"
                                                 data-target-id="modalUploadBuktiPenyerahanUnit"
