@@ -29,7 +29,7 @@ class RedirectIfAuthenticated
             if ($app_session['status'] == 'berhasil') {
                 $server_session = $controller->serverSessionCheck();
                 if ($server_session['status'] == 'sukses') {
-                    return redirect(RouteServiceProvider::HOME);
+                    return redirect()->back();
                 }
                 // else {
                 //     return redirect('/login');
@@ -42,7 +42,7 @@ class RedirectIfAuthenticated
 
             foreach ($guards as $guard) {
                 if (Auth::guard($guard)->check()) {
-                    return redirect(RouteServiceProvider::HOME);
+                    return redirect()->back();
                 }
             }
         }

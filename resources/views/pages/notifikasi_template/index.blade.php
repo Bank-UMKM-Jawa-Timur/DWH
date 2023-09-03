@@ -4,271 +4,124 @@
 
 @section('content')
 
-    <div class="panel-header">
-        <div class="page-inner py-5">
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-                <div>
-                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                </div>
-            </div>
-        </div>
+    <div class="head-pages">
+        <p class="text-sm">Master</p>
+        <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
+          {{ $pageTitle }}
+        </h2>
     </div>
-    <div class="page-inner mt--5">
-        <div class="row mt--2">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
-                            Tambah {{ $title }}
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <form id="form" action="" method="get">
-                            <input type="hidden" name="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}">
-                            <div class="d-flex justify-content-between" style="padding-left: 15px;padding-right: 15px;">
-                                <div>
-                                    <div class="form-inline">
-                                        <label>Show</label>
-                                        &nbsp;
-                                        <select class="form-control form-control-sm" name="page_length" id="page_length" >
-                                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
-                                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
-                                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
-                                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
-                                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
-                                        </select>
-                                        &nbsp;
-                                        <label>entries</label>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="form-inline">
-                                        <label>Search : </label>
-                                        &nbsp;
-                                        <form action="{{ route('template-notifikasi.index') }}" method="GET">
-                                            <input class="form-control form-control-sm" name="query" value="{{ old('query', Request()->query('query')) }}">
-                                            <input type="hidden" name="search_by" value="field">
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="table-responsive">
-                            <table class="table mt-2" id="basic-datatables">
-                                <thead>
-                                    <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Judul</th>
-                                        <th scope="col">Konten</th>
-                                        <th scope="col">Role / Peran</th>
-                                        <th scope="col">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($data as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->title }}</td>
-                                            <td>{{ $item->content }}</td>
-                                            <td>
-                                                @if (!$item->role_id && $item->all_role)
-                                                    <p>Semua</p>
-                                                @else
-                                                    @php
-                                                        $exRole = explode(',', $item->role_id);
-                                                    @endphp
-                                                    @forelse ($exRole as $v)
-                                                        @php
-                                                            $getRole = \App\Models\Role::select('id', 'name')
-                                                                ->where('id', $v)
-                                                                ->orderBy('name')
-                                                                ->first();
-                                                        @endphp
-                                                        {{ $getRole->name }}
-                                                    @empty
-                                                        <p>Role tidak dipilih</p>
-                                                    @endforelse
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-expanded="false">
-                                                        Selengkapnya
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" id="modalEdit{{ $item->id }}"
-                                                            data-toggle="modal" data-target="#editModal"
-                                                            data-id="{{ $item->id }}" data-title="{{ $item->title }}"
-                                                            data-content="{{ $item->content }}"
-                                                            data-role="{{ $item->role_id }}"
-                                                            data-all-role="{{ $item->all_role }}"
-                                                            data-action="{{ $item->action_id }}" href="#"
-                                                            onclick="edit({{ $item->id }})">Edit</a>
-                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
-                                                            data-target="#deleteModal" data-id="{{ $item->id }}"
-                                                            href="#">Hapus</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4">
-                                                <span class="text-danger">Maaf data belum tersedia.</span>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="paginated">
-                            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                {{ $data->appends(['page_length' => $page_length])->links('pagination::bootstrap-5') }}
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="body-pages">
+      <div class="table-wrapper bg-white border rounded-md w-full p-2">
+          <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+              <div class="title-table lg:p-3 p-2 text-center">
+                  <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                      Template Notifikasi
+                  </h2>
+              </div>
+              <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                  <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                      <span class="lg:mt-0 mt-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
+                              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2" d="M5 12h14m-7-7v14" />
+                          </svg>
+                      </span>
+                      <span class="lg:block hidden">
+                          Tambah Template Notifikasi
+                      </span>
+                  </button>
+              </div>
+          </div>
+          <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+              <div class="sorty pl-1 w-full">
+                  <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                  <select name="" class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                      id="">
+                      <option value="">5</option>
+                      <option value="">10</option>
+                      <option value="">15</option>
+                      <option value="">20</option>
+                  </select>
+                  <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+              </div>
+              <div class="search-table lg:w-96 w-full">
+                  <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                      <span class="mt-2 ml-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+                              <path fill="currentColor"
+                                  d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
+                          </svg>
+                      </span>
+                      <input type="search" placeholder="Search"
+                          class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
+                  </div>
+              </div>
+          </div>
+          <div class="tables mt-2">
+              <table class="table-auto w-full">
+                  <tr>
+                      <th>No.</th>
+                      <th>Judul</th>
+                      <th>Konten</th>
+                      <th>Kantor</th>
+                      <th>Role</th>
+                      <th>Aksi</th>
+                  </tr>
+                  <tbody>
+                      <tr>
+                          <td>1</td>
+                          <td>Data pengajuan baru</td>
+                          <td>Terdapat data pengajuan baru.</td>
+                          <td>-</td>
+                          <td>Semua</td>
+                          <td>
+                              <div class="dropdown">
+                                  <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                      Selangkapnya
+                                  </button>
+                                  <ul class="dropdown-menu">
+                                      <li class="">
+                                          <a class="item-dropdown" href="#">Detail</a>
+                                      </li>
+                                      <li class="">
+                                          <a class="item-dropdown" href="#">Hapus</a>
+                                      </li>
+                                  </ul>
+                              </div>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+          <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+              <div>
+                  <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
+              </div>
+              <div>
+                  <div class="pagination">
+                      <button class="btn-pagination">Previous</button>
+                      <button class="btn-pagination is-active">1</button>
+                      <button class="btn-pagination">2</button>
+                      <button class="btn-pagination">3</button>
+                      <button class="btn-pagination">4</button>
+                      <button class="btn-pagination">5</button>
+                      <button class="btn-pagination">...</button>
+                      <button class="btn-pagination">100</button>
+                      <button class="btn-pagination">Next</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
 
     <!-- Modal-tambah -->
-    <div class="modal hide" id="addModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Tambah {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-form">
-                        <div class="form-group action">
-                            <label for="add-action">Aksi</label>
-                            <select name="action" id="add-action" class="form-control select2 add-action">
-                                <option value="">---Pilih Aksi---</option>
-                                @foreach ($actions as $action)
-                                    <option value="{{ $action->id }}">{{ $action->name }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group title">
-                            <label for="add-title">Judul</label>
-                            <input type="text" class="form-control add-title" id="add-title" name="title">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group content">
-                            <label for="add-content">Konten</label>
-                            <input type="text" class="form-control add-content" id="add-content" name="content">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group role">
-                            <label for="add-role">Role / Peran</label>
-                            <br>
-                            <div class="w-100">
-                                <select name="role" id="add-role" class="form-control select-role add-role"
-                                    multiple="multiple" style="width: 100%">
-                                    <option value="">---Pilih Role / Peran---</option>
-                                    <option value="0">Semua</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="add-button">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Modal-edit -->
-    <div class="modal hide" id="editModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-edit-form" class="edit-form">
-                        <input type="hidden" name="edit_id" id="edit-id">
-                        <div class="form-group action">
-                            <label for="edit-action">Aksi</label>
-                            <select name="action" id="edit-action" class="form-control select2 edit-action">
-                                <option value="">---Pilih Aksi---</option>
-                                @foreach ($actions as $action)
-                                    <option value="{{ $action->id }}">{{ $action->name }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group title">
-                            <label for="edit-title">Judul</label>
-                            <input type="text" class="form-control edit-title" id="edit-title" name="title">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group content">
-                            <label for="edit-content">Konten</label>
-                            <input type="text" class="form-control edit-content" id="edit-content" name="content">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group role">
-                            <label for="edit-role">Role / Peran</label>
-                            <br>
-                            <div class="w-100">
-                                <select name="role" id="edit-role" class="form-control select-role edit-role"
-                                    multiple="multiple" style="width: 100%">
-                                    <option value="">---Pilih Role / Peran---</option>
-                                    <option value="0">Semua</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="edit-button">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     {{-- Modal Delete --}}
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="form-group name">
-                        Apakah Anda Ingin Menghapus {{ $title }}?
-                    </div>
-                    <div class="form-inline">
-                        <button data-dismiss="modal" class="btn btn-danger mr-2">Batal</button>
-                        <form id="delete-form" method="post">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-primary">Hapus</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
