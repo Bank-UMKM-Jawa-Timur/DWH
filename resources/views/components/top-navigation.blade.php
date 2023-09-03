@@ -66,7 +66,8 @@
             <a href="" class="block"><button class="p-4 w-full text-left hover:bg-gray-200">
                     Reset Password
                 </button></a>
-            <a href="" class="block"><button class="p-4 w-full text-left hover:bg-gray-200" id="btn-logout">
+            <a href="#" class="block"><button type="button" class="p-4 w-full text-left hover:bg-gray-200"
+                id="btn-logout">
                     Log out
                 </button></a>
         </div>

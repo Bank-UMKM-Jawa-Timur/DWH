@@ -49,9 +49,9 @@ $(".toggle-notification").blur(function () {
 $(".dropdown-account-toggle").click(function () {
     $(".dropdown-account").toggleClass("hidden");
 });
-$(".dropdown-account-toggle").blur(function () {
+/*$(".dropdown-account-toggle").blur(function () {
     $(".dropdown-account").addClass("hidden");
-});
+});*/
 
 $("#form-toggle").click(function () {
     form.toggleClass("layout-form-collapse");

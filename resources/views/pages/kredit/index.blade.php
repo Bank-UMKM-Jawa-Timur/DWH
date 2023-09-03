@@ -57,7 +57,8 @@
                 </div>
             </div>
             <div class="tables mt-2">
-                <table class="table-auto w-full">
+                @include('pages.kredit.partial._table')
+                {{--  <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
                         <th>Nama</th>
@@ -90,7 +91,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -119,7 +120,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -148,7 +149,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -177,7 +178,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -206,7 +207,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -220,23 +221,14 @@
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                </table>  --}}
             </div>
             <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                <div>
-                    <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-                </div>
-                <div>
+                <div class="w-full">
                     <div class="pagination">
-                        <button class="btn-pagination">Previous</button>
-                        <button class="btn-pagination is-active">1</button>
-                        <button class="btn-pagination">2</button>
-                        <button class="btn-pagination">3</button>
-                        <button class="btn-pagination">4</button>
-                        <button class="btn-pagination">5</button>
-                        <button class="btn-pagination">...</button>
-                        <button class="btn-pagination">100</button>
-                        <button class="btn-pagination">Next</button>
+                        @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                        {{ $data->links('pagination::tailwind') }}
+                        @endif
                     </div>
                 </div>
             </div>

@@ -149,6 +149,8 @@ class AuthenticatedSessionController extends Controller
                     if (array_key_exists('message', $responseBody)) {
                         if ($responseBody['message'] == 'Successfully logged out') {
                             Session::flush();
+
+                            return redirect('/login')->withStatus('Berhasil mengakhiri sesi');
                         }
                         else
                             return back()->withError('Terjadi kesalahan');
