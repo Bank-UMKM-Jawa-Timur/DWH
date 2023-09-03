@@ -140,14 +140,14 @@
                     <div id="tab-stnk" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="alert-stnk">
+                                <div class="alert-stnk hidden">
                                     <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">
                                         File STNK belum di upload
                                     </p>
                                 </div>
-                                <div class="content-stnk">
+                                <div class="content-stnk space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
                                         <input type="text" disabled class="p-2 w-full border" id="detail_no_stnk" />
@@ -162,14 +162,14 @@
                     <div id="tab-polis" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="alert-polis">
+                                <div class="alert-polis hidden">
                                     <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">
                                         File POLIS belum di upload
                                     </p>
                                 </div>
-                                <div class="content-polis">
+                                <div class="content-polis space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
                                         <input type="text" disabled class="p-2 w-full border" id="detail_no_polis" />
@@ -184,14 +184,14 @@
                     <div id="tab-bpkb" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="alert-bpkb">
+                                <div class="alert-bpkb hidden">
                                     <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">
                                         File BKPB belum di upload
                                     </p>
                                 </div>
-                                <div class="content-bpkb">
+                                <div class="content-bpkb space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
                                         <input type="text" disabled class="p-2 w-full border" id="detail_no_bpkb" />
@@ -212,6 +212,7 @@
 @push('extraScript')
     <script>
         $(".toggle-modal").on("click", function () {
+            $(".tab-wrapping .tab-button:first").trigger("click");
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -390,5 +391,7 @@
         
             $("#" + tabId).removeClass("hidden");
         });
+
+  
     </script>
 @endpush

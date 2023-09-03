@@ -48,18 +48,21 @@
         </div>
         <!-- avatar -->
         <button class="avatar dropdown-account-toggle">
-            <p class="text-white">A</p>
+            <img src="https://ui-avatars.com/api/?name={{$name}}" class="rounded-full" alt="" srcset="">
         </button>
+        {{--  <button class="avatar dropdown-account-toggle">
+            <p class="text-white">A</p>
+        </button>  --}}
         <div class="dropdown-account hidden bg-white z-30 w-80 divide-y absolute border right-0 top-11">
             <div class="head flex gap-5 p-5">
                 <button class="avatar">
-                    <p class="text-white">A</p>
+                    <img src="https://ui-avatars.com/api/?name={{$name}}" class="rounded-full" alt="" srcset="">
                 </button>
                 <div>
                     <h2 class="text-theme-text font-semibold">
-                        Arsyad Arthan N.
+                        {{$name}}
                     </h2>
-                    <p class="text-gray-400">19275</p>
+                    <p class="text-gray-400">{{$sub_name}}</p>
                 </div>
             </div>
             <a href="" class="block"><button class="p-4 w-full text-left hover:bg-gray-200">

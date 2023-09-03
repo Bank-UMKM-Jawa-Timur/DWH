@@ -2,7 +2,7 @@
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
             <div class="title-modal">
-                Konfirmasi Bukti Penyerahan Unit
+                Konfirmasi Bukti Imbal Jasa
                 <p class="text-sm text-gray-400 font-normal">
                     Apakah yakin ingin mengonfirmasi data ini?
                 </p>
@@ -56,6 +56,7 @@
             $(".layout-overlay-edit-form").removeClass("hidden");
             const data_id = $(this).data('id')
             const tanggal = $(this).data('tanggal')
+            const is_confirm = $(this).data('confirm')
             const confirm = $(this).data('confirm') ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'
             const file_bukti = $(this).data('file') ? $(this).data('file') : ''
             var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file_bukti;
@@ -64,6 +65,11 @@
             $('#id_cat').val(data_id)
             $('#tgl_upload_imbal_jasa').val(tanggal)
             $('#status_konfirmasi_imbal_jasa').val(tanggal)
+
+            if (is_confirm) {
+                $('#confirmImbalJasa .title-modal').html('Bukti Imbal Jasa')
+                $('#confirmImbalJasa .modal-footer').css('display', 'none')
+            }
         });
 
         $("[data-dismiss-id]").on("click", function () {

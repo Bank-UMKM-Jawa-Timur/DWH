@@ -26,11 +26,6 @@
 @include('pages.kredit.modal.detail-modal')
 @endsection
 @section('content')
-@php
-    $user = \Session::get(config('global.auth_session'));
-    $token = \Session::get(config('global.user_token_session'));
-    $role = \Session::get(config('global.role_id_session')) == 3 ? 'Vendor' : $user['role'];
-@endphp
     <div class="head-pages">
         <p class="text-sm">Dashboard</p>
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">

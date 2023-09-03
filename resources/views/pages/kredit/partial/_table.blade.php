@@ -11,7 +11,7 @@
                 <th>{{ $item->name }}</th>
             @endforeach
             <th>Bukti Pembayaran Imbal Jasa</th>
-            <th>Imbal Jasa</th>
+            <th>Imbal Jasa + 2% Pajak</th>
             <th>Status</th>
             <th>Aksi</th>
         </tr>
@@ -174,14 +174,14 @@
                         @if ($penyerahanUnit)
                             @if ($penyerahanUnit->is_confirm)
                                 <a style="text-decoration: underline; cursor: pointer;"
-                                    class="confirm-penyerahan-unit" data-toggle="modal"
+                                    class="toggle-modal" data-target-id="confirmModalPenyerahanUnit"
                                     data-id-category="2"
                                     data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
                                     data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
                                     data-confirm="{{ $penyerahanUnit->is_confirm }}"
                                     data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
                                     data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
-                                    href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                    href="#">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
                             @else
                                 @if (\Session::get(config('global.role_id_session')) == 3)
                                     <span>Menunggu konfirmasi cabang</span>
@@ -322,7 +322,7 @@
                                     data-confirm="{{ $imbalJasa->is_confirm }}"
                                     href="#confirmModalImbalJasa">Konfirmasi Bukti Pembayaran</a>
                             @elseif ($imbalJasa->is_confirm)
-                                <a class="bukti-pembayaran-modal"
+                                <a class="bukti-pembayaran-modal toggle-modal"
                                     style="cursor: pointer; text-decoration: underline;"
                                     data-toggle="modal" data-target="#previewImbalJasaModal"
                                     data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->date)->format('d-m-Y') }}"
@@ -348,10 +348,9 @@
                                 @if (!$imbalJasa->is_confirm)
                                     <p class="m-0">Menunggu Konfirmasi Vendor</p>
                                 @elseif ($imbalJasa->is_confirm)
-                                    <a class="bukti-pembayaran-modal"
+                                    <a class="bukti-pembayaran-modal toggle-modal"
                                         style="cursor: pointer; text-decoration: underline;"
-                                        data-toggle="modal"
-                                        data-target="#previewImbalJasaModal"
+                                        data-target-id="confirmImbalJasa"
                                         data-confirm="{{ $imbalJasa->is_confirm }}"
                                         data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->date)->format('d-m-Y') }}"
                                         data-confirm_at="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"

@@ -78,6 +78,7 @@
             $('#confirmModalPenyerahanUnit #tanggal_penyerahan_unit').val(tanggal)
             $('#confirmModalPenyerahanUnit #tanggal_confirm_penyerahan_unit').val(confirm_at)
             if (is_confirm) {
+                $('#confirmModalPenyerahanUnit .title-modal').html('Penyerahan Unit')
                 $('.form-confirm').css('display', 'none');
                 $('.penyerahan-unit-title').html('Penyerahan Unit');
             }
