@@ -15,7 +15,7 @@
       rel="stylesheet"
       href="{{ asset('css/app.css') }}"
     />
-
+    <link rel="icon" type="image/x-icon" href="{{asset('template/assets/img/icon_title.ico')}}">
     @stack('extraStyle')
   </head>
   <body>

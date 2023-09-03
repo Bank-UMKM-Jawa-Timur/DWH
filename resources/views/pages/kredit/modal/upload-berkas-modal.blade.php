@@ -22,11 +22,11 @@
                         </li>
                         <li class="tab-li">
                             <a data-tab="tab2"
-                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">Polis</a>
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BPKB</a>
                         </li>
                         <li class="tab-li">
                             <a data-tab="tab3"
-                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BPKB</a>
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">Polis</a>
                         </li>
                     </ul>
                 </div>
@@ -58,30 +58,6 @@
                     </div>
                     <div id="tab2" class="tab-content hidden">
                         <div class="input-box space-y-3">
-                            <input type="hidden" name="id_polis" id="id_polis">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Nomor</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
-                                <div class="form-group status-polis">
-                                    <p class="m-0" id="tanggal_upload_polis"></p>
-                                    <p class="m-0" id="tanggal_confirm_polis"></p>
-                                    <p class="m-0" id="status_confirm_polis"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <iframe id="preview_polis" src="" width="100%" height="450px"></iframe>
-                        @if (\Session::get(config('global.role_id_session')) == 3)
-                            <div class="input-box space-y-3">
-                                <div class="p-3 space-y-4">
-                                    <label for="" class="uppercase">Scan Berkas (PDF)</label>
-                                    <input type="file" class="p-2 w-full border bg-gray-100" id="polis_scan" name="polis_scan"
-                                    accept="application/pdf" />
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                    <div id="tab3" class="tab-content hidden">
-                        <div class="input-box space-y-3">
                             <input type="hidden" name="id_bpkb" id="id_bpkb">
                             <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
@@ -99,6 +75,30 @@
                                 <div class="p-3 space-y-4">
                                     <label for="" class="uppercase">Scan Berkas (PDF)</label>
                                     <input type="file" class="p-2 w-full border bg-gray-100" id="bpkb_scan" name="bpkb_scan"
+                                    accept="application/pdf" />
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                    <div id="tab3" class="tab-content hidden">
+                        <div class="input-box space-y-3">
+                            <input type="hidden" name="id_polis" id="id_polis">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Nomor</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
+                                <div class="form-group status-polis">
+                                    <p class="m-0" id="tanggal_upload_polis"></p>
+                                    <p class="m-0" id="tanggal_confirm_polis"></p>
+                                    <p class="m-0" id="status_confirm_polis"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <iframe id="preview_polis" src="" width="100%" height="450px"></iframe>
+                        @if (\Session::get(config('global.role_id_session')) == 3)
+                            <div class="input-box space-y-3">
+                                <div class="p-3 space-y-4">
+                                    <label for="" class="uppercase">Scan Berkas (PDF)</label>
+                                    <input type="file" class="p-2 w-full border bg-gray-100" id="polis_scan" name="polis_scan"
                                     accept="application/pdf" />
                                 </div>
                             </div>

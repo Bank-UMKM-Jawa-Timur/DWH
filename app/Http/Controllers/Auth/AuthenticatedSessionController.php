@@ -76,6 +76,8 @@ class AuthenticatedSessionController extends Controller
                 }
                 Session::put(config('global.role_id_session'), $user->role_id);
                 Session::put(config('global.user_id_session'), $user->id);
+                Session::put(config('global.user_role_session'), 'Vendor');
+
                 return redirect()->intended(RouteServiceProvider::HOME);
             }
             catch (\Exception $e) {
@@ -104,15 +106,16 @@ class AuthenticatedSessionController extends Controller
                         if (array_key_exists('status', $responseBody)) {
                             if ($responseBody['status'] == 'berhasil') {
                                 if ($responseBody['data'] != 'undifined') {
-                                    Session::put(config('global.auth_session'), $responseBody);
                                     $role_id = $responseBody['role'] == 'Administrator' ? 4 : 2;
+                                    Session::put(config('global.auth_session'), $responseBody);
                                     Session::put(config('global.role_id_session'), $role_id);
                                     Session::put(config('global.user_id_session'), $responseBody['id']);
                                     Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
                                     Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
+                                    Session::put(config('global.user_role_session'), $responseBody['role']);
                                     Session::put(config('global.user_token_session'), $responseBody['access_token']);
                                     Session::put(config('global.user_kode_cabang_session'), $responseBody['kode_cabang']);
-        
+
                                     return redirect()->route('dashboard');
                                 }
                                 else {

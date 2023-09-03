@@ -1,4 +1,4 @@
-<div class="modal-overlay hidden font-lexend overflow-auto" id="confirmImbalJasa">
+<div class="modal-overlay hidden font-lexend overflow-auto" id="modalConfirmImbalJasa">
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
             <div class="title-modal">
@@ -7,7 +7,7 @@
                     Apakah yakin ingin mengonfirmasi data ini?
                 </p>
             </div>
-            <button data-dismiss-id="confirmImbalJasa">
+            <button data-dismiss-id="modalConfirmImbalJasa">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" hu viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                         stroke-width="2" d="M17 7L7 17M7 7l10 10" />
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" data-dismiss-id="confirmImbalJasa"
+                <button type="button" data-dismiss-id="modalConfirmImbalJasa"
                     class="bg-white px-7 py-3 text-gray-400 border rounded">
                     Tidak
                 </button>
@@ -68,8 +68,8 @@
             $('#status_konfirmasi_imbal_jasa').val(tanggal)
 
             if (is_confirm) {
-                $('#confirmImbalJasa .title-modal').html('Bukti Imbal Jasa')
-                $('#confirmImbalJasa .modal-footer').css('display', 'none')
+                $('#modalConfirmImbalJasa .title-modal').html('Bukti Imbal Jasa')
+                $('#modalConfirmImbalJasa .modal-footer').css('display', 'none')
             }
         });
 

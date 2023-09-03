@@ -1,8 +1,8 @@
-<div class="modal-overlay hidden" id="uploadImbalJasaModal">
+<div class="modal-overlay hidden" id="modalUploadImbalJasa">
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
             <div class="title-modal">Bukti Transfer</div>
-            <button class="close-modal" data-dismiss-id="uploadImbalJasaModal">
+            <button class="close-modal" data-dismiss-id="modalUploadImbalJasa">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                         stroke-width="2" d="M17 7L7 17M7 7l10 10" />
@@ -16,13 +16,15 @@
                 <div class="input-box space-y-3">
                     <div class="p-5 space-y-4">
                         <label for="" class="uppercase">Upload Bukti Transfer Imbal Jasa</label>
+                        <br>
+                        <span class="text-red-500 m-0">Maksimal 2mb.</span>
                         <input type="file" class="p-2 w-full border bg-gray-100" accept="image/*" id="file_imbal_jasa"
                         name="file_imbal_jasa" required />
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button data-dismiss-id="uploadImbalJasaModal" class="border px-7 py-3 text-black rounded">
+                <button data-dismiss-id="modalUploadImbalJasa" class="border px-7 py-3 text-black rounded">
                     Batal
                 </button>
                 <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">

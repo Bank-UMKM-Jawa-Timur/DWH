@@ -513,7 +513,7 @@
                                                             <a href="#"
                                                                 style="text-decoration: underline; cursor: pointer;"
                                                                 class="upload-imbal-jasa" data-toggle="modal"
-                                                                data-target="#uploadImbalJasaModal"
+                                                                data-target="#modalUploadImbalJasa"
                                                                 data-id="{{ $item->id }}">Bayar</a>
                                                         @else
                                                             @if (!$imbalJasa->is_confirm)
@@ -681,7 +681,7 @@
                                                                     (isset($bpkb->is_confirm) && !$bpkb->is_confirm))
                                                                 <a href="#" class="dropdown-item upload-imbal-jasa"
                                                                     data-toggle="modal"
-                                                                    data-target="#uploadImbalJasaModal"
+                                                                    data-target="#modalUploadImbalJasa"
                                                                     data-id="{{ $item->id }}">Upload
                                                                     bukti imbal
                                                                     jasa</a>
@@ -779,7 +779,7 @@
     </div>
 
     <!-- Imbal Jasa Modal -->
-    <div class="modal fade" id="uploadImbalJasaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="modalUploadImbalJasa" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -1526,7 +1526,7 @@
                                 ErrorMessage(data.message)
                                 // console.log(data.message)
                             }
-                            $('#uploadImbalJasaModal').modal().hide()
+                            $('#modalUploadImbalJasa').modal().hide()
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                         }

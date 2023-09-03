@@ -53,12 +53,12 @@
                                 class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">STNK</a>
                         </li>
                         <li class="tab-li">
-                            <a data-tab="tab-polis"
-                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">Polis</a>
-                        </li>
-                        <li class="tab-li">
                             <a data-tab="tab-bpkb"
                                 class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BPKB</a>
+                        </li>
+                        <li class="tab-li">
+                            <a data-tab="tab-polis"
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">Polis</a>
                         </li>
                     </ul>
                 </div>
@@ -143,7 +143,6 @@
                     <div id="tab-stnk" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                          
                                 <div class="content-stnk space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
@@ -164,6 +163,28 @@
                             </div>
                         </div>
                     </div>
+                    <div id="tab-bpkb" class="tab-content hidden">
+                        <div class="flex justify-center">
+                            <div class="text-center w-full space-y-5">
+                                <div class="content-bpkb space-y-5">
+                                    <div class="input-box w-full space-y-3 text-left">
+                                        <label for="" class="uppercase appearance-none">Nomor</label>
+                                        <input type="text" disabled class="p-2 w-full border" id="detail_no_bpkb" />
+                                    </div>
+                                    <div class="h-[528px] w-full bg-gray-100">
+                                        <iframe id="detail_preview_bpkb" src="" style="width: 100%" height="450px"></iframe>
+                                    </div>
+                                </div>
+                                <div class="alert-bpkb hidden">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                        class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                        File BPKB belum di upload
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div id="tab-polis" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
@@ -181,30 +202,6 @@
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">
                                         File POLIS belum di upload
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
-                    <div id="tab-bpkb" class="tab-content hidden">
-                        <div class="flex justify-center">
-                            <div class="text-center w-full space-y-5">
-                         
-                                <div class="content-bpkb space-y-5">
-                                    <div class="input-box w-full space-y-3 text-left">
-                                        <label for="" class="uppercase appearance-none">Nomor</label>
-                                        <input type="text" disabled class="p-2 w-full border" id="detail_no_bpkb" />
-                                    </div>
-                                    <div class="h-[528px] w-full bg-gray-100">
-                                        <iframe id="detail_preview_bpkb" src="" style="width: 100%" height="450px"></iframe>
-                                    </div>
-                                </div>
-                                <div class="alert-bpkb hidden">
-                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
-                                        class="max-w-sm mx-auto" />
-                                    <p class="font-semibold tracking-tighter text-theme-text">
-                                        File BPKB belum di upload
                                     </p>
                                 </div>
                             </div>
