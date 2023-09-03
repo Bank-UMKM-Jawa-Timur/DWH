@@ -65,106 +65,35 @@
                         <th>Aksi</th>
                     </tr>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>BPKB</td>
+                        @forelse ($data as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->name }}</td>
 
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown toggle-modal" data-target-id="edit-kd" href="#">Edit</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Bukti Pembayaran</td>
-
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown toggle-modal" data-target-id="edit-kd" href="#">Edit</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Bukti Pembayaran Imbal Jasa</td>
-
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown toggle-modal" data-target-id="edit-kd" href="#">Edit</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Penyerahan Unit</td>
-
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown toggle-modal" data-target-id="edit-kd" href="#">Edit</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Polis</td>
-
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown toggle-modal" data-target-id="edit-kd" href="#">Edit</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Selangkapnya
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li class="">
+                                                <a class="item-dropdown toggle-modal" data-target-id="edit-kd" href="#"
+                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}">Edit</a>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown" href="#" data-name="{{ $item->name }}" data-id="{{ $item->id }}">Hapus</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3">
+                                    <span class="text-danger">Maaf data belum tersedia.</span>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div> --}}

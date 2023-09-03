@@ -11,9 +11,9 @@
 
 @section('content')
 <div class="head-pages">
-    <p class="text-sm">Role</p>
+    <p class="text-sm">Master</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-        {{\Session::get(config('global.user_name_session'))}}
+        Role / Peran
     </h2>
 </div>
 <div class="body-pages">
@@ -248,7 +248,7 @@
                         if (data.status == 'success') {
                             SuccessMessage(data.message);
                         } else {
-                            alert(data.message)
+                            ErrorMessage(data.message)
                         }
                         $('#addModal').modal().hide()
                         $('body').removeClass('modal-open');
@@ -283,7 +283,7 @@
                         if (data.status == 'success') {
                             SuccessMessage(data.message);
                         } else {
-                            alert(data.message)
+                            ErrorMessage(data.message)
                         }
                         $('#editModal').modal().hide()
                         $('body').removeClass('modal-open');

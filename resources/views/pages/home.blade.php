@@ -101,7 +101,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -130,7 +130,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -159,7 +159,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -188,7 +188,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
@@ -217,7 +217,7 @@
                             <td>
                                 <div class="dropdown">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
+                                        Selengkapnya
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
