@@ -565,6 +565,9 @@ video {
 .top-11 {
   top: 2.75rem;
 }
+.left-3 {
+  left: 0.75rem;
+}
 .z-0 {
   z-index: 0;
 }
@@ -671,6 +674,15 @@ video {
 .mt-\[0\.3rem\] {
   margin-top: 0.3rem;
 }
+.mt-10 {
+  margin-top: 2.5rem;
+}
+.mt-12 {
+  margin-top: 3rem;
+}
+.mt-\[4px\] {
+  margin-top: 4px;
+}
 .box-border {
   box-sizing: border-box;
 }
@@ -724,6 +736,9 @@ video {
 }
 .h-screen {
   height: 100vh;
+}
+.h-\[300px\] {
+  height: 300px;
 }
 .min-h-screen {
   min-height: 100vh;
@@ -974,9 +989,6 @@ video {
 .border-t {
   border-top-width: 1px;
 }
-.border-none {
-  border-style: none;
-}
 .border-\[\#E6E6E6\] {
   --tw-border-opacity: 1;
   border-color: rgb(230 230 230 / var(--tw-border-opacity));
@@ -1060,6 +1072,14 @@ video {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+.bg-gray-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(75 85 99 / var(--tw-bg-opacity));
+}
+.bg-theme-secondary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(18 44 79 / var(--tw-bg-opacity));
 }
 .fill-current {
   fill: currentColor;
@@ -1230,6 +1250,10 @@ video {
   font-size: 0.75rem;
   line-height: 1rem;
 }
+.text-7xl {
+  font-size: 4.5rem;
+  line-height: 1;
+}
 .font-bold {
   font-weight: 700;
 }
@@ -1339,6 +1363,10 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.text-theme-secondary {
+  --tw-text-opacity: 1;
+  color: rgb(18 44 79 / var(--tw-text-opacity));
 }
 .underline {
   text-decoration-line: underline;
@@ -1543,7 +1571,7 @@ video {
   width: 2.5rem;
   border-radius: 9999px;
   --tw-bg-opacity: 1;
-  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 .layout-sidebar {
   position: fixed;
@@ -1722,6 +1750,12 @@ body {
 }
 .table-imbal-jasa th {
   border-width: 1px;
+}
+.table-dictionary th {
+  text-align: left;
+}
+.table-dictionary td {
+  text-align: left;
 }
 table {
   border-collapse: collapse;
@@ -2684,6 +2718,10 @@ input:checked ~ .line {
     padding: 0.75rem;
   }
 
+  .lg\:p-5 {
+    padding: 1.25rem;
+  }
+
   .lg\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
@@ -2691,6 +2729,10 @@ input:checked ~ .line {
 
   .lg\:text-left {
     text-align: left;
+  }
+
+  .lg\:text-right {
+    text-align: right;
   }
 
   .lg\:text-4xl {
