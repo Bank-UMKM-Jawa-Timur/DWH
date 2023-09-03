@@ -37,7 +37,7 @@
                 class="bg-theme-primary px-8 rounded text-white py-2">
                 Simpan
             </button>
-            <button id="form-close" type="button" class="bg-white ml-2 px-8 rounded text-theme-text border py-2">
+            <button data-dismiss-id="add-layout-form" type="button" class="bg-white ml-2 px-8 rounded text-theme-text border py-2">
                 Batal
             </button>
         </div>

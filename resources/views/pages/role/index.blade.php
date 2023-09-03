@@ -11,7 +11,7 @@
 
 @section('content')
 <div class="head-pages">
-    <p class="text-sm">Dashboard</p>
+    <p class="text-sm">Role</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
         {{\App\Models\Role::select('name')->where('id', Auth::user()->role_id)->first()->name}}
     </h2>
@@ -25,8 +25,8 @@
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <button id="btn-add" type="button"
-                    class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                <button data-target-id="add-layout-form" type="button"
+                    class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                     <span class="mt-0">
                         @include('components.svg.plus')
                     </span>
@@ -132,17 +132,17 @@
         // add form
         var form = $("#add-layout-form");
 
-        $("#btn-add").click(function () {
-            // form.toggleClass("layout-form-collapse");
-            $("#add-layout-form").removeClass('hidden')
-            //toggleForm()
-        });
+        // $("#btn-add").click(function () {
+        //     // form.toggleClass("layout-form-collapse");
+        //     $("#add-layout-form").removeClass('hidden')
+        //     //toggleForm()
+        // });
 
-        $("#form-close").click(function () {
-            form.toggleClass("layout-form-collapse");
-            //closeForm();
-            toggleForm()
-        });
+        // $("#form-close").click(function () {
+        //     form.toggleClass("layout-form-collapse");
+        //     //closeForm();
+        //     toggleForm()
+        // });
 
         function toggleForm() {
             if (form.hasClass("layout-form-collapse")) {

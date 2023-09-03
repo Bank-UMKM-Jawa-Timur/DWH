@@ -71,7 +71,7 @@
         @apply bg-[#F5F5F9] p-2 rounded-md;
     }
     .dropdown-menu-link .menu-dropdown {
-        @apply space-y-2;
+        @apply space-y-5;
     }
     .dropdown-menu-link .menu-dropdown .dropdown-item-link {
         @apply text-sm px-5 py-2 rounded-md hover:bg-[#5F5F5F]/10 cursor-pointer;

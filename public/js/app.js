@@ -90,9 +90,11 @@ $(".layout-overlay").click(function () {
   toggleSidebar();
 });
 $(".layout-overlay-form").click(function () {
-  form.toggleClass("layout-form-collapse");
-  toggleForm();
+  form.addClass("hidden");
+  $(".layout-overlay-form").addClass("hidden");
+  // toggleForm();
 });
+
 $(".layout-overlay-edit-form").click(function () {
   element.toggleClass("layout-form-collapse");
 });
@@ -108,7 +110,21 @@ $(".close-form-edit").on("click", function () {
   $("#" + formId).addClass("hidden");
   $(".layout-overlay-edit-form").addClass("hidden");
 });
-
+$(".toggle-modal").on("click", function () {
+  var targetId = $(this).data("target-id");
+  $("#" + targetId).removeClass("hidden");
+  form.addClass("layout-form-collapse");
+  if (targetId.slice(0, 5) !== "modal") {
+    $(".layout-overlay-form").removeClass("hidden");
+  }
+});
+$("[data-dismiss-id]").on("click", function () {
+  var dismissId = $(this).data("dismiss-id");
+  $("#" + dismissId).addClass("hidden");
+  if (dismissId.slice(0, 5) !== "modal") {
+    $(".layout-overlay-form").addClass("hidden");
+  }
+});
 // chart donut
 var options = {
   series: [10, 10],

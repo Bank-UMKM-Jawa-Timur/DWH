@@ -1,10 +1,13 @@
 @extends('layout.master')
-
+@section('modal')
+<!-- Modal-Filter -->
+@include('pages.kredit.modal.filter-modal')
+@endsection
 @section('content')
     <div class="head-pages">
-        <p class="text-sm">Dashboard</p>
+        <p class="text-sm">KKB</p>
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-            Superadmin
+            KKB
         </h2>
     </div>
     <div class="body-pages">
@@ -22,8 +25,8 @@
                         </span>
                         <span class="lg:block hidden"> Reset </span>
                     </button>
-                    <button id="form-toggle" type="button"
-                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                    <button data-target-id="filter-kkb" type="button"
+                        class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                         <span class="lg:mt-1 mt-0">
                             @include('components.svg.filter')
                         </span>
