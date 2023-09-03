@@ -126,6 +126,49 @@ $("[data-dismiss-id]").on("click", function () {
     $(".layout-overlay-form").addClass("hidden");
   }
 });
+$(".toggle-fullscreen").click(function () {
+  $(".toggle-fullscreen").toggleClass("is-fullscreen");
+  if ($(".toggle-fullscreen").hasClass("is-fullscreen")) {
+    fullscreen(true);
+    $(".unfullscreen").removeClass("hidden");
+    $(".fullscreen").addClass("hidden");
+  } else {
+    fullscreen(false);
+    $(".unfullscreen").addClass("hidden");
+    $(".fullscreen").removeClass("hidden");
+  }
+});
+var elem = document.documentElement;
+function fullscreen(isFullscreen) {
+  if (isFullscreen) {
+    openFullscreen();
+  } else {
+    closeFullscreen();
+  }
+}
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) {
+    /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) {
+    /* IE11 */
+    elem.msRequestFullscreen();
+  }
+}
+function closeFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    /* Safari */
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    /* IE11 */
+    document.msExitFullscreen();
+  }
+}
+
 // chart donut
 var options = {
   series: [10, 10],
