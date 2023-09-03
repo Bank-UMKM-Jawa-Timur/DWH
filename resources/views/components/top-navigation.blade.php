@@ -93,12 +93,15 @@
         </div>
     </div>
     <!-- avatar -->
-    <button class="avatar dropdown-account-toggle"></button>
+    <button class="avatar dropdown-account-toggle">
+        <p class="text-white">A</p>
+    </button>
     <div
-        class="dropdown-account hidden bg-white z-30 w-80 divide-y absolute border right-0 top-11"
-    >
+        class="dropdown-account hidden bg-white z-30 w-80 divide-y absolute border right-0 top-11">
         <div class="head flex gap-5 p-5">
-        <div class="avatar"></div>
+        <button class="avatar">
+            <p class="text-white">A</p>
+        </button>
         <div>
             <h2 class="text-theme-text font-semibold">
             Arsyad Arthan N.
