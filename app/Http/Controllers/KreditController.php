@@ -90,7 +90,7 @@ class KreditController extends Controller
 
 
                 if (\Session::get(config('global.role_id_session')) == 2) {
-                    $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
+                    $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
                 }
 
                 if (is_numeric($page_length))
@@ -166,6 +166,7 @@ class KreditController extends Controller
 
                 return view('pages.kredit.index', $this->param);
             } catch (\Exception $e) {
+                return $e->getMessage();
                 return back()->withError('Terjadi kesalahan');
             } catch (\Illuminate\Database\QueryException $e) {
                 return back()->withError('Terjadi kesalahan pada database');

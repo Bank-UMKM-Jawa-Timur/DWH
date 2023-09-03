@@ -20,15 +20,20 @@ class AuthWithApi
     {
         // Check session in laravel application
         if (!Session::has(config('global.auth_session'))) {
-            return redirect('/login');
+            if (! $request->expectsJson()) {
+                // return redirect()->route('login');
+            }
+            // return redirect('/login');
         }
-        // Check session in LOS database
-        $controller = new Controller;
-        $loginSession = $controller->serverSessionCheck();
-        if ($loginSession['status'] == 'berhasil') {
-            $server_session = $controller->serverSessionCheck();
-            if ($server_session['status'] == 'gagal') {
-                return redirect('/login')->withError('Sesi Anda telah berakhir.');
+        else {
+            // Check session in LOS database
+            $controller = new Controller;
+            $loginSession = $controller->serverSessionCheck();
+            if ($loginSession['status'] == 'berhasil') {
+                $server_session = $controller->serverSessionCheck();
+                if ($server_session['status'] == 'gagal') {
+                    return redirect('/login')->withError('Sesi Anda telah berakhir.');
+                }
             }
         }
         

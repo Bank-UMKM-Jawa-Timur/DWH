@@ -10,5 +10,6 @@ return [
     'user_nip_session' => 'user_nip_session',
     'user_name_session' => 'user_name_session',
     'user_token_session' => 'user_token_session',
+    'user_kode_cabang_session' => 'user_kode_cabang_session',
     'role_id_session' => 'role_id_session',
 ];

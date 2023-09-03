@@ -64,20 +64,17 @@ class AuthenticatedSessionController extends Controller
                     $request->session()->regenerate();
     
                     $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
-    
-                    return redirect()->intended(RouteServiceProvider::HOME);
-                }
+                    }
             } else {
                 $request->authenticate();
     
                 $request->session()->regenerate();
     
                 $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
-    
-                return redirect()->intended(RouteServiceProvider::HOME);
             }
             Session::put(config('global.role_id_session'), $user->role_id);
             Session::put(config('global.user_id_session'), $user->id);
+            return redirect()->intended(RouteServiceProvider::HOME);
         }
         else {
             $host = env('LOS_API_HOST');
@@ -107,11 +104,54 @@ class AuthenticatedSessionController extends Controller
                                 Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
                                 Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
                                 Session::put(config('global.user_token_session'), $responseBody['access_token']);
+                                Session::put(config('global.user_kode_cabang_session'), $responseBody['kode_cabang']);
     
                                 return redirect()->route('dashboard');
                             }
-                            else
+                            else {
+                                $token = \Session::get(config('global.user_token_session'));
+                                $host = env('LOS_API_HOST');
+                                if ($host) {
+                                    $apiURL = $host . '/logout';
+                                    $headers = [
+                                        'token' => env('LOS_API_TOKEN'),
+                                        'Authorization' => "Bearer $token",
+                                    ];
+                        
+                                    try {
+                                        $response = Http::withHeaders($headers)
+                                                        ->withOptions(['verify' => false])
+                                                        ->post($apiURL);
+                                        $responseBody = json_decode($response->getBody(), true);
+                        
+                                        if (array_key_exists('message', $responseBody)) {
+                                            if ($responseBody['message'] == 'Successfully logged out') {
+                                                Session::flush();
+                                                return response()->json([
+                                                    'status' => 'success',
+                                                    'message' => 'Berhasil mengakhiri sesi'
+                                                ]);
+                                            }
+                                            else
+                                                return response()->json([
+                                                    'status' => 'failed',
+                                                    'message' => $responseBody['message']
+                                                ]);
+                                        }
+                                        else
+                                            return response()->json([
+                                                'status' => 'failed',
+                                                'message' => 'Terjadi kesalahan'
+                                            ]);
+                                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                                        return response()->json([
+                                            'status' => 'failed',
+                                            'message' => 'Terjadi kesalahan. '.$e->getMessage()
+                                        ]);
+                                    }
+                                }
                                 return back()->withError('Data tidak ditemukan');
+                            }
                         }
                         else
                             return back()->withError($responseBody['message']);

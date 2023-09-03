@@ -27,7 +27,7 @@
                     <option value="done">Done</option>
                 </select>
             </div>
-            @if (\Session::get(config('global.user_role_id_session')) == 4 || \Session::get(config('global.user_role_id_session')) == 1)
+            @if (\Session::get(config('global.role_id_session')) == 4 || \Session::get(config('global.role_id_session')) == 1)
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Cabang</label>
                     <select name="cabang" class="w-full p-2 border" id="cabang">

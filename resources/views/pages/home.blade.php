@@ -1,13 +1,40 @@
 @extends('layout.master')
 @section('modal')
-    <!-- Modal-Filter -->
-    @include('pages.kredit.modal.filter-modal')
+<!-- Modal-Filter -->
+@include('pages.kredit.modal.filter-modal')
+<!-- Modal PO -->
+@include('pages.kredit.modal.detail-po')
+<!-- Modal Atur Ketersediaan Unit -->
+@include('pages.kredit.modal.atur-ketersediaan-unit-modal')
+<!-- Modal Upload Bukti Pembayaran -->
+@include('pages.kredit.modal.upload-bukti-pembayaran-modal')
+<!-- Modal Preview Bukti Pembayaran -->
+@include('pages.kredit.modal.bukti-pembayaran-modal')
+<!-- Modal Confirm Bukti Pembayaran -->
+@include('pages.kredit.modal.confirm-bukti-pembayaran-modal')
+<!-- Modal Upload Bukti Penyerahan Unit -->
+@include('pages.kredit.modal.upload-penyerahan-unit-modal')
+<!-- Modal Confirm Bukti Penyerahan Unit -->
+@include('pages.kredit.modal.confirm-penyerahan-unit')
+<!-- Modal Upload Berkas -->
+@include('pages.kredit.modal.upload-berkas-modal')
+<!-- Modal Upload Imbal Jasa -->
+@include('pages.kredit.modal.upload-bukti-imbal-jasa')
+<!-- Modal Confirm Imbal Jasa -->
+@include('pages.kredit.modal.confirm-bukti-pembayaran-imbal-jasa-modal')
+<!-- Modal Detail PO -->
+@include('pages.kredit.modal.detail-modal')
 @endsection
 @section('content')
+@php
+    $user = \Session::get(config('global.auth_session'));
+    $token = \Session::get(config('global.user_token_session'));
+    $role = \Session::get(config('global.role_id_session')) == 3 ? 'Vendor' : $user['role'];
+@endphp
     <div class="head-pages">
         <p class="text-sm">Dashboard</p>
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-            Superadmin
+            {{ $role }}
         </h2>
     </div>
     <div class="body-pages">
@@ -68,7 +95,8 @@
                 </div>
             </div>
             <div class="tables mt-2">
-                <table class="table-auto w-full">
+                @include('pages.kredit.partial._table')
+                {{--  <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
                         <th>Nama</th>
@@ -231,7 +259,7 @@
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                </table>  --}}
             </div>
             <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
                 <div class="w-full">

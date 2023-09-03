@@ -59,8 +59,9 @@ class LogActivitesController extends Controller
 
     public function store($content)
     {
+        $token = \Session::get(config('global.user_token_session'));
         $newActivity = new LogActivity();
-        $newActivity->user_id = \Session::get(config('global.user_id_session'));
+        $newActivity->user_id = $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id;
         $newActivity->content = $content;
 
         $newActivity->save();

@@ -33,7 +33,8 @@ class DashboardController extends Controller
             $param['title'] = 'Dashboard';
             $param['pageTitle'] = 'Dashboard';
             $param['karyawan'] = null;
-            $user = $this->getLoginSession();
+            $token = Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
 
             $param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
             $data = Kredit::select(
@@ -127,8 +128,8 @@ class DashboardController extends Controller
             }
 
             $param['data'] = $data;
-
-            $param['role'] = $user['role'];
+            $role = $token ? $user['role'] : 'Vendor';
+            $param['role'] = $role;
             $all_cabang = $this->getAllCabang();
             $param['total_cabang'] = $all_cabang['status'] == 'berhasil' ? count($all_cabang['data']) : 0;
             $param['total_vendor'] = User::where('role_id', 3)->count();
@@ -252,13 +253,14 @@ class DashboardController extends Controller
 
     public function getRoleName()
     {
+        $token = \Session::get(config('global.user_token_session'));
         $user = User::select(
             'users.id',
             'users.role_id',
             'r.name AS role_name',
         )
             ->join('roles AS r', 'r.id', 'users.role_id')
-            ->where('users.id', \Session::get(config('global.user_id_session')))
+            ->where('users.id', $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id)
             ->first();
 
         return $user->role_name;
