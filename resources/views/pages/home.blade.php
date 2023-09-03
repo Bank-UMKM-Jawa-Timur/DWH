@@ -32,7 +32,15 @@
             {{ $role }}
         </h2>
     </div>
-    <div class="body-pages">
+    <div class="body-pages space-y-5">
+        
+        @if(\Session::get(config('global.role_id_session')) == 1)
+        @include('pages.dashboard.pemasaran')
+        @endif
+
+        @if(\Session::get(config('global.role_id_session')) == 2)
+        @include('pages.dashboard.cabang')
+        @endif
         <div class="table-wrapper bg-white border rounded-md w-full p-2">
             <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                 <div class="title-table lg:p-3 p-2 text-center">
@@ -159,6 +167,72 @@
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
+        // chart donut
+    var options = {
+        series: [10, 10],
+        colors: ["#122C4F", "#DC3545"],
+        chart: {
+            type: "donut",
+            width: "100%",
+        },
+
+        legend: {
+            show: false,
+        },
+        dataLabels: {
+            enabled: false,
+        },
+    };
+
+    var donut = new ApexCharts(document.querySelector(".chart"), options);
+    donut.render();
+
+
+    
+// line chart
+var lineOptions = {
+    series: [
+        {
+            name: "Data Set",
+            data: [10],
+        },
+    ],
+    chart: {
+        type: "bar",
+        height: 350,
+        stacked: true,
+    },
+    colors: ["#DC3545"],
+    responsive: [
+        {
+            breakpoint: 480,
+            options: {
+                legend: {
+                    position: "bottom",
+                    offsetX: -10,
+                    offsetY: 0,
+                },
+            },
+        },
+    ],
+    xaxis: {
+        categories: ["Data Set"],
+    },
+    fill: {
+        opacity: 1,
+    },
+    legend: {
+        position: "top",
+        offsetX: 0,
+        offsetY: 50,
+    },
+};
+
+var lineChart = document.querySelector(".line-chart");
+var chart = new ApexCharts(lineChart, lineOptions);
+chart.render();
+
+
 </script>
 @endpush
 @endsection

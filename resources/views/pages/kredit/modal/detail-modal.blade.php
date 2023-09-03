@@ -63,9 +63,9 @@
                     </ul>
                 </div>
 
-                <div class="mt-5 p-5">
+                <div class="mt-2 p-5">
                     <div id="tab-po" class="tab-content">
-                        <div class="gap-5 space-y-5">
+                        <div class="gap-5 space-y-3">
                             <div class="flex gap-5 w-full mt-0">
                                 <div class="input-box w-full space-y-3">
                                     <label for="" class="uppercase appearance-none">Nomor PO</label>
@@ -143,13 +143,7 @@
                     <div id="tab-stnk" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="alert-stnk hidden">
-                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
-                                        class="max-w-sm mx-auto" />
-                                    <p class="font-semibold tracking-tighter text-theme-text">
-                                        File STNK belum di upload
-                                    </p>
-                                </div>
+                          
                                 <div class="content-stnk space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
@@ -159,19 +153,20 @@
                                         <iframe id="detail_preview_stnk" src="" style="width: 100%" height="450px"></iframe>
                                     </div>
                                 </div>
+                                <div class="alert-stnk hidden">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                        class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                        File STNK belum di upload
+                                    </p>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
                     <div id="tab-polis" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="alert-polis hidden">
-                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
-                                        class="max-w-sm mx-auto" />
-                                    <p class="font-semibold tracking-tighter text-theme-text">
-                                        File POLIS belum di upload
-                                    </p>
-                                </div>
                                 <div class="content-polis space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
@@ -181,19 +176,21 @@
                                         <iframe id="detail_preview_polis" src="" width="100%" height="450px"></iframe>
                                     </div>
                                 </div>
+                                <div class="alert-polis hidden">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                        class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                        File POLIS belum di upload
+                                    </p>
+                                </div>
                             </div>
                         </div>
+                        
                     </div>
                     <div id="tab-bpkb" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="alert-bpkb hidden">
-                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
-                                        class="max-w-sm mx-auto" />
-                                    <p class="font-semibold tracking-tighter text-theme-text">
-                                        File BKPB belum di upload
-                                    </p>
-                                </div>
+                         
                                 <div class="content-bpkb space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
@@ -202,6 +199,13 @@
                                     <div class="h-[528px] w-full bg-gray-100">
                                         <iframe id="detail_preview_bpkb" src="" style="width: 100%" height="450px"></iframe>
                                     </div>
+                                </div>
+                                <div class="alert-bpkb hidden">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                        class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                        File BKPB belum di upload
+                                    </p>
                                 </div>
                             </div>
                         </div>

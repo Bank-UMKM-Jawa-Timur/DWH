@@ -174,7 +174,7 @@
                         @if ($penyerahanUnit)
                             @if ($penyerahanUnit->is_confirm)
                                 <a style="text-decoration: underline; cursor: pointer;"
-                                    class="toggle-modal" data-target-id="confirmModalPenyerahanUnit"
+                                    class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
                                     data-id-category="2"
                                     data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
                                     data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
@@ -187,7 +187,7 @@
                                     <span>Menunggu konfirmasi cabang</span>
                                 @else
                                     <a class="toggle-modal"
-                                        data-target-id="confirmModalPenyerahanUnit"
+                                        data-target-id="modalConfirmPenyerahanUnit"
                                         data-id-category="2"
                                         data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
                                         data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"

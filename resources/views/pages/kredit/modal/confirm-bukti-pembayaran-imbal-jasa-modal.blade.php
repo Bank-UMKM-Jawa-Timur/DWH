@@ -31,7 +31,8 @@
                     </div>
                     <div class="space-y-3">
                         <div class="h-[528px] w-full bg-gray-100">
-                            <img id="preview_imbal_jasa" src="" width="100%">
+                            <iframe src="" frameborder="0" class="w-full" id="preview_imbal_jasa"></iframe>
+                            {{-- <img id="preview_imbal_jasa" src="" width="100%"> --}}
                         </div>
                     </div>
                 </div>
