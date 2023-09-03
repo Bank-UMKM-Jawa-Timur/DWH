@@ -147,11 +147,17 @@
     .ui .menu {
         @apply border-none;
     }
-    .pagination .item {
+    .pagination {
+        @apply mt-2;
+    }
+    .pagination .btn-pagination {
         @apply px-5 py-2 border rounded-md;
     }
-    .pagination .item.active {
+    .pagination .btn-pagination.is-active {
         @apply bg-theme-primary text-white;
+    }
+    .pagination .btn-pagination.is-unactive {
+        @apply bg-gray-100 text-gray-500 cursor-not-allowed;
     }
     .dropdown {
         @apply relative z-0 max-w-[150px] mx-auto;

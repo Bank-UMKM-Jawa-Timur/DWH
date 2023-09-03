@@ -36,15 +36,18 @@
         </div>
         <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
             <div class="sorty pl-1 w-full">
-                <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                <select name="" class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                    id="">
-                    <option value="">5</option>
-                    <option value="">10</option>
-                    <option value="">15</option>
-                    <option value="">20</option>
-                </select>
-                <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                <form id="form" action="" method="GET">
+                    <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                    <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                    name="page_length" id="page_length">
+                        <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                        <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                        <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                        <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                    </select>
+                    <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                </form>
             </div>
             <div class="search-table lg:w-96 w-full">
                 <form action="{{ route('role.index') }}" method="GET">
@@ -53,7 +56,7 @@
                             @include('components.svg.search')
                         </span>
                             <input type="hidden" name="search_by" value="field">
-                            <input type="text" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                            <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
                                 name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
                     </div>
                 </form>
@@ -126,6 +129,9 @@
 </div>
 @push('extraScript')
     <script>
+        $('#page_length').on('change', function() {
+        $('#form').submit()
+    })
         // add form
         var form = $("#add-layout-form");
 

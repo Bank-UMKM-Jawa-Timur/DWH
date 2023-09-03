@@ -43,28 +43,30 @@
             </div>
             <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
                 <div class="sorty pl-1 w-full">
-                    <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                    <select name=""
-                        class="border outline-none px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                        id="">
-                        <option value="">5</option>
-                        <option value="">10</option>
-                        <option value="">15</option>
-                        <option value="">20</option>
-                    </select>
-                    <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    <form id="form" action="" method="GET">
+                        <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                        name="page_length" id="page_length">
+                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    </form>
                 </div>
                 <div class="search-table lg:w-96 w-full">
-                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                        <span class="mt-2 ml-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                    d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
-                            </svg>
-                        </span>
-                        <input type="search" placeholder="Search"
-                            class="p-2 rounded-md w-full border-none outline-none text-[#BFBFBF]" autocomplete="off" />
-                    </div>
+                    <form action="s" method="GET">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                @include('components.svg.search')
+                            </span>
+                                <input type="hidden" name="search_by" value="field">
+                                <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                    name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+                        </div>
+                    </form>
                 </div>
             </div>
             <div class="tables mt-2">
@@ -114,122 +116,6 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Muhammad Khalil Z.</td>
-                            <td>001/PO/07/2023</td>
-                            <td>Menunggu tanggal ketersediaan unit</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>diproses</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Edi</td>
-                            <td>001/PO/07/2023</td>
-                            <td>Menunggu tanggal ketersediaan unit</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>diproses</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Ahmad Roni.</td>
-                            <td>001/PO/07/2023</td>
-                            <td>Menunggu tanggal ketersediaan unit</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>diproses</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Dani Riyadi.</td>
-                            <td>001/PO/07/2023</td>
-                            <td>Menunggu tanggal ketersediaan unit</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>diproses</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -244,4 +130,12 @@
             </div>
         </div>
     </div>
+
+@push('extraScript')
+<script>
+    $('#page_length').on('change', function() {
+        $('#form').submit()
+    })
+</script>
+@endpush
 @endsection
