@@ -117,20 +117,11 @@
                 </table>
             </div>
             <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                <div>
-                    <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-                </div>
-                <div>
+                <div class="w-full">
                     <div class="pagination">
-                        <button class="btn-pagination">Previous</button>
-                        <button class="btn-pagination is-active">1</button>
-                        <button class="btn-pagination">2</button>
-                        <button class="btn-pagination">3</button>
-                        <button class="btn-pagination">4</button>
-                        <button class="btn-pagination">5</button>
-                        <button class="btn-pagination">...</button>
-                        <button class="btn-pagination">100</button>
-                        <button class="btn-pagination">Next</button>
+                        @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                        {{ $data->links('pagination::tailwind') }}
+                        @endif
                     </div>
                 </div>
             </div>

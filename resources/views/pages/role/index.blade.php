@@ -114,13 +114,10 @@
             </table>
         </div>
         <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-            <div>
-                <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-            </div>
-            <div>
+            <div class="w-full">
                 <div class="pagination">
                     @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                    {{ $data->links('pagination::simple-tailwind') }}
+                    {{ $data->links('pagination::tailwind') }}
                     @endif
                 </div>
             </div>
@@ -251,7 +248,7 @@
                         if (data.status == 'success') {
                             SuccessMessage(data.message);
                         } else {
-                            alert(data.message)
+                            ErrorMessage(data.message)
                         }
                         $('#addModal').modal().hide()
                         $('body').removeClass('modal-open');
@@ -286,7 +283,7 @@
                         if (data.status == 'success') {
                             SuccessMessage(data.message);
                         } else {
-                            alert(data.message)
+                            ErrorMessage(data.message)
                         }
                         $('#editModal').modal().hide()
                         $('body').removeClass('modal-open');

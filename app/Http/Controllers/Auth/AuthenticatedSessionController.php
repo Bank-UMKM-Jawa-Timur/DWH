@@ -99,15 +99,19 @@ class AuthenticatedSessionController extends Controller
 
                     if (array_key_exists('status', $responseBody)) {
                         if ($responseBody['status'] == 'berhasil') {
-                            Session::put(config('global.auth_session'), $responseBody);
-                            $role_id = $responseBody['role'] == 'Administrator' ? 4 : 2;
-                            Session::put(config('global.role_id_session'), $role_id);
-                            Session::put(config('global.user_id_session'), $responseBody['id']);
-                            Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
-                            Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
-                            Session::put(config('global.user_token_session'), $responseBody['access_token']);
-
-                            return redirect()->route('dashboard');
+                            if ($responseBody['data'] != 'undifined') {
+                                Session::put(config('global.auth_session'), $responseBody);
+                                $role_id = $responseBody['role'] == 'Administrator' ? 4 : 2;
+                                Session::put(config('global.role_id_session'), $role_id);
+                                Session::put(config('global.user_id_session'), $responseBody['id']);
+                                Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
+                                Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
+                                Session::put(config('global.user_token_session'), $responseBody['access_token']);
+    
+                                return redirect()->route('dashboard');
+                            }
+                            else
+                                return back()->withError('Data tidak ditemukan');
                         }
                         else
                             return back()->withError($responseBody['message']);
