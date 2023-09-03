@@ -65,54 +65,39 @@
                         <th>Aksi</th>
                     </tr>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>A0CY</td>
-                            <td>Tabel Mata Uang</td>
-    
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Edit</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>A0WI</td>
-                            <td>Tabel Wilayah</td>
-    
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Edit</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
+                        @forelse ($data as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->filename }}</td>
+                                <td>{{ $item->description }}</td>
+        
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Selangkapnya
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li class="">
+                                                <a class="item-dropdown" href="{{route('dictionary.edit', $item->id)}}">Edit</a>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown" href="{{route('dictionary.show', $item->id)}}">Detail</a>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown" data-name="{{ $item->name }}"
+                                                    data-id="{{ $item->id }}" href="#">Hapus</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr> 
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <span class="text-danger">Maaf data belum tersedia.</span>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

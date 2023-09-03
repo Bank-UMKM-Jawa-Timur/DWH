@@ -79,53 +79,83 @@
                       </tr>
                   </thead>
                   <tbody>
-                      <tr>
-                          <td>1</td>
-                          <td>
-                              < 10.000.000</td>
-                          <td>100.000</td>
-                          <td>200.000</td>
-                          <td>300.000</td>
-                          <td>
-                              <div class="dropdown">
-                                  <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                      Selangkapnya
-                                  </button>
-                                  <ul class="dropdown-menu">
-                                      <li class="">
-                                          <a class="item-dropdown toggle-form-edit" data-form-id="form-1"
-                                              href="#">Edit</a>
-                                      </li>
-                                      <li class="">
-                                          <a class="item-dropdown" href="#">Hapus</a>
-                                      </li>
-                                  </ul>
-                              </div>
-                          </td>
-                      </tr>
-                      <tr>
-                          <td>2</td>
-                          <td>10.000.000 s/d 15.000.000</td>
-                          <td>150.000</td>
-                          <td>300.000</td>
-                          <td>400.000</td>
-                          <td>
-                              <div class="dropdown">
-                                  <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                      Selangkapnya
-                                  </button>
-                                  <ul class="dropdown-menu">
-                                      <li class="">
-                                          <a class="item-dropdown toggle-form-edit" data-form-id="form-2"
-                                              href="#">Edit</a>
-                                      </li>
-                                      <li class="">
-                                          <a class="item-dropdown" href="#">Hapus</a>
-                                      </li>
-                                  </ul>
-                              </div>
-                          </td>
-                      </tr>
+                    @forelse ($data as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                @if ($item->plafond1 == 0)
+                                < @else @if ($item->plafond1 == 50000000)
+                                        > {{ number_format($item->plafond1, 0, '', '.') }}
+                                    @else
+                                        {{ number_format($item->plafond1, 0, '', '.') }} s/d
+                                @endif
+                                @endif
+                                @if ($item->plafond2 != 0)
+                                    {{ number_format($item->plafond2, 0, '', '.') }}
+                                @endif
+                            </td>
+                                @php
+                                    $imbaljasa = DB::table('tenor_imbal_jasas')
+                                        ->where('imbaljasa_id', $item->id)
+                                        ->get();
+                                    $tenor12 = 0;
+                                    $tenor24 = 0;
+                                    $tenor36 = 0;
+                                    $id12 = '';
+                                    $id24 = '';
+                                    $id36 = '';
+                                @endphp
+                                @foreach ($imbaljasa as $i)
+                                    @php
+                                        if ($i->tenor == 12) {
+                                            $tenor12 = $i->imbaljasa;
+                                            $id12 = $i->id;
+                                        } elseif ($i->tenor == 24) {
+                                            $tenor24 = $i->imbaljasa;
+                                            $id24 = $i->id;
+                                        } elseif ($i->tenor == 36) {
+                                            $tenor36 = $i->imbaljasa;
+                                            $id36 = $i->id;
+                                        }
+                                    @endphp
+                                    <td>{{ number_format($i->imbaljasa, 0, '', '.') }}</td>
+                                    {{-- @empty --}}
+                                    {{-- <td colspan="3"><span class="text-danger">Maaf data belum
+                                                    tersedia.</span></td> --}}
+                                @endforeach
+                            <td>
+                                <div class="dropdown">
+                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                        Selangkapnya
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li class="">
+                                            <a class="item-dropdown toggle-form-edit" data-form-id="form-1"
+                                            data-id="{{ $item->id }}"
+                                            data-plafond1="{{ number_format($item->plafond1, 0, '', '.') }}"
+                                            data-plafond2="{{ number_format($item->plafond2, 0, '', '.') }}"
+                                            data-imbaljasa12="{{ number_format($tenor12, 0, '', '.') }}"
+                                            data-imbaljasa24="{{ number_format($tenor24, 0, '', '.') }}"
+                                            data-imbaljasa36="{{ number_format($tenor36, 0, '', '.') }}"
+                                            data-idimbaljasa12="{{ $id12 }}"
+                                            data-idimbaljasa24="{{ $id24 }}"
+                                            data-idimbaljasa36="{{ $id36 }}" href="#">Edit</a>
+                                        </li>
+                                        <li class="">
+                                            <a class="item-dropdown" data-name="{{ $item->name }}"
+                                                data-id="{{ $item->id }}" href="#">Hapus</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6">
+                                <span class="text-danger">Maaf data belum tersedia.</span>
+                            </td>
+                        </tr>
+                    @endforelse
                   </tbody>
               </table>
           </div>

@@ -65,11 +65,12 @@
                     <th>Aksi</th>
                 </tr>
                 <tbody>
+                    @forelse ($data as $item)
                     <tr>
-                        <td>1</td>
-                        <td>01497</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $item->name }}</td>
+                        <td>{{ $item->address }}</td>
+                        <td>{{ $item->phone }}</td>
                         <td>
                             <div class="dropdown">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
@@ -77,15 +78,24 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="edit-vendor"  href="#">Edit</a>
+                                        <a class="item-dropdown toggle-modal" data-target-id="edit-vendor" href="#"
+                                        data-id="{{ $item->id }}" data-name="{{ $item->name }}">Edit</a>
                                     </li>
                                     <li class="">
-                                        <a class="item-dropdown" href="#">Hapus</a>
+                                        <a class="item-dropdown" href="#" data-id="{{ $item->id }}"
+                                        data-name="{{ $item->name }}">Hapus</a>
                                     </li>
                                 </ul>
                             </div>
                         </td>
                     </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <span class="text-danger">Maaf data belum tersedia.</span>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

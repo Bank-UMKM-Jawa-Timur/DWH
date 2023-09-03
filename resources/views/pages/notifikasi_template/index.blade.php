@@ -63,33 +63,65 @@
                       <th>No.</th>
                       <th>Judul</th>
                       <th>Konten</th>
-                      <th>Kantor</th>
-                      <th>Role</th>
+                      <th>Role / Peran</th>
                       <th>Aksi</th>
                   </tr>
                   <tbody>
-                      <tr>
-                          <td>1</td>
-                          <td>Data pengajuan baru</td>
-                          <td>Terdapat data pengajuan baru.</td>
-                          <td>-</td>
-                          <td>Semua</td>
-                          <td>
-                              <div class="dropdown">
-                                  <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                      Selangkapnya
-                                  </button>
-                                  <ul class="dropdown-menu">
-                                      <li class="">
-                                          <a class="item-dropdown" href="#">Detail</a>
-                                      </li>
-                                      <li class="">
-                                          <a class="item-dropdown" href="#">Hapus</a>
-                                      </li>
-                                  </ul>
-                              </div>
-                          </td>
-                      </tr>
+                    @forelse ($data as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->title }}</td>
+                            <td>{{ $item->content }}</td>
+                            <td>
+                                @if (!$item->role_id && $item->all_role)
+                                    <p>Semua</p>
+                                @else
+                                    @php
+                                        $exRole = explode(',', $item->role_id);
+                                    @endphp
+                                    @forelse ($exRole as $v)
+                                        @php
+                                            $getRole = \App\Models\Role::select('id', 'name')
+                                                ->where('id', $v)
+                                                ->orderBy('name')
+                                                ->first();
+                                        @endphp
+                                        {{ $getRole->name }}
+                                    @empty
+                                        <p>Role tidak dipilih</p>
+                                    @endforelse
+                                @endif
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                        Selangkapnya
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li class="">
+                                            <a class="item-dropdown" id="modalEdit{{ $item->id }}" 
+                                                data-id="{{ $item->id }}" data-title="{{ $item->title }}"
+                                                data-content="{{ $item->content }}"
+                                                data-role="{{ $item->role_id }}"
+                                                data-all-role="{{ $item->all_role }}"
+                                                data-action="{{ $item->action_id }}" href="#"
+                                                onclick="edit({{ $item->id }})">Edit</a>
+                                        </li>
+                                        <li class="">
+                                            <a class="item-dropdown" data-id="{{ $item->id }}"
+                                                href="#">Hapus</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4">
+                                <span class="text-danger">Maaf data belum tersedia.</span>
+                            </td>
+                        </tr>
+                    @endforelse
                   </tbody>
               </table>
           </div>
