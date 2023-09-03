@@ -53,7 +53,7 @@
                             @include('components.svg.search')
                         </span>
                             <input type="hidden" name="search_by" value="field">
-                            <input type="text" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                            <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
                                 name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
                     </div>
                 </form>
