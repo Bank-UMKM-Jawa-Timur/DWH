@@ -1,9 +1,9 @@
 
-<div class="modal-overlay hidden font-lexend overflow-auto" id="confirmModalPenyerahanUnit">
+<div class="modal-overlay hidden font-lexend overflow-auto" id="modalConfirmPenyerahanUnit">
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
             <div class="title-modal">Konfirmasi Penyerahan Unit</div>
-            <button data-dismiss-id="confirmModalPenyerahanUnit">
+            <button data-dismiss-id="modalConfirmPenyerahanUnit">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" hu viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                         stroke-width="2" d="M17 7L7 17M7 7l10 10" />
@@ -41,7 +41,7 @@
             <form id="confirm-form-penyerahan-unit">
                 <input type="hidden" name="confirm_id" id="confirm_id">
                 <input type="hidden" name="confirm_id_category" id="confirm_id_category">
-                <button type="button" data-dismiss-id="confirmModalPenyerahanUnit" class="border px-7 py-3 text-black rounded">
+                <button type="button" data-dismiss-id="modalConfirmPenyerahanUnit" class="border px-7 py-3 text-black rounded">
                     Tidak
                 </button>
                 <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
@@ -71,14 +71,14 @@
             const file = $(this).data('file');
             var path_file = "{{ asset('storage') }}" + "/dokumentasi-peyerahan/" + file;
 
-            $("#confirmModalPenyerahanUnit #preview_penyerahan_unit").attr("src", path_file);
-            $('#confirmModalPenyerahanUnit #confirm_id').val(data_id)
-            $('#confirmModalPenyerahanUnit #confirm_id_category').val(data_category_doc_id)
-            $('#confirmModalPenyerahanUnit #status_confirm_penyerahan_unit').val(status)
-            $('#confirmModalPenyerahanUnit #tanggal_penyerahan_unit').val(tanggal)
-            $('#confirmModalPenyerahanUnit #tanggal_confirm_penyerahan_unit').val(confirm_at)
+            $("#modalConfirmPenyerahanUnit #preview_penyerahan_unit").attr("src", path_file);
+            $('#modalConfirmPenyerahanUnit #confirm_id').val(data_id)
+            $('#modalConfirmPenyerahanUnit #confirm_id_category').val(data_category_doc_id)
+            $('#modalConfirmPenyerahanUnit #status_confirm_penyerahan_unit').val(status)
+            $('#modalConfirmPenyerahanUnit #tanggal_penyerahan_unit').val(tanggal)
+            $('#modalConfirmPenyerahanUnit #tanggal_confirm_penyerahan_unit').val(confirm_at)
             if (is_confirm) {
-                $('#confirmModalPenyerahanUnit .title-modal').html('Penyerahan Unit')
+                $('#modalConfirmPenyerahanUnit .title-modal').html('Penyerahan Unit')
                 $('.form-confirm').css('display', 'none');
                 $('.penyerahan-unit-title').html('Penyerahan Unit');
             }

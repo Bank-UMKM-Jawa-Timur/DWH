@@ -350,7 +350,7 @@
                                                                 data-confirm="{{ $penyerahanUnit->is_confirm }}"
                                                                 data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
                                                                 data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
-                                                                href="#confirmModalPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                                href="#modalConfirmPenyerahanUnit">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
                                                         @else
                                                             @if (Auth::user()->role_id == 3)
                                                                 <span>Menunggu konfirmasi cabang</span>
@@ -363,7 +363,7 @@
                                                                     data-confirm="{{ $penyerahanUnit->is_confirm }}"
                                                                     data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
                                                                     data-confirm_at="{{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) }}"
-                                                                    href="#confirmModalPenyerahanUnit">Konfirmasi</a>
+                                                                    href="#modalConfirmPenyerahanUnit">Konfirmasi</a>
                                                             @endif
                                                         @endif
                                                     @else

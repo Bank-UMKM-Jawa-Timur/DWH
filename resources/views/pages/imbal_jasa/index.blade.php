@@ -27,7 +27,7 @@
                   </h2>
               </div>
               <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                  <button id="form-toggle" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                  <button data-target-id="add-imbal-jasa" class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                       <span class="lg:mt-0 mt-0">
                           <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
                               <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -141,7 +141,7 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
-                                            <a class="item-dropdown toggle-form-edit" data-form-id="form-1"
+                                            <a class="item-dropdown toggle-modal" data-target-id="edit-imbal-jasa"
                                             data-id="{{ $item->id }}"
                                             data-plafond1="{{ number_format($item->plafond1, 0, '', '.') }}"
                                             data-plafond2="{{ number_format($item->plafond2, 0, '', '.') }}"

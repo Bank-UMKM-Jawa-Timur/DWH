@@ -167,7 +167,7 @@
       </li>
       @endif
       @if (\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
-      <li class="item-link">
+      <li class="item-link hidden">
         <a
           href="/laporan"
           class="nav-link relative"
