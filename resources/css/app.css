@@ -32,7 +32,7 @@
     }
 
     .avatar {
-        @apply w-10 h-10 rounded-full bg-gray-300;
+        @apply w-10 h-10 rounded-full bg-blue-700;
     }
     .layout-sidebar {
         @apply w-[280px] overflow-auto bg-white border-r h-full lg:relative fixed lg:z-0 z-40  lg:left-0;
