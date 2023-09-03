@@ -62,7 +62,7 @@
                         @endif
                     @else
                         @if ($item->detail)
-                            <button class="toggle-modal" data-target-id="modalPO"
+                            <button class="toggle-modal underline" data-target-id="modalPO"
                             data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
                             data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
                             data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}">
