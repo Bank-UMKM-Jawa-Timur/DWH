@@ -52,29 +52,32 @@
                       <th>Waktu</th>
                   </tr>
                   <tbody>
-                      <tr>
-                          <td>1</td>
-                          <td>01474</td>
-                          <td>Pengguna '01474' melakukan log in.</td>
-                          <td>2023-08-31 19:37</td>
-                      </tr>
+                    @forelse ($data as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->nip ? $item->nip : $item->email }}</td>
+                            <td>{{ $item->content }}</td>
+                            <td>{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <span class="text-danger">Maaf data belum tersedia.</span>
+                            </td>
+                        </tr>
+                    @endforelse
                   </tbody>
               </table>
           </div>
           <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-              <div>
-                  <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-              </div>
-              <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                <div class="w-full">
-                    <div class="pagination">
-                        @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                        {{ $data->links('pagination::tailwind') }}
-                        @endif
-                    </div>
+            <div class="w-full">
+                <div class="pagination">
+                    @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                    {{ $data->links('pagination::tailwind') }}
+                    @endif
                 </div>
             </div>
-          </div>
+        </div>
       </div>
   </div>
     @push('extraScript')
