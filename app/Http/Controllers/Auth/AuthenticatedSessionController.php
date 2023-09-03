@@ -99,15 +99,19 @@ class AuthenticatedSessionController extends Controller
 
                     if (array_key_exists('status', $responseBody)) {
                         if ($responseBody['status'] == 'berhasil') {
-                            Session::put(config('global.auth_session'), $responseBody);
-                            $role_id = $responseBody['role'] == 'Administrator' ? 4 : 2;
-                            Session::put(config('global.role_id_session'), $role_id);
-                            Session::put(config('global.user_id_session'), $responseBody['id']);
-                            Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
-                            Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
-                            Session::put(config('global.user_token_session'), $responseBody['access_token']);
-
-                            return redirect()->route('dashboard');
+                            if ($responseBody['data'] != 'undifined') {
+                                Session::put(config('global.auth_session'), $responseBody);
+                                $role_id = $responseBody['role'] == 'Administrator' ? 4 : 2;
+                                Session::put(config('global.role_id_session'), $role_id);
+                                Session::put(config('global.user_id_session'), $responseBody['id']);
+                                Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
+                                Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
+                                Session::put(config('global.user_token_session'), $responseBody['access_token']);
+    
+                                return redirect()->route('dashboard');
+                            }
+                            else
+                                return back()->withError('Data tidak ditemukan');
                         }
                         else
                             return back()->withError($responseBody['message']);
@@ -149,31 +153,58 @@ class AuthenticatedSessionController extends Controller
                     if (array_key_exists('message', $responseBody)) {
                         if ($responseBody['message'] == 'Successfully logged out') {
                             Session::flush();
+                            return response()->json([
+                                'status' => 'success',
+                                'message' => 'Berhasil mengakhiri sesi'
+                            ]);
                         }
                         else
-                            return back()->withError('Terjadi kesalahan');
+                            return response()->json([
+                                'status' => 'failed',
+                                'message' => $responseBody['message']
+                            ]);
                     }
                     else
-                        return back()->withError('Terjadi kesalahan');
+                        return response()->json([
+                            'status' => 'failed',
+                            'message' => 'Terjadi kesalahan'
+                        ]);
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    return back()->withError('Terjadi kesalahan. '.$e->getMessage());
+                    return response()->json([
+                        'status' => 'failed',
+                        'message' => 'Terjadi kesalahan. '.$e->getMessage()
+                    ]);
                 }
             }
             else {
-                return back()->withError('Host api belum diatur');
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Host api belum diatur '
+                ]);
             }
         }
         else {
-            $user = Auth::guard('web')->user()->nip != null ? Auth::guard('web')->user()->email . " (" . Auth::guard('web')->user()->nip . ")" : Auth::guard('web')->user()->email;
-            $this->logActivity->store("Pengguna '$user' melakukan log out.");
-            Auth::guard('web')->logout();
+            try {
+                $user = Auth::guard('web')->user()->nip != null ? Auth::guard('web')->user()->email . " (" . Auth::guard('web')->user()->nip . ")" : Auth::guard('web')->user()->email;
+                $this->logActivity->store("Pengguna '$user' melakukan log out.");
+                Auth::guard('web')->logout();
 
-            $request->session()->invalidate();
+                $request->session()->invalidate();
 
-            $request->session()->regenerateToken();
+                $request->session()->regenerateToken();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Berhasil mengakhiri sesi '
+                ]);
+            }
+            catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Terjadi kesalahan.'.$e->getMessage()
+                ]);
+            }
         }
-
-        return redirect('/');
     }
 
     public function firstLogin()

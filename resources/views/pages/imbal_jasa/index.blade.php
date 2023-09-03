@@ -2,13 +2,21 @@
 
 @section('title', $title)
 
+
+@section('modal')
+    <!-- Modal-tambah -->
+    @include('pages.imbal_jasa.modal.create')
+    <!-- Modal-edit -->
+    @include('pages.imbal_jasa.modal.edit')
+@endsection
+
 @section('content')
 
     <div class="head-pages">
-      <p class="text-sm">Master</p>
-      <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-          {{ $pageTitle }}
-      </h2>
+        <p class="text-sm">Master</p>
+        <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
+            {{ $pageTitle }}
+        </h2>
     </div>
     <div class="body-pages">
       <div class="table-wrapper bg-white border rounded-md w-full p-2">
@@ -168,16 +176,16 @@
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
     <!-- Modal-tambah -->
-    
+
 
     <!-- Modal-edit -->
-   
+
 
     {{-- Modal Delete --}}
-    
+
 
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
