@@ -14,11 +14,13 @@
         <div class="table-wrapper bg-white border rounded-md w-full p-2">
             <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                 <div class="title-table lg:p-3 p-2 text-center">
+                    
                     <h2 class="font-bold text-lg text-theme-text tracking-tighter">
                         Dictionary
                     </h2>
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                    <a href="{{ route('dictionary.create') }}">
                     <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                         <span class="lg:mt-0 mt-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
@@ -28,6 +30,7 @@
                         </span>
                         <span class="lg:block hidden"> Tambah </span>
                     </button>
+                    </a>
                 </div>
             </div>
             <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">

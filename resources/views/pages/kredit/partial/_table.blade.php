@@ -51,7 +51,7 @@
                 <td class="@if ($item->detail) link-po @endif">
                     @if ($buktiPembayaran)
                         @if ($item->detail)
-                        <button class="toggle-modal" data-target-id="modalPO"
+                        <button class="toggle-modal underline" data-target-id="modalPO"
                             data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
                             data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
                             data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}">
@@ -135,7 +135,7 @@
                                                 Konfirmasi
                                             </button>
                                         @else
-                                            <button class="toggle-modal" data-target-id="modalBuktiPembayaran"
+                                            <button class="toggle-modal underline" data-target-id="modalBuktiPembayaran"
                                                 data-file="{{ $buktiPembayaran->file }}"
                                                 data-tanggal="{{ $buktiPembayaran->date }}"
                                                 data-confirm="{{ $buktiPembayaran->is_confirm }}"
@@ -144,7 +144,7 @@
                                             </button>
                                         @endif
                                     @elseif ($buktiPembayaran->is_confirm)
-                                        <button class="toggle-modal" data-target-id="modalBuktiPembayaran"
+                                        <button class="toggle-modal underline" data-target-id="modalBuktiPembayaran"
                                             data-file="{{ $buktiPembayaran->file }}"
                                             data-tanggal="{{ $buktiPembayaran->date }}"
                                             data-confirm="{{ $buktiPembayaran->is_confirm }}"
@@ -186,7 +186,8 @@
                                 @if (\Session::get(config('global.role_id_session')) == 3)
                                     <span>Menunggu konfirmasi cabang</span>
                                 @else
-                                    <a class="toggle-modal"
+                                    <a style="text-decoration: underline; cursor: pointer;"
+                                        class="toggle-modal"
                                         data-target-id="modalConfirmPenyerahanUnit"
                                         data-id-category="2"
                                         data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
