@@ -40,6 +40,12 @@
     .layout-pages {
         @apply w-full box-border h-screen bg-theme-pages drop-shadow-md overflow-auto;
     }
+    .head-pages {
+        @apply p-5;
+    }
+    .body-pages {
+        @apply p-5;
+    }
     .app-brand {
         @apply p-5;
     }
