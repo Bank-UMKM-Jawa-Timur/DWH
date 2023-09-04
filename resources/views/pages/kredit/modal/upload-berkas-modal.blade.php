@@ -1,7 +1,14 @@
 <div class="modal-overlay hidden font-lexend overflow-auto" id="modalUploadBerkas">
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
-            <div class="title-modal">Upload Berkas</div>
+            <div class="title-modal">
+                @if (\Session::get(config('global.role_id_session')) == 2)
+                    Konfirmasi Berkas
+                @endif
+                @if (\Session::get(config('global.role_id_session')) == 3)
+                    Upload Berkas
+                @endif
+            </div>
             <button data-dismiss-id="modalUploadBerkas">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -38,14 +45,27 @@
                             <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_stnk" name="no_stnk" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
-                                <div class="form-group status-stnk">
-                                    <p class="m-0" id="tanggal_upload_stnk"></p>
-                                    <p class="m-0" id="tanggal_confirm_stnk"></p>
-                                    <p class="m-0" id="status_confirm_stnk"></p>
-                                </div>
                             </div>
                         </div>
-                        <iframe id="preview_stnk" src="" width="100%" height="450px"></iframe>
+                        {{--  <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Tanggal Upload</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_upload_stnk" readonly />
+                            </div>
+                        </div>
+                        <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Tanggal Konfirmasi</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_confirm_stnk" readonly />
+                            </div>
+                        </div>
+                        <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Status</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="status_confirm_stnk" readonly />
+                            </div>
+                        </div>  --}}
+                        <iframe id="preview_stnk" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3">
                                 <div class="p-3 space-y-4">
@@ -55,6 +75,12 @@
                                 </div>
                             </div>
                         @endif
+                        @if (\Session::get(config('global.role_id_session')) == 2)
+                            <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
+                                id="btn-confirm-stnk">
+                                Konfirmasi
+                            </button>
+                        @endif
                     </div>
                     <div id="tab2" class="tab-content hidden">
                         <div class="input-box space-y-3">
@@ -62,14 +88,27 @@
                             <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_bpkb" name="no_bpkb" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
-                                <div class="form-group status-bpkb">
-                                    <p class="m-0" id="tanggal_upload_bpkb"></p>
-                                    <p class="m-0" id="tanggal_confirm_bpkb"></p>
-                                    <p class="m-0" id="status_confirm_bpkb"></p>
-                                </div>
                             </div>
                         </div>
-                        <iframe id="preview_bpkb" src="" width="100%" height="450px"></iframe>
+                        {{--  <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Tanggal Upload</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_upload_bpkb" readonly />
+                            </div>
+                        </div>
+                        <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Tanggal Konfirmasi</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="new_tanggal_confirm_bpkb" readonly />
+                            </div>
+                        </div>
+                        <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Status</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="status_confirm_bpkb" readonly />
+                            </div>
+                        </div>  --}}
+                        <iframe id="preview_bpkb" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3">
                                 <div class="p-3 space-y-4">
@@ -79,6 +118,12 @@
                                 </div>
                             </div>
                         @endif
+                        @if (\Session::get(config('global.role_id_session')) == 2)
+                            <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
+                                id="btn-confirm-bpkb">
+                                Konfirmasi
+                            </button>
+                        @endif
                     </div>
                     <div id="tab3" class="tab-content hidden">
                         <div class="input-box space-y-3">
@@ -86,14 +131,27 @@
                             <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
-                                <div class="form-group status-polis">
-                                    <p class="m-0" id="tanggal_upload_polis"></p>
-                                    <p class="m-0" id="tanggal_confirm_polis"></p>
-                                    <p class="m-0" id="status_confirm_polis"></p>
-                                </div>
                             </div>
                         </div>
-                        <iframe id="preview_polis" src="" width="100%" height="450px"></iframe>
+                        {{--  <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Tanggal Upload</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_upload_polis" readonly />
+                            </div>
+                        </div>
+                        <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Tanggal Konfirmasi</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_confirm_polis" readonly />
+                            </div>
+                        </div>
+                        <div class="input-box space-y-3 mt-4">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Status</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="status_confirm_polis" readonly />
+                            </div>
+                        </div>  --}}
+                        <iframe id="preview_polis" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3">
                                 <div class="p-3 space-y-4">
@@ -103,19 +161,22 @@
                                 </div>
                             </div>
                         @endif
+                        @if (\Session::get(config('global.role_id_session')) == 2)
+                            <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
+                                id="btn-confirm-polis">
+                                Konfirmasi
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
-                    @if (\Session::get(config('global.role_id_session')) == 2)
-                        Konfirmasi
-                    @endif
-                    @if (\Session::get(config('global.role_id_session')) == 3)
+            @if (\Session::get(config('global.role_id_session')) == 3)
+                <div class="modal-footer">
+                    <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
                         Kirim
-                    @endif
-                </button>
-            </div>
+                    </button>
+                </div>
+            @endif
         </form>
     </div>
 </div>
@@ -168,6 +229,19 @@
             confirm_stnk = $(this).data('confirm-stnk') ? $(this).data('confirm-stnk') : ''
             confirm_polis = $(this).data('confirm-polis') ? $(this).data('confirm-polis') : ''
             confirm_bpkb = $(this).data('confirm-bpkb') ? $(this).data('confirm-bpkb') : ''
+
+            var upload_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
+            var upload_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
+            var upload_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
+            var is_confirm_stnk = $(this).data('confirm-stnk') ? $(this).data('confirm-stnk') : ''
+            var is_confirm_polis = $(this).data('confirm-polis') ? $(this).data('confirm-polis') : ''
+            var is_confirm_bpkb = $(this).data('confirm-bpkb') ? $(this).data('confirm-bpkb') : ''
+            if (upload_stnk != '' && is_confirm_stnk != '')
+                $('#btn-confirm-stnk').addClass('hidden')
+            if (upload_bpkb != '' && is_confirm_bpkb != '')
+                $('#btn-confirm-bpkb').addClass('hidden')
+            if (upload_polis != '' && is_confirm_polis != '')
+                $('#btn-confirm-polis').addClass('hidden')
 
             visibilityComponents();
 
@@ -247,9 +321,9 @@
         })
         $('#polis-tab-menu').on('click', function() {
             if (file_polis != '') {
-                $('#tanggal_upload_polis').html('Tanggal Upload : '+tanggal_polis);
-                $('#tanggal_confirm_polis').html('Tanggal Konfirmasi : '+confirm_at_polis);
-                $('#status_confirm_polis').html('Status : '+(confirm_polis ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
+                $('#modalUploadBerkas #tanggal_upload_polis').val(tanggal_polis);
+                $('#tanggal_confirm_polis').val(confirm_at_polis);
+                $('#status_confirm_polis').val((confirm_polis ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
                 if (user_role == 2 && !confirm_polis)
                     $('.form-submit-berkas').css('display', 'block')
                 else
@@ -270,9 +344,10 @@
         })
         $('#bpkb-tab-menu').on('click', function() {
             if (file_bpkb != '') {
-                $('#tanggal_upload_bpkb').html('Tanggal Upload : '+tanggal_bpkb);
-                $('#tanggal_confirm_bpkb').html('Tanggal Konfirmasi : '+confirm_at_bpkb);
-                $('#status_confirm_bpkb').html('Status : '+(confirm_bpkb ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
+                alert(tanggal_bpkb)
+                $('#modalUploadBerkas #tanggal_upload_bpkb').val(tanggal_bpkb);
+                $('#modalUploadBerkas #new_tanggal_confirm_bpkb').val('asd');
+                $('#modalUploadBerkas #status_confirm_bpkb').val((confirm_bpkb ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
                 if (user_role == 2 && !confirm_bpkb)
                     $('.form-submit-berkas').css('display', 'block')
                 else
@@ -306,9 +381,9 @@
                     $('.form-submit-berkas').css('display', 'none')
                 $('.input-stnk').css('display', 'none')
                 $('#no_stnk').prop('readonly', true)
-                $('#tanggal_upload_stnk').html('Tanggal Upload : '+tanggal_stnk);
-                $('#tanggal_confirm_stnk').html('Tanggal Konfirmasi : '+(confirm_at_stnk));
-                $('#status_confirm_stnk').html('Status : '+(confirm_stnk ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
+                $('#modalUploadBerkas #tanggal_upload_stnk').val(tanggal_stnk);
+                $('#tanggal_confirm_stnk').val((confirm_at_stnk));
+                $('#status_confirm_stnk').val((confirm_stnk ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
             }
             else {
                 if (user_role == 2) {
@@ -419,5 +494,57 @@
                 })
             }
         })
+
+        $('#btn-confirm-stnk').on('click', function(e) {
+            // Confirm
+            const req_id_stnk = $('#id_stnk').val()
+            confirmBerkas(req_id_stnk, 0, 0)
+        })
+
+        $('#btn-confirm-bpkb').on('click', function(e) {
+            // Confirm
+            const req_id_bpkb = $('#id_bpkb').val()
+            confirmBerkas(req_id_bpkb, 0, 0)
+        })
+
+        $('#btn-confirm-polis').on('click', function(e) {
+            // Confirm
+            const req_id_polis = $('#id_polis').val()
+            confirmBerkas(req_id_polis, 0, 0)
+        })
+
+        function confirmBerkas(id_stnk, id_polis, id_bpkb) {
+            if (id_stnk == 0 && id_polis == 0 && id_bpkb == 0) {
+                ErrorMessage('Harap pilih berkas yang akan dikonfirmasi');
+            }
+            var url = `{{ route('kredit.confirm_berkas') }}?id_stnk=${id_stnk}&id_polis=${id_polis}&id_bpkb=${id_bpkb}`
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    console.log(data)
+                    if (Array.isArray(data.error)) {
+                        for (var i = 0; i < data.error.length; i++) {
+                            var message = data.error[i];
+                            console.log(message)
+                        }
+                    } else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        } else {
+                            ErrorMessage(data.message)
+                        }
+                    }
+                },
+                error: function(e) {
+                    console.log(e)
+                    ErrorMessage('Terjadi kesalahan')
+                }
+            })
+        }
     </script>
 @endpush

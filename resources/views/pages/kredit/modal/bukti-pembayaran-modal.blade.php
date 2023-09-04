@@ -1,35 +1,3 @@
-{{--  <div class="modal fade" id="previewBuktiPembayaranModal" tabindex="-1" role="dialog"
-    aria-labelledby="previewBuktiPembayaranModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <h5 class="modal-title" id="previewBuktiPembayaranModalLabel">Bukti Pembayaran</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" class="text-light">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="title-po">Tanggal : </h5>
-                        <input type="text" class="form-control text-field" id="tanggal_pembayaran" readonly>
-                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
-                        <input type="text" class="form-control text-field" id="tanggal_confirm_pembayaran" readonly>
-                        <h5 class="title-po">Status : </h5>
-                        <input type="text" class="form-control text-field" id="status_confirm" readonly>
-                    </div>
-                    <div class="col-sm-6">
-                        <h5 class="title-po">File Bukti Pembayaran : </h5>
-                        <div class="form-inline mt-1 show-pdf">
-                            <iframe id="bukti_pembayaran_img" src="" class="mt-2" width="100%"
-                                height="500"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>  --}}
 <div class="modal-overlay hidden" id="modalBuktiPembayaran">
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
@@ -56,7 +24,7 @@
                     </div>
 
                     <div class="space-y-3">
-                        <label for="" class="uppercase appearance-none">File PO</label>
+                        <label for="" class="uppercase appearance-none">Bukti Pembayaran</label>
                         <div class="h-[528px] w-full bg-gray-100">
                             <iframe id="bukti_pembayaran_img" src="" class="mt-2" width="100%" height="500"></iframe>
                         </div>

@@ -697,58 +697,67 @@ class KreditController extends Controller
         $message = '';
 
         try {
+            \DB::beginTransaction();
             if (\Session::get(config('global.role_id_session')) == 2) {
                 // Cabang
+                $doc_cat_name = 'undifined';
                 // stnk
-                if (is_numeric($request->id_stnk)) {
-                    $stnk = Document::find($request->id_stnk);
-                    $docCategory = DocumentCategory::select('name')->find($stnk->document_category_id);
-
-                    // send notification
-                    if (!$stnk->is_confirm)
-                        $this->notificationController->send(12, $stnk->kredit_id);
-
-                    $stnk->is_confirm = 1;
-                    $stnk->confirm_at = date('Y-m-d');
-                    $stnk->confirm_by = \Session::get(config('global.user_id_session'));
-                    $stnk->save();
-
+                if ($request->has('id_stnk')) {
+                    if (is_numeric($request->id_stnk) && $request->id_stnk != 0) {
+                        $stnk = Document::find($request->id_stnk);
+                        $docCategory = DocumentCategory::select('name')->find($stnk->document_category_id);
+                        $doc_cat_name = $docCategory->name;
+    
+                        // send notification
+                        if (!$stnk->is_confirm)
+                            $this->notificationController->send(12, $stnk->kredit_id);
+    
+                        $stnk->is_confirm = 1;
+                        $stnk->confirm_at = date('Y-m-d');
+                        $stnk->confirm_by = \Session::get(config('global.user_id_session'));
+                        $stnk->save();
+                    }
                 }
 
                 // polis
-                if (is_numeric($request->id_polis)) {
-                    $polis = Document::find($request->id_polis);
-                    $docCategory = DocumentCategory::select('name')->find($polis->document_category_id);
-
-                    // send notification
-                    if (!$polis->is_confirm)
-                        $this->notificationController->send(13, $polis->kredit_id);
-
-                    $polis->is_confirm = 1;
-                    $polis->confirm_at = date('Y-m-d');
-                    $polis->confirm_by = \Session::get(config('global.user_id_session'));
-                    $polis->save();
-
+                if ($request->has('id_polis')) {
+                    if (is_numeric($request->id_polis) && $request->id_polis != 0) {
+                        $polis = Document::find($request->id_polis);
+                        $docCategory = DocumentCategory::select('name')->find($polis->document_category_id);
+                        $doc_cat_name = $docCategory->name;
+    
+                        // send notification
+                        if (!$polis->is_confirm)
+                            $this->notificationController->send(13, $polis->kredit_id);
+    
+                        $polis->is_confirm = 1;
+                        $polis->confirm_at = date('Y-m-d');
+                        $polis->confirm_by = \Session::get(config('global.user_id_session'));
+                        $polis->save();
+                    }
                 }
 
                 // bpkb
-                if (is_numeric($request->id_bpkb)) {
-                    $bpkb = Document::find($request->id_bpkb);
-                    $docCategory = DocumentCategory::select('name')->find($bpkb->document_category_id);
-
-                    // send notification
-                    if (!$bpkb->is_confirm)
-                        $this->notificationController->send(14, $bpkb->kredit_id);
-
-                    $bpkb->is_confirm = 1;
-                    $bpkb->confirm_at = date('Y-m-d');
-                    $bpkb->confirm_by = \Session::get(config('global.user_id_session'));
-                    $bpkb->save();
-
+                if ($request->has('id_bpkb')) {
+                    if (is_numeric($request->id_bpkb) && $request->id_bpkb != 0) {
+                        $bpkb = Document::find($request->id_bpkb);
+                        $docCategory = DocumentCategory::select('name')->find($bpkb->document_category_id);
+                        $doc_cat_name = $docCategory->name;
+    
+                        // send notification
+                        if (!$bpkb->is_confirm)
+                            $this->notificationController->send(14, $bpkb->kredit_id);
+    
+                        $bpkb->is_confirm = 1;
+                        $bpkb->confirm_at = date('Y-m-d');
+                        $bpkb->confirm_by = \Session::get(config('global.user_id_session'));
+                        $bpkb->save();
+                    }
                 }
 
-                $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
+                $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $doc_cat_name . '.');
 
+                \DB::commit();
                 $status = 'success';
                 $message = 'Berhasil mengkonfirmasi berkas';
             } else {
@@ -756,12 +765,15 @@ class KreditController extends Controller
                 $message = 'Hanya cabang yang bisa melakukan konfirmasi';
             }
         } catch (\Exception $e) {
+            \DB::rollback();
             $status = 'failed';
             $message = 'Terjadi kesalahan ' . $e;
         } catch (\Illuminate\Database\QueryException $e) {
+            \DB::rollback();
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database';
         } catch (\Throwable $th) {
+            \DB::rollback();
             $status = 'failed';
             $message = 'Terjadi kesalahan ' . $th;
         } finally {
