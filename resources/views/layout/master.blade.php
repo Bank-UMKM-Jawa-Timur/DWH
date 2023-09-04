@@ -78,11 +78,11 @@
       timer: 3000,
       closeOnClickOutside: false
     }).then(() => {
-        //location.reload();
-    });
-    /*setTimeout(function() {
         location.reload();
-    }, 3000);*/
+    });
+    setTimeout(function() {
+        location.reload();
+    }, 3000);
   }
 
   function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {

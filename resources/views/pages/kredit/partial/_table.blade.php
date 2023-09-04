@@ -379,17 +379,13 @@
                 <td>
                     @if ($penyerahanUnit)
                         @if ($imbalJasa)
-                            @php
-                                $pajak = $setImbalJasa->imbaljasa * 2 / 100;
-                                $nominal_imbal_jasa = $setImbalJasa->imbaljasa + $pajak;
-                            @endphp
                             @if ($imbalJasa->file && $imbalJasa->is_confirm)
-                                <a>Rp.{{ number_format($nominal_imbal_jasa, 0, '', '.') }}</a>
+                                <a>Rp.{{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
                             @else
                                 @if (\Session::get(config('global.role_id_session')) == 3)
                                     <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                                 @else
-                                    <span>Rp. {{ number_format($nominal_imbal_jasa, 0, '', '.') }}</span>
+                                    <span>Rp. {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</span>
                                 @endif
                             @endif
                         @else

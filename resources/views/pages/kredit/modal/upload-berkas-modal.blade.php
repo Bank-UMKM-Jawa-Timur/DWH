@@ -185,50 +185,31 @@
 @push('extraScript')
     <script>
         const user_role = "{{\Session::get(config('global.role_id_session'))}}";
-        var id = '';
-        var id_stnk = '';
-        var id_polis = '';
-        var id_bpkb = '';
-        var no_stnk = ''
-        var no_polis = ''
-        var no_bpkb = ''
-        var file_stnk = '';
-        var file_polis = '';
-        var file_bpkb = '';
-        var tanggal_stnk = '';
-        var tanggal_polis = '';
-        var tanggal_bpkb = '';
-        var confirm_at_sntk = '';
-        var confirm_at_polis = '';
-        var confirm_at_bpkb = '';
-        var confirm_sntk = '';
-        var confirm_polis = '';
-        var confirm_bpkb = '';
 
         $(".toggle-modal").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
 
-            id = $(this).data('id_kkb')
-            id_stnk = $(this).data('id-stnk') ? $(this).data('id-stnk') : '';
-            id_polis = $(this).data('id-polis') ? $(this).data('id-polis') : '';
-            id_bpkb = $(this).data('id-bpkb') ? $(this).data('id-bpkb') : '';
-            no_stnk = $(this).data('no-stnk') ? $(this).data('no-stnk') : ''
-            no_polis = $(this).data('no-polis') ? $(this).data('no-polis') : ''
-            no_bpkb = $(this).data('no-bpkb') ? $(this).data('no-bpkb') : ''
-            file_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
-            file_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
-            file_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
-            tanggal_stnk = $(this).data('date-stnk') ? $(this).data('date-stnk') : ''
-            tanggal_polis = $(this).data('date-polis') ? $(this).data('date-polis') : ''
-            tanggal_bpkb = $(this).data('date-bpkb') ? $(this).data('date-bpkb') : ''
-            confirm_at_stnk = $(this).data('confirm-at-stnk') ? $(this).data('confirm-at-stnk') : '-'
-            confirm_at_polis = $(this).data('confirm-at-polis') ? $(this).data('confirm-at-polis') : '-'
-            confirm_at_bpkb = $(this).data('confirm-at-bpkb') ? $(this).data('confirm-at-bpkb') : '-'
-            confirm_stnk = $(this).data('confirm-stnk') ? $(this).data('confirm-stnk') : ''
-            confirm_polis = $(this).data('confirm-polis') ? $(this).data('confirm-polis') : ''
-            confirm_bpkb = $(this).data('confirm-bpkb') ? $(this).data('confirm-bpkb') : ''
+            var id = $(this).data('id_kkb')
+            var id_stnk = $(this).data('id-stnk') ? $(this).data('id-stnk') : '';
+            var id_polis = $(this).data('id-polis') ? $(this).data('id-polis') : '';
+            var id_bpkb = $(this).data('id-bpkb') ? $(this).data('id-bpkb') : '';
+            var no_stnk = $(this).data('no-stnk') ? $(this).data('no-stnk') : ''
+            var no_polis = $(this).data('no-polis') ? $(this).data('no-polis') : ''
+            var no_bpkb = $(this).data('no-bpkb') ? $(this).data('no-bpkb') : ''
+            var file_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
+            var file_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
+            var file_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
+            var tanggal_stnk = $(this).data('date-stnk') ? $(this).data('date-stnk') : ''
+            var tanggal_polis = $(this).data('date-polis') ? $(this).data('date-polis') : ''
+            var tanggal_bpkb = $(this).data('date-bpkb') ? $(this).data('date-bpkb') : ''
+            var confirm_at_stnk = $(this).data('confirm-at-stnk') ? $(this).data('confirm-at-stnk') : '-'
+            var confirm_at_polis = $(this).data('confirm-at-polis') ? $(this).data('confirm-at-polis') : '-'
+            var confirm_at_bpkb = $(this).data('confirm-at-bpkb') ? $(this).data('confirm-at-bpkb') : '-'
+            var confirm_stnk = $(this).data('confirm-stnk') ? $(this).data('confirm-stnk') : ''
+            var confirm_polis = $(this).data('confirm-polis') ? $(this).data('confirm-polis') : ''
+            var confirm_bpkb = $(this).data('confirm-bpkb') ? $(this).data('confirm-bpkb') : ''
 
             var upload_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
             var upload_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
@@ -243,7 +224,36 @@
             if (upload_polis != '' && is_confirm_polis != '')
                 $('#btn-confirm-polis').addClass('hidden')
 
-            visibilityComponents();
+            // Visibility Components
+            var stnkActive = $('#stnk-tab-menu').hasClass('active')
+            var polisActive = $('#polis-tab-menu').hasClass('active')
+            var bpkbActive = $('#bpkb-tab-menu').hasClass('active')
+
+            if (file_stnk != '') {
+                if (user_role == 3)
+                    $('.form-submit-berkas').css('display', 'none')
+                if (user_role == 2 && !confirm_stnk && stnkActive)
+                    $('.form-submit-berkas').css('display', 'block')
+                else
+                    $('.form-submit-berkas').css('display', 'none')
+                $('.input-stnk').css('display', 'none')
+                $('#no_stnk').prop('readonly', true)
+                $('#modalUploadBerkas #tanggal_upload_stnk').val(tanggal_stnk);
+                $('#tanggal_confirm_stnk').val((confirm_at_stnk));
+                $('#status_confirm_stnk').val((confirm_stnk ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
+            }
+            else {
+                if (user_role == 2) {
+                    $('#stnk_belum_diunggah').html('Berkas belum diunggah.')
+                    $('.input-no-stnk').css('display', 'none')
+                    if (stnkActive)
+                        $('.form-submit-berkas').css('display', 'none')
+                }
+                else {
+                    if (stnkActive)
+                        $('.form-submit-berkas').css('display', 'block')
+                }
+            }
 
             try {
                 $('#modal-berkas #id_kkb').val(id);
@@ -367,38 +377,6 @@
             }
         })
 
-        function visibilityComponents() {
-            var stnkActive = $('#stnk-tab-menu').hasClass('active')
-            var polisActive = $('#polis-tab-menu').hasClass('active')
-            var bpkbActive = $('#bpkb-tab-menu').hasClass('active')
-
-            if (file_stnk != '') {
-                if (user_role == 3)
-                    $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2 && !confirm_stnk && stnkActive)
-                    $('.form-submit-berkas').css('display', 'block')
-                else
-                    $('.form-submit-berkas').css('display', 'none')
-                $('.input-stnk').css('display', 'none')
-                $('#no_stnk').prop('readonly', true)
-                $('#modalUploadBerkas #tanggal_upload_stnk').val(tanggal_stnk);
-                $('#tanggal_confirm_stnk').val((confirm_at_stnk));
-                $('#status_confirm_stnk').val((confirm_stnk ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
-            }
-            else {
-                if (user_role == 2) {
-                    $('#stnk_belum_diunggah').html('Berkas belum diunggah.')
-                    $('.input-no-stnk').css('display', 'none')
-                    if (stnkActive)
-                        $('.form-submit-berkas').css('display', 'none')
-                }
-                else {
-                    if (stnkActive)
-                        $('.form-submit-berkas').css('display', 'block')
-                }
-            }
-        }
-
         $('#modal-berkas').on("submit", function(event) {
             event.preventDefault();
             var is_confirm = "{{ \Session::get(config('global.role_id_session')) }}" != 3;
@@ -504,18 +482,43 @@
         $('#btn-confirm-bpkb').on('click', function(e) {
             // Confirm
             const req_id_bpkb = $('#id_bpkb').val()
-            confirmBerkas(req_id_bpkb, 0, 0)
+            confirmBerkas(0, 0, req_id_bpkb)
         })
 
         $('#btn-confirm-polis').on('click', function(e) {
             // Confirm
             const req_id_polis = $('#id_polis').val()
-            confirmBerkas(req_id_polis, 0, 0)
+            confirmBerkas(0, req_id_polis, 0)
         })
 
         function confirmBerkas(id_stnk, id_polis, id_bpkb) {
+            Swal.fire({
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            var type = '';
+            if (id_stnk != 0 && id_polis == 0 && id_bpkb == 0) {
+                type = 'stnk'
+            }
+            if (id_stnk == 0 && id_polis != 0 && id_bpkb == 0) {
+                type = 'polis'
+            }
+            if (id_stnk == 0 && id_polis == 0 && id_bpkb != 0) {
+                type = 'bpkb'
+            }
+
             if (id_stnk == 0 && id_polis == 0 && id_bpkb == 0) {
-                ErrorMessage('Harap pilih berkas yang akan dikonfirmasi');
+                Swal.fire({
+                    title: 'Gagal',
+                    icon: 'error',
+                    text: 'Harap pilih berkas yang akan dikonfirmasi',
+                    closeOnClickOutside: false
+                });
             }
             var url = `{{ route('kredit.confirm_berkas') }}?id_stnk=${id_stnk}&id_polis=${id_polis}&id_bpkb=${id_bpkb}`
 
@@ -526,6 +529,8 @@
                 contentType: false,
                 processData: false,
                 success: function(data) {
+                    Swal.close() // close loading dialog
+
                     console.log(data)
                     if (Array.isArray(data.error)) {
                         for (var i = 0; i < data.error.length; i++) {
@@ -534,15 +539,39 @@
                         }
                     } else {
                         if (data.status == 'success') {
-                            SuccessMessage(data.message);
+                            Swal.fire({
+                                title: 'Berhasil',
+                                icon: 'success',
+                                timer: 3000,
+                                closeOnClickOutside: false
+                            });
+
+                            if (type == 'stnk')
+                                $('#btn-confirm-stnk').addClass('hidden')
+                            if (type == 'bpkb')
+                                $('#btn-confirm-bpkb').addClass('hidden')
+                            if (type == 'polis')
+                                $('#btn-confirm-polis').addClass('hidden')
                         } else {
-                            ErrorMessage(data.message)
+                            Swal.fire({
+                                title: 'Gagal',
+                                icon: 'error',
+                                text: data.message,
+                                closeOnClickOutside: false
+                            });
                         }
                     }
                 },
                 error: function(e) {
+                    Swal.close() // close loading dialog
+
                     console.log(e)
-                    ErrorMessage('Terjadi kesalahan')
+                    Swal.fire({
+                        title: 'Terjadi kesalahan',
+                        icon: 'error',
+                        text: e,
+                        closeOnClickOutside: false
+                    });
                 }
             })
         }

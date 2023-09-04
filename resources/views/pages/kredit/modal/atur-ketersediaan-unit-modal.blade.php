@@ -43,6 +43,15 @@
             $("#id_kkb").val(id);
         });
         $('#modal-tgl-form').on("submit", function(event) {
+            Swal.fire({
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
             event.preventDefault();
 
             const req_id = document.getElementById('id_kkb')
@@ -62,6 +71,7 @@
                     date: req_date.value,
                 },
                 success: function(data) {
+                    Swal.close()
                     console.log(data);
                     if (Array.isArray(data.error)) {
                         showError(req_date, data.error[0])
@@ -77,6 +87,7 @@
                     }
                 },
                 error: function(e) {
+                    Swal.close()
                     console.log(e)
                     ErrorMessage('Terjadi kesalahan')
                 }

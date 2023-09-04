@@ -59,6 +59,15 @@
         });
 
         $('#modal-tgl-penyerahan').on("submit", function(event) {
+            Swal.fire({
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
             event.preventDefault();
 
             const req_id = document.getElementById('id_kkb')
@@ -74,6 +83,7 @@
                 contentType: false,
                 processData: false,
                 success: function(data) {
+                    Swal.close()
                     if (Array.isArray(data.error)) {
                         for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];
@@ -91,6 +101,7 @@
                     }
                 },
                 error: function(e) {
+                    Swal.close()
                     console.log(e)
                     ErrorMessage('Terjadi kesalahan')
                 }

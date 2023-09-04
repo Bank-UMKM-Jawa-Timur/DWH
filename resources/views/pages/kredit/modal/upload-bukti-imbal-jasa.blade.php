@@ -51,6 +51,15 @@
         });
 
         $('#modal-imbal-jasa-form').submit(function(e) {
+            Swal.fire({
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
             e.preventDefault()
             const req_id = document.getElementById('id_kkbimbaljasa')
             const req_file = document.getElementById('file_imbal_jasa')
@@ -63,6 +72,7 @@
                 contentType: false,
                 processData: false,
                 success: function(data) {
+                    Swal.close()
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
                         ErrorMessage('Gagal')
@@ -82,6 +92,7 @@
                     }
                 },
                 error: function(e) {
+                    Swal.close()
                     console.log(e)
                     // ErrorMessage('Terjadi kesalahan')
                 }
