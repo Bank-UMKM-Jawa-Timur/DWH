@@ -93,11 +93,11 @@
                         </td>
                         <td>{{ $item->role }}</td>
                         <td>
-                            <div class="dropdown">
+                            <div class="dropdown ">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                     Selengkapnya
                                 </button>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu left-3">
                                     <li class="">
                                         <a class="item-dropdown toggle-modal" data-target-id="reset-password" href="#">Reset Password</a>
                                         {{--  <a class="dropdown-item buttonresetpassword" data-toggle="modal"

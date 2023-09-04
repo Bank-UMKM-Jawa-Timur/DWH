@@ -429,7 +429,7 @@
                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                             Selengkapnya
                         </button>
-                        <ul class="dropdown-menu w-full">
+                        <ul class="dropdown-menu  right-20">
                             @if ($item->tgl_ketersediaan_unit)
                                 @if ($buktiPembayaran)
                                     @if (!$penyerahanUnit && $buktiPembayaran->is_confirm && \Session::get(config('global.role_id_session')) == 3)

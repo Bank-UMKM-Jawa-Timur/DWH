@@ -28,7 +28,7 @@
                     <div class="input-box w-full space-y-3">
                         <label for="" class="uppercase appearance-none">Status Konfirmasi</label>
                         <input type="text" disabled class="p-2 w-full border" id="status_konfirmasi_imbal_jasa" />
-                    </div>
+                    </div>  
                     <div class="space-y-3">
                         <label for="" class="uppercase appearance-none">Bukti Pembayaran</label>
                         <div class="h-[528px] w-full bg-gray-100">

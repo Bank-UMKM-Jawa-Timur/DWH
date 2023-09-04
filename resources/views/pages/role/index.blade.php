@@ -77,11 +77,11 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->name }}</td>
                             <td>
-                                <div class="dropdown">
+                                <div class="dropdown max-w-[450px] mx-auto">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                         Selengkapnya
                                     </button>
-                                    <ul class="dropdown-menu w-full">
+                                    <ul class="dropdown-menu right-60">
                                         <li>
                                             <a class="item-dropdown"
                                                 href="{{ route('role.permission.index', $item->id) }}">
