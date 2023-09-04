@@ -106,7 +106,15 @@ class AuthenticatedSessionController extends Controller
                         if (array_key_exists('status', $responseBody)) {
                             if ($responseBody['status'] == 'berhasil') {
                                 if ($responseBody['data'] != 'undifined') {
-                                    $role_id = $responseBody['role'] == 'Administrator' ? 4 : 2;
+                                    if ($responseBody['role'] == 'Administrator') {
+                                        $role_id = 4;
+                                    }
+                                    else if ($responseBody['role'] == 'Pemasaran') {
+                                        $role_id = 1;
+                                    }
+                                    else {
+                                        $role_id = 2;
+                                    }
                                     Session::put(config('global.auth_session'), $responseBody);
                                     Session::put(config('global.role_id_session'), $role_id);
                                     Session::put(config('global.user_id_session'), $responseBody['id']);
