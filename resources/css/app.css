@@ -98,7 +98,7 @@
     }
 
     .tables {
-        @apply lg:overflow-visible relative overflow-x-auto p-2;
+        @apply lg:overflow-visible overflow-x-auto p-2;
     }
     body {
         @apply overflow-hidden;
@@ -139,7 +139,7 @@
         @apply p-2 text-center text-sm;
     }
     table td {
-        @apply border-b text-theme-text relative;
+        @apply border-b text-theme-text;
     }
     .pagination {
         @apply mt-2 border-none;
@@ -160,7 +160,7 @@
         @apply bg-gray-100 text-gray-500 cursor-not-allowed;
     }
     .dropdown {
-        @apply z-0 max-w-full  mx-auto;
+        @apply relative;
     }
     .dropdown-menu {
         @apply hidden border bg-white divide-y absolute text-left text-gray-700 z-30 right-32 bottom-0;
@@ -172,7 +172,7 @@
         @apply lg:w-[400px] w-full h-screen  bg-white z-40 fixed right-0 border-l;
     }
 }
-
+        
 .select2.select2-container {
     width: 100% !important;
 }

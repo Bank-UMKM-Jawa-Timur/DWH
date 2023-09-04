@@ -32,7 +32,7 @@
                     <div class="space-y-3">
                         <label for="" class="uppercase appearance-none">Bukti Pembayaran</label>
                         <div class="h-[528px] w-full bg-gray-100">
-                            <iframe src="" frameborder="0" class="w-full" id="preview_imbal_jasa"
+                            <iframe src="" frameborder="0" class="w-full h-[528px]" id="preview_imbal_jasa"
                                 style="width: 100%;"></iframe>
                         </div>
                     </div>
