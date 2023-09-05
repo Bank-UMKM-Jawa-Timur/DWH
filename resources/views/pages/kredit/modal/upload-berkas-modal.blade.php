@@ -383,6 +383,15 @@
 
             if (!is_confirm) {
                 // Upload
+                Swal.fire({
+                    title: 'Memuat...',
+                    html: 'Silahkan tunggu...',
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
                 const req_id = document.getElementById('id_kkb')
                 const req_no_stnk = document.getElementById('no_stnk')
                 const req_file_stnk = document.getElementById('stnk_scan')
@@ -400,6 +409,7 @@
                     contentType: false,
                     processData: false,
                     success: function(data) {
+                        Swal.close() // close loading dialog
                         if (Array.isArray(data.error)) {
                             console.log(data.error)
                             ErrorMessage('gagal')
@@ -430,6 +440,8 @@
                         }
                     },
                     error: function(e) {
+                        Swal.close() // close loading dialog
+
                         console.log(e)
                         ErrorMessage('Terjadi kesalahan')
                     }

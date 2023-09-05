@@ -301,7 +301,7 @@
                                 @if (\Session::get(config('global.role_id_session')) == 3)
                                     @if ($penyerahanUnit->is_confirm)
                                         <span class="text-info">Maksimal
-                                            {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                            {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
                                     @else
                                         <span class="text-warning">Menunggu konfirmasi
                                             penyerahan unit</span>
