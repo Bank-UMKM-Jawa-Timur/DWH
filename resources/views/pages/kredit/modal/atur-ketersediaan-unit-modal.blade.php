@@ -15,13 +15,13 @@
                     <div class="p-5 space-y-4">
                         <input type="hidden" name="id_kkb" id="id_kkb">
                         <label for="" class="uppercase">Tanggal Ketersedian Unit</label>
-                        <input type="date" class="p-2 w-full border bg-gray-100" name="tgl_ketersediaan_unit"
+                        <input type="text"  class="datepicker p-2 w-full border bg-gray-100" name="tgl_ketersediaan_unit"
                             id="tgl_ketersediaan_unit" />
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button data-dismiss-id="modalAturKetersedian" class="border px-7 py-3 text-black rounded">
+                <button type="button" data-dismiss-id="modalAturKetersedian" class="border px-7 py-3 text-black rounded">
                     Batal
                 </button>
                 <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">

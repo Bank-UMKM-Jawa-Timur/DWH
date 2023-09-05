@@ -135,7 +135,7 @@
                                                     tersedia.</span></td> --}}
                                 @endforeach
                             <td>
-                                <div class="dropdown">
+                                <div class="dropdown max-w-[250px]">
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                         Selangkapnya
                                     </button>

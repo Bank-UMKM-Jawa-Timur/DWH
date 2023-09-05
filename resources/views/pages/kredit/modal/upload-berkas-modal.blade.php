@@ -67,7 +67,7 @@
                         </div>  --}}
                         <iframe id="preview_stnk" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
-                            <div class="input-box space-y-3">
+                            <div class="input-box space-y-3" id="stnk_input">
                                 <div class="p-3 space-y-4">
                                     <label for="" class="uppercase">Scan Berkas (PDF)</label>
                                     <input type="file" class="p-2 w-full border bg-gray-100" id="stnk_scan" name="stnk_scan"
@@ -75,6 +75,15 @@
                                 </div>
                             </div>
                         @endif
+                        @if(\Session::get(config('global.role_id_session')) == 2)
+                        <div id="alert_stnk" class="hidden p-5 text-center mt-2 space-y-5">
+                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                            class="max-w-sm mx-auto" />
+                            <p class="font-semibold tracking-tighter text-theme-text">
+                                File STNK belum di upload
+                            </p>
+                        </div>
+                         @endif
                         @if (\Session::get(config('global.role_id_session')) == 2)
                             <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
                                 id="btn-confirm-stnk">
@@ -110,7 +119,7 @@
                         </div>  --}}
                         <iframe id="preview_bpkb" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
-                            <div class="input-box space-y-3">
+                            <div class="input-box space-y-3" id="bpkb_input">
                                 <div class="p-3 space-y-4">
                                     <label for="" class="uppercase">Scan Berkas (PDF)</label>
                                     <input type="file" class="p-2 w-full border bg-gray-100" id="bpkb_scan" name="bpkb_scan"
@@ -118,7 +127,17 @@
                                 </div>
                             </div>
                         @endif
+                        @if(\Session::get(config('global.role_id_session')) == 2)
+                        <div id="alert_bpkb" class="hidden p-5 text-center mt-2 space-y-5">
+                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                            class="max-w-sm mx-auto" />
+                            <p class="font-semibold tracking-tighter text-theme-text">
+                                File BPKB belum di upload
+                            </p>
+                        </div>
+                        @endif
                         @if (\Session::get(config('global.role_id_session')) == 2)
+                        
                             <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
                                 id="btn-confirm-bpkb">
                                 Konfirmasi
@@ -128,7 +147,7 @@
                     <div id="tab3" class="tab-content hidden">
                         <div class="input-box space-y-3">
                             <input type="hidden" name="id_polis" id="id_polis">
-                            <div class="px-3 space-y-4">
+                            <div class="px-3 space-y-4" >
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                             </div>
@@ -153,13 +172,22 @@
                         </div>  --}}
                         <iframe id="preview_polis" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
-                            <div class="input-box space-y-3">
+                            <div class="input-box space-y-3" id="polis_input">
                                 <div class="p-3 space-y-4">
                                     <label for="" class="uppercase">Scan Berkas (PDF)</label>
                                     <input type="file" class="p-2 w-full border bg-gray-100" id="polis_scan" name="polis_scan"
                                     accept="application/pdf" />
                                 </div>
                             </div>
+                        @endif
+                        @if(\Session::get(config('global.role_id_session')) == 2)
+                        <div id="alert_polis" class="hidden p-5 text-center mt-2 space-y-5">
+                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                            class="max-w-sm mx-auto" />
+                            <p class="font-semibold tracking-tighter text-theme-text">
+                                File POLIS belum di upload
+                            </p>
+                        </div>
                         @endif
                         @if (\Session::get(config('global.role_id_session')) == 2)
                             <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
@@ -284,22 +312,55 @@
             if (file_stnk != '') {
                 var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk + "#navpanes=0";
                 $("#preview_stnk").attr("src", path_stnk);
+                if(user_role == 2){
+                    $("#alert_stnk").addClass("hidden")
+                }else{
+                    $("#stnk_input").addClass("hidden")
+                }
             } else {
                 $("#preview_stnk").css("display", 'none');
+                if(user_role == 2){
+                    $("#alert_stnk").removeClass("hidden")
+                }else{
+                    $("#stnk_input").removeClass("hidden")
+                }
             }
 
             if (file_polis != '') {
                 var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis + "#navpanes=0";
                 $("#preview_polis").attr("src", path_polis);
+                $("#polis_input").addClass("hidden")
+                if(user_role == 2){
+                    $("#alert_polis").addClass("hidden")
+                }else{
+                    $("#polis_input").addClass("hidden")
+                }
+                
             } else {
+                $("#polis_input").removeClass("hidden")
                 $("#preview_polis").css("display", 'none');
+                if(user_role == 2){
+                    $("#alert_polis").removeClass("hidden")
+                }else{
+                    $("#polis_input").removeClass("hidden")
+                }
             }
-
+            
             if (file_bpkb != '') {
                 var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#navpanes=0";
                 $("#preview_bpkb").attr("src", path_bpkb);
+                if(user_role == 2){
+                    $("#alert_bpkb").addClass("hidden")
+                }else{
+                    $("#bpkb_input").addClass("hidden")
+                }
             } else {
                 $("#preview_bpkb").css("display", 'none');
+                if(user_role == 2){
+                    $("#alert_bpkb").removeClass("hidden")
+                }else{
+                    $("#bpkb_input").removeClass("hidden")
+                }
             }
         });
 

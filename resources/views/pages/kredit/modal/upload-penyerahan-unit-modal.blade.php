@@ -16,7 +16,7 @@
                 <div class="input-box space-y-3">
                     <div class="p-5 space-y-4">
                         <label for="" class="uppercase">Tanggal Pengiriman</label>
-                        <input type="date" class="p-2 w-full border bg-gray-100"
+                        <input type="text" class="datepicker p-2 w-full border bg-gray-100"
                             id="tgl_pengiriman" name="tgl_pengiriman"/>
                     </div>
                 </div>

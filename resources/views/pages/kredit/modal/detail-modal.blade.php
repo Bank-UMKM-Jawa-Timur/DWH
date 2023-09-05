@@ -237,8 +237,6 @@
                         const document = response.data || response.data.documents[i] ? response.data.documents[i] : null;
                         const karyawan = response.data.karyawan ? response.data.karyawan : null;
                         
-                        console.log(response.data)
-
                         if (document.category == "Penyerahan Unit") {
                             if (document.file) {
                                 $(".alert-detailpo").hide();
@@ -248,7 +246,10 @@
 
                         if (document.category == "Bukti Pembayaran") {
                             if (document.file) {
+                                console.log("ada file");
                                 $("#detail_bukti_pembayaran").attr('src', document.file_path+"#navpanes=0")
+                            }else{
+                                
                             }
                         }
 
@@ -345,9 +346,14 @@
                             }
                         }
                     }
+                    console.log(response.data)
                     if (response.data.documents.length == 0) {
-                        $('.alert-stnk').show()
-                        $('.content-stnk').css('display', 'none')
+                        $('.alert-stnk').removeClass("hidden")
+                        $('.content-stnk').addClass("hidden")
+                        $('.alert-bpkb').removeClass("hidden")
+                        $('.content-bpkb').addClass("hidden")
+                        $('.alert-polis').removeClass("hidden")
+                        $('.content-polis').addClass("hidden")
                     }
                     if (response.data.pengajuan) {
                         var data = response.data.pengajuan;

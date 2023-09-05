@@ -104,7 +104,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="dropdown">
+                                    <div class="dropdown max-w-[280px]">
                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                             Selangkapnya
                                         </button>

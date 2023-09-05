@@ -1,5 +1,6 @@
 // $(".layout-sidebar").perfectScrollbar();
 
+$('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' }).val("dd/mm/yyyy");
 var sidebar = $(".layout-sidebar");
 var form = $(".layout-form");
 
