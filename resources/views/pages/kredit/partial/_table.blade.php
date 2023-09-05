@@ -299,7 +299,7 @@
                                     @if (\Session::get(config('global.role_id_session')) == 3)
                                         @if ($penyerahanUnit->is_confirm)
                                             <span class="text-info">Maksimal
-                                                {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +1 month')) }}</span>
+                                                {{ date('d-m-Y', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
                                         @else
                                             <span class="text-warning">Menunggu konfirmasi
                                                 penyerahan unit</span>
@@ -338,7 +338,7 @@
                                     @if (\Session::get(config('global.role_id_session')) == 3)
                                         @if ($penyerahanUnit->is_confirm)
                                             <span class="text-info">Maksimal
-                                                {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
+                                                {{ date('d-m-Y', strtotime($penyerahanUnit->date . ' +3 month')) }}</span>
                                         @else
                                             <span class="text-warning">Menunggu konfirmasi
                                                 penyerahan unit</span>
@@ -377,7 +377,7 @@
                                     @if (\Session::get(config('global.role_id_session')) == 3)
                                         @if ($penyerahanUnit->is_confirm)
                                             <span class="text-info">Maksimal
-                                                {{ date('d-m-Y', strtotime($penyerahanUnit->confirm_at . ' +3 month')) }}</span>
+                                                {{ date('d-m-Y', strtotime($penyerahanUnit->date . ' +3 month')) }}</span>
                                         @else
                                             <span class="text-warning">Menunggu konfirmasi
                                                 penyerahan unit</span>
@@ -428,9 +428,9 @@
                         @endif
                     @else
                         {{--  role selain vendor  --}}
-                        @if ($stnk && $bpkb)
+                        @if ($stnk && $bpkb && $polis)
                             @if ($is_kredit_page)
-                                @if ($stnk->is_confirm && $bpkb->is_confirm)
+                                @if ($stnk->is_confirm && $bpkb->is_confirm && $polis->is_confirm)
                                     @if (!$imbalJasa)
                                         @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
                                             <a href="#"
