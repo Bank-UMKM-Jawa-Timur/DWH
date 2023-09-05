@@ -8,6 +8,9 @@
         <tr>
             <th>No</th>
             <th width="150">Nama</th>
+            @if ($role_id == 3)
+                <th>Cabang</th>
+            @endif
             <th>PO</th>
             <th>Ketersediaan Unit</th>
             <th>Bukti Pembayaran</th>
@@ -56,6 +59,9 @@
                         undifined
                     @endif
                 </td>
+                @if ($role_id == 3)
+                    <td>{{ array_key_exists('cabang', $item->detail) ? $item->detail['cabang'] : '-' }}</td>
+                @endif
                 <td class="@if ($item->detail) link-po @endif">
                     @if ($buktiPembayaran)
                         @if ($item->detail)
