@@ -195,15 +195,55 @@
                             @if ($is_kredit_page)
                                 @if ($buktiPembayaran->file)
                                     @if ($penyerahanUnit)
-                                        <a style="text-decoration: underline; cursor: pointer;"
-                                            class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
-                                            data-id-category="2"
-                                            data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
-                                            data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
-                                            data-confirm="{{ $penyerahanUnit->is_confirm }}"
-                                            data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
-                                            data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}"
-                                            href="#">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                        @if ($penyerahanUnit->file)
+                                            @if (\Session::get(config('global.role_id_session')) == 3)
+                                                @if ($penyerahanUnit->is_confirm)
+                                                    <a style="text-decoration: underline; cursor: pointer;"
+                                                        class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                        data-id-category="2"
+                                                        data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                        data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                        data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                                        data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                        data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}"
+                                                        href="#">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                @else
+                                                    <a style="text-decoration: underline; cursor: pointer;"
+                                                        class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                        data-id-category="2"
+                                                        data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                        data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                        data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                                        data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                        data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}"
+                                                        href="#">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                @endif
+                                            @elseif(\Session::get(config('global.role_id_session')) == 2 && \Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                                @if ($penyerahanUnit->is_confirm)
+                                                    <a style="text-decoration: underline; cursor: pointer;"
+                                                        class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                        data-id-category="2"
+                                                        data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                        data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                        data-confirm="1"
+                                                        data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                        data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}"
+                                                        href="#">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                @else
+                                                    <a style="text-decoration: underline; cursor: pointer;"
+                                                        class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                        data-id-category="2"
+                                                        data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                        data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                        data-confirm="0"
+                                                        data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                        data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}"
+                                                        href="#">Konfirmasi</a>
+                                                @endif
+                                            @endif
+                                        @else
+                                            
+                                        @endif
                                     @else
                                         <span class="text-info">Maksimal
                                             {{ date('d-m-Y', strtotime($buktiPembayaran->date . ' +1 day')) }}</span>

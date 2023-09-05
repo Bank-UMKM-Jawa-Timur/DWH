@@ -82,7 +82,20 @@
                 $('.form-confirm').css('display', 'none');
                 $('.penyerahan-unit-title').html('Penyerahan Unit');
             }
-
+            else {
+                var role_id = "{{\Session::get(config('global.role_id_session'))}}"
+                var role_name = "{{\Session::get(config('global.user_role_session'))}}"
+                if (role_id == 2 && role_name == 'Staf Analis Kredit') {
+                    $('#modalConfirmPenyerahanUnit .title-modal').html('Konfirmasi Penyerahan Unit')
+                    $('.form-confirm').css('display', 'block');
+                    $('.penyerahan-unit-title').html('Konfirmasi Penyerahan Unit');
+                }
+                else {
+                    $('#modalConfirmPenyerahanUnit .title-modal').html('Penyerahan Unit')
+                    $('.form-confirm').css('display', 'none');
+                    $('.penyerahan-unit-title').html('Penyerahan Unit');
+                }
+            }
         });
 
         $("[data-dismiss-id]").on("click", function () {
