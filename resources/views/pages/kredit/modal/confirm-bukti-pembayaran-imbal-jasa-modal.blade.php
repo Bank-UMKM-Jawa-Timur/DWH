@@ -66,7 +66,7 @@
             $("#preview_imbal_jasa").attr("src", path_file);
             $('#id_cat').val(data_id)
             $('#tgl_upload_imbal_jasa').val(tanggal)
-            $('#status_konfirmasi_imbal_jasa').val(tanggal)
+            $('#status_konfirmasi_imbal_jasa').val(confirm)
 
             if (is_confirm) {
                 $('#modalConfirmImbalJasa .title-modal').html('Bukti Imbal Jasa')
