@@ -1,4 +1,36 @@
 @extends('layout.master')
+@push('extraScript')
+    <script>
+        function refreshTable() {
+            var page_length = $("#page_length").val()
+            var tAwal = $("#tAwal").val() != 'dd/mm/yyyy' ? $('#tAwal').val() : ''
+            var tAkhir = $("#tAkhir").val() != 'dd/mm/yyyy' ? $('#tAkhir').val() : ''
+            var status = $("#status").val()
+
+            $.ajax({
+                type: "POST",
+                url: "{{route('kredit.load_json')}}",
+                data: {
+                    _token: "{{csrf_token()}}",
+                    page_length: page_length,
+                    tAwal: tAwal,
+                    tAkhir: tAkhir,
+                    status: status,
+                },
+                success: function(response) {
+                    if (response) {
+                        console.log(response)
+                        if (response.status == 'success') {
+                            if ("html" in response) {
+                                $('#table_content').html(response.html);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+@endpush
 @section('modal')
 <!-- Modal-Filter -->
 @include('pages.kredit.modal.filter-modal')
@@ -41,7 +73,7 @@
                     </h2>
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                    @if (isset($_GET['tglAwal']) || isset($_GET['tglAkhir']) || isset($_GET['status']))
+                    @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
                     <form action="" method="get">
                         <button type="submit" class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
                             <span class="lg:mt-1.5 mt-0">
@@ -63,8 +95,9 @@
             </div>
             <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
                 <div class="sorty pl-1 w-full">
-                    <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                    <select name="" class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                    <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
+                    <select name="page_length" id="page_length"
+                        class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
                         id="">
                         <option value="">5</option>
                         <option value="">10</option>
@@ -83,172 +116,8 @@
                     </div>
                 </div>
             </div>
-            <div class="tables mt-2">
+            <div class="tables mt-2" id="table_content">
                 @include('pages.kredit.partial._table')
-                {{--  <table class="table-auto w-full">
-                    <tr>
-                        <th>No.</th>
-                        <th>Nama</th>
-                        <th>PO</th>
-                        <th>Kendaraan Unit</th>
-                        <th>Bukti Pembayaran</th>
-                        <th>Penyerahan Unit</th>
-                        <th>STNK</th>
-                        <th>POLIS</th>
-                        <th>BPKB</th>
-                        <th>Bukti Pembayaran imbal jasa</th>
-                        <th>Imbal jasa</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Farhan</td>
-                            <td>001/PO/07/2023</td>
-                            <td>15-08-2023</td>
-                            <td>-</td>
-                            <td>22-08-2023</td>
-                            <td>24-08-2023</td>
-                            <td>24-08-2023</td>
-                            <td>24-08-2023</td>
-                            <td>Rp.100.000</td>
-                            <td>Selesai</td>
-                            <td>Done</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Muhammad Khalil Z.</td>
-                            <td>001/PO/07/2023</td>
-                            <td>Menunggu tanggal ketersediaan unit</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>diproses</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Edi</td>
-                            <td>001/PO/07/2023</td>
-                            <td>Menunggu tanggal ketersediaan unit</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>diproses</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Ahmad Roni.</td>
-                            <td>001/PO/07/2023</td>
-                            <td>Menunggu tanggal ketersediaan unit</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>diproses</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Dani Riyadi.</td>
-                            <td>001/PO/07/2023</td>
-                            <td>Menunggu tanggal ketersediaan unit</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>diproses</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>  --}}
             </div>
             <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
                 <div class="w-full">

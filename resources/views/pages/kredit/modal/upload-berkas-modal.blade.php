@@ -214,6 +214,32 @@
     <script>
         const user_role = "{{\Session::get(config('global.role_id_session'))}}";
 
+        function SuccessMessage(message) {
+            Swal.fire({
+                title: 'Berhasil',
+                icon: 'success',
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    refreshTable()
+                }
+            })
+        }
+        
+        function ErrorMessage(message) {
+            Swal.fire({
+                title: 'Gagal',
+                icon: 'error',
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    refreshTable()
+                }
+            })
+        }
+
         $(".toggle-modal").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
@@ -495,9 +521,7 @@
                             } else {
                                 ErrorMessage(data.message)
                             }
-                            $('#modalUploadBerkas').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
+                            $('#modalUploadBerkas').addClass('hidden')
                         }
                     },
                     error: function(e) {
@@ -505,6 +529,7 @@
 
                         console.log(e)
                         ErrorMessage('Terjadi kesalahan')
+                        $('#modalUploadBerkas').addClass('hidden')
                     }
                 })
             } else {
@@ -533,14 +558,13 @@
                             } else {
                                 ErrorMessage(data.message)
                             }
-                            $('#modalUploadBerkas').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
+                            $('#modalUploadBerkas').addClass('hidden')
                         }
                     },
                     error: function(e) {
                         console.log(e)
                         ErrorMessage('Terjadi kesalahan')
+                        $('#modalUploadBerkas').addClass('hidden')
                     }
                 })
             }
@@ -633,6 +657,7 @@
                                 closeOnClickOutside: false
                             });
                         }
+                        refreshTable()
                     }
                 },
                 error: function(e) {
@@ -645,6 +670,7 @@
                         text: e,
                         closeOnClickOutside: false
                     });
+                    refreshTable()
                 }
             })
         }

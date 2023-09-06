@@ -54,6 +54,34 @@
 
 @push('extraScript')
     <script>
+        function SuccessMessage(message) {
+            Swal.fire({
+                title: 'Berhasil',
+                icon: 'success',
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    refreshTable()
+                    $('#modalConfirmPenyerahanUnit').addClass('hidden')
+                }
+            })
+        }
+        
+        function ErrorMessage(message) {
+            Swal.fire({
+                title: 'Gagal',
+                icon: 'error',
+                timer: 3000,
+                closeOnClickOutside: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    refreshTable()
+                    $('#modalConfirmPenyerahanUnit').addClass('hidden')
+                }
+            })
+        }
+
         $(".toggle-modal").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");

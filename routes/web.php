@@ -113,6 +113,7 @@ Route::middleware('auth_api')->group(function () {
     Route::get('/kredit/{id}', [KreditController::class, 'show'])->name('kredit.show');
     Route::post('/kredit/upload-imbal-jasa', [KreditController::class, 'uploadUImbalJasa'])->name('kredit.upload_imbal_jasa');
     Route::post('/kredit/confirm-imbal-jasa', [KreditController::class, 'confirmUploadUImbalJasa'])->name('kredit.confirm-imbal-jasa');
+    Route::post('/kredit/load-json', [KreditController::class, 'loadDataJson'])->name('kredit.load_json');
 
     Route::get('/log_aktivitas', [LogActivitesController::class, 'index'])->name('log_aktivitas.index');
 
