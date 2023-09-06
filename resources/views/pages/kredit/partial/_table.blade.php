@@ -99,7 +99,11 @@
                                 {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}
                             @endif
                         @else
-                            -
+                            @if (!$item->tgl_ketersediaan_unit)
+                                <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
+                            @else
+                                {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}
+                            @endif
                         @endif
                     @elseif ($item->tgl_ketersediaan_unit)
                         {{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}
@@ -133,7 +137,19 @@
                                         Menunggu Pembayaran dari Cabang
                                     @endif
                                 @else
-                                    -
+                                    @if (!$buktiPembayaran->is_confirm)
+                                        Menunggu konfirmasi dari Cabang
+                                    @elseif ($buktiPembayaran->is_confirm)
+                                        <a class="m-0 bukti-pembayaran-modal toggle-modal"
+                                            style="cursor: pointer; text-decoration: underline;"
+                                            data-target-id="modalConfirmBuktiPembayaran"
+                                            data-file="{{ $buktiPembayaran->file }}"
+                                            data-confirm="{{ $buktiPembayaran->is_confirm }}"
+                                            data-tanggal="{{ date('d-m-Y', strtotime($buktiPembayaran->date)) }}"
+                                            data-confirm_at="{{ date('d-m-Y', strtotime($buktiPembayaran->confirm_at)) }}">Selesai</a>
+                                    @else
+                                        Menunggu Pembayaran dari Cabang
+                                    @endif
                                 @endif
                             @else
                                 Menunggu Pembayaran dari Cabang
@@ -184,7 +200,17 @@
                                             </button>
                                         @endif
                                     @else
-                                        -
+                                        @if ($buktiPembayaran->is_confirm)
+                                            <button class="toggle-modal underline" data-target-id="modalBuktiPembayaran"
+                                                data-file="{{ $buktiPembayaran->file }}"
+                                                data-tanggal="{{ $buktiPembayaran->date }}"
+                                                data-confirm="{{ $buktiPembayaran->is_confirm }}"
+                                                data-confirm_at="{{ $buktiPembayaran->confirm_at ? date('d-m-Y', strtotime($buktiPembayaran->confirm_at)) : '-' }}">
+                                                Selesai
+                                            </button>
+                                        @else
+                                            -
+                                        @endif
                                     @endif
                                 @else
                                     Menunggu cabang mengunggah bukti pembayaran
@@ -270,7 +296,68 @@
                                     @endif
                                 @endif
                             @else
-                                -
+                                @if ($buktiPembayaran->file)
+                                    @if ($penyerahanUnit)
+                                        @if ($penyerahanUnit->file)
+                                            @if (\Session::get(config('global.role_id_session')) == 3)
+                                                @if ($penyerahanUnit->is_confirm)
+                                                    <a style="text-decoration: underline; cursor: pointer;"
+                                                        class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                        data-id-category="2"
+                                                        data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                        data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                        data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                                        data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                        data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}"
+                                                        href="#">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                @else
+                                                    <a style="text-decoration: underline; cursor: pointer;"
+                                                        class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                        data-id-category="2"
+                                                        data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                        data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                        data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                                        data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                        data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}"
+                                                        href="#">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                @endif
+                                            @elseif(\Session::get(config('global.role_id_session')) == 2 && \Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                                @if ($penyerahanUnit->is_confirm)
+                                                    <a style="text-decoration: underline; cursor: pointer;"
+                                                        class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                        data-id-category="2"
+                                                        data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                                        data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                                        data-confirm="1"
+                                                        data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                                        data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}"
+                                                        href="#">{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}</a>
+                                                @else
+                                                    Menunggu konfirmasi
+                                                @endif
+                                            @endif
+                                        @else
+                                            
+                                        @endif
+                                    @else
+                                        <span class="text-info">Maksimal
+                                            {{ date('d-m-Y', strtotime($buktiPembayaran->date . ' +1 day')) }}</span>
+                                    @endif
+                                @else
+                                    @if (\Session::get(config('global.role_id_session')) == 3 && \Session::get(config('global.user_role_session')) != $staf_analisa_kredit_role)
+                                        <span>Menunggu konfirmasi cabang</span>
+                                    @else
+                                        <a style="text-decoration: underline; cursor: pointer;"
+                                            class="toggle-modal"
+                                            data-target-id="modalConfirmPenyerahanUnit"
+                                            data-id-category="2"
+                                            data-id-doc="{{ $penyerahanUnit ? $penyerahanUnit->id : 0 }}"
+                                            data-file="@isset($penyerahanUnit->file){{ $penyerahanUnit->file }}@endisset"
+                                            data-confirm="{{ $penyerahanUnit->is_confirm }}"
+                                            data-tanggal="{{ date('d-m-Y', strtotime($penyerahanUnit->date)) }}"
+                                            data-confirm_at="{{ $penyerahanUnit->confirm_at ? date('d-m-Y', strtotime($penyerahanUnit->confirm_at)) : '-' }}">Konfirmasi</a>
+                                    @endif
+                                @endif
                             @endif
                         @else
                             -
@@ -312,7 +399,35 @@
                                 -
                             @endif
                         @else
-                            -
+                            @if ($penyerahanUnit->is_confirm)
+                                @if ($stnk)
+                                    @if ($stnk->file && $stnk->is_confirm)
+                                        <a style="text-decoration: underline; cursor: pointer;"
+                                            class="open-po detailFileStnk" data-toggle="modal"
+                                            data-target="#detailStnk"
+                                            data-file="{{ $stnk->file }}"
+                                            data-confirm="{{ $stnk->is_confirm }}"
+                                            data-tanggal="{{ date('d-m-Y', strtotime($stnk->date)) }}"
+                                            data-confirm_at="{{ date('d-m-Y', strtotime($stnk->confirm_at)) }}">{{ date('d-m-Y', strtotime($stnk->date)) }}</a>
+                                    @else
+                                        <span class="text-warning">Menunggu konfirmasi</span>
+                                    @endif
+                                @else
+                                    @if (\Session::get(config('global.role_id_session')) == 3)
+                                        @if ($penyerahanUnit->is_confirm)
+                                            <span class="text-info">Maksimal
+                                                {{ date('d-m-Y', strtotime($penyerahanUnit->date . ' +1 month')) }}</span>
+                                        @else
+                                            <span class="text-warning">Menunggu konfirmasi
+                                                penyerahan unit</span>
+                                        @endif
+                                    @else
+                                        <span class="text-warning">Menunggu penyerahan</span>
+                                    @endif
+                                @endif
+                            @else
+                                -
+                            @endif
                         @endif
                     @else
                         <span class="text-warning">-</span>
@@ -351,7 +466,35 @@
                                 -
                             @endif
                         @else
-                            -
+                            @if ($penyerahanUnit->is_confirm)
+                                @if ($bpkb)
+                                    @if ($bpkb->file && $bpkb->is_confirm)
+                                        <a style="text-decoration: underline; cursor: pointer;"
+                                            class="open-po detailFileBpkb" data-toggle="modal"
+                                            data-target="#detailBpkb"
+                                            data-file="{{ $bpkb->file }}"
+                                            data-confirm="{{ $bpkb->is_confirm }}"
+                                            data-tanggal="{{ date('d-m-Y', strtotime($bpkb->date)) }}"
+                                            data-confirm_at="{{ date('d-m-Y', strtotime($bpkb->confirm_at)) }}">{{ date('d-m-Y', strtotime($bpkb->date)) }}</a>
+                                    @else
+                                        <span class="text-warning">Menunggu konfirmasi</span>
+                                    @endif
+                                @else
+                                    @if (\Session::get(config('global.role_id_session')) == 3)
+                                        @if ($penyerahanUnit->is_confirm)
+                                            <span class="text-info">Maksimal
+                                                {{ date('d-m-Y', strtotime($penyerahanUnit->date . ' +3 month')) }}</span>
+                                        @else
+                                            <span class="text-warning">Menunggu konfirmasi
+                                                penyerahan unit</span>
+                                        @endif
+                                    @else
+                                        <span class="text-warning">Menunggu penyerahan</span>
+                                    @endif
+                                @endif
+                            @else
+                                -
+                            @endif
                         @endif
                     @else
                         <span class="text-warning">-</span>
@@ -390,7 +533,35 @@
                                 -
                             @endif
                         @else
-                            -
+                            @if ($penyerahanUnit->is_confirm)
+                                @if ($polis)
+                                    @if ($polis->file && $polis->is_confirm)
+                                        <a style="text-decoration: underline; cursor: pointer;"
+                                            class="open-po detailFilePolis" data-toggle="modal"
+                                            data-target="#detailPolis"
+                                            data-file="{{ $polis->file }}"
+                                            data-confirm="{{ $polis->is_confirm }}"
+                                            data-tanggal="{{ date('d-m-Y', strtotime($polis->date)) }}"
+                                            data-confirm_at="{{ date('d-m-Y', strtotime($polis->confirm_at)) }}">{{ date('d-m-Y', strtotime($polis->date)) }}</a>
+                                    @else
+                                        <span class="text-warning">Menunggu konfirmasi</span>
+                                    @endif
+                                @else
+                                    @if (\Session::get(config('global.role_id_session')) == 3)
+                                        @if ($penyerahanUnit->is_confirm)
+                                            <span class="text-info">Maksimal
+                                                {{ date('d-m-Y', strtotime($penyerahanUnit->date . ' +3 month')) }}</span>
+                                        @else
+                                            <span class="text-warning">Menunggu konfirmasi
+                                                penyerahan unit</span>
+                                        @endif
+                                    @else
+                                        <span class="text-warning">Menunggu penyerahan</span>
+                                    @endif
+                                @endif
+                            @else
+                                -
+                            @endif
                         @endif
                     @else
                         <span class="text-warning">-</span>
@@ -421,7 +592,19 @@
                                     Menunggu Pembayaran dari Cabang
                                 @endif
                             @else
-                                -
+                                @if (!$imbalJasa->is_confirm)
+                                    Menunggu konfirmasi
+                                @elseif ($imbalJasa->is_confirm)
+                                    <a class="bukti-pembayaran-modal toggle-modal"
+                                        style="cursor: pointer; text-decoration: underline;"
+                                        data-target-id="modalConfirmImbalJasa"
+                                        data-confirm="{{ $imbalJasa->is_confirm }}"
+                                        data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->date)->format('d-m-Y') }}"
+                                        data-confirm_at="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
+                                        data-file="{{ $imbalJasa->file }}">Selesai</a>
+                                @else
+                                    Menunggu Pembayaran dari Cabang
+                                @endif
                             @endif
                         @else
                             -
@@ -456,7 +639,27 @@
                                 -
                                 @endif
                             @else
+                                @if ($stnk->is_confirm && $bpkb->is_confirm && $polis->is_confirm)
+                                    @if (!$imbalJasa)
+                                        @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                            Menunggu pembayaran
+                                        @endif
+                                    @else
+                                        @if (!$imbalJasa->is_confirm)
+                                            <p class="m-0">Menunggu Konfirmasi Vendor</p>
+                                        @elseif ($imbalJasa->is_confirm)
+                                            <a class="bukti-pembayaran-modal toggle-modal"
+                                                style="cursor: pointer; text-decoration: underline;"
+                                                data-target-id="modalConfirmImbalJasa"
+                                                data-confirm="{{ $imbalJasa->is_confirm }}"
+                                                data-tanggal="{{ \Carbon\Carbon::parse($imbalJasa->date)->format('d-m-Y') }}"
+                                                data-confirm_at="{{ \Carbon\Carbon::parse($imbalJasa->confirm_at)->format('d-m-Y') }}"
+                                                data-file="{{ $imbalJasa->file }}">Selesai</a>
+                                        @endif
+                                    @endif
+                                @else
                                 -
+                                @endif
                             @endif
                         @else
                             -
@@ -468,12 +671,12 @@
                         @if ($is_kredit_page)
                             @if ($imbalJasa)
                                 @if ($imbalJasa->file && $imbalJasa->is_confirm)
-                                    <a>Rp.{{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
+                                    <a>Rp {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
                                 @else
                                     @if (\Session::get(config('global.role_id_session')) == 3)
                                         <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                                     @else
-                                        <span>Rp. {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</span>
+                                        <span>Rp {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</span>
                                     @endif
                                 @endif
                             @else
@@ -501,7 +704,40 @@
                                 @endif
                             @endif
                         @else
-                            -
+                            @if ($imbalJasa)
+                                @if ($imbalJasa->file && $imbalJasa->is_confirm)
+                                    <a>Rp {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</a>
+                                @else
+                                    @if (\Session::get(config('global.role_id_session')) == 3)
+                                        <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
+                                    @else
+                                        <span>Rp {{ number_format($setImbalJasa->imbaljasa, 0, '', '.') }}</span>
+                                    @endif
+                                @endif
+                            @else
+                                @if ($imbalJasa)
+                                    @if ($imbalJasa->file && $imbalJasa->is_confirm)
+                                        @if ($stnk && $polis && $bpkb)
+                                            @if (\Session::get(config('global.role_id_session')) == 2 && \Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                                <span class="text-info">Silahkan upload bukti
+                                                    transfer imbal
+                                                    jasa</span>
+                                            @else
+                                                <span class="text-info">Menunggu bukti transfer
+                                                    imbal
+                                                    jasa</span>
+                                            @endif
+                                        @else
+                                            <span class="text-warning">Menunggu penyerahan semua
+                                                berkas</span>
+                                        @endif
+                                    @else
+                                        -
+                                    @endif
+                                @else
+                                    <span class="text-warning">-</span>
+                                @endif
+                            @endif
                         @endif
                     @else
                         <span class="text-warning">-</span>
