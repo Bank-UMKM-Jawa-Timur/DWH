@@ -30,7 +30,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required_without:nip', 'string', 'email'],
-            'nip' => ['required_without:email', 'string', 'exists:users,nip'],
+            'nip' => ['required_without:email', 'string'],
             'password' => ['required', 'string'],
         ];
     }
