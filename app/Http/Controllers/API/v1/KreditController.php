@@ -43,7 +43,7 @@ class KreditController extends Controller
                 'nomor_po' => ['required'],
                 'kode_cabang' => ['required'],
                 'tenor' => ['required'],
-                'harga_kendaraan' => ['required'],
+                'plafon' => ['required'],
             ], [
                 'required' => 'Atribut ini harus diisi.',
                 'unique' => 'Atribut ini telah digunakan.',
@@ -54,44 +54,53 @@ class KreditController extends Controller
                 $status = 'failed';
                 $message = $fields->errors();
             } else {
-                $tenor = $request->tenor < 36 ? $request->tenor : 36;
-                $harga_kendaraan1 = $request->harga_kendaraan;
-                $harga_kendaraan2 = $request->harga_kendaraan > 50000000 ?   0 : $request->harga_kendaraan;
-                $setImbalJasa = DB::table('imbal_jasas')
-                                ->join('tenor_imbal_jasas as ti', 'ti.imbaljasa_id', 'imbal_jasas.id')
-                                ->select('ti.*');
-                if ($request->harga_kendaraan > 50000000) {
-                    $setImbalJasa = $setImbalJasa->where('plafond1', '<', $harga_kendaraan1)
-                        ->where('plafond2', '=', $harga_kendaraan2);
-                } else {
-                    $setImbalJasa = $setImbalJasa->where('plafond1', '<', $harga_kendaraan1)
-                        ->where('plafond2', '<', $harga_kendaraan2);
-                }
-                $setImbalJasa = $setImbalJasa->where('tenor', $tenor)
-                    ->first();
-
-                if ($setImbalJasa) {
-                    $model = new Kredit();
-                    $model->pengajuan_id = $request->pengajuan_id;
-                    $model->kode_cabang = $request->kode_cabang;
-                    $model->save();
-
-                    $createKKB = new KKB();
-                    $createKKB->kredit_id = $model->id;
-                    $createKKB->id_tenor_imbal_jasa = $setImbalJasa->id;
-                    $createKKB->save();
-
-                    // send notification
-                    $extraMessage = view('notifications.detail-notif')->with('nomor', $request->nomor_po)->render();
-                    $this->notificationController->sendWithExtra(2, $model->id, $extraMessage);
-
-                    $req_status = HttpFoundationResponse::HTTP_OK;
-                    $status = 'success';
-                    $message = 'Data saved successfully';
-                } else {
+                if ($request->tenor > 60) {
                     $req_status = HttpFoundationResponse::HTTP_OK;
                     $status = 'failed';
-                    $message = 'Imbal jasa tidak ditemukan.';
+                    $message = 'Tenor tidak boleh lebih dari 60 bulan';
+                }
+                else {
+                    $tenor = $request->tenor < 36 ? $request->tenor : 36;
+                    $plafon = $request->plafon;
+                    $setImbalJasa = DB::table('imbal_jasas')
+                                    ->join('tenor_imbal_jasas as ti', 'ti.imbaljasa_id', 'imbal_jasas.id')
+                                    ->select('ti.*')
+                                    ->where([
+                                        ['imbal_jasas.plafond1', '<=', $plafon],
+                                        ['imbal_jasas.plafond2', null],
+                                        ['tenor', $tenor]
+                                    ])
+                                    ->orWhere([
+                                        ['imbal_jasas.plafond1', '<=', $plafon],
+                                        ['imbal_jasas.plafond2', '>=', $plafon],
+                                        ['tenor', $tenor]
+                                    ])
+                                    ->first();
+                    $setImbalJasa->tenor = (int)$request->tenor;
+    
+                    if ($setImbalJasa) {
+                        $model = new Kredit();
+                        $model->pengajuan_id = $request->pengajuan_id;
+                        $model->kode_cabang = $request->kode_cabang;
+                        $model->save();
+    
+                        $createKKB = new KKB();
+                        $createKKB->kredit_id = $model->id;
+                        $createKKB->id_tenor_imbal_jasa = $setImbalJasa->id;
+                        $createKKB->save();
+    
+                        // send notification
+                        $extraMessage = view('notifications.detail-notif')->with('nomor', $request->nomor_po)->render();
+                        $this->notificationController->sendWithExtra(2, $model->id, $extraMessage);
+    
+                        $req_status = HttpFoundationResponse::HTTP_OK;
+                        $status = 'success';
+                        $message = 'Data saved successfully';
+                    } else {
+                        $req_status = HttpFoundationResponse::HTTP_OK;
+                        $status = 'failed';
+                        $message = 'Imbal jasa tidak ditemukan.';
+                    }
                 }
             }
         } catch (Exception $e) {
