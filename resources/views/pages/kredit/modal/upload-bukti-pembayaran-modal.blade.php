@@ -42,9 +42,9 @@
                 closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preload-data').removeClass("hidden")
+                    $('[data-dismiss-id]').trigger('click')
                     refreshTable()
-                    $('#modalUploadBuktiPembayaran').addClass('hidden')
-                    console.log('asda')
                 }
             })
         }
@@ -57,8 +57,9 @@
                 closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preload-data').removeClass("hidden")
+                    $('[data-dismiss-id]').trigger('click')
                     refreshTable()
-                    $('#modalUploadBuktiPembayaran').addClass('hidden')
                 }
             })
         }

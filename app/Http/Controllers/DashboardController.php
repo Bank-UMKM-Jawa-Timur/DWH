@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Master\PenggunaController;
+use App\Models\Document;
 use App\Models\DocumentCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Session;
 class DashboardController extends Controller
 {
     private $role_id;
+    private $param;
+
 
     function __construct()
     {
@@ -29,6 +32,9 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         try {
+            $this->param['role_id'] = \Session::get(config('global.role_id_session'));
+            $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
+            $this->param['is_kredit_page'] = request()->is('kredit');
             $page_length = $request->page_length ? $request->page_length : 5;
             $this->param['role'] = $this->getRoleName();
             $this->param['title'] = 'KKB';
@@ -159,7 +165,44 @@ class DashboardController extends Controller
                         unset($data[$key]); // remove data
                 }
             }
-            $param['data'] = $data;
+
+            foreach ($data as $key => $value) {
+                $buktiPembayaran = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 1)
+                                            ->first();
+
+                $penyerahanUnit = \App\Models\Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 2)
+                                            ->first();
+
+                $stnk = \App\Models\Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 3)
+                                            ->first();
+
+                $polis = Document::where('kredit_id', $value->id)
+                                    ->where('document_category_id', 4)
+                                    ->first();
+
+                $bpkb = Document::where('kredit_id', $value->id)
+                                ->where('document_category_id', 5)
+                                ->first();
+
+                $imbalJasa = Document::where('kredit_id', $value->id)
+                                    ->where('document_category_id', 6)
+                                    ->first();
+
+                $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
+
+                $value->bukti_pembayaran = $buktiPembayaran;
+                $value->penyerahan_unit = $penyerahanUnit;
+                $value->stnk = $stnk;
+                $value->bpkb = $bpkb;
+                $value->polis = $polis;
+                $value->imbal_jasa = $imbalJasa;
+                $value->set_imbal_jasa = $setImbalJasa;
+            }
+
+            $this->param['data'] = $data;
 
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {

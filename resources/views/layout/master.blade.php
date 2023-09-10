@@ -38,6 +38,15 @@
         <!-- layout overlay -->
         <div class="layout-overlay lg:hidden hidden"></div>
         <div class="layout-overlay-form hidden"></div>
+        
+        <div class="modal-overlay hidden" id="preload-data">
+          <div class="flex justify-center mt-[35vh]">
+          <div class="text-center space-y-5">
+            <img src="{{asset('template/assets/img/news/loading.svg')}}" class="max-w-[120px] mx-auto" alt="">
+            <p class="text-white">Updating data...</p>
+          </div>
+          </div>
+        </div>
 
         <!-- pages -->
         <div class="layout-pages box-border">
@@ -56,6 +65,7 @@
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
   <script src="{{ asset('js/app.js') }}"></script>
 
   <script>

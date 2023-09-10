@@ -41,19 +41,22 @@ $(".dropdown-toggle").click(function () {
 });
 
 // notification toggle
-$(".toggle-notification").click(function () {
+$(".toggle-notification").click(function (e) {
   $(".notification-list").toggleClass("hidden");
+  e.stopPropagation();
 });
-$(".toggle-notification").blur(function () {
-  $(".notification-list").addClass("hidden");
+$(document).click(function (e) {
+  if (e.target.closest('.notification-list')) return;
+  $('.notification-list').addClass('hidden');
 });
-$(".dropdown-account-toggle").click(function () {
+$(".dropdown-account-toggle").click(function (e) {
   $(".dropdown-account").toggleClass("hidden");
+  e.stopPropagation();
 });
-/*$(".dropdown-account-toggle").blur(function () {
-    $(".dropdown-account").addClass("hidden");
-});*/
-
+$(document).click(function (e) {
+  if (e.target.closest('.dropdown-account')) return;
+  $('.dropdown-account').addClass('hidden');
+});
 $("#form-toggle").click(function () {
   form.toggleClass("layout-form-collapse");
   toggleForm();

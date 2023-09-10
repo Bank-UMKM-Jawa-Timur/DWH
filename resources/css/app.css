@@ -98,7 +98,7 @@
     }
 
     .tables {
-        @apply lg:overflow-visible overflow-x-auto p-2;
+        @apply max-[1400px]:overflow-visible min-[320px]:overflow-x-auto p-2;
     }
     body {
         @apply overflow-hidden;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\KreditBroadcast;
 use App\Http\Controllers\Master\PenggunaController;
 use App\Models\Document;
 use App\Models\DocumentCategory;
@@ -49,6 +50,9 @@ class KreditController extends Controller
          * upload/{id_pengajuan}/pk/{filename}
          */
         try {
+            $this->param['role_id'] = \Session::get(config('global.role_id_session'));
+            $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
+            $this->param['is_kredit_page'] = request()->is('kredit');
             $page_length = $request->page_length ? $request->page_length : 5;
             $this->param['role'] = $this->dashboardContoller->getRoleName();
             $this->param['title'] = 'KKB';
@@ -179,7 +183,44 @@ class KreditController extends Controller
                         unset($data[$key]); // remove data
                 }
             }
+
+            foreach ($data as $key => $value) {
+                $buktiPembayaran = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 1)
+                                            ->first();
+
+                $penyerahanUnit = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 2)
+                                            ->first();
+
+                $stnk = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 3)
+                                            ->first();
+
+                $polis = Document::where('kredit_id', $value->id)
+                                    ->where('document_category_id', 4)
+                                    ->first();
+
+                $bpkb = Document::where('kredit_id', $value->id)
+                                ->where('document_category_id', 5)
+                                ->first();
+
+                $imbalJasa = Document::where('kredit_id', $value->id)
+                                    ->where('document_category_id', 6)
+                                    ->first();
+
+                $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
+
+                $value->bukti_pembayaran = $buktiPembayaran;
+                $value->penyerahan_unit = $penyerahanUnit;
+                $value->stnk = $stnk;
+                $value->bpkb = $bpkb;
+                $value->polis = $polis;
+                $value->imbal_jasa = $imbalJasa;
+                $value->set_imbal_jasa = $setImbalJasa;
+            }
             $this->param['data'] = $data;
+            // return $data;
 
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {
@@ -192,7 +233,12 @@ class KreditController extends Controller
 
     public function loadDataJson(Request $request) {
         try {
+            $this->param['role_id'] = \Session::get(config('global.role_id_session'));
+            $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
+            // $this->param['is_kredit_page'] = request()->is('kredit');
+            $this->param['is_kredit_page'] = str_contains(url()->current(), 'kredit');
             $page_length = $request->page_length ? $request->page_length : 5;
+            $current_page = $request->page ? $request->page : 1;
             $this->param['role'] = $this->dashboardContoller->getRoleName();
             $this->param['title'] = 'KKB';
             $this->param['pageTitle'] = 'KKB';
@@ -241,8 +287,10 @@ class KreditController extends Controller
                 $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
             }
 
-            if (is_numeric($page_length))
-                $data = $data->paginate($page_length);
+            if (is_numeric($page_length)) {
+                // $data = $data->paginate($page_length);
+                $data = $data->paginate($page_length, ['*'], 'page', $current_page);
+            }
             else
                 $data = $data->get();
 
@@ -320,7 +368,46 @@ class KreditController extends Controller
                         unset($data[$key]); // remove data
                 }
             }
+
+            foreach ($data as $key => $value) {
+                $buktiPembayaran = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 1)
+                                            ->first();
+
+                $penyerahanUnit = \App\Models\Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 2)
+                                            ->first();
+
+                $stnk = \App\Models\Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 3)
+                                            ->first();
+
+                $polis = Document::where('kredit_id', $value->id)
+                                    ->where('document_category_id', 4)
+                                    ->first();
+
+                $bpkb = Document::where('kredit_id', $value->id)
+                                ->where('document_category_id', 5)
+                                ->first();
+
+                $imbalJasa = Document::where('kredit_id', $value->id)
+                                    ->where('document_category_id', 6)
+                                    ->first();
+
+                $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
+
+                $value->bukti_pembayaran = $buktiPembayaran;
+                $value->penyerahan_unit = $penyerahanUnit;
+                $value->stnk = $stnk;
+                $value->bpkb = $bpkb;
+                $value->polis = $polis;
+                $value->imbal_jasa = $imbalJasa;
+                $value->set_imbal_jasa = $setImbalJasa;
+            }
+            
             $this->param['data'] = $data;
+
+            event(new KreditBroadcast($data));
 
             $html = view('pages.kredit.partial._table', $this->param)->render();
 
@@ -1136,6 +1223,7 @@ class KreditController extends Controller
         }
     }
 
+
     public function show($id)
     {
         $status = '';
@@ -1251,7 +1339,6 @@ class KreditController extends Controller
                 'message' => $message,
                 'data' => $data,
             ];
-
             return response()->json($response);
         }
     }

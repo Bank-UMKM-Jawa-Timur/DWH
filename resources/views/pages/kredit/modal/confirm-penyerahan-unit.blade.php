@@ -32,7 +32,7 @@
                 <div class="space-y-3">
                     <label for="" class="uppercase appearance-none">Foto Penyerahan Unit</label>
                     <div class="h-[528px] w-full bg-gray-100">
-                        <img id="preview_penyerahan_unit" width="100%" height="500px">
+                        <img id="preview_penyerahan_unit" class="w-full h-[528px]">
                     </div>
                 </div>
             </div>
@@ -62,8 +62,9 @@
                 closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preload-data').removeClass("hidden")
+                    $('[data-dismiss-id]').trigger('click')
                     refreshTable()
-                    $('#modalConfirmPenyerahanUnit').addClass('hidden')
                 }
             })
         }
@@ -76,8 +77,9 @@
                 closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preload-data').removeClass("hidden")
+                    $('[data-dismiss-id]').trigger('click')
                     refreshTable()
-                    $('#modalConfirmPenyerahanUnit').addClass('hidden')
                 }
             })
         }

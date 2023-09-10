@@ -1,7 +1,23 @@
 @extends('layout.master')
 @push('extraScript')
     <script>
+
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('9f88310a7a5420e808d3', {
+        cluster: 'ap1'
+        });
+
+        var channel = pusher.subscribe('kredit');
+        channel.bind('data-table', function(data) {
+            $('#preload-data').addClass("hidden")
+            refreshTable();
+    });
+
+
         function refreshTable() {
+            
+            var page = $("#page").val()
             var page_length = $("#page_length").val()
             var tAwal = $("#tAwal").val() != 'dd/mm/yyyy' ? $('#tAwal').val() : ''
             var tAkhir = $("#tAkhir").val() != 'dd/mm/yyyy' ? $('#tAkhir').val() : ''
@@ -12,6 +28,7 @@
                 url: "{{route('kredit.load_json')}}",
                 data: {
                     _token: "{{csrf_token()}}",
+                    page: page,
                     page_length: page_length,
                     tAwal: tAwal,
                     tAkhir: tAkhir,
@@ -19,7 +36,7 @@
                 },
                 success: function(response) {
                     if (response) {
-                        console.log(response)
+                        // console.log(response)
                         if (response.status == 'success') {
                             if ("html" in response) {
                                 $('#table_content').html(response.html);
@@ -82,7 +99,6 @@
                             <span class="lg:block hidden"> Reset </span>
                         </button>
                     </form>
-                        
                     @endif
                     <button data-target-id="filter-kkb" type="button"
                         class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
@@ -95,6 +111,7 @@
             </div>
             <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
                 <div class="sorty pl-1 w-full">
+                    <input type="hidden" name="page" id="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}">
                     <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
                     <select name="page_length" id="page_length"
                         class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
@@ -116,17 +133,8 @@
                     </div>
                 </div>
             </div>
-            <div class="tables mt-2" id="table_content">
+            <div id="table_content">
                 @include('pages.kredit.partial._table')
-            </div>
-            <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                <div class="w-full">
-                    <div class="pagination">
-                        @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                        {{ $data->links('pagination::tailwind') }}
-                        @endif
-                    </div>
-                </div>
             </div>
         </div>
     </div>

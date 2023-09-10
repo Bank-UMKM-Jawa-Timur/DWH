@@ -44,8 +44,9 @@
                 closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preload-data').removeClass("hidden")
+                    $('[data-dismiss-id]').trigger('click')
                     refreshTable()
-                    $('#modalUploadImbalJasa').addClass('hidden')
                 }
             })
         }
@@ -58,8 +59,9 @@
                 closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $('#preload-data').removeClass("hidden")
+                    $('[data-dismiss-id]').trigger('click')
                     refreshTable()
-                    $('#modalUploadImbalJasa').addClass('hidden')
                 }
             })
         }
