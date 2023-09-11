@@ -60,7 +60,13 @@
                     @endif
                 </td>
                 @if ($role_id == 3)
-                    <td>{{ array_key_exists('cabang', $item->detail) ? $item->detail['cabang'] : '-' }}</td>
+                    <td>
+                        @if ($item->detail)
+                            {{ array_key_exists('cabang', $item->detail) ? $item->detail['cabang'] : '-' }}
+                        @else
+                            -
+                        @endif
+                    </td>
                 @endif
                 <td class="@if ($item->detail) link-po @endif">
                     @if ($buktiPembayaran)
