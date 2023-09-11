@@ -5,7 +5,13 @@
                 <th>No</th>
                 <th width="150">Nama</th>
                 @if ($role_id == 3)
-                    <th>Cabang</th>
+                    <td>
+                        @if ($item->detail)
+                            {{ array_key_exists('cabang', $item->detail) ? $item->detail['cabang'] : '-' }}
+                        @else
+                            -
+                        @endif
+                    </td>
                 @endif
                 <th>PO</th>
                 <th>Ketersediaan Unit</th>
