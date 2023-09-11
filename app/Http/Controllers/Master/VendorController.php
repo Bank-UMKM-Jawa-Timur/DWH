@@ -122,7 +122,7 @@ class VendorController extends Controller
             $newVendor = new Vendor();
             $newVendor->name = $request->name;
             $newVendor->phone = $request->phone;
-            $newVendor->cabang_id = $request->cabang_id;
+            // $newVendor->cabang_id = $request->cabang_id;
             $newVendor->address = $request->address;
             $newVendor->save();
 

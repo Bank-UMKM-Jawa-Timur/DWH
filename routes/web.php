@@ -87,7 +87,7 @@ Route::middleware('auth_api')->group(function () {
         Route::get('/role-list-options', [RoleController::class, 'listOptions'])->name('role.list_options');
         Route::get('/role/hak-akses/{id}', [RoleController::class, 'indexPermission'])->name('role.permission.index');
         Route::post('/role/hak-akses', [RoleController::class, 'storePermission'])->name('role.permission.store');
-        Route::resource('/pengguna', PenggunaController::class);
+        // Route::resource('/pengguna', PenggunaController::class);
         Route::get('/pengguna-list-cabang', [PenggunaController::class, 'listCabang'])->name('pengguna.list_cabang');
         Route::post('/pengguna/reset-password', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset_password');
         Route::resource('/vendor', VendorController::class);

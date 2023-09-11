@@ -64,7 +64,7 @@
         </a>
       </li>
       @if (\Session::get(config('global.role_id_session')) == 4)
-      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'active-link' : '' }}">
+      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'active-link' : '' }}">
         <div class="relative">
           <a
             href="#"
@@ -111,11 +111,11 @@
               Role / Peran
             </li>
           </a>
-          <a href="{{ route('pengguna.index') }}">
+          {{--  <a href="{{ route('pengguna.index') }}">
             <li class="dropdown-item-link {{ request()->is('master/pengguna') ? 'active-dropdown-link' : '' }}">
               Pengguna
             </li>
-          </a>
+          </a>  --}}
           <a href="{{ route('vendor.index') }}">
             <li class="dropdown-item-link {{ request()->is('master/vendor') ? 'active-dropdown-link' : '' }}">
               Vendor

@@ -129,7 +129,7 @@
         if (result.isConfirmed) {
             $.ajax({
                 type: "POST",
-                url: "{{ route('logout') }}/",
+                url: "{{ route('logout') }}",
                 data: {
                     _token: "{{ csrf_token() }}",
                 },
