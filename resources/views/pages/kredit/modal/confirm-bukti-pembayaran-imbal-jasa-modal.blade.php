@@ -52,37 +52,43 @@
 </div>
 @push('extraScript')
     <script>
-        function SuccessMessage(message) {
+        function ConfirmImbalJasaSuccessMessage(message) {
             Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
-                    refreshTable()
-                }
+                console.log('then')
+                $("#modalConfirmImbalJasa").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
             })
         }
         
-        function ErrorMessage(message) {
+        function ConfirmImbalJasaErrorMessage(message) {
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
+                    
                     refreshTable()
                 }
             })
         }
 
-        $(".toggle-modal").on("click", function () {
+        /*$(".toggle-modal").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -102,7 +108,7 @@
                 $('#modalConfirmImbalJasa .title-modal').html('Bukti Imbal Jasa')
                 $('#modalConfirmImbalJasa .modal-footer').css('display', 'none')
             }
-        });
+        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
@@ -124,8 +130,8 @@
                 success: function(data) {
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
-                        ErrorMessage('Gagal')
-                        /*for (var i = 0; i < data.error.length; i++) {
+                        /*ErrorMessage('Gagal')
+                        for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];
                             if (message.toLowerCase().includes('id'))
                                 showError(req_id, message)
@@ -134,9 +140,9 @@
                         }*/
                     } else {
                         if (data.status == 'success') {
-                            SuccessMessage(data.message);
+                            ConfirmImbalJasaSuccessMessage(data.message);
                         } else {
-                            ErrorMessage(data.message)
+                            ConfirmImbalJasaErrorMessage(data.message)
                         }
                     }
                 }

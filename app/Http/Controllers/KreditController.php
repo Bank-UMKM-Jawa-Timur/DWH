@@ -133,13 +133,15 @@ class KreditController extends Controller
 
                     // insert response to object
                     if ($user_id != 0) {
-                        if (array_key_exists('message', $responseBody)) {
-                            if ($responseBody['message'] == 'Data not found') {
-                                unset($data[$key]);
+                        if ($responseBody) {
+                            if (array_key_exists('message', $responseBody)) {
+                                if ($responseBody['message'] == 'Data not found') {
+                                    unset($data[$key]);
+                                }
                             }
-                        }
-                        if (array_key_exists('id_pengajuan', $responseBody)) {
-                            $value->detail = $responseBody;
+                            if (array_key_exists('id_pengajuan', $responseBody)) {
+                                $value->detail = $responseBody;
+                            }
                         }
                     }
                     else {
@@ -320,13 +322,15 @@ class KreditController extends Controller
 
                     // insert response to object
                     if ($user_id != 0) {
-                        if (array_key_exists('message', $responseBody)) {
-                            if ($responseBody['message'] == 'Data not found') {
-                                unset($data[$key]);
+                        if ($responseBody) {
+                            if (array_key_exists('message', $responseBody)) {
+                                if ($responseBody['message'] == 'Data not found') {
+                                    unset($data[$key]);
+                                }
                             }
-                        }
-                        if (array_key_exists('id_pengajuan', $responseBody)) {
-                            $value->detail = $responseBody;
+                            if (array_key_exists('id_pengajuan', $responseBody)) {
+                                $value->detail = $responseBody;
+                            }
                         }
                     }
                     else {
@@ -407,8 +411,6 @@ class KreditController extends Controller
             
             $this->param['data'] = $data;
 
-            event(new KreditBroadcast($data));
-
             $html = view('pages.kredit.partial._table', $this->param)->render();
 
             return response()->json([
@@ -463,15 +465,16 @@ class KreditController extends Controller
         try {
             $file = $request->file('bukti_pembayaran_scan');
             $file->storeAs('public/dokumentasi-bukti-pembayaran', $file->hashName());
+            $kkb = KKB::find($request->id_kkb);
             $document = new Document();
-            $document->kredit_id = $request->id_kkb;
+            $document->kredit_id = $kkb->kredit_id;
             $document->date = date('Y-m-d');
             $document->file = $file->hashName();
             $document->document_category_id  = 1;
             $document->save();
 
             // send notif
-            $this->notificationController->send($action_id, $request->id_kkb);
+            $this->notificationController->send($action_id, $kkb->kredit_id);
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas bukti pembayaran.');
 
@@ -491,6 +494,7 @@ class KreditController extends Controller
                 'status' => $status,
                 'message' => $message,
             ];
+            event(new KreditBroadcast('event created'));
 
             return response()->json($response);
         }
@@ -547,6 +551,7 @@ class KreditController extends Controller
                 'status' => $status,
                 'message' => $message,
             ];
+            event(new KreditBroadcast('event created'));
 
             return response()->json($response);
         }
@@ -611,6 +616,8 @@ class KreditController extends Controller
                 'status' => $status,
                 'message' => $message,
             ];
+
+            event(new KreditBroadcast('event created'));
 
             return response()->json($response);
         }
@@ -926,6 +933,8 @@ class KreditController extends Controller
                 'message' => $message,
             ];
 
+            event(new KreditBroadcast('event created'));
+
             return response()->json($response);
         }
     }
@@ -1020,6 +1029,8 @@ class KreditController extends Controller
                 'status' => $status,
                 'message' => $message,
             ];
+
+            event(new KreditBroadcast('event created'));
 
             return response()->json($response);
         }
@@ -1155,6 +1166,8 @@ class KreditController extends Controller
                 'message' => $message,
             ];
 
+            event(new KreditBroadcast('event created'));
+
             return response()->json($response);
         }
     }
@@ -1218,6 +1231,8 @@ class KreditController extends Controller
                 'status' => $status,
                 'message' => $message,
             ];
+
+            event(new KreditBroadcast('event created'));
 
             return response()->json($response);
         }
@@ -1400,6 +1415,8 @@ class KreditController extends Controller
                 'message' => $message,
             ];
 
+            event(new KreditBroadcast('event created'));
+
             return response()->json($response);
         }
     }
@@ -1439,6 +1456,8 @@ class KreditController extends Controller
                 'status' => $status,
                 'message' => $message,
             ];
+
+            event(new KreditBroadcast('event created'));
 
             return response()->json($response);
         }

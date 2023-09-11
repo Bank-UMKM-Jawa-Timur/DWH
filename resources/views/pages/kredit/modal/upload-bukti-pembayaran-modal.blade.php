@@ -17,7 +17,7 @@
                     <div class="p-5 space-y-4">
                         <label for="" class="uppercase">Scan Bukti Pembayaran (Pdf)</label>
                         <input type="file" class="p-2 w-full border bg-gray-100" id="bukti_pembayaran_scan"
-                        name="bukti_pembayaran_scan" accept="application/pdf" required />
+                        name="bukti_pembayaran_scan" accept="application/pdf" />
                     </div>
                 </div>
             </div>
@@ -34,37 +34,42 @@
 </div>
 @push('extraScript')
     <script>
-        function SuccessMessage(message) {
+        function UploadBuktiPembayaranSuccessMessage(message) {
             Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
-                    refreshTable()
-                }
+                $("#modalUploadBuktiPembayaran").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
             })
         }
         
-        function ErrorMessage(message) {
+        function UploadBuktiPembayaranErrorMessage(message) {
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
+                    
                     refreshTable()
                 }
             })
         }
 
-        $(".toggle-modal").on("click", function () {
+        /*$(".toggle-modal-upload-bukti-pembayaran").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -72,9 +77,12 @@
             var id = $(this).data('id_kkb');
 
             $("#modal-bukti-pembayaran").find('#id_kkb').val(id);
-        });
+        });*/
+
         $('#modal-bukti-pembayaran').on("submit", function(e) {
             Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
                 title: 'Memuat...',
                 html: 'Silahkan tunggu...',
                 allowEscapeKey: false,
@@ -102,21 +110,23 @@
                     if (Array.isArray(data.error)) {
                         for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];
-                            if (message.toLowerCase().includes('bukti_pembayaran_scan'))
+                            console.log(message)
+                            /*if (message.toLowerCase().includes('bukti_pembayaran_scan'))
                                 showError(req_image, message)
+                            */
                         }
                     } else {
                         if (data.status == 'success') {
-                            SuccessMessage(data.message);
+                            UploadBuktiPembayaranSuccessMessage(data.message);
                         } else {
-                            ErrorMessage(data.message)
+                            UploadBuktiPembayaranErrorMessage(data.message)
                         }
                     }
                 },
                 error: function(e) {
                     Swal.close()
                     console.log(e)
-                    ErrorMessage('Terjadi kesalahan')
+                    UploadBuktiPembayaranErrorMessage('Terjadi kesalahan')
                 }
             })
         })

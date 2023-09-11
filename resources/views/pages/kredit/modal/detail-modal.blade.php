@@ -215,10 +215,13 @@
 
 @push('extraScript')
     <script>
-        $(".toggle-modals").on("click", function () {
+        /*$(".toggle-modals").on("click", function () {
             $(".active-tab").trigger("click");
             const targetId = $(this).data("target-id");
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Memuat data...',
                 html: 'Silahkan tunggu...',
                 allowEscapeKey: false,
@@ -384,7 +387,7 @@
                     ErrorMessage('Terjadi kesalahan')
                 }
             })
-        });
+        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");

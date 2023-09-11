@@ -36,7 +36,8 @@
 </div>
 @push('extraScript')
     <script>
-        $(".toggle-modal").on("click", function () {
+        
+        /*$(".toggle-modal-bukti-pembayaran").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -52,7 +53,7 @@
             $('#tanggal_pembayaran').val(tanggal)
             $('#tanggal_confirm_pembayaran').val(confirm_at)
             $('#status_confirm').val(status)
-        });
+        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");

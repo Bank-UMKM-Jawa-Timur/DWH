@@ -42,37 +42,42 @@
 </div>
 @push('extraScript')
     <script>
-        function SuccessMessage(message) {
+        function UploadBuktiPenyerahanUnitSuccessMessage(message) {
             Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
-                    refreshTable()
-                }
+                $("#modalUploadBuktiPenyerahanUnit").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
             })
         }
         
-        function ErrorMessage(message) {
+        function UploadBuktiPenyerahanUnitErrorMessage(message) {
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
+                    
                     refreshTable()
                 }
             })
         }
 
-        $(".toggle-modal").on("click", function () {
+        /*$(".toggle-modal").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -80,7 +85,7 @@
             const id = $(this).data('id_kkb');
 
             $('#modalUploadBuktiPenyerahanUnit #id_kkb').val(id)
-        });
+        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
@@ -90,6 +95,8 @@
 
         $('#modal-tgl-penyerahan').on("submit", function(event) {
             Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
                 title: 'Memuat...',
                 html: 'Silahkan tunggu...',
                 allowEscapeKey: false,
@@ -117,23 +124,26 @@
                     if (Array.isArray(data.error)) {
                         for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];
-                            if (message.toLowerCase().includes('tanggal'))
-                                showError(req_date, message)
+                            console.log(message)
+                            /*if (message.toLowerCase().includes('tanggal'))
+                                UploadBuktiPenyerahanUnitErrorMessage(message)
                             if (message.toLowerCase().includes('gambar'))
-                                showError(req_image, message)
+                                UploadBuktiPenyerahanUnitErrorMessage(message)
+                            */
                         }
                     } else {
                         if (data.status == 'success') {
-                            SuccessMessage(data.message);
+                            UploadBuktiPenyerahanUnitSuccessMessage(data.message);
+                            //alert(data.message)
                         } else {
-                            ErrorMessage(data.message)
+                            UploadBuktiPenyerahanUnitErrorMessage(data.message)
                         }
                     }
                 },
                 error: function(e) {
                     Swal.close()
                     console.log(e)
-                    ErrorMessage('Terjadi kesalahan')
+                    UploadBuktiPenyerahanUnitErrorMessage('Terjadi kesalahan')
                 }
             })
         })

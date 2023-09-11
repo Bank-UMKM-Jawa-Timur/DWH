@@ -33,47 +33,46 @@
 </div>
 @push('extraScript')
     <script>
-        function SuccessMessage(message) {
+        function AturSuccesMessage(message) {
             Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
-                    refreshTable()
-                }
+                console.log('then')
+                $("#modalAturKetersedian").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
             })
         }
         
-        function ErrorMessage(message) {
+        function AturErrorMessage(message) {
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
+                    
                     refreshTable()
                 }
             })
         }
 
-        $(".toggle-modal").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            var id = $(this).data('id_kkb');
-
-            $("#id_kkb").val(id);
-        });
         $('#modal-tgl-form').on("submit", function(event) {
             Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
                 title: 'Memuat...',
                 html: 'Silahkan tunggu...',
                 allowEscapeKey: false,
@@ -88,7 +87,7 @@
             const req_date = document.getElementById('tgl_ketersediaan_unit')
 
             if (req_date == '') {
-                showError(req_date, 'Tanggal ketersediaan unit harus dipilih.');
+                AturErrorMessage(req_date, 'Tanggal ketersediaan unit harus dipilih.');
                 return false;
             }
 
@@ -102,24 +101,21 @@
                 },
                 success: function(data) {
                     Swal.close()
-                    console.log(data);
                     if (Array.isArray(data.error)) {
-                        showError(req_date, data.error[0])
+                        //AturErrorMessage(req_date, data.error[0])
                     } else {
                         if (data.status == 'success') {
-                            SuccessMessage(data.message);
+                            AturSuccesMessage(data.message);
                         } else {
-                            ErrorMessage(data.message)
+                            AturErrorMessage(data.message)
                         }
-                        $('#tglModal').modal().hide()
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
                     }
                 },
                 error: function(e) {
                     Swal.close()
+                    console.log('qwerty')
                     console.log(e)
-                    ErrorMessage('Terjadi kesalahan')
+                    //AturErrorMessage('Terjadi kesalahan')
                 }
             })
         })

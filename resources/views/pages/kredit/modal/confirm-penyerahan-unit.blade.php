@@ -39,8 +39,8 @@
         </div>
         <div class="modal-footer form-confirm">
             <form id="confirm-form-penyerahan-unit">
-                <input type="hidden" name="confirm_id" id="confirm_id">
-                <input type="hidden" name="confirm_id_category" id="confirm_id_category">
+                <input type="hidden" name="confirm_id" id="confirm_penyerahan_id">
+                <input type="hidden" name="confirm_id_category" id="confirm_penyerahan_id_category">
                 <button type="button" data-dismiss-id="modalConfirmPenyerahanUnit" class="border px-7 py-3 text-black rounded">
                     Tidak
                 </button>
@@ -54,37 +54,43 @@
 
 @push('extraScript')
     <script>
-        function SuccessMessage(message) {
+        function ConfirmPenyerahanUnitSuccessMessage(message) {
             Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
-                    refreshTable()
-                }
+                console.log('then')
+                $("#modalConfirmPenyerahanUnit").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
             })
         }
         
-        function ErrorMessage(message) {
+        function ConfirmPenyerahanUnitErrorMessage(message) {
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
+                    
                     refreshTable()
                 }
             })
         }
 
-        $(".toggle-modal").on("click", function () {
+        /*$(".toggle-modal").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -126,7 +132,7 @@
                     $('.penyerahan-unit-title').html('Penyerahan Unit');
                 }
             }
-        });
+        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
@@ -135,9 +141,20 @@
         });
 
         $('#confirm-form-penyerahan-unit').on('submit', function(e) {
+            Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
             e.preventDefault()
-            const req_id = $('#confirm_id').val()
-            const req_category_doc_id = $('#confirm_id_category').val()
+            const req_id = $('#confirm_penyerahan_id').val()
+            const req_category_doc_id = $('#confirm_penyerahan_id_category').val()
 
             $.ajax({
                 type: "POST",
@@ -148,15 +165,22 @@
                     category_id: req_category_doc_id
                 },
                 success: function(data) {
+                    Swal.close()
+
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
                     } else {
                         if (data.status == 'success') {
-                            SuccessMessage(data.message);
+                            ConfirmPenyerahanUnitSuccessMessage(data.message);
                         } else {
-                            ErrorMessage(data.message)
+                            ConfirmPenyerahanUnitErrorMessage(data.message)
                         }
                     }
+                },
+                error: function(e) {
+                    console.log('confirm error')
+                    console.log(e)
+                    Swal.close()
                 }
             })
         })

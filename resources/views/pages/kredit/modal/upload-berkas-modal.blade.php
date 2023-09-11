@@ -214,37 +214,43 @@
     <script>
         const user_role = "{{\Session::get(config('global.role_id_session'))}}";
 
-        function SuccessMessage(message) {
+        function UploadBerkasSuccessMessage(message) {
             Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
-                    refreshTable()
-                }
+                console.log('then')
+                $("#modalUploadBerkas").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
             })
         }
         
-        function ErrorMessage(message) {
+        function UploadBerkasErrorMessage(message) {
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
+                    
                     refreshTable()
                 }
             })
         }
 
-        $(".toggle-modal").on("click", function () {
+        /*$(".toggle-modal").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -393,6 +399,7 @@
                 }
             }
         });
+        */
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
@@ -475,6 +482,9 @@
             if (!is_confirm) {
                 // Upload
                 Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                     title: 'Memuat...',
                     html: 'Silahkan tunggu...',
                     allowEscapeKey: false,
@@ -503,8 +513,8 @@
                         Swal.close() // close loading dialog
                         if (Array.isArray(data.error)) {
                             console.log(data.error)
-                            ErrorMessage('gagal')
-                            /*for (var i = 0; i < data.error.length; i++) {
+                            /*ErrorMessage('gagal')
+                            for (var i = 0; i < data.error.length; i++) {
                                 var message = data.error[i];
                                 if (message.toLowerCase().includes('no_stnk'))
                                     showError(req_date, message)
@@ -521,9 +531,9 @@
                             }*/
                         } else {
                             if (data.status == 'success') {
-                                SuccessMessage(data.message);
+                                UploadBerkasSuccessMessage(data.message);
                             } else {
-                                ErrorMessage(data.message)
+                                UploadBerkasErrorMessage(data.message)
                             }
                             $('#modalUploadBerkas').addClass('hidden')
                         }
@@ -532,7 +542,7 @@
                         Swal.close() // close loading dialog
 
                         console.log(e)
-                        ErrorMessage('Terjadi kesalahan')
+                        UploadBerkasErrorMessage('Terjadi kesalahan')
                         $('#modalUploadBerkas').addClass('hidden')
                     }
                 })
@@ -558,16 +568,16 @@
                             }
                         } else {
                             if (data.status == 'success') {
-                                SuccessMessage(data.message);
+                                UploadBerkasSuccessMessage(data.message);
                             } else {
-                                ErrorMessage(data.message)
+                                UploadBerkasErrorMessage(data.message)
                             }
                             $('#modalUploadBerkas').addClass('hidden')
                         }
                     },
                     error: function(e) {
                         console.log(e)
-                        ErrorMessage('Terjadi kesalahan')
+                        UploadBerkasErrorMessage('Terjadi kesalahan')
                         $('#modalUploadBerkas').addClass('hidden')
                     }
                 })
@@ -594,6 +604,8 @@
 
         function confirmBerkas(id_stnk, id_polis, id_bpkb) {
             Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
                 title: 'Memuat...',
                 html: 'Silahkan tunggu...',
                 allowEscapeKey: false,
@@ -615,6 +627,9 @@
 
             if (id_stnk == 0 && id_polis == 0 && id_bpkb == 0) {
                 Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                     title: 'Gagal',
                     icon: 'error',
                     text: 'Harap pilih berkas yang akan dikonfirmasi',
@@ -641,6 +656,9 @@
                     } else {
                         if (data.status == 'success') {
                             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                                 title: 'Berhasil',
                                 icon: 'success',
                                 timer: 3000,
@@ -655,6 +673,9 @@
                                 $('#btn-confirm-polis').addClass('hidden')
                         } else {
                             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                                 title: 'Gagal',
                                 icon: 'error',
                                 text: data.message,
@@ -669,6 +690,9 @@
 
                     console.log(e)
                     Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                         title: 'Terjadi kesalahan',
                         icon: 'error',
                         text: e,

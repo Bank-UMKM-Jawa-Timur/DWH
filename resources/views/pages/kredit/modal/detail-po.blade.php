@@ -1,32 +1,3 @@
-{{--  <div class="modal fade" id="detailPO" tabindex="-1" aria-labelledby="detailPOLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <h5 class="modal-title" id="detailPOLabel">Detail PO</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" class="text-light">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="title-po">Nomor PO</h5>
-                        <input type="text" class="form-control text-field" id="nomorPo" readonly>
-                        <h5 class="title-po">Tanggal PO</h5>
-                        <input type="text" class="form-control text-field" id="tanggalPo" readonly>
-                    </div>
-                    <div class="col-sm-6">
-                        <h5 class="title-po">File PO</h5>
-                        <div class="form-inline mt-1 show-pdf">
-                            <iframe id="filepo" src="" class="mt-2" width="100%" height="500"></iframe>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>  --}}
 <div class="modal-overlay hidden font-lexend overflow-auto" id="modalPO">
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
@@ -70,7 +41,7 @@
 
 @push('extraScript')
     <script>
-        $(".toggle-modal").on("click", function () {
+        /*$(".toggle-modal-po").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -82,7 +53,7 @@
             $("#nomorPo").val(nomorPo);
             $("#tanggalPo").val(tanggalPo);
             $("#filepo").attr("src", filePo);
-        });
+        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");

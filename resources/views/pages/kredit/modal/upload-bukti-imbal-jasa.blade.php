@@ -19,7 +19,7 @@
                         <br>
                         <span class="text-red-500 m-0">Maksimal 2mb.</span>
                         <input type="file" class="p-2 w-full border bg-gray-100" accept="image/*" id="file_imbal_jasa"
-                        name="file_imbal_jasa" required />
+                        name="file_imbal_jasa" />
                     </div>
                 </div>
             </div>
@@ -36,43 +36,48 @@
 </div>
 @push('extraScript')
     <script>
-        function SuccessMessage(message) {
+        function UploadImbalJasaSuccessMessage(message) {
             Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
-                    refreshTable()
-                }
+                $("#modalUploadImbalJasa").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
             })
         }
         
-        function ErrorMessage(message) {
+        function UploadImbalJasaErrorMessage(message) {
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
+                    
                     refreshTable()
                 }
             })
         }
 
-        $(".toggle-modal").on("click", function () {
+        /*$(".toggle-modal-upload-imbal-jasa").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
             const data_id = $(this).data('id')
             $('#id_kkbimbaljasa').val(data_id)
-        });
+        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
@@ -82,6 +87,8 @@
 
         $('#modal-imbal-jasa-form').submit(function(e) {
             Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
                 title: 'Memuat...',
                 html: 'Silahkan tunggu...',
                 allowEscapeKey: false,
@@ -105,8 +112,8 @@
                     Swal.close()
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
-                        ErrorMessage('Gagal')
-                        /*for (var i = 0; i < data.error.length; i++) {
+                        /*UploadImbalJasaErrorMessage('Gagal')
+                        for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];
                             if (message.toLowerCase().includes('no_bpkb'))
                                 showError(req_date, message)
@@ -115,16 +122,16 @@
                         }*/
                     } else {
                         if (data.status == 'success') {
-                            SuccessMessage(data.message);
+                            UploadImbalJasaSuccessMessage(data.message);
                         } else {
-                            ErrorMessage(data.message)
+                            UploadImbalJasaErrorMessage(data.message)
                         }
                     }
                 },
                 error: function(e) {
                     Swal.close()
                     console.log(e)
-                    ErrorMessage('Terjadi kesalahan')
+                    UploadImbalJasaErrorMessage('Terjadi kesalahan')
                 }
             });
         });

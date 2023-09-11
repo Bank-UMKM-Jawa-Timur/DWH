@@ -43,37 +43,43 @@
 </div>
 @push('extraScript')
     <script>
-        function SuccessMessage(message) {
+        function ConfirmPembayaranSuccessMessage(message) {
             Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
-                    refreshTable()
-                }
+                console.log('then')
+                $("#modalConfirmBuktiPembayaran").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
             })
         }
         
-        function ErrorMessage(message) {
+        function ConfirmPembayaranErrorMessage(message) {
             Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                timer: 3000,
-                closeOnClickOutside: false
+                //timer: 3000,
+                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    $('[data-dismiss-id]').trigger('click')
+                    
                     refreshTable()
                 }
             })
         }
 
-        $(".toggle-modal").on("click", function () {
+        /*$(".toggle-modal-confirm-bukti-pembayaran").on("click", function () {
             const targetId = $(this).data("target-id");
             $("#" + targetId).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -96,7 +102,7 @@
             if (is_confirm) {
                 $('#modalConfirmBuktiPembayaran .modal-footer').css('display', 'none')
             }
-        });
+        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
@@ -122,9 +128,9 @@
                         console.log(data.error)
                     } else {
                         if (data.status == 'success') {
-                            SuccessMessage(data.message);
+                            ConfirmPembayaranSuccessMessage(data.message);
                         } else {
-                            ErrorMessage(data.message)
+                            ConfirmPembayaranErrorMessage(data.message)
                         }
                     }
                 }
