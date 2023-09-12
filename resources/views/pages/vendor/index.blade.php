@@ -22,7 +22,7 @@
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                 <button data-target-id="add-vendor"
-                    class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                    class="add-modal-vendor px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                     <span class="lg:mt-0 mt-0">
                         @include('components.svg.plus')
                     </span>
@@ -64,6 +64,7 @@
                 <tr>
                     <th>No.</th>
                     <th>Nama</th>
+                    <th>Email</th>
                     <th>Alamat</th>
                     <th>Nomor HP</th>
                     <th>Aksi</th>
@@ -73,6 +74,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->name }}</td>
+                        <td>{{ $item->email }}</td>
                         <td>{{ $item->address }}</td>
                         <td>{{ $item->phone }}</td>
                         <td>
@@ -82,11 +84,17 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="edit-vendor" href="#"
-                                        data-id="{{ $item->id }}" data-name="{{ $item->name }}">Edit</a>
+                                        <a class="item-dropdown edit-modal-vendor" data-target-id="edit-vendor" href="#"
+                                        data-id="{{ $item->id }}"
+                                        data-name="{{ $item->name }}"
+                                        data-email="{{ $item->email }}"
+                                        data-phone="{{ $item->phone }}"
+                                        data-address="{{ $item->address }}">Edit</a>
                                     </li>
                                     <li class="">
-                                        <a class="item-dropdown" href="#" data-id="{{ $item->id }}"
+                                        <a class="item-dropdown btn-delete-vendor"
+                                        href="#"
+                                        data-id="{{ $item->id }}"
                                         data-name="{{ $item->name }}">Hapus</a>
                                     </li>
                                 </ul>
@@ -120,6 +128,222 @@
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
+
+    $(".add-modal-vendor").on("click", function () {
+        var targetId = 'add-vendor';
+        $("#" + targetId).removeClass("hidden");
+        form.addClass("layout-form-collapse");
+        if (targetId.slice(0, 5) !== "modal") {
+            $(".layout-overlay-form").removeClass("hidden");
+        }
+    });
+
+    $(".edit-modal-vendor").on("click", function () {
+        var targetId = 'edit-vendor';
+
+        const data_id = $(this).data('id')
+        const data_email = $(this).data('email')
+        const data_name = $(this).data('name')
+        const data_phone = $(this).data('phone')
+        const data_address = $(this).data('address')
+
+        $(`#${targetId} #edit-id`).val(data_id)
+        $(`#${targetId} #edit-name`).val(data_name)
+        $(`#${targetId} #edit-email`).val(data_email)
+        $(`#${targetId} #edit-phone`).val(data_phone)
+        $(`#${targetId} #edit-address`).val(data_address)
+        
+        $("#" + targetId).removeClass("hidden");
+        $(".layout-form").addClass("layout-form-collapse");
+        if (targetId.slice(0, 5) !== "modal") {
+            $(".layout-overlay-form").removeClass("hidden");
+        }
+    });
+
+    $("[data-dismiss-id]").on("click", function () {
+        var dismissId = $(this).data("dismiss-id");
+        $("#" + dismissId).addClass("hidden");
+        if (dismissId.slice(0, 5) !== "modal") {
+            $(".layout-overlay-form").addClass("hidden");
+        }
+    });
+    
+    $("#simpanButton").on('click', function(e) {
+        e.preventDefault();
+        const req_name = document.getElementById('add-name')
+        const req_phone = document.getElementById('add-phone')
+        const req_email = document.getElementById('add-email')
+        const req_address = document.getElementById('add-address')
+
+        if (req_name == '') {
+            showError(req_name, 'Nama harus diisi.');
+            return false;
+        }
+        if (req_phone == '') {
+            showError(req_phone, 'Nomor HP harus diisi.');
+            return false;
+        }
+        if (req_email == '') {
+            showError(req_email, 'Email harus diisi.');
+            return false;
+        }
+        if (req_address == '') {
+            showError(req_address, 'Alamat harus diisi.');
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('vendor.store') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                name: req_name.value,
+                phone: req_phone.value,
+                email: req_email.value,
+                address: req_address.value,
+            },
+            success: function(data) {
+                console.log(data);
+                if (Array.isArray(data.error)) {
+                    for (var i = 0; i < data.error.length; i++) {
+                        var message = data.error[i];
+
+                        if (message.toLowerCase().includes('name'))
+                            showError(req_name, message)
+                        if (message.toLowerCase().includes('nomor'))
+                            showError(req_phone, message)
+                        if (message.toLowerCase().includes('email'))
+                            showError(req_email, message)
+                        if (message.toLowerCase().includes('address'))
+                            showError(req_address, message)
+                    }
+                } else {
+                    if (data.status == 'success') {
+                        SuccessMessage(data.message);
+                    } else {
+                        ErrorMessage(data.message)
+                    }
+                    $('#add-vendor').addClass('hidden')
+                }
+            },
+            error: function(e) {
+                console.log(e)
+            }
+        });
+    });
+
+    $('#edit-button').click(function(e) {
+        e.preventDefault()
+        const req_id = document.getElementById('edit-id')
+        const req_name = document.getElementById('edit-name')
+        const req_phone = document.getElementById('edit-phone')
+        const req_email = document.getElementById('edit-email')
+        const req_address = document.getElementById('edit-address')
+        const req_password = document.getElementById('edit-password')
+
+        if (req_name == '') {
+            showError(req_name, 'Nama harus diisi.')
+            return false;
+        }
+        if (req_phone == '') {
+            showError(req_phone, 'Nomor HP harus diisi.')
+            return false;
+        }
+        if (req_email == '') {
+            showError(req_email, 'Email harus diisi.')
+            return false;
+        }
+        if (req_address == '') {
+            showError(req_address, 'Alamat harus diisi.')
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "{{ url('/master/vendor') }}/" + req_id.value,
+            data: {
+                _token: "{{ csrf_token() }}",
+                _method: 'PUT',
+                name: req_name.value,
+                phone: req_phone.value,
+                email: req_email.value,
+                address: req_address.value,
+                password: req_password.value,
+            },
+            success: function(data) {
+                console.log(data);
+                if (Array.isArray(data.error)) {
+                    for (var i = 0; i < data.error.length; i++) {
+                        var message = data.error[i];
+
+                        if (message.toLowerCase().includes('name'))
+                            showError(req_name, message)
+                        if (message.toLowerCase().includes('nomor'))
+                            showError(req_phone, message)
+                        if (message.toLowerCase().includes('email'))
+                            showError(req_email, message)
+                        if (message.toLowerCase().includes('address'))
+                            showError(req_address, message)
+                        if (message.toLowerCase().includes('cabang'))
+                            showError(req_cabang_id, message)
+                    }
+                } else {
+                    if (data.status == 'success') {
+                        SuccessMessage(data.message);
+                    } else {
+                        ErrorMessage(data.message)
+                    }
+                }
+            },
+            error: function(e) {
+                console.log(e)
+            }
+        });
+    })
+
+    $('.btn-delete-vendor').on('click', function(e) {
+        const data_id = $(this).data('id')
+        Swal.fire({
+            title: 'Konfirmasi',
+            html: 'Anda yakin akan menghapus data ini?',
+            icon: 'question',
+            iconColor: '#DC3545',
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            cancelButtonText: `Batal`,
+            confirmButtonColor: '#DC3545'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/master/vendor') }}/"+data_id,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'DELETE',
+                    },
+                    success: function(data) {
+                        console.log(data)
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        } else {
+                            ErrorMessage(data.message)
+                        }
+                    }
+                });
+            }
+        })
+    })
+
+    function showError(input, message) {
+        /*
+        const formGroup = input.parentElement;
+        const errorSpan = formGroup.querySelector('.error');
+
+        formGroup.classList.add('has-error');
+        errorSpan.innerText = message;
+        input.focus();
+        */
+    }
 </script>
 @endpush
 @endsection

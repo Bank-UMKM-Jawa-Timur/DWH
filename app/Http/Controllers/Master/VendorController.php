@@ -40,7 +40,9 @@ class VendorController extends Controller
 
     public function list($page_length = 5 , $searchQuery, $searchBy)
     {
-        $query = Vendor::orderBy('name');
+        $query = Vendor::select('vendors.*', 'u.email')
+                        ->join('users AS u', 'u.vendor_id', 'vendors.id')
+                        ->orderBy('name');
         if ($searchQuery && $searchBy === 'field') {
             $query->where(function ($q) use ($searchQuery) {
                 $q->where('name', '=', $searchQuery)
@@ -169,16 +171,16 @@ class VendorController extends Controller
         $message = '';
 
         $currentVendor = Vendor::find($id);
+        $user = User::where('vendor_id', $id)->first();
         $isUniqueName = $request->name && $request->name != $currentVendor->name ? '|unique:vendors,name' : '';
         $isUniquePhone = $request->phone && $request->phone != $currentVendor->phone ? '|unique:vendors,phone' : '';
-        $isUniqueEmail = $request->email && $request->email != $currentVendor->email ? '|unique:users,email' : '';
+        $isUniqueEmail = $request->email && $request->email != $user->email ? '|unique:users,email' : '';
 
         $validator = Validator::make($request->all(), [
             'name' => 'required'.$isUniqueName,
             'phone' => 'required'.$isUniquePhone,
             'email' => 'required'.$isUniqueEmail,
             'address' => 'required',
-            'cabang_id' => 'not_in:0'
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
@@ -188,7 +190,6 @@ class VendorController extends Controller
             'phone' => 'Nomor HP',
             'email' => 'Email',
             'address' => 'Alamat',
-            'cabang_id' => 'NIP Cabang'
         ]);
 
         if ($validator->fails()) {
@@ -203,11 +204,11 @@ class VendorController extends Controller
             $currentVendor->name = $request->name;
             $currentVendor->phone = $request->phone;
             $currentVendor->address = $request->address;
-            $currentVendor->cabang_id = $request->cabang_id;
             $currentVendor->save();
 
-            $user = User::where('vendor_id', $id)->first();
             $user->email = $request->email;
+            if ($request->has('password'))
+                $user->password = \Hash::make($request->password);
             $user->save();
 
             $this->logActivity->store("Memperbarui data vendor.");
@@ -272,7 +273,12 @@ class VendorController extends Controller
             $message = 'Terjadi kesalahan pada database.';
         } finally {
             \DB::commit();
-            return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
         }
     }
 }
