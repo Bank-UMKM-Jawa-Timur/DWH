@@ -12,10 +12,9 @@
         channel.bind('data-table', function(data) {
             console.log('Received')
             console.log(data)
-            //var current_url = window.location.href
-            //window.location = current_url
-            if (data.data != 'confirm berkas')
-                refreshTable();
+            //if (data.data != 'confirm berkas')
+                //refreshTable();
+            refreshTable();
         });
 
         function refreshTable() {
@@ -93,6 +92,7 @@
             else if (targetId == 'modalConfirmImbalJasa') {
                 const data_id = $(identifier).data('id')
                 const tanggal = $(identifier).data('tanggal')
+                const nominal = $(identifier).data('nominal')
                 const is_confirm = $(identifier).data('confirm')
                 const confirm = $(identifier).data('confirm') ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'
                 const file_bukti = $(identifier).data('file') ? $(identifier).data('file') : ''
@@ -101,6 +101,7 @@
                 $(`#${targetId} #preview_imbal_jasa`).attr("src", path_file);
                 $(`#${targetId} #id_cat`).val(data_id)
                 $(`#${targetId} #tgl_upload_imbal_jasa`).val(tanggal)
+                $(`#${targetId} #nominal_imbal_jasa`).val(nominal)
                 $(`#${targetId} #status_konfirmasi_imbal_jasa`).val(confirm)
 
                 if (is_confirm) {
@@ -510,7 +511,9 @@
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");
                 const data_id = $(identifier).data('id')
+                const data_nominal = $(identifier).data('nominal')
                 $(`#${targetId} #id_kkbimbaljasa`).val(data_id)
+                $(`#${targetId} #nominal_imbal_jasa`).val(data_nominal)
             }
             else if (targetId == 'modalUploadBuktiPenyerahanUnit') {
                 $(`#${targetId}`).removeClass("hidden");

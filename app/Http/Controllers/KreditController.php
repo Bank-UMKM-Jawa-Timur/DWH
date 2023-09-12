@@ -76,7 +76,6 @@ class KreditController extends Controller
                 \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
                 \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
                 \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
                 \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
             )
                 ->join('kkb', 'kkb.kredit_id', 'kredits.id')
@@ -222,7 +221,6 @@ class KreditController extends Controller
                 $value->set_imbal_jasa = $setImbalJasa;
             }
             $this->param['data'] = $data;
-            // return $data;
 
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {

@@ -9,7 +9,7 @@
                     Upload Berkas
                 @endif
             </div>
-            <button data-dismiss-id="modalUploadBerkas">
+            <button id="btn-close-modal" data-dismiss-id="modalUploadBerkas">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                         stroke-width="2" d="M17 7L7 17M7 7l10 10" />
@@ -188,7 +188,7 @@
             })
         }
 
-        $("[data-dismiss-id]").on("click", function () {
+        $("#btn-close-modal").on("click", function () {
             $("#modalUploadBerkas").addClass("hidden");
             $(".layout-overlay-edit-form").addClass("hidden");
             $('#preload-data').removeClass("hidden")

@@ -205,7 +205,6 @@ class NotificationController extends Controller
                     $arrRole = explode(',', $value->role_id);
                     $user = User::where('kode_cabang', $kredit->kode_cabang)
                                 ->whereIn('role_id', $arrRole)
-                                ->orWhereIn('role_id', $arrRole)
                                 ->get();
 
                     foreach ($user as $key => $item) {

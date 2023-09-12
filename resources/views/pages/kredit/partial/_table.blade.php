@@ -11,14 +11,11 @@
                 <th>Ketersediaan Unit</th>
                 <th>Bukti Pembayaran</th>
                 <th>Penyerahan Unit</th>
-                {{-- @foreach ($documentCategories as $item)
-                    <th>{{ $item->name }}</th>
-                @endforeach --}}
+                <th>Bukti Pembayaran Imbal Jasa</th>
+                <th>Imbal Jasa + 2% Pajak</th>
                 <th>STNK</th>
                 <th>BPKB</th>
                 <th>Polis</th>
-                <th>Bukti Pembayaran Imbal Jasa</th>
-                <th>Imbal Jasa + 2% Pajak</th>
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>

@@ -28,7 +28,12 @@
                     <div class="input-box w-full space-y-3">
                         <label for="" class="uppercase appearance-none">Status Konfirmasi</label>
                         <input type="text" disabled class="p-2 w-full border" id="status_konfirmasi_imbal_jasa" />
-                    </div>  
+                    </div>
+                    <div class="input-box w-full space-y-3">
+                        <label for="" class="uppercase appearance-none">Nominal yang harus dibayarkan</label>
+                        <input type="text"  class="p-2 mt-2 w-full border bg-gray-100" name="nominal_imbal_jasa"
+                            id="nominal_imbal_jasa" disabled/>
+                    </div>
                     <div class="space-y-3">
                         <label for="" class="uppercase appearance-none">Bukti Imbal Jasa</label>
                         <div class="h-[528px] w-full bg-gray-100">
