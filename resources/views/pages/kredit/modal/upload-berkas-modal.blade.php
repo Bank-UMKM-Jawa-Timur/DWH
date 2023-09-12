@@ -40,31 +40,13 @@
     
                 <div class="p-2">
                     <div id="tab1" class="tab-content hidden">
-                        <div class="input-box space-y-3">
+                        <div class="input-box space-y-3 confirm-input-stnk">
                             <input type="hidden" name="id_stnk" id="id_stnk">
                             <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_stnk" name="no_stnk" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                             </div>
                         </div>
-                        {{--  <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Tanggal Upload</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_upload_stnk" readonly />
-                            </div>
-                        </div>
-                        <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Tanggal Konfirmasi</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_confirm_stnk" readonly />
-                            </div>
-                        </div>
-                        <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Status</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="status_confirm_stnk" readonly />
-                            </div>
-                        </div>  --}}
                         <iframe id="preview_stnk" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3" id="stnk_input">
@@ -76,14 +58,14 @@
                             </div>
                         @endif
                         @if(\Session::get(config('global.role_id_session')) == 2)
-                        <div id="alert_stnk" class="hidden p-5 text-center mt-2 space-y-5">
-                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
-                            class="max-w-sm mx-auto" />
-                            <p class="font-semibold tracking-tighter text-theme-text">
-                                File STNK belum di upload
-                            </p>
-                        </div>
-                         @endif
+                            <div id="alert_stnk" class="hidden p-5 text-center mt-2 space-y-5">
+                                <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                class="max-w-sm mx-auto" />
+                                <p class="font-semibold tracking-tighter text-theme-text">
+                                    File STNK belum di upload
+                                </p>
+                            </div>
+                        @endif
                         @if (\Session::get(config('global.role_id_session')) == 2)
                             <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
                                 id="btn-confirm-stnk">
@@ -92,31 +74,13 @@
                         @endif
                     </div>
                     <div id="tab2" class="tab-content hidden">
-                        <div class="input-box space-y-3">
+                        <div class="input-box space-y-3 confirm-input-bpkb">
                             <input type="hidden" name="id_bpkb" id="id_bpkb">
                             <div class="px-3 space-y-4">
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_bpkb" name="no_bpkb" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                             </div>
                         </div>
-                        {{--  <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Tanggal Upload</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_upload_bpkb" readonly />
-                            </div>
-                        </div>
-                        <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Tanggal Konfirmasi</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="new_tanggal_confirm_bpkb" readonly />
-                            </div>
-                        </div>
-                        <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Status</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="status_confirm_bpkb" readonly />
-                            </div>
-                        </div>  --}}
                         <iframe id="preview_bpkb" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3" id="bpkb_input">
@@ -128,13 +92,13 @@
                             </div>
                         @endif
                         @if(\Session::get(config('global.role_id_session')) == 2)
-                        <div id="alert_bpkb" class="hidden p-5 text-center mt-2 space-y-5">
-                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
-                            class="max-w-sm mx-auto" />
-                            <p class="font-semibold tracking-tighter text-theme-text">
-                                File BPKB belum di upload
-                            </p>
-                        </div>
+                            <div id="alert_bpkb" class="hidden p-5 text-center mt-2 space-y-5">
+                                <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                class="max-w-sm mx-auto" />
+                                <p class="font-semibold tracking-tighter text-theme-text">
+                                    File BPKB belum di upload
+                                </p>
+                            </div>
                         @endif
                         @if (\Session::get(config('global.role_id_session')) == 2)
                         
@@ -145,31 +109,13 @@
                         @endif
                     </div>
                     <div id="tab3" class="tab-content hidden">
-                        <div class="input-box space-y-3">
+                        <div class="input-box space-y-3 confirm-input-polis">
                             <input type="hidden" name="id_polis" id="id_polis">
                             <div class="px-3 space-y-4" >
                                 <label for="" class="uppercase">Nomor</label>
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                             </div>
                         </div>
-                        {{--  <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Tanggal Upload</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_upload_polis" readonly />
-                            </div>
-                        </div>
-                        <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Tanggal Konfirmasi</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="tanggal_confirm_polis" readonly />
-                            </div>
-                        </div>
-                        <div class="input-box space-y-3 mt-4">
-                            <div class="px-3 space-y-4">
-                                <label for="" class="uppercase">Status</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="status_confirm_polis" readonly />
-                            </div>
-                        </div>  --}}
                         <iframe id="preview_polis" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3" id="polis_input">
@@ -181,13 +127,13 @@
                             </div>
                         @endif
                         @if(\Session::get(config('global.role_id_session')) == 2)
-                        <div id="alert_polis" class="hidden p-5 text-center mt-2 space-y-5">
-                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
-                            class="max-w-sm mx-auto" />
-                            <p class="font-semibold tracking-tighter text-theme-text">
-                                File POLIS belum di upload
-                            </p>
-                        </div>
+                            <div id="alert_polis" class="hidden p-5 text-center mt-2 space-y-5">
+                                <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                class="max-w-sm mx-auto" />
+                                <p class="font-semibold tracking-tighter text-theme-text">
+                                    File POLIS belum di upload
+                                </p>
+                            </div>
                         @endif
                         @if (\Session::get(config('global.role_id_session')) == 2)
                             <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
@@ -221,14 +167,8 @@
                 closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                //timer: 3000,
-                //closeOnClickOutside: false
             }).then((result) => {
-                console.log('then')
-                $("#modalUploadBerkas").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
                 
-                refreshTable()
             })
         }
         
@@ -239,8 +179,6 @@
                 closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                //timer: 3000,
-                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
@@ -250,161 +188,14 @@
             })
         }
 
-        /*$(".toggle-modal").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            var id = $(this).data('id_kkb')
-            var id_stnk = $(this).data('id-stnk') ? $(this).data('id-stnk') : '';
-            var id_polis = $(this).data('id-polis') ? $(this).data('id-polis') : '';
-            var id_bpkb = $(this).data('id-bpkb') ? $(this).data('id-bpkb') : '';
-            var no_stnk = $(this).data('no-stnk') ? $(this).data('no-stnk') : ''
-            var no_polis = $(this).data('no-polis') ? $(this).data('no-polis') : ''
-            var no_bpkb = $(this).data('no-bpkb') ? $(this).data('no-bpkb') : ''
-            var file_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
-            var file_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
-            var file_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
-            var tanggal_stnk = $(this).data('date-stnk') ? $(this).data('date-stnk') : ''
-            var tanggal_polis = $(this).data('date-polis') ? $(this).data('date-polis') : ''
-            var tanggal_bpkb = $(this).data('date-bpkb') ? $(this).data('date-bpkb') : ''
-            var confirm_at_stnk = $(this).data('confirm-at-stnk') ? $(this).data('confirm-at-stnk') : '-'
-            var confirm_at_polis = $(this).data('confirm-at-polis') ? $(this).data('confirm-at-polis') : '-'
-            var confirm_at_bpkb = $(this).data('confirm-at-bpkb') ? $(this).data('confirm-at-bpkb') : '-'
-            var confirm_stnk = $(this).data('confirm-stnk') ? $(this).data('confirm-stnk') : ''
-            var confirm_polis = $(this).data('confirm-polis') ? $(this).data('confirm-polis') : ''
-            var confirm_bpkb = $(this).data('confirm-bpkb') ? $(this).data('confirm-bpkb') : ''
-
-            var upload_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
-            var upload_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
-            var upload_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
-            var is_confirm_stnk = $(this).data('confirm-stnk') ? $(this).data('confirm-stnk') : ''
-            var is_confirm_polis = $(this).data('confirm-polis') ? $(this).data('confirm-polis') : ''
-            var is_confirm_bpkb = $(this).data('confirm-bpkb') ? $(this).data('confirm-bpkb') : ''
-            if (upload_stnk != '' && is_confirm_stnk != '')
-                $('#btn-confirm-stnk').addClass('hidden')
-            if (upload_bpkb != '' && is_confirm_bpkb != '')
-                $('#btn-confirm-bpkb').addClass('hidden')
-            if (upload_polis != '' && is_confirm_polis != '')
-                $('#btn-confirm-polis').addClass('hidden')
-
-            // Visibility Components
-            var stnkActive = $('#stnk-tab-menu').hasClass('active')
-            var polisActive = $('#polis-tab-menu').hasClass('active')
-            var bpkbActive = $('#bpkb-tab-menu').hasClass('active')
-
-            if (file_stnk != '') {
-                if (user_role == 3)
-                    $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2 && !confirm_stnk && stnkActive)
-                    $('.form-submit-berkas').css('display', 'block')
-                else
-                    $('.form-submit-berkas').css('display', 'none')
-                $('.input-stnk').css('display', 'none')
-                $('#no_stnk').prop('readonly', true)
-                $('#modalUploadBerkas #tanggal_upload_stnk').val(tanggal_stnk);
-                $('#tanggal_confirm_stnk').val((confirm_at_stnk));
-                $('#status_confirm_stnk').val((confirm_stnk ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
-            }
-            else {
-                if (user_role == 2) {
-                    $('#stnk_belum_diunggah').html('Berkas belum diunggah.')
-                    $('.input-no-stnk').css('display', 'none')
-                    if (stnkActive)
-                        $('.form-submit-berkas').css('display', 'none')
-                }
-                else {
-                    if (stnkActive)
-                        $('.form-submit-berkas').css('display', 'block')
-                }
-            }
-
-            try {
-                $('#modal-berkas #id_kkb').val(id);
-                if (id_stnk != '')
-                    $('#modal-berkas #id_stnk').val(id_stnk);
-                if (id_polis != '')
-                    $('#modal-berkas #id_polis').val(id_polis);
-                if (id_bpkb != '')
-                    $('#modal-berkas #id_bpkb').val(id_bpkb);
-                if (no_stnk != '')
-                    $('#modal-berkas #no_stnk').val(no_stnk);
-                if (no_polis != '')
-                    $('#modal-berkas #no_polis').val(no_polis);
-                if (no_bpkb != '')
-                    $('#modal-berkas #no_bpkb').val(no_bpkb);
-                if (file_stnk != '')
-                    $('#modal-berkas #stnk_scan').val(file_stnk);
-                if (file_polis != '')
-                    $('#modal-berkas #polis_scan').val(file_polis);
-                if (file_bpkb != '')
-                    $('#modal-berkas #bpkb_scan').val(file_bpkb);
-            } catch (e) {
-                console.log('error : '+e)
-            }
-            var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis;
-            var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
-
-            if (file_stnk != '') {
-                var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk + "#navpanes=0";
-                $("#preview_stnk").attr("src", path_stnk);
-                if(user_role == 2){
-                    $("#alert_stnk").addClass("hidden")
-                }else{
-                    $("#stnk_input").addClass("hidden")
-                }
-            } else {
-                $("#preview_stnk").css("display", 'none');
-                if(user_role == 2){
-                    $("#alert_stnk").removeClass("hidden")
-                }else{
-                    $("#stnk_input").removeClass("hidden")
-                }
-            }
-
-            if (file_polis != '') {
-                var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis + "#navpanes=0";
-                $("#preview_polis").attr("src", path_polis);
-                $("#polis_input").addClass("hidden")
-                if(user_role == 2){
-                    $("#alert_polis").addClass("hidden")
-                }else{
-                    $("#polis_input").addClass("hidden")
-                }
-                
-            } else {
-                $("#polis_input").removeClass("hidden")
-                $("#preview_polis").css("display", 'none');
-                if(user_role == 2){
-                    $("#alert_polis").removeClass("hidden")
-                }else{
-                    $("#polis_input").removeClass("hidden")
-                }
-            }
-            
-            if (file_bpkb != '') {
-                var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#navpanes=0";
-                $("#preview_bpkb").attr("src", path_bpkb);
-                if(user_role == 2){
-                    $("#alert_bpkb").addClass("hidden")
-                }else{
-                    $("#bpkb_input").addClass("hidden")
-                }
-            } else {
-                $("#preview_bpkb").css("display", 'none');
-                if(user_role == 2){
-                    $("#alert_bpkb").removeClass("hidden")
-                }else{
-                    $("#bpkb_input").removeClass("hidden")
-                }
-            }
-        });
-        */
-
         $("[data-dismiss-id]").on("click", function () {
-            const dismissId = $(this).data("dismiss-id");
-            $("#" + dismissId).addClass("hidden");
+            $("#modalUploadBerkas").addClass("hidden");
             $(".layout-overlay-edit-form").addClass("hidden");
+            $('#preload-data').removeClass("hidden")
+            
+            refreshTable()
+            //const dismissId = $(this).data("dismiss-id");
+            //$("#modalUploadBerkas").addClass("hidden");
         });
 
         $('#stnk-tab-menu').on('click', function() {

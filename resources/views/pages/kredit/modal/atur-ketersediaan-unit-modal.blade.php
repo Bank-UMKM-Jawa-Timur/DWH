@@ -40,8 +40,6 @@
                 closeOnClickOutside: true,
                 title: 'Berhasil',
                 icon: 'success',
-                //timer: 3000,
-                //closeOnClickOutside: false
             }).then((result) => {
                 console.log('then')
                 $("#modalAturKetersedian").addClass("hidden");
@@ -58,8 +56,6 @@
                 closeOnClickOutside: true,
                 title: 'Gagal',
                 icon: 'error',
-                //timer: 3000,
-                //closeOnClickOutside: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")

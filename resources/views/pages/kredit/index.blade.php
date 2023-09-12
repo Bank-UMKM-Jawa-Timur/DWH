@@ -14,10 +14,12 @@
             console.log(data)
             //var current_url = window.location.href
             //window.location = current_url
-            refreshTable();
+            if (data.data != 'confirm berkas')
+                refreshTable();
         });
 
         function refreshTable() {
+            console.log('refresh table')
             var page = $("#page").val()
             var page_length = $("#page_length").val()
             var tAwal = $("#tAwal").val() != 'dd/mm/yyyy' ? $('#tAwal').val() : ''
@@ -55,7 +57,8 @@
 
         function showModal(identifier) {
             const targetId = $(identifier).data("target-id");
-            console.log(targetId)
+            const user_role_id = "{{\Session::get(config('global.role_id_session'))}}";
+            
             $(`#${targetId}`).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
 
@@ -361,12 +364,36 @@
                 var is_confirm_stnk = $(identifier).data('confirm-stnk') ? $(identifier).data('confirm-stnk') : ''
                 var is_confirm_polis = $(identifier).data('confirm-polis') ? $(identifier).data('confirm-polis') : ''
                 var is_confirm_bpkb = $(identifier).data('confirm-bpkb') ? $(identifier).data('confirm-bpkb') : ''
-                if (upload_stnk != '' && is_confirm_stnk != '')
+
+                if (upload_stnk != '') {
+                    if (is_confirm_stnk != '')
+                        $(`#${targetId} #btn-confirm-stnk`).addClass('hidden')
+                }
+                else {
+                    if (user_role_id == 2)
+                        $(`#${targetId} .confirm-input-stnk`).addClass('hidden')
                     $(`#${targetId} #btn-confirm-stnk`).addClass('hidden')
-                if (upload_bpkb != '' && is_confirm_bpkb != '')
+                }
+
+                if (upload_bpkb != '') {
+                    if (is_confirm_bpkb != '')
+                        $(`#${targetId} #btn-confirm-bpkb`).addClass('hidden')
+                }
+                else {
+                    if (user_role_id == 2)
+                        $(`#${targetId} .confirm-input-bpkb`).addClass('hidden')
                     $(`#${targetId} #btn-confirm-bpkb`).addClass('hidden')
-                if (upload_polis != '' && is_confirm_polis != '')
+                }
+
+                if (upload_polis != '') {
+                    if (is_confirm_polis != '')
+                        $(`#${targetId} #btn-confirm-polis`).addClass('hidden')
+                }
+                else {
+                    if (user_role_id == 2)
+                        $(`#${targetId} .confirm-input-polis`).addClass('hidden')
                     $(`#${targetId} #btn-confirm-polis`).addClass('hidden')
+                }
 
                 // Visibility Components
                 var stnkActive = $(`#${targetId} #stnk-tab-menu`).hasClass('active')
