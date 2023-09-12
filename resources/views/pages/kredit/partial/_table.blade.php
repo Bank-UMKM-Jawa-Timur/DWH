@@ -5,7 +5,7 @@
                 <th>No</th>
                 <th width="150">Nama</th>
                 @if ($role_id == 3)
-                    <td>Cabang</td>
+                    <th>Cabang</th>
                 @endif
                 <th>PO</th>
                 <th>Ketersediaan Unit</th>
