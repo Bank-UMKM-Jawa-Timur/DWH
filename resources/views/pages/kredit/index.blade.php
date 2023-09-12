@@ -3,19 +3,25 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         Pusher.logToConsole = true;
+        const app_key = "{{config('broadcasting.connections.pusher.key')}}"
 
-        var pusher = new Pusher('8f56b6b591d9087dc11a', {
-            cluster: 'ap1'
-        });
-
-        var channel = pusher.subscribe('kredit');
-        channel.bind('data-table', function(data) {
-            console.log('Received')
-            console.log(data)
-            //if (data.data != 'confirm berkas')
-                //refreshTable();
-            refreshTable();
-        });
+        if (app_key) {
+            var pusher = new Pusher(app_key, {
+                cluster: 'ap1'
+            });
+    
+            var channel = pusher.subscribe('kredit');
+            channel.bind('data-table', function(data) {
+                console.log('Received')
+                console.log(data)
+                //if (data.data != 'confirm berkas')
+                    //refreshTable();
+                refreshTable();
+            });
+        }
+        else {
+            console.log(`Pusher app key isn't have value`)
+        }
 
         function refreshTable() {
             console.log('refresh table')
