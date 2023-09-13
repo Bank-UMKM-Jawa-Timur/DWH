@@ -803,75 +803,40 @@
         </td>
         <td>
             @if ($is_kredit_page)
-                <div class="dropdown">
-                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                        Selengkapnya
+                @if (strtolower($item->status) == 'done')
+                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn toggle-modals"
+                        data-target-id="modalDetailPo" data-id="{{ $item->id }}" onclick="showModal(this)">
+                        Detail
                     </button>
-                    <ul class="dropdown-menu  right-20">
-                        @if ($item->tgl_ketersediaan_unit)
-                            @if ($item->bukti_pembayaran)
-                                @if (!$item->penyerahan_unit && $item->bukti_pembayaran->is_confirm && \Session::get(config('global.role_id_session')) == 3)
-                                    <li>
-                                        <a href="#" class="item-dropdown toggle-modal"
-                                            data-target-id="modalUploadBuktiPenyerahanUnit"
-                                            data-id_kkb="{{ $item->kkb_id }}"
-                                            onclick="showModal(this)">Kirim Unit</a>
-                                    </li>
-                                @endif
-                            @endif
-                        @endif
-                        {{--  Upload Berkas  --}}
-                        @if (\Session::get(config('global.role_id_session')) == 3 && $item->penyerahan_unit)
-                            @if ($item->penyerahan_unit['is_confirm'])
-                                @if ($item->imbal_jasa)
-                                    @if ($item->imbal_jasa['is_confirm'])
-                                        @if (!isset($item->stnk['file']) || !isset($item->polis['file']) || !isset($item->bpkb['is_confirm']))
-                                        {{--  Vendor  --}}
+                @else
+                    <div class="dropdown">
+                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                            Selengkapnya
+                        </button>
+                        <ul class="dropdown-menu  right-20">
+                            @if ($item->tgl_ketersediaan_unit)
+                                @if ($item->bukti_pembayaran)
+                                    @if (!$item->penyerahan_unit && $item->bukti_pembayaran->is_confirm && \Session::get(config('global.role_id_session')) == 3)
                                         <li>
-                                            <a class="item-dropdown toggle-modal"
-                                                data-target-id="modalUploadBerkas"
+                                            <a href="#" class="item-dropdown toggle-modal"
+                                                data-target-id="modalUploadBuktiPenyerahanUnit"
                                                 data-id_kkb="{{ $item->kkb_id }}"
-                                                data-no-stnk="@isset($item->stnk->text){{ $item->stnk->text }}@endisset"
-                                                data-file-stnk="@isset($item->stnk['file']){{ $item->stnk['file'] }}@endisset"
-                                                data-date-stnk="@isset($item->stnk['date']){{ date('d-m-Y', strtotime($item->stnk['date'])) }}@endisset"
-                                                data-confirm-stnk="@isset($item->stnk['is_confirm']){{ $item->stnk['is_confirm'] }}@endisset"
-                                                data-confirm-at-stnk="@isset($item->stnk['confirm_at']){{ date('d-m-Y', strtotime($item->stnk['confirm_at'])) }}@endisset"
-                                                data-no-polis="@isset($item->polis->text){{ $item->polis->text }}@endisset"
-                                                data-file-polis="@isset($item->polis['file']){{ $item->polis['file'] }}@endisset"
-                                                data-date-polis="@isset($item->polis['date']){{ date('d-m-Y', strtotime($item->polis['date'])) }}@endisset"
-                                                data-confirm-polis="@isset($item->polis['is_confirm']){{ $item->polis['is_confirm'] }}@endisset"
-                                                data-confirm-at-polis="@isset($item->polis['confirm_at']){{ date('d-m-Y', strtotime($item->polis['confirm_at'])) }}@endisset"
-                                                data-no-bpkb="@isset($item->bpkb->text){{ $item->bpkb->text }}@endisset"
-                                                data-file-bpkb="@isset($item->bpkb['file']){{ $item->bpkb['file'] }}@endisset"
-                                                data-date-bpkb="@isset($item->bpkb['date']){{ date('d-m-Y', strtotime($item->bpkb['date'])) }}@endisset"
-                                                data-confirm-bpkb="@isset($item->bpkb['is_confirm']){{ $item->bpkb['is_confirm'] }}@endisset"
-                                                data-confirm-at-bpkb="@isset($item->bpkb['confirm_at']){{ date('d-m-Y', strtotime($item->bpkb['confirm_at'])) }}@endisset"
-                                                href="#"
-                                                onclick="showModal(this)">
-                                                Upload Berkas
-                                            </a>
+                                                onclick="showModal(this)">Kirim Unit</a>
                                         </li>
                                     @endif
-                                    @endif
                                 @endif
                             @endif
-                        @endif
-                        @if (\Session::get(config('global.role_id_session')) == 2 && \Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
-                            {{--  Cabang  --}}
-                            @if ($item->imbal_jasa)
-                                @if ($item->imbal_jasa['is_confirm'])
-                                    @if ($item->stnk || $item->polis || $item->bpkb)
-                                        @if (
-                                            (isset($item->stnk['is_confirm']) && !$item->stnk['is_confirm']) ||
-                                                (isset($item->polis['is_confirm']) && !$item->polis['is_confirm']) ||
-                                                (isset($item->bpkb['is_confirm']) && !$item->bpkb['is_confirm']))
+                            {{--  Upload Berkas  --}}
+                            @if (\Session::get(config('global.role_id_session')) == 3 && $item->penyerahan_unit)
+                                @if ($item->penyerahan_unit['is_confirm'])
+                                    @if ($item->imbal_jasa)
+                                        @if ($item->imbal_jasa['is_confirm'])
+                                            @if (!isset($item->stnk['file']) || !isset($item->polis['file']) || !isset($item->bpkb['is_confirm']))
+                                            {{--  Vendor  --}}
                                             <li>
                                                 <a class="item-dropdown toggle-modal"
                                                     data-target-id="modalUploadBerkas"
                                                     data-id_kkb="{{ $item->kkb_id }}"
-                                                    data-id-stnk="@if ($item->stnk) {{ $item->stnk->id }}@else- @endif"
-                                                    data-id-polis="@if ($item->polis) {{ $item->polis->id }}@else- @endif"
-                                                    data-id-bpkb="@if ($item->bpkb) {{ $item->bpkb->id }}@else- @endif"
                                                     data-no-stnk="@isset($item->stnk->text){{ $item->stnk->text }}@endisset"
                                                     data-file-stnk="@isset($item->stnk['file']){{ $item->stnk['file'] }}@endisset"
                                                     data-date-stnk="@isset($item->stnk['date']){{ date('d-m-Y', strtotime($item->stnk['date'])) }}@endisset"
@@ -889,21 +854,63 @@
                                                     data-confirm-at-bpkb="@isset($item->bpkb['confirm_at']){{ date('d-m-Y', strtotime($item->bpkb['confirm_at'])) }}@endisset"
                                                     href="#"
                                                     onclick="showModal(this)">
-                                                    Konfirmasi Berkas
+                                                    Upload Berkas
                                                 </a>
                                             </li>
+                                        @endif
                                         @endif
                                     @endif
                                 @endif
                             @endif
-                        @endif
-                        <li>
-                            <a class="item-dropdown toggle-modals"
-                                data-target-id="modalDetailPo" data-id="{{ $item->id }}"
-                                href="#" onclick="showModal(this)">Detail</a>
-                        </li>
-                    </ul>
-                </div>
+                            @if (\Session::get(config('global.role_id_session')) == 2 && \Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                {{--  Cabang  --}}
+                                @if ($item->imbal_jasa)
+                                    @if ($item->imbal_jasa['is_confirm'])
+                                        @if ($item->stnk || $item->polis || $item->bpkb)
+                                            @if (
+                                                (isset($item->stnk['is_confirm']) && !$item->stnk['is_confirm']) ||
+                                                    (isset($item->polis['is_confirm']) && !$item->polis['is_confirm']) ||
+                                                    (isset($item->bpkb['is_confirm']) && !$item->bpkb['is_confirm']))
+                                                <li>
+                                                    <a class="item-dropdown toggle-modal"
+                                                        data-target-id="modalUploadBerkas"
+                                                        data-id_kkb="{{ $item->kkb_id }}"
+                                                        data-id-stnk="@if ($item->stnk) {{ $item->stnk->id }}@else- @endif"
+                                                        data-id-polis="@if ($item->polis) {{ $item->polis->id }}@else- @endif"
+                                                        data-id-bpkb="@if ($item->bpkb) {{ $item->bpkb->id }}@else- @endif"
+                                                        data-no-stnk="@isset($item->stnk->text){{ $item->stnk->text }}@endisset"
+                                                        data-file-stnk="@isset($item->stnk['file']){{ $item->stnk['file'] }}@endisset"
+                                                        data-date-stnk="@isset($item->stnk['date']){{ date('d-m-Y', strtotime($item->stnk['date'])) }}@endisset"
+                                                        data-confirm-stnk="@isset($item->stnk['is_confirm']){{ $item->stnk['is_confirm'] }}@endisset"
+                                                        data-confirm-at-stnk="@isset($item->stnk['confirm_at']){{ date('d-m-Y', strtotime($item->stnk['confirm_at'])) }}@endisset"
+                                                        data-no-polis="@isset($item->polis->text){{ $item->polis->text }}@endisset"
+                                                        data-file-polis="@isset($item->polis['file']){{ $item->polis['file'] }}@endisset"
+                                                        data-date-polis="@isset($item->polis['date']){{ date('d-m-Y', strtotime($item->polis['date'])) }}@endisset"
+                                                        data-confirm-polis="@isset($item->polis['is_confirm']){{ $item->polis['is_confirm'] }}@endisset"
+                                                        data-confirm-at-polis="@isset($item->polis['confirm_at']){{ date('d-m-Y', strtotime($item->polis['confirm_at'])) }}@endisset"
+                                                        data-no-bpkb="@isset($item->bpkb->text){{ $item->bpkb->text }}@endisset"
+                                                        data-file-bpkb="@isset($item->bpkb['file']){{ $item->bpkb['file'] }}@endisset"
+                                                        data-date-bpkb="@isset($item->bpkb['date']){{ date('d-m-Y', strtotime($item->bpkb['date'])) }}@endisset"
+                                                        data-confirm-bpkb="@isset($item->bpkb['is_confirm']){{ $item->bpkb['is_confirm'] }}@endisset"
+                                                        data-confirm-at-bpkb="@isset($item->bpkb['confirm_at']){{ date('d-m-Y', strtotime($item->bpkb['confirm_at'])) }}@endisset"
+                                                        href="#"
+                                                        onclick="showModal(this)">
+                                                        Konfirmasi Berkas
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        @endif
+                                    @endif
+                                @endif
+                            @endif
+                            <li>
+                                <a class="item-dropdown toggle-modals"
+                                    data-target-id="modalDetailPo" data-id="{{ $item->id }}"
+                                    href="#" onclick="showModal(this)">Detail</a>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
             @else
                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn toggle-modals"
                     data-target-id="modalDetailPo" data-id="{{ $item->id }}" onclick="showModal(this)">
