@@ -39,8 +39,7 @@ class NotificationController extends Controller
                                 ->orderBy('notifications.created_at', 'DESC')
                                 ->get();
             $param['total_belum_dibaca'] = Notification::select('notifications.id')
-                                            ->join('users AS u', 'u.id', 'notifications.user_id')
-                                            ->where('u.id', \Session::get(config('global.user_id_session')))
+                                            ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                             ->where('notifications.read', false)
                                             ->count();
             return view('pages.notifikasi.index', $param);
@@ -125,8 +124,7 @@ class NotificationController extends Controller
             $data->read = 1;
             $data->save();
             $total_belum_dibaca = Notification::select('notifications.id')
-                                            ->join('users AS u', 'u.id', 'notifications.user_id')
-                                            ->where('u.id', \Session::get(config('global.user_id_session')))
+                                            ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                             ->where('notifications.read', false)
                                             ->count();
 
