@@ -469,7 +469,6 @@
                     @endif
                 @else
                     -
-                    {{\Session::get(config('global.role_id_session'))}}
                 @endif
             @endif
         </td>
