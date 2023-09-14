@@ -90,14 +90,15 @@
                                         @php
                                             $exRole = explode(',', $item->role_id);
                                         @endphp
-                                        @forelse ($exRole as $v)
+                                        @forelse ($exRole as $role_key => $v)
                                             @php
                                                 $getRole = \App\Models\Role::select('id', 'name')
                                                     ->where('id', $v)
                                                     ->orderBy('name')
                                                     ->first();
+                                                $splitter = $role_key == count($exRole) - 1 ? '' : ',';
                                             @endphp
-                                            {{ $getRole->name }}
+                                            {{ $getRole->name. $splitter }}
                                         @empty
                                             <p>Role tidak dipilih</p>
                                         @endforelse
@@ -110,7 +111,7 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li class="">
-                                                <a class="item-dropdown toggle-modal"
+                                                <a class="item-dropdown edit-template-modal"
                                                     data-target-id="edit-template-notifikasi"
                                                     id="modalEdit{{ $item->id }}" data-id="{{ $item->id }}"
                                                     data-title="{{ $item->title }}" data-content="{{ $item->content }}"
@@ -119,7 +120,7 @@
                                                     onclick="edit({{ $item->id }})">Edit</a>
                                             </li>
                                             <li class="">
-                                                <a class="item-dropdown" data-id="{{ $item->id }}"
+                                                <a class="item-dropdown btn-delete-template" data-id="{{ $item->id }}"
                                                     href="#">Hapus</a>
                                             </li>
                                         </ul>
@@ -147,20 +148,14 @@
             </div>
         </div>
 
-        <!-- Modal-tambah -->
-
-
-        <!-- Modal-edit -->
-
-
-        {{-- Modal Delete --}}
-
-
         @push('extraScript')
             <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
             <script>
                 // In your Javascript (external .js resource or <script> tag)
                 $(document).ready(function() {
+                    $('.select-action').select2({
+                        width: 'resolve',
+                    });
                     $('.select-role').select2({
                         width: 'resolve',
                     });
@@ -187,22 +182,22 @@
                 // Form
                 $('#add-button').click(function(e) {
                     e.preventDefault()
-
+    
                     store();
                 })
-
+    
                 $('#edit-button').click(function(e) {
                     e.preventDefault()
-
+    
                     update();
                 })
-
+    
                 function store() {
                     const req_title = document.getElementById('add-title');
                     const req_content = document.getElementById('add-content');
                     const req_role = document.getElementById('add-role');
                     const req_action = document.getElementById('add-action');
-
+    
                     $.ajax({
                         type: "POST",
                         url: "{{ route('template-notifikasi.store') }}",
@@ -232,23 +227,20 @@
                                 if (data.status == 'success') {
                                     SuccessMessage(data.message);
                                 } else {
-                                    alert(data.message)
+                                    ErrorMessage(data.message)
                                 }
-                                $('#addModal').modal().hide()
-                                $('body').removeClass('modal-open');
-                                $('.modal-backdrop').remove();
                             }
                         }
                     });
                 }
-
+    
                 function update() {
                     const req_id = document.getElementById('edit-id')
                     const req_title = document.getElementById('edit-title');
                     const req_content = document.getElementById('edit-content');
                     const req_role = document.getElementById('edit-role');
                     const req_action = document.getElementById('edit-action');
-
+    
                     $.ajax({
                         type: "POST",
                         url: "{{ url('/master/template-notifikasi') }}/" + req_id.value,
@@ -268,42 +260,26 @@
                                 if (data.status == 'success') {
                                     SuccessMessage(data.message);
                                 } else {
-                                    alert(data.message)
+                                    ErrorMessage(data.message)
                                 }
-                                $('#editModal').modal().hide()
-                                $('body').removeClass('modal-open');
-                                $('.modal-backdrop').remove();
                             }
                         }
                     });
                 }
-
+    
                 function showError(input, message) {
                     console.log(message);
                     const formGroup = input.parentElement;
                     const errorSpan = formGroup.querySelector('.error');
-
+    
                     formGroup.classList.add('has-error');
                     errorSpan.innerText = message;
                     input.focus();
                 }
-
-                function SuccessMessage(message) {
-                    swal("Berhasil!", message, {
-                        icon: "success",
-                        timer: 3000,
-                        closeOnClickOutside: false
-                    }).then(() => {
-                        location.reload();
-                    });
-                    setTimeout(function() {
-                        location.reload();
-                    }, 3000);
-                }
-
+    
                 // Modal
-                function edit(id) {
-                    var selector = '#modalEdit' + id
+                $('.edit-template-modal').on('click', function() {
+                    const targetId = 'edit-template-notifikasi';
                     var arrayRole = [];
                     var data_id = '';
                     var data_title = '';
@@ -311,52 +287,86 @@
                     var data_role = '';
                     var data_all_role = '';
                     var data_action = '';
-                    if (typeof $(selector).data('id') !== 'undefined') {
-                        data_id = $(selector).data('id');
+                    if (typeof $(this).data('id') !== 'undefined') {
+                        data_id = $(this).data('id');
                     }
-                    if (typeof $(selector).data('title') !== 'undefined') {
-                        data_title = $(selector).data('title');
+                    if (typeof $(this).data('title') !== 'undefined') {
+                        data_title = $(this).data('title');
                     }
-                    if (typeof $(selector).data('content') !== 'undefined') {
-                        data_content = $(selector).data('content');
+                    if (typeof $(this).data('content') !== 'undefined') {
+                        data_content = $(this).data('content');
                     }
-                    if (typeof $(selector).data('role') !== 'undefined') {
-                        data_role = $(selector).data('role');
+                    if (typeof $(this).data('role') !== 'undefined') {
+                        data_role = $(this).data('role');
                     }
-                    if (typeof $(selector).data('all-role') !== 'undefined') {
-                        data_all_role = $(selector).data('all-role');
+                    if (typeof $(this).data('all-role') !== 'undefined') {
+                        data_all_role = $(this).data('all-role');
                     }
-                    if (typeof $(selector).data('action') !== 'undefined') {
-                        data_action = $(selector).data('action');
+                    if (typeof $(this).data('action') !== 'undefined') {
+                        data_action = $(this).data('action');
                     }
+                    
                     var checkArray = data_role.toString();
-                    console.log(data_role);
-                    $('#edit-id').val(data_id);
-                    $('.edit-title').val(data_title);
-                    $('.edit-content').val(data_content);
-                    $('.edit-action').val(data_action);
+
+                    $(`#${targetId} #edit-id`).val(data_id);
+                    $(`#${targetId} .edit-title`).val(data_title);
+                    $(`#${targetId} .edit-content`).val(data_content);
+                    $(`#${targetId} .edit-action`).val(data_action).change();
                     if (data_all_role == 1)
-                        $('.edit-role').val(0).change()
+                        $(`#${targetId} .edit-role`).val(0).change()
                     else
                     if (checkArray.includes(",") == true) {
                         $.each(data_role.split(","), function(i, v) {
                             arrayRole.push(parseInt(v));
                         });
-                        $('.edit-role').val(arrayRole).change();
+                        $(`#${targetId} .edit-role`).val(arrayRole).change();
                     } else {
-                        $('.edit-role').val(data_role).change();
+                        $(`#${targetId} .edit-role`).val(data_role).change();
                     }
-
+    
                     var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
-                    $('.edit-form').attr("action", url);
-                }
-                $(document).on("click", ".deleteModal", function() {
+                    $(`#${targetId} .edit-form`).attr("action", url);
+
+                    $(`#${targetId}`).removeClass("hidden");
+                    $(`#${targetId} .layout-form`).addClass("layout-form-collapse");
+                    if (targetId.slice(0, 5) !== "modal") {
+                        $(`#${targetId} .layout-overlay-form`).removeClass("hidden");
+                    }
+                })
+
+                $(document).on("click", ".btn-delete-template", function() {
                     var data_id = $(this).data('id');
                     var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
-                    console.log(url)
-                    $('#delete-form').attr("action", url);
-
-                    $('#deleteModal').modal('show');
+    
+                    Swal.fire({
+                        title: 'Konfirmasi',
+                        html: 'Anda yakin akan menghapus data ini?',
+                        icon: 'question',
+                        iconColor: '#DC3545',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya',
+                        cancelButtonText: `Batal`,
+                        confirmButtonColor: '#DC3545'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type: "POST",
+                                url: url,
+                                data: {
+                                    _token: "{{ csrf_token() }}",
+                                    _method: 'DELETE',
+                                },
+                                success: function(data) {
+                                    console.log(data)
+                                    if (data.status == 'success') {
+                                        SuccessMessage(data.message);
+                                    } else {
+                                        ErrorMessage(data.message)
+                                    }
+                                }
+                            });
+                        }
+                    })
                 });
             </script>
         @endpush
