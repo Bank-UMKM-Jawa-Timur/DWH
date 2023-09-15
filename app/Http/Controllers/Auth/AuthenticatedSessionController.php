@@ -142,25 +142,27 @@ class AuthenticatedSessionController extends Controller
                                                             ->post($apiURL);
                                             $responseBody = json_decode($response->getBody(), true);
                             
-                                            if (array_key_exists('message', $responseBody)) {
-                                                if ($responseBody['message'] == 'Successfully logged out') {
-                                                    Session::flush();
-                                                    return response()->json([
-                                                        'status' => 'success',
-                                                        'message' => 'Berhasil mengakhiri sesi'
-                                                    ]);
+                                            if ($responseBody) {
+                                                if (array_key_exists('message', $responseBody)) {
+                                                    if ($responseBody['message'] == 'Successfully logged out') {
+                                                        Session::flush();
+                                                        return response()->json([
+                                                            'status' => 'success',
+                                                            'message' => 'Berhasil mengakhiri sesi'
+                                                        ]);
+                                                    }
+                                                    else
+                                                        return response()->json([
+                                                            'status' => 'failed',
+                                                            'message' => $responseBody['message']
+                                                        ]);
                                                 }
                                                 else
                                                     return response()->json([
                                                         'status' => 'failed',
-                                                        'message' => $responseBody['message']
+                                                        'message' => 'Terjadi kesalahan'
                                                     ]);
                                             }
-                                            else
-                                                return response()->json([
-                                                    'status' => 'failed',
-                                                    'message' => 'Terjadi kesalahan'
-                                                ]);
                                         } catch (\Illuminate\Http\Client\ConnectionException $e) {
                                             return response()->json([
                                                 'status' => 'failed',
