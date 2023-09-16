@@ -101,7 +101,7 @@
                             @endif
                         @else
                             @if (!$item->bukti_pembayaran->is_confirm)
-                                Menunggu konfirmasi dari Cabang
+                                Menunggu konfirmasi
                             @elseif ($item->bukti_pembayaran->is_confirm)
                                 <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
                                     style="cursor: pointer; text-decoration: underline;"
@@ -133,7 +133,7 @@
                                 <span>Menunggu pembayaran</span>
                             @endif
                         @else
-                            -
+                            <span>Menunggu pembayaran</span>
                         @endif
                     @else
                         @if ($item->bukti_pembayaran)
@@ -187,7 +187,7 @@
                                         Selesai
                                     </button>
                                 @else
-                                    -
+                                    <span>Menunggu konfirmasi</span>
                                 @endif
                             @endif
                         @else

@@ -9,9 +9,9 @@
     <title>Dashboard KKB</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+    <link href="{{ asset('template/assets/css/new-font.css') }}" rel="stylesheet">
+    <link href="{{ asset('template/assets/css/select2.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('template/assets/css/jquery-ui.css') }}">
     <link
       rel="stylesheet"
       href="{{ asset('css/app.css') }}"
@@ -60,11 +60,11 @@
       </div>
     </div>
   </body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src="https://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+  <script src="{{ asset('template/assets/js/jquery.min.js') }}"></script>
+  <script src="{{ asset('template/assets/js/sweetalert2.js') }}"></script>
+  <script src="{{ asset('template/assets/js/select2.min.js') }}"></script>
+  <script src="{{ asset('template/assets/js/apexcharts.js') }}"></script>
+  <script src="{{ asset('template/assets/js/jquery-ui.js') }}"></script>
   <script src="{{ asset('js/app.js') }}"></script>
 
 <script>
