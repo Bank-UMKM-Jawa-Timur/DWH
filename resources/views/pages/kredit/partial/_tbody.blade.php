@@ -187,7 +187,7 @@
                                         Selesai
                                     </button>
                                 @else
-                                    -
+                                    <span>Menunggu konfirmasi</span>
                                 @endif
                             @endif
                         @else
