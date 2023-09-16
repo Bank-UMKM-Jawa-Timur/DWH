@@ -133,7 +133,7 @@
                                 <span>Menunggu pembayaran</span>
                             @endif
                         @else
-                            -
+                            <span>Menunggu pembayaran</span>
                         @endif
                     @else
                         @if ($item->bukti_pembayaran)
