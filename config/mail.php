@@ -35,10 +35,10 @@ return [
 
     'mailers' => [
         'smtp' => [
-            'transport' => 'smtp',
+            'transport' => 'sendmail',
             'host' => env('MAIL_HOST', 'smtp.office365.com'),
             'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'starttls'),
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
@@ -115,3 +115,24 @@ return [
     ],
 
 ];
+
+// return [
+//     'driver' => env('MAIL_DRIVER', 'smtp'),
+//     'host' => env('MAIL_HOST', 'smtp.office365.com'),
+//     'port' => env('MAIL_PORT', 587),
+//     'from' => [
+//         'address' => 'no-reply.kkb@dwh.bankumkm.id', 
+//         'name' => 'KKB Notification'
+//     ],
+//     'encryption' => 'tls',
+//     'username' => env('MAIL_USERNAME'),
+//     'password' => env('MAIL_PASSWORD'),
+//     'sendmail' => '/usr/sbin/sendmail -bs',
+//     'pretend' => false,
+//     'markdown' => [
+//         'theme' => 'default',
+//         'paths' => [
+//             resource_path('views/emails.email'),
+//         ],
+//     ],
+// ];
