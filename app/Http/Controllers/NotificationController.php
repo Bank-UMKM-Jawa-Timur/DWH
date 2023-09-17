@@ -300,109 +300,25 @@ class NotificationController extends Controller
         }
     }
 
-    public function sendEmail(Request $request) {
-        $mail_to = 'mkhalil26122000@gmail.com';
-        // return [
-        //     'transport' => 'smtp',
-        //     'host' => env('MAIL_HOST', 'smtp.office365.com'),
-        //     'port' => (int)env('MAIL_PORT', 587),
-        //     'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-        //     'username' => env('MAIL_USERNAME'),
-        //     'password' => env('MAIL_PASSWORD'),
-        //     'timeout' => null,
-        // ];
-        $testMailData = [
-            'title' => 'Test Email From no-reply.kkb@dwh.develop.bankumkm.id',
-            'body' => $request->body
-        ];
+    public function sendEmail($mail_to, $mail_body) {
+        $status = '';
+        $message = '';
+        try {
+            // cabang sample email = 'cabangsurabaya@bankumkm.id'
+            // $mail_to = 'mkhalil26122000@outlook.com';
 
-        Mail::to($mail_to)->send(new SendMail($testMailData));
+            Mail::to($mail_to)->send(new SendMail($mail_body));
 
-        dd('Success! Email has been sent successfully.');
-        //Create an instance; passing `true` enables exceptions
-        // $mail = new PHPMailer(true);
-
-        // try {
-        //     //Server settings
-        //     $mail->SMTPDebug = 0;                      //Enable verbose debug output
-        //     $mail->isSMTP();                                            //Send using SMTP
-        //     $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
-        //     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-        //     $mail->Username   = 'no-reply.kkb@dwh.bankumkm.id';                     //SMTP username
-        //     $mail->Password   = 'J4tim1!!';                               //SMTP password
-        //     $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
-        //     $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-
-        //     //Recipients
-        //     $mail->setFrom('no-reply.kkb@dwh.bankumkm.id', 'Mailer');
-        //     $mail->addAddress($mail_to, 'Khalil');     //Add a recipient
-        //     $mail->addReplyTo('info@example.com', 'Information');
-        //     $mail->addCC('cc@example.com');
-        //     $mail->addBCC('bcc@example.com');
-
-        //     //Attachments
-        //     // $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
-        //     // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
-
-        //     //Content
-        //     $mail->isHTML(true);                                  //Set email format to HTML
-        //     $mail->Subject = 'Here is the subject';
-        //     $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-        //     $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
-        //     $mail->send();
-        //     return 'Message has been sent';
-        // } catch (\Exception $e) {
-        //     return "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-        // }
-        // $mail = new PHPMailer(true);     // Passing `true` enables exceptions
- 
-        // try {
-        //     // Email server settings
-        //     $mail->SMTPDebug = 0;
-        //     $mail->isSMTP();
-        //     $mail->SMTPKeepAlive = true;  
-        //     $mail->Host = env('MAIL_HOST', 'smtp.office365.com');             //  smtp host
-        //     $mail->Username = env('MAIL_USERNAME');   //  sender username
-        //     $mail->Password = env('MAIL_PASSWORD');       // sender password
-        //     $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
-        //     $mail->IsSMTP();
-        //     $mail->SMTPAuth = true;
-        //     $mail->Port = '465';                          // port - 587/465
- 
-        //     $mail->setFrom(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
-        //     $mail->addAddress($mail_to);
-        //     $mail->addCC($mail_to);
-        //     $mail->addBCC($mail_to);
- 
-        //     $mail->addReplyTo(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
- 
-        //     // if(isset($_FILES['emailAttachments'])) {
-        //     //     for ($i=0; $i < count($_FILES['emailAttachments']['tmp_name']); $i++) {
-        //     //         $mail->addAttachment($_FILES['emailAttachments']['tmp_name'][$i], $_FILES['emailAttachments']['name'][$i]);
-        //     //     }
-        //     // }
- 
- 
-        //     $mail->isHTML(true);                // Set email content format to HTML
- 
-        //     // $mail->Subject = $mail_toSubject;
-        //     $mail->Body    = $request->body;
- 
-        //     $mail->AltBody = $request->body;
-        //     // return ['data' => $mail];
-            
-        //     if( !$mail->send() ) {
-        //         return $mail->ErrorInfo;
-        //     }
-            
-        //     else {
-        //         return "Email has been sent.";
-        //     }
-        //     dd($mail);
- 
-        // } catch (\Exception $e) {
-        //      return $e->getMessage();
-        // }
+            $status = 'success';
+            $message = 'Berhasil mengirim email';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Gagal mengirim email. '.$e->getMessage();
+        } finally {
+            return response()->json([
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
     }
 }

@@ -12,16 +12,16 @@ use Illuminate\Queue\SerializesModels;
 class SendMail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $testMailData;
+    public $body;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($testMailData)
+    public function __construct($body)
     {
-        $this->testMailData = $testMailData;
+        $this->body = $body;
     }
 
     /**
@@ -32,6 +32,6 @@ class SendMail extends Mailable
     public function build()
     {
         return $this->subject('Email From AllPHPTricks.com')
-                    ->view('emails.email');
+                    ->view('emails.email', $this->body);
     }
 }

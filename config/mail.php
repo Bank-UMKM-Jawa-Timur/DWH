@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'smtp'),
+    'default' => env('MAIL_MAILER', 'microsoft-graph'),
 
     /*
     |--------------------------------------------------------------------------
@@ -34,14 +34,15 @@ return [
     */
 
     'mailers' => [
-        'smtp' => [
-            'transport' => 'sendmail',
-            'host' => env('MAIL_HOST', 'smtp.office365.com'),
-            'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
+        'microsoft-graph' => [
+            'transport' => 'microsoft-graph',
+            'client_id' => env('MICROSOFT_GRAPH_CLIENT_ID'),
+            'client_secret' => env('MICROSOFT_GRAPH_CLIENT_SECRET'),
+            'tenant_id' => env('MICROSOFT_GRAPH_TENANT_ID'),
+            'from' => [
+                'address' => env('MAIL_FROM_ADDRESS'),
+                'name' => env('MAIL_FROM_NAME'),
+            ],
         ],
 
         'ses' => [
@@ -113,7 +114,6 @@ return [
             resource_path('views/vendor/mail'),
         ],
     ],
-
 ];
 
 // return [
