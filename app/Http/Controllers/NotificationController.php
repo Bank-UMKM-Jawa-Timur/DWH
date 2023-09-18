@@ -303,10 +303,9 @@ class NotificationController extends Controller
     public function sendEmail($mail_to, $mail_body) {
         $status = '';
         $message = '';
+
         try {
             // cabang sample email = 'cabangsurabaya@bankumkm.id'
-            // $mail_to = 'mkhalil26122000@outlook.com';
-
             Mail::to($mail_to)->send(new SendMail($mail_body));
 
             $status = 'success';

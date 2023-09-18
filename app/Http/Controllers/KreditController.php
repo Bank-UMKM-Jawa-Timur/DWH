@@ -472,7 +472,11 @@ class KreditController extends Controller
             $document->save();
 
             // send notif
-            $this->notificationController->send($action_id, $kkb->kredit_id);
+            // $this->notificationController->send($action_id, $kkb->kredit_id);
+            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                'no_po' => '9086',
+                'nama_debitur' => 'Mohammad Sahrullah' 
+            ]);
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas bukti pembayaran.');
 
@@ -530,7 +534,11 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal ketersediaan unit.');
 
             // send notification
-            $this->notificationController->send($action_id, $kkb->kredit_id);
+            // $this->notificationController->send($action_id, $kkb->kredit_id);
+            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                'no_po' => '9086',
+                'nama_debitur' => 'Mohammad Sahrullah' 
+            ]);
 
             DB::commit();
 
@@ -596,7 +604,11 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
 
             // send notification
-            $this->notificationController->send($action_id, $kkb->kredit_id);
+            // $this->notificationController->send($action_id, $kkb->kredit_id);
+            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                'no_po' => '9086',
+                'nama_debitur' => 'Mohammad Sahrullah' 
+            ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -664,7 +676,11 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas nomor polisi.');
 
             // send notification
-            $this->notificationController->send($action_id, $request->id_kkb);
+            // $this->notificationController->send($action_id, $request->id_kkb);
+            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                'no_po' => '9086',
+                'nama_debitur' => 'Mohammad Sahrullah' 
+            ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -731,7 +747,11 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas BPKB.');
 
             // send notif
-            $this->notificationController->send($action_id, $request->id_kkb);
+            // $this->notificationController->send($action_id, $request->id_kkb);
+            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                'no_po' => '9086',
+                'nama_debitur' => 'Mohammad Sahrullah' 
+            ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -797,7 +817,11 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas STNK.');
 
             // send notification
-            $this->notificationController->send($action_id, $request->id_kkb);
+            // $this->notificationController->send($action_id, $request->id_kkb);
+            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                'no_po' => '9086',
+                'nama_debitur' => 'Mohammad Sahrullah' 
+            ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -871,7 +895,11 @@ class KreditController extends Controller
                 $document->save();
 
                 // send notification
-                $this->notificationController->send(9, $kkb->kredit_id);
+                // $this->notificationController->send(9, $kkb->kredit_id);
+                $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                    'no_po' => '9086',
+                    'nama_debitur' => 'Mohammad Sahrullah' 
+                ]);
             }
 
             // polis
@@ -888,7 +916,11 @@ class KreditController extends Controller
                 $document->save();
 
                 // send notification
-                $this->notificationController->send(10, $kkb->kredit_id);
+                // $this->notificationController->send(10, $kkb->kredit_id);
+                $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                    'no_po' => '9086',
+                    'nama_debitur' => 'Mohammad Sahrullah' 
+                ]);
             }
 
             // bpkb
@@ -905,7 +937,11 @@ class KreditController extends Controller
                 $document->save();
 
                 // send notification
-                $this->notificationController->send(11, $kkb->kredit_id);
+                // $this->notificationController->send(11, $kkb->kredit_id);
+                $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                    'no_po' => '9086',
+                    'nama_debitur' => 'Mohammad Sahrullah' 
+                ]);
             }
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
@@ -956,7 +992,11 @@ class KreditController extends Controller
     
                         // send notification
                         if (!$stnk->is_confirm)
-                            $this->notificationController->send(12, $stnk->kredit_id);
+                            // $this->notificationController->send(12, $stnk->kredit_id);
+                            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                                'no_po' => '9086',
+                                'nama_debitur' => 'Mohammad Sahrullah' 
+                            ]);
     
                         $stnk->is_confirm = 1;
                         $stnk->confirm_at = date('Y-m-d');
@@ -974,7 +1014,11 @@ class KreditController extends Controller
     
                         // send notification
                         if (!$polis->is_confirm)
-                            $this->notificationController->send(13, $polis->kredit_id);
+                            // $this->notificationController->send(13, $polis->kredit_id);
+                            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                                'no_po' => '9086',
+                                'nama_debitur' => 'Mohammad Sahrullah' 
+                            ]);
     
                         $polis->is_confirm = 1;
                         $polis->confirm_at = date('Y-m-d');
@@ -992,7 +1036,11 @@ class KreditController extends Controller
     
                         // send notification
                         if (!$bpkb->is_confirm)
-                            $this->notificationController->send(14, $bpkb->kredit_id);
+                            // $this->notificationController->send(14, $bpkb->kredit_id);
+                            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                                'no_po' => '9086',
+                                'nama_debitur' => 'Mohammad Sahrullah' 
+                            ]);
     
                         $bpkb->is_confirm = 1;
                         $bpkb->confirm_at = date('Y-m-d');
@@ -1075,7 +1123,11 @@ class KreditController extends Controller
                     $action_id = 14;
 
                 // send notification
-                $this->notificationController->send($action_id, $document->kredit_id);
+                // $this->notificationController->send($action_id, $document->kredit_id);
+                $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                    'no_po' => '9086',
+                    'nama_debitur' => 'Mohammad Sahrullah' 
+                ]);
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
 
@@ -1138,10 +1190,15 @@ class KreditController extends Controller
 
                 if ($request->category_id == 1) {
                     // send notification
-                    $this->notificationController->send(5, $document->kredit_id);
+                    $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                        'no_po' => '9086',
+                        'nama_debitur' => 'Mohammad Sahrullah' 
+                    ]);
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
+
+    
 
                 $status = 'success';
                 $message = 'Berhasil mengkonfirmasi berkas';
@@ -1204,7 +1261,12 @@ class KreditController extends Controller
 
                 if ($request->category_id == 2) {
                     // send notification
-                    $this->notificationController->send(8, $document->kredit_id);
+                    // $this->notificationController->send(8, $document->kredit_id);
+                    $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                        'no_po' => '9086',
+                        'nama_debitur' => 'Mohammad Sahrullah' 
+                    ]);
+        
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
@@ -1393,7 +1455,11 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas imbal jasa.');
 
             // send notification
-            $this->notificationController->send($action_id, $request->id_kkbimbaljasa);
+            // $this->notificationController->send($action_id, $request->id_kkbimbaljasa);
+            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                'no_po' => '9086',
+                'nama_debitur' => 'Mohammad Sahrullah' 
+            ]);
 
             $status = 'success';
             $message = 'Berhasil mengupload berkas imbal jasa.';
@@ -1435,7 +1501,11 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . Auth::user()->name . ' mengkonfirmasi berkas imbal jasa.');
 
             // send notification
-            $this->notificationController->send($action_id, $document->kredit_id);
+            // $this->notificationController->send($action_id, $document->kredit_id);
+            $this->notificationController->sendEmail('mohammadsahrullah894@gmail.com',  [
+                'no_po' => '9086',
+                'nama_debitur' => 'Mohammad Sahrullah' 
+            ]);
 
             $status = 'success';
             $message = 'Berhasil mengkonfirmasi berkas imbal jasa.';

@@ -31,7 +31,7 @@ class SendMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Email From AllPHPTricks.com')
+        return $this->subject('Email from KKB Dashboard BANK UMKM')
                     ->view('emails.email', $this->body);
     }
 }

@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // Email
-Route::get('/send-email', [NotificationController::class, 'sendEmail']);
+Route::get('/send-email', [NotificationController::class, 'sendEmail'])->name('sendEmail');
 Route::get('/', function () {
     return redirect()->route('login');
 });
