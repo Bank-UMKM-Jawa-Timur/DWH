@@ -97,5 +97,17 @@ class NotificationTemplatesSeeder extends Seeder
             'action_id' => 14,
             'role_id' => '1,3'
         ]);
+
+        \DB::table('notification_templates')->insert([
+            'title' => 'Upload Bukti Pembayaran Imbal Jasa',
+            'content' => 'Bukti pembayaran imbal jasa telah diupload oleh cabang.',
+            'action_id' => 15,
+        ]);
+        
+        \DB::table('notification_templates')->insert([
+            'title' => 'Kofirmasi Bukti Pembayaran Imbal Jasa',
+            'content' => 'Bukti pembayaran imbal jasa telah dikonfirmasi.',
+            'action_id' => 16,
+        ]);
     }
 }

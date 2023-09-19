@@ -31,6 +31,7 @@ class ActionSeeder extends Seeder
             'KKB-konfirmasi berkas Polis',
             'KKB-konfirmasi berkas BPKB',
             'KKB-atur imbal jasa',
+            'KKB-konfirmasi imbal jasa',
             'KKB-detail data',
             'Role-List data',
             'Role-Tambah data',
