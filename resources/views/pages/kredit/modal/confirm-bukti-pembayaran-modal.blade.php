@@ -129,6 +129,9 @@
                             ConfirmPembayaranErrorMessage(data.message)
                         }
                     }
+                },
+                error: function(e) {
+                    ConfirmPembayaranErrorMessage(e)
                 }
             })
         })

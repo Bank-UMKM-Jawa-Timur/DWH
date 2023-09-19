@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class SendMail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $body;
+    private $body;
 
     /**
      * Create a new message instance.
@@ -31,7 +31,7 @@ class SendMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Email from KKB Dashboard BANK UMKM')
+        return $this->subject('Email dari KKB Dashboard BANK UMKM')
                     ->view('emails.email', $this->body);
     }
 }

@@ -15,7 +15,7 @@
         }
         body{
             background-color: #F2F2F2;
-            font-family: Helvetica, Verdana, sans-serif !important;
+            font-family: 'Segoe UI', sans-serif !important;
             -webkit-font-smoothing: antialiased;
         }
         .body {
@@ -25,6 +25,7 @@
         }
         .email-wrapper{
             max-width: 600px;
+            width: 100%;
             margin: auto;
             margin-top: 8rem;
             border: 1px solid #dcdcdc;
@@ -36,7 +37,7 @@
         .email-wrapper .email-head .title{
             letter-spacing: -1px;
             color: #525252;
-            font-weight: 600;
+            font-weight: 700;
         }
         /* body */
         .email-wrapper .body-email{
@@ -44,20 +45,21 @@
             padding-bottom: 2rem;
         }
         .email-wrapper .body-email .nama-debitur{
-            letter-spacing: -1px;
             color: gray;
-            font-weight: normal;
+            font-weight: 600;
             font-size: 20px;
         }
         .email-wrapper .body-email .nama-debitur b{
             color: #525252;
         }
         .email-wrapper .body-email .no-po{
-            color: #9e9a9a;
+            font-weight: 600;
+            color: gray;
         }
         .email-wrapper .body-email .message{
             color: gray;
-            font-size: 18px;
+            margin-top: 2rem;
+            font-size: 1rem;
         }
         .wrapping{
             padding: 2rem;
@@ -65,7 +67,7 @@
         /* footer */
         .footer{
             text-align: center;
-            padding: 1.5rem;
+            padding: 1.2rem;
             background-color: #DC3545;
         }
         .footer p{
@@ -75,6 +77,21 @@
     </style>
   </head>
   <body>
+    @php
+        $hour = date( "G" );
+        $year = date( "Y" );
+        $greeting = '';
+
+        if ( $hour >= 5 && $hour < 12 ) {
+            $greeting = "Selamat pagi";
+        } elseif ( $hour >= 12 && $hour < 15 ) {
+            $greeting = "Selamat siang";
+        } elseif ( $hour >= 15 && $hour < 18 ) {
+            $greeting = "Selamat sore";
+        } else {
+            $greeting = "Selamat malam";
+        }
+    @endphp
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
         <tr>
             <td>&nbsp;</td>
@@ -87,8 +104,8 @@
                                 <table>
                                     <tr>
                                         <td class="email-head">
-                                            <img src="{{ asset('template/img') }}/news/logo.png" alt="logo">
-                                            <h1 class="title">You have new message from dashboard kkb.</h1>
+                                            <img src="{{ asset('template/assets') }}/img/news/logo.png" alt="logonya masih belum ada coy">
+                                            <h1 class="title">{{ $title }}</h1>
                                         </td>
                                     </tr>
                                 </table>
@@ -96,11 +113,10 @@
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td class="body-email">
-                                                <h3 class="nama-debitur">Hi, <b> Mohammad Sahrullah</b></h3>
-                                                <p class="no-po">NO PO: 9086</p>
-                                                <p class="message">
-                                                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Velit sed nisi reprehenderit optio voluptas quisquam ipsa ipsum odit! Ipsum aliquid hic, facere ea voluptatem optio sint impedit earum animi labore?
-                                                </p>
+                                                <h3 class="nama-debitur">{{$greeting}}, {{$to}}</h3>
+                                                <p class="no-po">Nama Debitur: {{$nama_debitur}}</p>
+                                                <p class="no-po">NO PO: {{$no_po}}</p>
+                                                <p class="message">{{$body}}</p>
                                         </td>
                                     </tr>
                                 </table>
@@ -112,8 +128,7 @@
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td class="content-block">
-                                    <p>Please do not reply to this email. We cannot respond to questions sent to this address. For immediate answers to your questions, call our office 082349898</p>
-                                    
+                                    <p>Tolong jangan balas ke email ini. Kami tidak dapat menanggapi pertanyaan yang dikirimkan ke alamat ini. Untuk jawaban segera atas pertanyaan Anda, hubungi kantor kami 082349898</p>
                                 </td>
                             </tr>
                             <tr>

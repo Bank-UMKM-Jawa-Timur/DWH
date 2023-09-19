@@ -65,6 +65,16 @@ Route::get('/karyawan/{nip}', function () {
     return $result;
 });
 
+Route::get('tes-email', function() {
+    return view('emails.email', [
+        'title' => 'Upload pembayaran',
+        'no_po' => '001/SBY/PO/09/2023',
+        'nama_debitur' => 'Sahrullah',
+        'to' => 'BJSC',
+        'body' => 'Bukti pembayaran telah diupload.'
+    ]);
+});
+
 Route::middleware('auth_api')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
