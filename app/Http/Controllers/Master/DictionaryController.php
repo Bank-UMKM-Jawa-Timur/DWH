@@ -82,6 +82,19 @@ class DictionaryController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'filename' => 'required|unique:mst_file_dictionary,filename',
+            'description' => 'required',
+            'input_field.*' => 'required'
+        ], [
+            'required' => ':attribute harus diisi.',
+            'unique' => ':attribute telah digunakan.',
+        ], [
+            'filename' => 'Filename',
+            'description' => 'Deskripsi',
+            'input_field' => 'Field'
+        ]);
+
         try {
             DB::beginTransaction();
             $newFileDictionary = new MstFileDictionary;
@@ -199,9 +212,22 @@ class DictionaryController extends Controller
      */
     public function update(Request $request, $id)
     {
+        DB::beginTransaction();
+        $fileDictionary = MstFileDictionary::find($id);
+        $uniqueFilename = $request->filename != '' && $request->filename != $fileDictionary->filename ? '|unique:mst_file_dictionary,filename' : '';
+
+        $this->validate($request, [
+            'filename' => 'required'.$uniqueFilename,
+            'description' => 'required'
+        ], [
+            'required' => ':attribute harus diisi.',
+            'unique' => ':attribute telah digunakan.',
+        ], [
+            'filename' => 'Filename',
+            'description' => 'Deskripsi'
+        ]);
+        
         try {
-            DB::beginTransaction();
-            $fileDictionary = MstFileDictionary::find($id);
             $fileDictionary->filename = $request->filename;
             $fileDictionary->description = $request->description;
             $fileDictionary->save();

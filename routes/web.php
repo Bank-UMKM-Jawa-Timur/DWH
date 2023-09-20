@@ -28,6 +28,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -60,8 +63,7 @@ Route::get('/karyawan/{nip}', function () {
     return $result;
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/', [DashboardController::class, 'index']);
+Route::middleware('auth_api')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/change-password', [ProfileController::class, 'changePassword'])->name('change_password');
@@ -85,7 +87,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/role-list-options', [RoleController::class, 'listOptions'])->name('role.list_options');
         Route::get('/role/hak-akses/{id}', [RoleController::class, 'indexPermission'])->name('role.permission.index');
         Route::post('/role/hak-akses', [RoleController::class, 'storePermission'])->name('role.permission.store');
-        Route::resource('/pengguna', PenggunaController::class);
+        // Route::resource('/pengguna', PenggunaController::class);
         Route::get('/pengguna-list-cabang', [PenggunaController::class, 'listCabang'])->name('pengguna.list_cabang');
         Route::post('/pengguna/reset-password', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset_password');
         Route::resource('/vendor', VendorController::class);
@@ -104,13 +106,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/kredit/upload-bpkb', [KreditController::class, 'uploadBpkb'])->name('kredit.upload_bpkb');
     Route::post('/kredit/upload-stnk', [KreditController::class, 'uploadStnk'])->name('kredit.upload_stnk');
     Route::post('/kredit/upload-berkas', [KreditController::class, 'uploadBerkas'])->name('kredit.upload_berkas');
-    Route::post('/kredit/confirm-berkas', [KreditController::class, 'confirmBerkas'])->name('kredit.confirm_berkas');
+    Route::get('/kredit/confirm-berkas', [KreditController::class, 'confirmBerkas'])->name('kredit.confirm_berkas');
     Route::post('/kredit/confirm-document', [KreditController::class, 'confirmDocumentCabang'])->name('kredit.confirm_document');
     Route::post('/kredit/confirm-document-vendor', [KreditController::class, 'confirmDocumentVendor'])->name('kredit.confirm_document_vendor');
     Route::post('/kredit/confirm-penyerahan-unit', [KreditController::class, 'confirmPenyerahanUnit'])->name('kredit.confirm_penyerahan_unit');
     Route::get('/kredit/{id}', [KreditController::class, 'show'])->name('kredit.show');
     Route::post('/kredit/upload-imbal-jasa', [KreditController::class, 'uploadUImbalJasa'])->name('kredit.upload_imbal_jasa');
     Route::post('/kredit/confirm-imbal-jasa', [KreditController::class, 'confirmUploadUImbalJasa'])->name('kredit.confirm-imbal-jasa');
+    Route::post('/kredit/load-json', [KreditController::class, 'loadDataJson'])->name('kredit.load_json');
 
     Route::get('/log_aktivitas', [LogActivitesController::class, 'index'])->name('log_aktivitas.index');
 
@@ -118,12 +121,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/collection', [CollectionController::class, 'index'])->name('collection.index');
     Route::post('/collection/upload', [CollectionController::class, 'upload'])->name('collection.upload');
     Route::post('/collection', [CollectionController::class, 'store'])->name('collection.store');
+    Route::post('/collection/page', [CollectionController::class, 'getPage'])->name('collection.page');
 });
 
 
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth_api')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

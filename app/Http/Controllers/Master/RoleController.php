@@ -219,13 +219,16 @@ class RoleController extends Controller
             }
         } catch (\Exception $e) {
             $status = 'error';
-            $message = 'Terjadi kesalahan.';
+            $message = 'Terjadi kesalahan.'.$e->getMessage();
 
         } catch (\Illuminate\Database\QueryException $e) {
             $status = 'error';
             $message = 'Terjadi kesalahan pada database.';
         } finally {
-            return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
+            return  [
+                'status' => $status,
+                'message' => $message,
+            ];
         }
     }
 
@@ -281,7 +284,7 @@ class RoleController extends Controller
                         $permission->delete();
                 }
             }
-            $username = Auth::user()->role_id == 3 ? Auth()->user()->email : Auth()->user()->nip;
+            $username = \Session::get(config('global.role_id_session')) == 3 ? Auth()->user()->email : Auth()->user()->nip;
             $this->logActivity->store("Pengguna '$username' menyimpan pengaturan hak akses.");
             DB::commit();
 

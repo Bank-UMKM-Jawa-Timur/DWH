@@ -2,128 +2,77 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Dashboard KKB | Login</title>
-    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-    <link rel="icon" href="{{ asset('template') }}/assets/img/icon_title.png" type="image/x-icon" />
-
-    <!-- Fonts and icons -->
-    <script src="{{ asset('template') }}/assets/js/plugin/webfont/webfont.min.js"></script>
-    <script>
-        WebFont.load({
-            google: {
-                "families": ["Lato:300,400,700,900"]
-            },
-            custom: {
-                "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands",
-                    "simple-line-icons"
-                ],
-                urls: ['{{ asset('template') }}/assets/css/fonts.min.css']
-            },
-            active: function() {
-                sessionStorage.fonts = true;
-            }
-        });
-    </script>
-
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ asset('template') }}/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ asset('template') }}/assets/css/atlantis.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard KKB - Login</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
-<body class="login">
-    <div class="wrapper wrapper-login">
-        <div class="container container-login animated fadeIn">
-            <img src="{{ asset('template') }}/assets/img/logo.png" alt="navbar brand" class="login-logo">
-            <form class="login-form" action="{{ route('login') }}" method="POST">
-                @csrf
-                <div class="form-group form-floating-label">
-                    <input id="input_type" autofocus name="input_type" type="text"
-                        class="form-control input-border-bottom" required>
-                    <label for="input_type" class="placeholder">NIP / Email</label>
-                    @if ($errors->get('email'))
-                        <span class="text-danger">{{ $errors->get('email')[0] }}</span>
-                    @endif
-                    @if ($errors->get('nip'))
-                        <span class="text-danger">{{ $errors->get('nip')[0] }}</span>
-                    @endif
-                </div>
-                <div class="form-group form-floating-label">
-                    <input id="password" name="password" type="password" class="form-control input-border-bottom"
-                        required>
-                    <label for="password" class="placeholder">Password</label>
-                    <div class="show-password">
-                        <i class="icon-eye"></i>
-                    </div>
-                    @if ($errors->get('password'))
-                        <span class="text-danger">{{ $errors->get('password')[0] }}</span>
-                    @endif
-                </div>
-                {{-- <div class="row form-sub m-0">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="rememberme">
-                        <label class="custom-control-label" for="rememberme">Remember Me</label>
-                    </div>
-
-                    <a href="#" class="link float-right">Forget Password ?</a>
-                </div> --}}
-                <div class="form-group form-floating-label">
-                    <button type="submit" class="btn btn-danger btn-login">Login</button>
-                </div>
-                {{-- <div class="login-account">
-                    <span class="msg">Don't have an account yet ?</span>
-                    <a href="#" id="show-signup" class="link">Sign Up</a>
-                </div> --}}
-            </form>
+<body>
+    <div class="lg:flex justify-center w-full font-lexend">
+        <div class="h-screen lg:block hidden w-full bg-gray-100 p-5">
+            <div class="flex justify-center mt-24">
+                <img class="w-[50rem]" src="{{ asset('template') }}/assets/img/news/login-ilustration.svg"
+                    alt="ilustration" />
+            </div>
         </div>
+        <div class="bg-white p-5 shadow lg:max-w-xl max-w-full mx-auto mt-0 h-screen w-full rounded-sm">
+            <div class="wrapping-form lg:mt-[14vh] mt-20 lg:p-10 p-3 space-y-5">
+                <form action="{{ route('login') }}" method="POST">
+                    @csrf
+                    <div class="form-head space-y-5">
+                        <img src="{{ asset('template') }}/assets/img/news/logo.png" alt="logo bank umkm" />
 
-        <div class="container container-signup animated fadeIn">
-            <h3 class="text-center">Sign Up</h3>
-            <form class="login-form">
-                <div class="form-group form-floating-label">
-                    <input id="fullname" name="fullname" type="text" class="form-control input-border-bottom"
-                        required>
-                    <label for="fullname" class="placeholder">Fullname</label>
-                </div>
-                <div class="form-group form-floating-label">
-                    <input id="email" name="email" type="email" class="form-control input-border-bottom"
-                        required>
-                    <label for="email" class="placeholder">Email</label>
-                </div>
-                <div class="form-group form-floating-label">
-                    <input id="passwordsignin" name="passwordsignin" type="password"
-                        class="form-control input-border-bottom" required>
-                    <label for="passwordsignin" class="placeholder">Password</label>
-                    <div class="show-password">
-                        <i class="icon-eye"></i>
+                        <div class="content space-y-3">
+                            <h2 class="lg:text-4xl text-3xl text-theme-text font-bold tracking-tighter">
+                                Selamat datang
+                            </h2>
+                            <p class="lg:text-sm text-xs text-[#bababa]">
+                                Silahkan login untuk melanjutkan
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group form-floating-label">
-                    <input id="confirmpassword" name="confirmpassword" type="password"
-                        class="form-control input-border-bottom" required>
-                    <label for="confirmpassword" class="placeholder">Confirm Password</label>
-                    <div class="show-password">
-                        <i class="icon-eye"></i>
+                    <div class="form-body mt-7 space-y-5">
+                        @include('components.alert')
+                        <div class="input-form space-y-3">
+                            <label for="niporemail"
+                                class="text-[#576B80] lg:text-sm text-xs font-semibold tracking-tighter">NIP atau
+                                EMAIL</label>
+                            <div class="input-box border border-[#E6E6E6] rounded-md">
+                                <input type="text" autofocus name="input_type"
+                                    class="p-2 px-4 w-full rounded-md outline-none text-theme-text caret-theme-primary bg-[#F9F9F9]"
+                                    id="niporemail" />
+                            </div>
+                            @if ($errors->get('email'))
+                                <span class="text-theme-primary">{{ $errors->get('email')[0] }}</span>
+                            @endif
+                            @if ($errors->get('nip'))
+                                <span class="text-theme-primary">{{ $errors->get('nip')[0] }}</span>
+                            @endif
+                        </div>
+                        <div class="input-form space-y-3">
+                            <label for="niporemail"
+                                class="text-[#576B80] lg:text-sm text-xs font-semibold tracking-tighter">PASSWORD</label>
+                            <div class="input-box border border-[#E6E6E6] rounded-md">
+                                <input type="password" name="password"
+                                    class="p-2 px-4 text-theme-text w-full caret-theme-primary rounded-md outline-none bg-[#F9F9F9]"
+                                    id="niporemail" />
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="bg-theme-primary focus:bg-red-700 py-3 lg:text-lg text-sm w-full text-white font-semibold rounded-md drop-shadow-md">
+                            MASUK
+                        </button>
                     </div>
-                </div>
-                <div class="row form-sub m-0">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" name="agree" id="agree">
-                        <label class="custom-control-label" for="agree">I Agree the terms and conditions.</label>
+                    <div class="copyright mt-8 text-xs text-center text-neutral-400">
+                        &copy; Copyright <b>BANK UMKM Jatim</b> 2023
                     </div>
-                </div>
-                <div class="form-action">
-                    <a href="#" id="show-signin" class="btn btn-danger btn-link btn-login mr-3">Cancel</a>
-                    <a href="#" class="btn btn-primary btn-rounded btn-login">Sign Up</a>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-    <script src="{{ asset('template') }}/assets/js/core/jquery.3.2.1.min.js"></script>
-    <script src="{{ asset('template') }}/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-    <script src="{{ asset('template') }}/assets/js/core/popper.min.js"></script>
-    <script src="{{ asset('template') }}/assets/js/core/bootstrap.min.js"></script>
-    <script src="{{ asset('template') }}/assets/js/atlantis.min.js"></script>
 </body>
 
 </html>

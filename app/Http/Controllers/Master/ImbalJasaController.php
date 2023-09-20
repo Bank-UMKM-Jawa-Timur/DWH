@@ -231,7 +231,7 @@ class ImbalJasaController extends Controller
     {
         try {
             if ($imbalJasa) {
-                TenorImbalJasa::where('imbaljasa_id', $imbalJasa)->delete();
+                TenorImbalJasa::where('imbaljasa_id', $imbalJasa->id)->delete();
                 $imbalJasa->delete();
                 $this->logActivity->store("Menghapus data imbal jasa.");
 
@@ -248,7 +248,12 @@ class ImbalJasaController extends Controller
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database';
         } finally {
-            return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
         }
     }
 }

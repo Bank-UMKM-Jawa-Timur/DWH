@@ -269,7 +269,12 @@ class NotificationTemplateController extends Controller
             $status = 'error';
             $message = 'Terjadi kesalahan pada database.';
         } finally {
-            return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
         }
     }
 }

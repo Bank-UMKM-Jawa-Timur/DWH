@@ -2,114 +2,147 @@
 
 @section('title', $title)
 
+@section('modal')
+<!-- Modal-tambah -->
+@include('pages.target.modal.create')
+<!-- Modal-edit -->
+@include('pages.target.modal.edit')
+@endsection
+
+
 @section('content')
 
-    <div class="panel-header">
-        <div class="page-inner py-5">
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-                <div>
-                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
+    <div class="head-pages">
+        <p class="text-sm">Target</p>
+        <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
+            {{ $pageTitle }}
+        </h2>
+    </div>
+    <div class="body-pages">
+        <div class="table-wrapper bg-white border rounded-md w-full p-2">
+            <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                <div class="title-table lg:p-3 p-2 text-center">
+                    <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                        Target
+                    </h2>
+                </div>
+                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                    <button data-target-id="add-target" class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                        <span class="lg:mt-0 mt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M5 12h14m-7-7v14" />
+                            </svg>
+                        </span>
+                        <span class="lg:block hidden"> Tambah Target </span>
+                    </button>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="page-inner mt--5">
-        <div class="row mt--2">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
-                            Tambah {{ $pageTitle }}
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <form id="form" action="" method="get">
-                            <input type="hidden" name="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}">
-                            <div class="d-flex justify-content-between" style="padding-left: 15px;padding-right: 15px;">
-                                <div>
-                                    <div class="form-inline">
-                                        <label>Show</label>
-                                        &nbsp;
-                                        <select class="form-control form-control-sm" name="page_length" id="page_length" >
-                                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
-                                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
-                                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
-                                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
-                                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
-                                        </select>
-                                        &nbsp;
-                                        <label>entries</label>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="form-inline">
-                                        <label>Search : </label>
-                                        &nbsp;
-                                        <form action="{{ route('target.index') }}" method="GET">
-                                            <input class="form-control form-control-sm" name="query" value="{{ old('query', Request()->query('query')) }}">
-                                            <input type="hidden" name="search_by" value="field">
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="table-responsive">
-                            <table id="basic-datatables" class="table mt-2">
-                                <thead>
-                                    <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Total Unit</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($data as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            {{--  <td>Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>  --}}
-                                            <td>{{ $item->total_unit }}</td>
-                                            <td>
+            <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                <div class="sorty pl-1 w-full pr-5">
+                    <form id="form" action="" method="GET">
+                        <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                        name="page_length" id="page_length">
+                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    </form>
+                </div>
+                <div class="search-table lg:w-96 w-full">
+                    <form action="{{ route('target.index') }}" method="GET">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                @include('components.svg.search')
+                            </span>
+                                <input type="hidden" name="search_by" value="field">
+                                <input type="text" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                    name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="tables mt-2">
+                <table class="table-auto w-full">
+                    <tr>
+                        <th>No.</th>
+                        <th>Total Unit</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                    <tbody>
+                        @forelse ($data as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->total_unit }}</td>
+                                <td>
+                                    <div class="flex items-center justify-center w-full">
+                                        <label for="toogleA" class="flex items-center cursor-pointer">
+                                            <!-- toggle -->
+                                            <div class="relative">
+                                                <!-- input -->
                                                 <input type="checkbox" class="toggle-button" data-id="{{ $item->id }}"
                                                     data-toggle="toggle" data-onstyle="primary" data-style="btn-round"
                                                     @if ($item->is_active) checked @endif>
-                                            </td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-expanded="false">
-                                                        Selengkapnya
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item edit" data-toggle="modal"
-                                                            data-target="#editModal" data-id="{{ $item->id }}"
-                                                            /*data-nominal="{{ $item->nominal }}"*/ data-total_unit="{{ $item->total_unit }}" href="#">Edit</a>
-                                                        <a class="dropdown-item delete" data-toggle="modal"
-                                                            data-target="#deleteModal" data-id="{{ $item->id }}"
-                                                            href="#">Hapus</a>
-                                                    </div>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Edit</a>
-                                                    </div>
+                                                {{-- <input class="toggle-checkbox toggle-button mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-primary checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-primary checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-primary checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-primary dark:checked:after:bg-primary dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
+                                                type="checkbox" role="switch" data-id="{{ $item->id }}" @if ($item->is_active) checked @endif id="flexSwitchChecked"/> --}}
+                                                <!-- line -->
+                                                {{-- <div class="line w-10 h-4 bg-gray-400 rounded-full shadow-inner transition">
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center">
-                                                <span class="text-danger">Maaf data belum tersedia.</span>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="paginated">
-                            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                            {{ $data->links('pagination::bootstrap-5') }}
-                            @endif
-                        </div>
-                    </div>
+                                                <!-- dot -->
+                                                <div
+                                                    class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition">
+                                                </div> --}}
+                                            </div>
+                                            <!-- label -->
+                                            <div id="type-check" class="ml-3 text-gray-700 font-medium">
+                                                @if ($item->is_active)
+                                                    ON
+                                                @else
+                                                    OFF
+                                                @endif
+                                            </div>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="dropdown max-w-[280px]">
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Selengkapnya
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li class="">
+                                                <a class="item-dropdown toggle-modal edit" data-toggle="modal" data-target-id="edit-target" data-target="#edit-target" href="#" data-id="{{ $item->id }}" data-total_unit="{{ $item->total_unit }}">Edit</a>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown delete" data-id="{{ $item->id }}" 
+                                                    href="#">Hapus</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <span class="text-danger">Maaf data belum tersedia.</span>
+                                </td>
+                            </tr>
+                        @endforelse
+                        
+                    </tbody>
+                </table>
+            </div>
+          <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+            <div class="w-full">
+                <div class="pagination">
+                    @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                    {{ $data->links('pagination::tailwind') }}
+                    @endif
                 </div>
             </div>
         </div>
@@ -117,128 +150,23 @@
 
     {{-- modal konfirmasi pin --}}
     <!-- Modal -->
-    <div class="modal fade" id="pin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    Apakah Kamu Yakin Ingin Mengaktifkan Target?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary btn-sm">Aktifkan</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal-tambah -->
-    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Tambah {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-add-form">
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    {{--  <div class="Nominal">
-                                        <label for="nominal">Nominal</label>
-                                        <input autofocus type="number" class="form-control" id="nominal" name="nominal"
-                                            required>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>  --}}
-                                    <div class="TotalUnit">
-                                        <label for="total_unit">Total Unit</label>
-                                        <input autofocus type="number" class="form-control" id="total_unit" name="total_unit"
-                                            required>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary" id="add-button">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Modal-edit -->
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-edit-form">
-                        <input type="hidden" name="edit_id" id="edit_id">
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    {{--  <div class="Nominal">
-                                        <label for="edit_nominal">Nominal</label>
-                                        <input autofocus type="number" class="form-control" id="edit_nominal"
-                                            name="edit_nominal" required>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>  --}}
-                                    <div class="TotalUnit">
-                                        <label for="edit_total_unit">Total Unit</label>
-                                        <input autofocus type="number" class="form-control" id="edit_total_unit"
-                                            name="edit_total_unit" required>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     {{-- Modal Delete --}}
-    <div class="modal fade " id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="form-group name">
-                        Yakin akan menghapus data ini?
-                    </div>
-                    <div class="form-inline">
-                        <button data-dismiss="modal" class="btn btn-danger mr-2">Batal</button>
-                        <form id="delete-form" method="post">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-primary btn-delete">Hapus</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
 
     @push('extraScript')
         <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
 
         <script>
+            $('#page_length').on('change', function() {
+                $('#form').submit()
+            })
             $('#modal-add-form').on('submit', function(e) {
                 e.preventDefault()
 
@@ -388,12 +316,37 @@
 
             $(document).on("click", ".delete", function() {
                 var data_id = $(this).data('id');
-                var url = "{{ route('target.destroy', '+data_id+') }}";
-
-                $('#konfirmasi').text("Apakah yakin akan menghapus data?");
-                $('#delete-form').attr("action", url);
-
-                $('#deleteModal').modal('show');
+                var data_name = $(this).data('name');
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    html: 'Anda yakin akan menghapus data ini?',
+                    icon: 'question',
+                    iconColor: '#DC3545',
+                    showCancelButton: true,
+                    confirmButtonText: 'Lanjutkan',
+                    cancelButtonText: `Batal`,
+                    confirmButtonColor: '#DC3545'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ url('/target/') }}/"+data_id,
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                _method: 'DELETE',
+                            },
+                            success: function(data) {
+                                console.log(data);
+                                if (data.status == 'success') {
+                                    SuccessMessage(data.message);
+                                    //Swal.fire('Saved!', '', 'success')
+                                } else {
+                                    ErrorMessage(data.message)
+                                }
+                            }
+                        });
+                    }
+                })
             });
 
             function showError(input, message) {

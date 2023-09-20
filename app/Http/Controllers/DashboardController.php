@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Master\PenggunaController;
+use App\Models\Document;
 use App\Models\DocumentCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,27 +16,38 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
 {
+    private $role_id;
+    private $param;
+
+
+    function __construct()
+    {
+        $this->role_id = Session::get(config('global.role_id_session'));
+    }
+
     public function index(Request $request)
     {
         try {
+            $this->param['role_id'] = \Session::get(config('global.role_id_session'));
+            $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
+            $this->param['is_kredit_page'] = request()->is('kredit');
             $page_length = $request->page_length ? $request->page_length : 5;
-            $param['title'] = 'Dashboard';
-            $param['pageTitle'] = 'Dashboard';
-            $param['karyawan'] = null;
-            $user = User::select(
-                'users.id',
-                'users.nip',
-                'users.role_id',
-                'r.name AS role_name',
-            )
-                ->join('roles AS r', 'r.id', 'users.role_id')
-                ->where('users.id', Auth::user()->id)
-                ->first();
+            $this->param['role'] = $this->getRoleName();
+            $this->param['title'] = 'KKB';
+            $this->param['pageTitle'] = 'KKB';
+            $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
 
-            $param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            
+            $user_id = $token ? $user['id'] : $user->id;
+            if (!$token)
+                $user_id = 0; // vendor
+
             $data = Kredit::select(
                 'kredits.id',
                 'kredits.pengajuan_id',
@@ -68,8 +80,8 @@ class DashboardController extends Controller
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
 
-            if (Auth::user()->role_id == 2) {
-                $data->where('kredits.kode_cabang', Auth::user()->kode_cabang);
+            if (\Session::get(config('global.role_id_session')) == 2) {
+                $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
             }
 
             if (is_numeric($page_length))
@@ -80,7 +92,7 @@ class DashboardController extends Controller
             foreach ($data as $key => $value) {
                 // retrieve from api
                 $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id;
+                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
 
                 $headers = [
                     'token' => env('LOS_API_TOKEN')
@@ -102,98 +114,23 @@ class DashboardController extends Controller
                     }
 
                     // insert response to object
-                    $value->detail = $responseBody;
+                    if ($user_id != 0) {
+                        if (array_key_exists('message', $responseBody)) {
+                            if ($responseBody['message'] == 'Data not found') {
+                                unset($data[$key]);
+                            }
+                        }
+                        if (array_key_exists('id_pengajuan', $responseBody)) {
+                            $value->detail = $responseBody;
+                        }
+                    }
+                    else {
+                        $value->detail = $responseBody;
+                    }
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
             }
-
-            $penggunaController = new PenggunaController;
-            foreach ($data as $key => $value) {
-                if ($value->nip) {
-                    $karyawan = $penggunaController->getKaryawan($value->nip);
-                    if (gettype($karyawan) == 'string') {
-                        $value->detail = null;
-                    }
-                    else {
-                        if ($karyawan) {
-                            if (array_key_exists('nama', $karyawan))
-                                $value->detail = $karyawan;
-                            else
-                                $value->detail = null;
-                        }
-                    }
-                }
-            }
-
-            $param['data'] = $data;
-
-            $param['role'] = $user->role_name;
-            $param['total_cabang'] = User::where('role_id', 2)->count();
-            $param['total_vendor'] = User::where('role_id', 3)->count();
-            $target = Target::where('is_active', 1)->pluck('total_unit');
-            $param['target'] = count($target) ? $target->first() : 0;
-            if (Auth::user()->role_id != 3) {
-                $param['total_kkb_done'] = Kredit::join('documents AS d', 'd.kredit_id', 'kredits.id')
-                    ->where('d.document_category_id', 2)
-                    ->count();
-                $param['total_pengguna'] = User::count();
-            }
-
-            if (Auth::user()->role_id == 2) {
-                $param['notification'] = Notification::select(
-                    'notifications.id',
-                    'notifications.user_id',
-                    'notifications.extra',
-                    'notifications.read',
-                    'notifications.created_at',
-                    'notifications.updated_at',
-                    'nt.title',
-                    'nt.content',
-                    'nt.action_id',
-                    'nt.role_id',
-                )
-                    ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
-                    ->where('notifications.user_id', Auth::user()->id)
-                    ->where('notifications.read', false)
-                    ->orderBy('notifications.read')
-                    ->orderBy('notifications.created_at', 'DESC')
-                    ->get();
-            }
-
-            $arrLabelChartLabel = [];
-            $arrBarChartData = [];
-            $barChart = DB::select('SELECT COUNT(*) as total, k.kode_cabang FROM documents as d JOIN kredits as k ON k.id = d.kredit_id WHERE d.document_category_id = 1 AND d.is_confirm = true GROUP BY k.kode_cabang');
-            foreach ($barChart as $k => $v) {
-                $cabang = $v->kode_cabang;
-                $curl = curl_init();
-
-                curl_setopt_array($curl, array(
-                CURLOPT_URL => env('LOS_API_HOST').'/kkb/get-cabang/'.$cabang,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    'token: gTWx1U1bVhtz9h51cRNoiluuBfsHqty5MCdXRdmWthFDo9RMhHgHIwrU9DBFVaNj'
-                ),
-                ));
-
-                $response = curl_exec($curl);
-                curl_close($curl);
-                $res = json_decode($response);
-                $namaCabang = 'undifined';
-                if ($res)
-                    $namaCabang = $res->cabang;
-
-                array_push($arrLabelChartLabel, $namaCabang);
-                array_push($arrBarChartData, $v->total);
-            }
-            $param['barChartData'] = $arrBarChartData;
-            $param['barChartLabel'] = $arrLabelChartLabel;
 
             $data_array = [];
             if($request->status != null){
@@ -202,9 +139,9 @@ class DashboardController extends Controller
                         array_push($data_array,$rows);
                     }
                 }
-                $param['data'] = $this->paginate($data_array);
+                $this->param['data'] = $this->paginate($data_array);
             }else{
-                $param['data'] = $data;
+                $this->param['data'] = $data;
             }
 
             // Search query
@@ -228,15 +165,51 @@ class DashboardController extends Controller
                         unset($data[$key]); // remove data
                 }
             }
-            $param['data'] = $data;
-            // return $data;
 
-            return view('pages.home', $param);
+            foreach ($data as $key => $value) {
+                $buktiPembayaran = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 1)
+                                            ->first();
+
+                $penyerahanUnit = \App\Models\Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 2)
+                                            ->first();
+
+                $stnk = \App\Models\Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 3)
+                                            ->first();
+
+                $polis = Document::where('kredit_id', $value->id)
+                                    ->where('document_category_id', 4)
+                                    ->first();
+
+                $bpkb = Document::where('kredit_id', $value->id)
+                                ->where('document_category_id', 5)
+                                ->first();
+
+                $imbalJasa = Document::where('kredit_id', $value->id)
+                                    ->where('document_category_id', 6)
+                                    ->first();
+
+                $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
+
+                $value->bukti_pembayaran = $buktiPembayaran;
+                $value->penyerahan_unit = $penyerahanUnit;
+                $value->stnk = $stnk;
+                $value->bpkb = $bpkb;
+                $value->polis = $polis;
+                $value->imbal_jasa = $imbalJasa;
+                $value->set_imbal_jasa = $setImbalJasa;
+            }
+
+            $this->param['data'] = $data;
+
+            return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();
-            return redirect('/dashboard')->withError('Terjadi kesalahan');
+            return back()->withError('Terjadi kesalahan');
         } catch (\Illuminate\Database\QueryException $e) {
-            return redirect('/dashboard')->withError('Terjadi kesalahan pada database');
+            return back()->withError('Terjadi kesalahan pada database');
         }
     }
 
@@ -249,15 +222,16 @@ class DashboardController extends Controller
 
     public function getRoleName()
     {
+        $token = \Session::get(config('global.user_token_session'));
         $user = User::select(
             'users.id',
             'users.role_id',
             'r.name AS role_name',
         )
             ->join('roles AS r', 'r.id', 'users.role_id')
-            ->where('users.id', Auth::user()->id)
+            ->where('users.id', $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id)
             ->first();
 
-        return $user->role_name;
+        return $user ? $user->role_name : '';
     }
 }

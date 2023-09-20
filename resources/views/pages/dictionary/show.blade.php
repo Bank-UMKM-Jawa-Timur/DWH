@@ -3,18 +3,21 @@
 @section('title', $title)
 
 @section('content')
-
-    <div class="panel-header">
-        <div class="page-inner py-5">
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-                <div>
-                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                </div>
+    <div class="page-inner">
+        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+            <div>
+                <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
             </div>
         </div>
-    </div>
-    <div class="page-inner mt--5">
-        <div class="row mt--2">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{{route('dictionary.index')}}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-arrow-left"></i>
+                    Kembali
+                </a>
+            </div>
+        </div>
+        <div class="row mt-2">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">

@@ -231,7 +231,10 @@ class TargetController extends Controller
             $status = 'error';
             $message = 'Terjadi kesalahan pada database.';
         } finally {
-            return $status == 'success' ? back()->withStatus($message) : back()->withError($message);
+            return response()->json([
+                'status' => $status,
+                'message' => $message
+            ]);
         }
     }
 

@@ -29,8 +29,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required_without:nip', 'string', 'email', 'exists:users,email'],
-            'nip' => ['required_without:email', 'string', 'exists:users,nip'],
+            'email' => ['required_without:nip', 'string', 'email'],
+            'nip' => ['required_without:email', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -48,7 +48,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'input_type' => trans('auth.failed'),
+                'input_type' => 'Kredensial ini tidak cocok dengan data kami.',
             ]);
         }
 

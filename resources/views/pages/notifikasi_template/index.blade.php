@@ -2,475 +2,373 @@
 
 @section('title', $title)
 
+@section('modal')
+    <!-- Modal-tambah -->
+    @include('pages.notifikasi_template.modal.create')
+    <!-- Modal-edit -->
+    @include('pages.notifikasi_template.modal.edit')
+@endsection
+
 @section('content')
 
-    <div class="panel-header">
-        <div class="page-inner py-5">
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-                <div>
-                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                </div>
-            </div>
-        </div>
+    <div class="head-pages">
+        <p class="text-sm">Master</p>
+        <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
+            {{ $pageTitle }}
+        </h2>
     </div>
-    <div class="page-inner mt--5">
-        <div class="row mt--2">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
-                            Tambah {{ $title }}
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <form id="form" action="" method="get">
-                            <input type="hidden" name="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}">
-                            <div class="d-flex justify-content-between" style="padding-left: 15px;padding-right: 15px;">
-                                <div>
-                                    <div class="form-inline">
-                                        <label>Show</label>
-                                        &nbsp;
-                                        <select class="form-control form-control-sm" name="page_length" id="page_length" >
-                                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
-                                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
-                                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
-                                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
-                                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
-                                        </select>
-                                        &nbsp;
-                                        <label>entries</label>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="form-inline">
-                                        <label>Search : </label>
-                                        &nbsp;
-                                        <form action="{{ route('template-notifikasi.index') }}" method="GET">
-                                            <input class="form-control form-control-sm" name="query" value="{{ old('query', Request()->query('query')) }}">
-                                            <input type="hidden" name="search_by" value="field">
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="table-responsive">
-                            <table class="table mt-2" id="basic-datatables">
-                                <thead>
-                                    <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Judul</th>
-                                        <th scope="col">Konten</th>
-                                        <th scope="col">Role / Peran</th>
-                                        <th scope="col">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($data as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->title }}</td>
-                                            <td>{{ $item->content }}</td>
-                                            <td>
-                                                @if (!$item->role_id && $item->all_role)
-                                                    <p>Semua</p>
-                                                @else
-                                                    @php
-                                                        $exRole = explode(',', $item->role_id);
-                                                    @endphp
-                                                    @forelse ($exRole as $v)
-                                                        @php
-                                                            $getRole = \App\Models\Role::select('id', 'name')
-                                                                ->where('id', $v)
-                                                                ->orderBy('name')
-                                                                ->first();
-                                                        @endphp
-                                                        {{ $getRole->name }}
-                                                    @empty
-                                                        <p>Role tidak dipilih</p>
-                                                    @endforelse
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-expanded="false">
-                                                        Selengkapnya
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" id="modalEdit{{ $item->id }}"
-                                                            data-toggle="modal" data-target="#editModal"
-                                                            data-id="{{ $item->id }}" data-title="{{ $item->title }}"
-                                                            data-content="{{ $item->content }}"
-                                                            data-role="{{ $item->role_id }}"
-                                                            data-all-role="{{ $item->all_role }}"
-                                                            data-action="{{ $item->action_id }}" href="#"
-                                                            onclick="edit({{ $item->id }})">Edit</a>
-                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
-                                                            data-target="#deleteModal" data-id="{{ $item->id }}"
-                                                            href="#">Hapus</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4">
-                                                <span class="text-danger">Maaf data belum tersedia.</span>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="paginated">
-                            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                {{ $data->appends(['page_length' => $page_length])->links('pagination::bootstrap-5') }}
-                            @endif
-                        </div>
-                    </div>
+    <div class="body-pages">
+        <div class="table-wrapper bg-white border rounded-md w-full p-2">
+            <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                <div class="title-table lg:p-3 p-2 text-center">
+                    <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                        Template Notifikasi
+                    </h2>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal-tambah -->
-    <div class="modal hide" id="addModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Tambah {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                    <button data-target-id="add-template-notifikasi"
+                        class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                        <span class="lg:mt-0 mt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M5 12h14m-7-7v14" />
+                            </svg>
+                        </span>
+                        <span class="lg:block hidden">
+                            Tambah Template Notifikasi
+                        </span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form id="modal-form">
-                        <div class="form-group action">
-                            <label for="add-action">Aksi</label>
-                            <select name="action" id="add-action" class="form-control select2 add-action">
-                                <option value="">---Pilih Aksi---</option>
-                                @foreach ($actions as $action)
-                                    <option value="{{ $action->id }}">{{ $action->name }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group title">
-                            <label for="add-title">Judul</label>
-                            <input type="text" class="form-control add-title" id="add-title" name="title">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group content">
-                            <label for="add-content">Konten</label>
-                            <input type="text" class="form-control add-content" id="add-content" name="content">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group role">
-                            <label for="add-role">Role / Peran</label>
-                            <br>
-                            <div class="w-100">
-                                <select name="role" id="add-role" class="form-control select-role add-role"
-                                    multiple="multiple" style="width: 100%">
-                                    <option value="">---Pilih Role / Peran---</option>
-                                    <option value="0">Semua</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="add-button">Simpan</button>
+            </div>
+            <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                <div class="sorty pl-1 w-full">
+                    <form id="form" action="" method="GET">
+                        <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                        name="page_length" id="page_length">
+                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    </form>
+                </div>
+                <div class="search-table lg:w-96 w-full">
+                    <form action="{{ route('template-notifikasi.index') }}" method="GET">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                @include('components.svg.search')
+                            </span>
+                                <input type="hidden" name="search_by" value="field">
+                                <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                    name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Modal-edit -->
-    <div class="modal hide" id="editModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-edit-form" class="edit-form">
-                        <input type="hidden" name="edit_id" id="edit-id">
-                        <div class="form-group action">
-                            <label for="edit-action">Aksi</label>
-                            <select name="action" id="edit-action" class="form-control select2 edit-action">
-                                <option value="">---Pilih Aksi---</option>
-                                @foreach ($actions as $action)
-                                    <option value="{{ $action->id }}">{{ $action->name }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group title">
-                            <label for="edit-title">Judul</label>
-                            <input type="text" class="form-control edit-title" id="edit-title" name="title">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group content">
-                            <label for="edit-content">Konten</label>
-                            <input type="text" class="form-control edit-content" id="edit-content" name="content">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group role">
-                            <label for="edit-role">Role / Peran</label>
-                            <br>
-                            <div class="w-100">
-                                <select name="role" id="edit-role" class="form-control select-role edit-role"
-                                    multiple="multiple" style="width: 100%">
-                                    <option value="">---Pilih Role / Peran---</option>
-                                    <option value="0">Semua</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="edit-button">Simpan</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="tables mt-2">
+                <table class="table-auto w-full">
+                    <tr>
+                        <th>No.</th>
+                        <th>Judul</th>
+                        <th>Konten</th>
+                        <th>Role / Peran</th>
+                        <th>Aksi</th>
+                    </tr>
+                    <tbody>
+                        @forelse ($data as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->title }}</td>
+                                <td>{{ $item->content }}</td>
+                                <td>
+                                    @if (!$item->role_id && $item->all_role)
+                                        <p>Semua</p>
+                                    @else
+                                        @php
+                                            $exRole = explode(',', $item->role_id);
+                                        @endphp
+                                        @forelse ($exRole as $role_key => $v)
+                                            @php
+                                                $getRole = \App\Models\Role::select('id', 'name')
+                                                    ->where('id', $v)
+                                                    ->orderBy('name')
+                                                    ->first();
+                                                $splitter = $role_key == count($exRole) - 1 ? '' : ',';
+                                            @endphp
+                                            {{ $getRole->name. $splitter }}
+                                        @empty
+                                            <p>Role tidak dipilih</p>
+                                        @endforelse
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="dropdown max-w-[280px]">
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Selengkapnya
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li class="">
+                                                <a class="item-dropdown edit-template-modal"
+                                                    data-target-id="edit-template-notifikasi"
+                                                    id="modalEdit{{ $item->id }}" data-id="{{ $item->id }}"
+                                                    data-title="{{ $item->title }}" data-content="{{ $item->content }}"
+                                                    data-role="{{ $item->role_id }}" data-all-role="{{ $item->all_role }}"
+                                                    data-action="{{ $item->action_id }}" href="#"
+                                                    onclick="edit({{ $item->id }})">Edit</a>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown btn-delete-template" data-id="{{ $item->id }}"
+                                                    href="#">Hapus</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4">
+                                    <span class="text-danger">Maaf data belum tersedia.</span>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-        </div>
-    </div>
-
-    {{-- Modal Delete --}}
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="form-group name">
-                        Apakah Anda Ingin Menghapus {{ $title }}?
-                    </div>
-                    <div class="form-inline">
-                        <button data-dismiss="modal" class="btn btn-danger mr-2">Batal</button>
-                        <form id="delete-form" method="post">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-primary">Hapus</button>
-                        </form>
+            <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+                <div class="w-full">
+                    <div class="pagination">
+                        @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                            {{ $data->links('pagination::tailwind') }}
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    @push('extraScript')
-        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
-        <script>
-            // In your Javascript (external .js resource or <script> tag)
-            $(document).ready(function() {
-                $('.select-role').select2();
-            });
-           $('#page_length').on('change', function() {
-                $('#form').submit()
-            })
-        </script>
-        @if (session('status'))
+        @push('extraScript')
+            <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
             <script>
-                swal("Berhasil!", '{{ session('status') }}', {
-                    icon: "success",
-                    timer: 3000,
-                    closeOnClickOutside: false
-                }).then(() => {
-                    location.reload();
-                });
-                setTimeout(function() {
-                    location.reload();
-                }, 3000);
-            </script>
-        @endif
-        <script>
-            // Form
-            $('#add-button').click(function(e) {
-                e.preventDefault()
-
-                store();
-            })
-
-            $('#edit-button').click(function(e) {
-                e.preventDefault()
-
-                update();
-            })
-
-            function store() {
-                const req_title = document.getElementById('add-title');
-                const req_content = document.getElementById('add-content');
-                const req_role = document.getElementById('add-role');
-                const req_action = document.getElementById('add-action');
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('template-notifikasi.store') }}",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        title: req_title.value,
-                        content: req_content.value,
-                        role: $('#add-role').val().toString(),
-                        action: req_action.value,
-                    },
-                    success: function(data) {
-                        //console.log(data)
-                        if (Array.isArray(data.error)) {
-                            for (var i = 0; i < data.error.length; i++) {
-                                var message = data.error[i];
-                                console.log(message);
-                                if (message.toLowerCase().includes('judul'))
-                                    showError(req_title, message)
-                                if (message.toLowerCase().includes('konten'))
-                                    showError(req_content, message)
-                                if (message.toLowerCase().includes('role'))
-                                    showError(req_role, message)
-                                if (message.toLowerCase().includes('aksi'))
-                                    showError(req_action, message)
-                            }
-                        } else {
-                            if (data.status == 'success') {
-                                SuccessMessage(data.message);
-                            } else {
-                                alert(data.message)
-                            }
-                            $('#addModal').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
-                        }
-                    }
-                });
-            }
-
-            function update() {
-                const req_id = document.getElementById('edit-id')
-                const req_title = document.getElementById('edit-title');
-                const req_content = document.getElementById('edit-content');
-                const req_role = document.getElementById('edit-role');
-                const req_action = document.getElementById('edit-action');
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url('/master/template-notifikasi') }}/" + req_id.value,
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: 'PUT',
-                        title: req_title.value,
-                        content: req_content.value,
-                        role: $('#edit-role').val().toString(),
-                        action: req_action.value,
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        if (Array.isArray(data.error)) {
-                            showError(req_name, data.error[0])
-                        } else {
-                            if (data.status == 'success') {
-                                SuccessMessage(data.message);
-                            } else {
-                                alert(data.message)
-                            }
-                            $('#editModal').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
-                        }
-                    }
-                });
-            }
-
-            function showError(input, message) {
-                console.log(message);
-                const formGroup = input.parentElement;
-                const errorSpan = formGroup.querySelector('.error');
-
-                formGroup.classList.add('has-error');
-                errorSpan.innerText = message;
-                input.focus();
-            }
-
-            function SuccessMessage(message) {
-                swal("Berhasil!", message, {
-                    icon: "success",
-                    timer: 3000,
-                    closeOnClickOutside: false
-                }).then(() => {
-                    location.reload();
-                });
-                setTimeout(function() {
-                    location.reload();
-                }, 3000);
-            }
-
-            // Modal
-            function edit(id) {
-                var selector = '#modalEdit' + id
-                var arrayRole = [];
-                var data_id = '';
-                var data_title = '';
-                var data_content = '';
-                var data_role = '';
-                var data_all_role = '';
-                var data_action = '';
-                if (typeof $(selector).data('id') !== 'undefined') {
-                    data_id = $(selector).data('id');
-                }
-                if (typeof $(selector).data('title') !== 'undefined') {
-                    data_title = $(selector).data('title');
-                }
-                if (typeof $(selector).data('content') !== 'undefined') {
-                    data_content = $(selector).data('content');
-                }
-                if (typeof $(selector).data('role') !== 'undefined') {
-                    data_role = $(selector).data('role');
-                }
-                if (typeof $(selector).data('all-role') !== 'undefined') {
-                    data_all_role = $(selector).data('all-role');
-                }
-                if (typeof $(selector).data('action') !== 'undefined') {
-                    data_action = $(selector).data('action');
-                }
-                var checkArray = data_role.toString();
-                console.log(data_role);
-                $('#edit-id').val(data_id);
-                $('.edit-title').val(data_title);
-                $('.edit-content').val(data_content);
-                $('.edit-action').val(data_action);
-                if (data_all_role == 1)
-                    $('.edit-role').val(0).change()
-                else
-                if (checkArray.includes(",") == true) {
-                    $.each(data_role.split(","), function(i, v) {
-                        arrayRole.push(parseInt(v));
+                // In your Javascript (external .js resource or <script> tag)
+                $(document).ready(function() {
+                    $('.select-action').select2({
+                        width: 'resolve',
                     });
-                    $('.edit-role').val(arrayRole).change();
-                } else {
-                    $('.edit-role').val(data_role).change();
+                    $('.select-role').select2({
+                        width: 'resolve',
+                    });
+                });
+                $('#page_length').on('change', function() {
+                    $('#form').submit()
+                })
+            </script>
+            @if (session('status'))
+                <script>
+                    swal("Berhasil!", '{{ session('status') }}', {
+                        icon: "success",
+                        timer: 3000,
+                        closeOnClickOutside: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                    setTimeout(function() {
+                        location.reload();
+                    }, 3000);
+                </script>
+            @endif
+            <script>
+                // Form
+                $('#add-button').click(function(e) {
+                    e.preventDefault()
+    
+                    store();
+                })
+    
+                $('#edit-button').click(function(e) {
+                    e.preventDefault()
+    
+                    update();
+                })
+    
+                function store() {
+                    const req_title = document.getElementById('add-title');
+                    const req_content = document.getElementById('add-content');
+                    const req_role = document.getElementById('add-role');
+                    const req_action = document.getElementById('add-action');
+    
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('template-notifikasi.store') }}",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            title: req_title.value,
+                            content: req_content.value,
+                            role: $('#add-role').val().toString(),
+                            action: req_action.value,
+                        },
+                        success: function(data) {
+                            //console.log(data)
+                            if (Array.isArray(data.error)) {
+                                for (var i = 0; i < data.error.length; i++) {
+                                    var message = data.error[i];
+                                    console.log(message);
+                                    if (message.toLowerCase().includes('judul'))
+                                        showError(req_title, message)
+                                    if (message.toLowerCase().includes('konten'))
+                                        showError(req_content, message)
+                                    if (message.toLowerCase().includes('role'))
+                                        showError(req_role, message)
+                                    if (message.toLowerCase().includes('aksi'))
+                                        showError(req_action, message)
+                                }
+                            } else {
+                                if (data.status == 'success') {
+                                    SuccessMessage(data.message);
+                                } else {
+                                    ErrorMessage(data.message)
+                                }
+                            }
+                        }
+                    });
                 }
+    
+                function update() {
+                    const req_id = document.getElementById('edit-id')
+                    const req_title = document.getElementById('edit-title');
+                    const req_content = document.getElementById('edit-content');
+                    const req_role = document.getElementById('edit-role');
+                    const req_action = document.getElementById('edit-action');
+    
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('/master/template-notifikasi') }}/" + req_id.value,
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            _method: 'PUT',
+                            title: req_title.value,
+                            content: req_content.value,
+                            role: $('#edit-role').val().toString(),
+                            action: req_action.value,
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            if (Array.isArray(data.error)) {
+                                showError(req_name, data.error[0])
+                            } else {
+                                if (data.status == 'success') {
+                                    SuccessMessage(data.message);
+                                } else {
+                                    ErrorMessage(data.message)
+                                }
+                            }
+                        }
+                    });
+                }
+    
+                function showError(input, message) {
+                    console.log(message);
+                    const formGroup = input.parentElement;
+                    const errorSpan = formGroup.querySelector('.error');
+    
+                    formGroup.classList.add('has-error');
+                    errorSpan.innerText = message;
+                    input.focus();
+                }
+    
+                // Modal
+                $('.edit-template-modal').on('click', function() {
+                    const targetId = 'edit-template-notifikasi';
+                    var arrayRole = [];
+                    var data_id = '';
+                    var data_title = '';
+                    var data_content = '';
+                    var data_role = '';
+                    var data_all_role = '';
+                    var data_action = '';
+                    if (typeof $(this).data('id') !== 'undefined') {
+                        data_id = $(this).data('id');
+                    }
+                    if (typeof $(this).data('title') !== 'undefined') {
+                        data_title = $(this).data('title');
+                    }
+                    if (typeof $(this).data('content') !== 'undefined') {
+                        data_content = $(this).data('content');
+                    }
+                    if (typeof $(this).data('role') !== 'undefined') {
+                        data_role = $(this).data('role');
+                    }
+                    if (typeof $(this).data('all-role') !== 'undefined') {
+                        data_all_role = $(this).data('all-role');
+                    }
+                    if (typeof $(this).data('action') !== 'undefined') {
+                        data_action = $(this).data('action');
+                    }
+                    
+                    var checkArray = data_role.toString();
 
-                var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
-                $('.edit-form').attr("action", url);
-            }
-            $(document).on("click", ".deleteModal", function() {
-                var data_id = $(this).data('id');
-                var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
-                console.log(url)
-                $('#delete-form').attr("action", url);
+                    $(`#${targetId} #edit-id`).val(data_id);
+                    $(`#${targetId} .edit-title`).val(data_title);
+                    $(`#${targetId} .edit-content`).val(data_content);
+                    $(`#${targetId} .edit-action`).val(data_action).change();
+                    if (data_all_role == 1)
+                        $(`#${targetId} .edit-role`).val(0).change()
+                    else
+                    if (checkArray.includes(",") == true) {
+                        $.each(data_role.split(","), function(i, v) {
+                            arrayRole.push(parseInt(v));
+                        });
+                        $(`#${targetId} .edit-role`).val(arrayRole).change();
+                    } else {
+                        $(`#${targetId} .edit-role`).val(data_role).change();
+                    }
+    
+                    var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
+                    $(`#${targetId} .edit-form`).attr("action", url);
 
-                $('#deleteModal').modal('show');
-            });
-        </script>
-    @endpush
+                    $(`#${targetId}`).removeClass("hidden");
+                    $(`#${targetId} .layout-form`).addClass("layout-form-collapse");
+                    if (targetId.slice(0, 5) !== "modal") {
+                        $(`#${targetId} .layout-overlay-form`).removeClass("hidden");
+                    }
+                })
 
-@endsection
+                $(document).on("click", ".btn-delete-template", function() {
+                    var data_id = $(this).data('id');
+                    var url = "{{ url('/master/template-notifikasi') }}/" + data_id;
+    
+                    Swal.fire({
+                        title: 'Konfirmasi',
+                        html: 'Anda yakin akan menghapus data ini?',
+                        icon: 'question',
+                        iconColor: '#DC3545',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya',
+                        cancelButtonText: `Batal`,
+                        confirmButtonColor: '#DC3545'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type: "POST",
+                                url: url,
+                                data: {
+                                    _token: "{{ csrf_token() }}",
+                                    _method: 'DELETE',
+                                },
+                                success: function(data) {
+                                    console.log(data)
+                                    if (data.status == 'success') {
+                                        SuccessMessage(data.message);
+                                    } else {
+                                        ErrorMessage(data.message)
+                                    }
+                                }
+                            });
+                        }
+                    })
+                });
+            </script>
+        @endpush
+
+    @endsection

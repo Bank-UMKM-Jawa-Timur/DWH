@@ -1,251 +1,202 @@
-<div class="modal fade" id="uploadBerkasModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <h5 class="modal-title" id="uploadBerkasModalLabel">
-                    @if (Auth::user()->role_id == 3)
-                        Upload Berkas
-                    @else
-                        Konfirmasi Berkas
-                    @endif
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" class="text-light">&times;</span>
-                </button>
+<div class="modal-overlay hidden font-lexend overflow-auto" id="modalUploadBerkas">
+    <div class="modal modal-tab">
+        <div class="modal-head text-gray-500 text-lg">
+            <div class="title-modal">
+                @if (\Session::get(config('global.role_id_session')) == 2)
+                    Konfirmasi Berkas
+                @endif
+                @if (\Session::get(config('global.role_id_session')) == 3)
+                    Upload Berkas
+                @endif
             </div>
-            <form id="modal-berkas" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                        <input type="hidden" name="id_kkb" id="id_kkb">
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="stnk-tab-menu" data-toggle="tab" href="#stnk_tab"
-                                    role="tab" aria-controls="stnk" aria-selected="true">STNK</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="polis-tab-menu" data-toggle="tab" href="#polis_tab" role="tab"
-                                    aria-controls="polis" aria-selected="false">Polis</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="bpkb-tab-menu" data-toggle="tab" href="#bpkb_tab" role="tab"
-                                    aria-controls="bpkb" aria-selected="false">BPKB</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="myTabContent">
-                            {{--  STNK  --}}
-                            <div class="tab-pane fade show active" id="stnk_tab" role="tabpanel"
-                                aria-labelledby="stnk-tab">
-                                <input type="hidden" name="id_stnk" id="id_stnk">
-                                <p class="mt-2" id="stnk_belum_diunggah"></p>
-                                <div class="form-group input-no-stnk">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="no_stnk" name="no_stnk" @if (Auth::user()->role_id == 2) readonly @endif>
-                                    </div>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
-                                <div class="form-group status-stnk">
-                                    <p class="m-0" id="tanggal_upload_stnk"></p>
-                                    <p class="m-0" id="tanggal_confirm_stnk"></p>
-                                    <p class="m-0" id="status_confirm_stnk"></p>
-                                </div>
-                                <iframe id="preview_stnk" src="" width="100%" height="450px"></iframe>
-                                @if (Auth::user()->role_id == 3)
-                                    <div class="form-group input-stnk">
-                                        <label>Scan Berkas (pdf)</label>
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" id="stnk_scan" name="stnk_scan"
-                                                accept="application/pdf">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    <i class="fa fa-file"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                @endif
-                            </div>
-                            {{--  Polis  --}}
-                            <div class="tab-pane fade" id="polis_tab" role="tabpanel" aria-labelledby="polis-tab">
-                                <input type="hidden" name="id_polis" id="id_polis">
-                                <p class="mt-2" id="polis_belum_diunggah"></p>
-                                <div class="form-group input-no-polis">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="no_polis" name="no_polis" @if (Auth::user()->role_id == 2) readonly @endif>
-                                    </div>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
-                                <div class="form-group status-polis">
-                                    <p class="m-0" id="tanggal_upload_polis"></p>
-                                    <p class="m-0" id="tanggal_confirm_polis"></p>
-                                    <p class="m-0" id="status_confirm_polis"></p>
-                                </div>
-                                <iframe id="preview_polis" src="" width="100%" height="450px"></iframe>
-                                @if (Auth::user()->role_id == 3)
-                                    <div class="form-group input-polis">
-                                        <label>Scan Berkas (pdf)</label>
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" id="polis_scan" name="polis_scan"
-                                                accept="application/pdf">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    <i class="fa fa-file"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                @endif
-                            </div>
-                            {{--  BPKB  --}}
-                            <div class="tab-pane fade" id="bpkb_tab" role="tabpanel" aria-labelledby="bpkb-tab">
-                                <input type="hidden" name="id_bpkb" id="id_bpkb">
-                                <p class="mt-2" id="bpkb_belum_diunggah"></p>
-                                <div class="form-group input-no-bpkb">
-                                    <label>Nomor</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="no_bpkb" name="no_bpkb" @if (Auth::user()->role_id == 2) readonly @endif>
-                                    </div>
-                                    <small class="form-text text-danger error"></small>
-                                </div>
-                                <div class="form-group status-bpkb">
-                                    <p class="m-0" id="tanggal_upload_bpkb"></p>
-                                    <p class="m-0" id="tanggal_confirm_bpkb"></p>
-                                    <p class="m-0" id="status_confirm_bpkb"></p>
-                                </div>
-                                <iframe id="preview_bpkb" src="" width="100%" height="450px"></iframe>
-                                @if (Auth::user()->role_id == 3)
-                                    <div class="form-group input-bpkb">
-                                        <label>Scan Berkas (pdf)</label>
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" id="bpkb_scan" name="bpkb_scan"
-                                                accept="application/pdf">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    <i class="fa fa-file"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <small class="form-text text-danger error"></small>
-                                    </div>
-                                @endif
+            <button id="btn-close-modal" data-dismiss-id="modalUploadBerkas">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" d="M17 7L7 17M7 7l10 10" />
+                </svg>
+            </button>
+        </div>
+
+        <form id="modal-berkas">
+            <input type="hidden" name="id_kkb" id="id_kkb">
+            @csrf
+            <div class="modal-body">
+                <div class="overflow-x-auto">
+                    <ul class="flex tab-wrapping w-full mt-5 border-b-2 p-[6px]">
+                        <li class="tab-li">
+                            <a data-tab="tab1"
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">STNK</a>
+                        </li>
+                        <li class="tab-li">
+                            <a data-tab="tab2"
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BPKB</a>
+                        </li>
+                        <li class="tab-li">
+                            <a data-tab="tab3"
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">Polis</a>
+                        </li>
+                    </ul>
+                </div>
+    
+                <div class="p-2">
+                    <div id="tab1" class="tab-content hidden">
+                        <div class="input-box space-y-3 confirm-input-stnk">
+                            <input type="hidden" name="id_stnk" id="id_stnk">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Nomor</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="no_stnk" name="no_stnk" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                             </div>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="form-group form-submit-berkas">
-                        <button type="submit" class="btn btn-primary">
-                            @if (Auth::user()->role_id == 2)
+                        <iframe id="preview_stnk" class="mt-4" src="" width="100%" height="450px"></iframe>
+                        @if (\Session::get(config('global.role_id_session')) == 3)
+                            <div class="input-box space-y-3" id="stnk_input">
+                                <div class="p-3 space-y-4">
+                                    <label for="" class="uppercase">Scan Berkas (PDF)</label>
+                                    <input type="file" class="p-2 w-full border bg-gray-100" id="stnk_scan" name="stnk_scan"
+                                    accept="application/pdf" />
+                                </div>
+                            </div>
+                        @endif
+                        @if(\Session::get(config('global.role_id_session')) == 2)
+                            <div id="alert_stnk" class="hidden p-5 text-center mt-2 space-y-5">
+                                <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                class="max-w-sm mx-auto" />
+                                <p class="font-semibold tracking-tighter text-theme-text">
+                                    File STNK belum di upload
+                                </p>
+                            </div>
+                        @endif
+                        @if (\Session::get(config('global.role_id_session')) == 2)
+                            <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
+                                id="btn-confirm-stnk">
                                 Konfirmasi
-                            @endif
-                            @if (Auth::user()->role_id == 3)
-                                Kirim
-                            @endif
-                        </button>
+                            </button>
+                        @endif
+                    </div>
+                    <div id="tab2" class="tab-content hidden">
+                        <div class="input-box space-y-3 confirm-input-bpkb">
+                            <input type="hidden" name="id_bpkb" id="id_bpkb">
+                            <div class="px-3 space-y-4">
+                                <label for="" class="uppercase">Nomor</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="no_bpkb" name="no_bpkb" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
+                            </div>
+                        </div>
+                        <iframe id="preview_bpkb" class="mt-4" src="" width="100%" height="450px"></iframe>
+                        @if (\Session::get(config('global.role_id_session')) == 3)
+                            <div class="input-box space-y-3" id="bpkb_input">
+                                <div class="p-3 space-y-4">
+                                    <label for="" class="uppercase">Scan Berkas (PDF)</label>
+                                    <input type="file" class="p-2 w-full border bg-gray-100" id="bpkb_scan" name="bpkb_scan"
+                                    accept="application/pdf" />
+                                </div>
+                            </div>
+                        @endif
+                        @if(\Session::get(config('global.role_id_session')) == 2)
+                            <div id="alert_bpkb" class="hidden p-5 text-center mt-2 space-y-5">
+                                <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                class="max-w-sm mx-auto" />
+                                <p class="font-semibold tracking-tighter text-theme-text">
+                                    File BPKB belum di upload
+                                </p>
+                            </div>
+                        @endif
+                        @if (\Session::get(config('global.role_id_session')) == 2)
+                        
+                            <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
+                                id="btn-confirm-bpkb">
+                                Konfirmasi
+                            </button>
+                        @endif
+                    </div>
+                    <div id="tab3" class="tab-content hidden">
+                        <div class="input-box space-y-3 confirm-input-polis">
+                            <input type="hidden" name="id_polis" id="id_polis">
+                            <div class="px-3 space-y-4" >
+                                <label for="" class="uppercase">Nomor</label>
+                                <input type="text" class="p-2 w-full border bg-gray-100" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
+                            </div>
+                        </div>
+                        <iframe id="preview_polis" class="mt-4" src="" width="100%" height="450px"></iframe>
+                        @if (\Session::get(config('global.role_id_session')) == 3)
+                            <div class="input-box space-y-3" id="polis_input">
+                                <div class="p-3 space-y-4">
+                                    <label for="" class="uppercase">Scan Berkas (PDF)</label>
+                                    <input type="file" class="p-2 w-full border bg-gray-100" id="polis_scan" name="polis_scan"
+                                    accept="application/pdf" />
+                                </div>
+                            </div>
+                        @endif
+                        @if(\Session::get(config('global.role_id_session')) == 2)
+                            <div id="alert_polis" class="hidden p-5 text-center mt-2 space-y-5">
+                                <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
+                                class="max-w-sm mx-auto" />
+                                <p class="font-semibold tracking-tighter text-theme-text">
+                                    File POLIS belum di upload
+                                </p>
+                            </div>
+                        @endif
+                        @if (\Session::get(config('global.role_id_session')) == 2)
+                            <button type="button" class="mt-4 bg-theme-primary px-3 py-2 text-white rounded"
+                                id="btn-confirm-polis">
+                                Konfirmasi
+                            </button>
+                        @endif
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+            @if (\Session::get(config('global.role_id_session')) == 3)
+                <div class="modal-footer">
+                    <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
+                        Kirim
+                    </button>
+                </div>
+            @endif
+        </form>
     </div>
 </div>
 
+
 @push('extraScript')
     <script>
-        const user_role = "{{Auth::user()->role_id}}";
-        var id = '';
-        var id_stnk = '';
-        var id_polis = '';
-        var id_bpkb = '';
-        var no_stnk = ''
-        var no_polis = ''
-        var no_bpkb = ''
-        var file_stnk = '';
-        var file_polis = '';
-        var file_bpkb = '';
-        var tanggal_stnk = '';
-        var tanggal_polis = '';
-        var tanggal_bpkb = '';
-        var confirm_at_sntk = '';
-        var confirm_at_polis = '';
-        var confirm_at_bpkb = '';
-        var confirm_sntk = '';
-        var confirm_polis = '';
-        var confirm_bpkb = '';
+        const user_role = "{{\Session::get(config('global.role_id_session'))}}";
 
-        $('.upload-berkas').on('click', function(e) {
-            e.preventDefault()
-            id = $(this).data('id_kkb')
-            id_stnk = $(this).data('id-stnk') ? $(this).data('id-stnk') : '';
-            id_polis = $(this).data('id-polis') ? $(this).data('id-polis') : '';
-            id_bpkb = $(this).data('id-bpkb') ? $(this).data('id-bpkb') : '';
-            no_stnk = $(this).data('no-stnk') ? $(this).data('no-stnk') : ''
-            no_polis = $(this).data('no-polis') ? $(this).data('no-polis') : ''
-            no_bpkb = $(this).data('no-bpkb') ? $(this).data('no-bpkb') : ''
-            file_stnk = $(this).data('file-stnk') ? $(this).data('file-stnk') : ''
-            file_polis = $(this).data('file-polis') ? $(this).data('file-polis') : ''
-            file_bpkb = $(this).data('file-bpkb') ? $(this).data('file-bpkb') : ''
-            tanggal_stnk = $(this).data('date-stnk') ? $(this).data('date-stnk') : ''
-            tanggal_polis = $(this).data('date-polis') ? $(this).data('date-polis') : ''
-            tanggal_bpkb = $(this).data('date-bpkb') ? $(this).data('date-bpkb') : ''
-            confirm_at_stnk = $(this).data('confirm-at-stnk') ? $(this).data('confirm-at-stnk') : '-'
-            confirm_at_polis = $(this).data('confirm-at-polis') ? $(this).data('confirm-at-polis') : '-'
-            confirm_at_bpkb = $(this).data('confirm-at-bpkb') ? $(this).data('confirm-at-bpkb') : '-'
-            confirm_stnk = $(this).data('confirm-stnk') ? $(this).data('confirm-stnk') : ''
-            confirm_polis = $(this).data('confirm-polis') ? $(this).data('confirm-polis') : ''
-            confirm_bpkb = $(this).data('confirm-bpkb') ? $(this).data('confirm-bpkb') : ''
+        function UploadBerkasSuccessMessage(message) {
+            Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
+                title: 'Berhasil',
+                icon: 'success',
+            }).then((result) => {
+                
+            })
+        }
+        
+        function UploadBerkasErrorMessage(message) {
+            Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                title: 'Gagal',
+                icon: 'error',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#preload-data').removeClass("hidden")
+                    
+                    refreshTable()
+                }
+            })
+        }
 
-            visibilityComponents();
-
-            try {
-                $('#modal-berkas #id_kkb').val(id);
-                if (id_stnk != '')
-                    $('#modal-berkas #id_stnk').val(id_stnk);
-                if (id_polis != '')
-                    $('#modal-berkas #id_polis').val(id_polis);
-                if (id_bpkb != '')
-                    $('#modal-berkas #id_bpkb').val(id_bpkb);
-                if (no_stnk != '')
-                    $('#modal-berkas #no_stnk').val(no_stnk);
-                if (no_polis != '')
-                    $('#modal-berkas #no_polis').val(no_polis);
-                if (no_bpkb != '')
-                    $('#modal-berkas #no_bpkb').val(no_bpkb);
-                if (file_stnk != '')
-                    $('#modal-berkas #stnk_scan').val(file_stnk);
-                if (file_polis != '')
-                    $('#modal-berkas #polis_scan').val(file_polis);
-                if (file_bpkb != '')
-                    $('#modal-berkas #bpkb_scan').val(file_bpkb);
-            } catch (e) {
-                console.log('error : '+e)
-            }
-            var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis;
-            var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
-
-            if (file_stnk != '') {
-                var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk + "#navpanes=0";
-                $("#preview_stnk").attr("src", path_stnk);
-            } else {
-                $("#preview_stnk").css("display", 'none');
-            }
-
-            if (file_polis != '') {
-                var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis + "#navpanes=0";
-                $("#preview_polis").attr("src", path_polis);
-            } else {
-                $("#preview_polis").css("display", 'none');
-            }
-
-            if (file_bpkb != '') {
-                var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#navpanes=0";
-                $("#preview_bpkb").attr("src", path_bpkb);
-            } else {
-                $("#preview_bpkb").css("display", 'none');
-            }
-        })
+        $("#btn-close-modal").on("click", function () {
+            $("#modalUploadBerkas").addClass("hidden");
+            $(".layout-overlay-edit-form").addClass("hidden");
+            $('#preload-data').removeClass("hidden")
+            
+            refreshTable()
+            //const dismissId = $(this).data("dismiss-id");
+            //$("#modalUploadBerkas").addClass("hidden");
+        });
 
         $('#stnk-tab-menu').on('click', function() {
             if (file_stnk != '') {
@@ -269,9 +220,9 @@
         })
         $('#polis-tab-menu').on('click', function() {
             if (file_polis != '') {
-                $('#tanggal_upload_polis').html('Tanggal Upload : '+tanggal_polis);
-                $('#tanggal_confirm_polis').html('Tanggal Konfirmasi : '+confirm_at_polis);
-                $('#status_confirm_polis').html('Status : '+(confirm_polis ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
+                $('#modalUploadBerkas #tanggal_upload_polis').val(tanggal_polis);
+                $('#tanggal_confirm_polis').val(confirm_at_polis);
+                $('#status_confirm_polis').val((confirm_polis ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
                 if (user_role == 2 && !confirm_polis)
                     $('.form-submit-berkas').css('display', 'block')
                 else
@@ -292,9 +243,10 @@
         })
         $('#bpkb-tab-menu').on('click', function() {
             if (file_bpkb != '') {
-                $('#tanggal_upload_bpkb').html('Tanggal Upload : '+tanggal_bpkb);
-                $('#tanggal_confirm_bpkb').html('Tanggal Konfirmasi : '+confirm_at_bpkb);
-                $('#status_confirm_bpkb').html('Status : '+(confirm_bpkb ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
+                alert(tanggal_bpkb)
+                $('#modalUploadBerkas #tanggal_upload_bpkb').val(tanggal_bpkb);
+                $('#modalUploadBerkas #new_tanggal_confirm_bpkb').val('asd');
+                $('#modalUploadBerkas #status_confirm_bpkb').val((confirm_bpkb ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
                 if (user_role == 2 && !confirm_bpkb)
                     $('.form-submit-berkas').css('display', 'block')
                 else
@@ -314,91 +266,24 @@
             }
         })
 
-        function visibilityComponents() {
-            var stnkActive = $('#stnk-tab-menu').hasClass('active')
-            var polisActive = $('#polis-tab-menu').hasClass('active')
-            var bpkbActive = $('#bpkb-tab-menu').hasClass('active')
-
-            if (file_stnk != '') {
-                if (user_role == 3)
-                    $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2 && !confirm_stnk && stnkActive)
-                    $('.form-submit-berkas').css('display', 'block')
-                else
-                    $('.form-submit-berkas').css('display', 'none')
-                $('.input-stnk').css('display', 'none')
-                $('#no_stnk').prop('readonly', true)
-                $('#tanggal_upload_stnk').html('Tanggal Upload : '+tanggal_stnk);
-                $('#tanggal_confirm_stnk').html('Tanggal Konfirmasi : '+(confirm_at_stnk));
-                $('#status_confirm_stnk').html('Status : '+(confirm_stnk ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
-            }
-            else {
-                if (user_role == 2) {
-                    $('#stnk_belum_diunggah').html('Berkas belum diunggah.')
-                    $('.input-no-stnk').css('display', 'none')
-                    if (stnkActive)
-                        $('.form-submit-berkas').css('display', 'none')
-                }
-                else {
-                    if (stnkActive)
-                        $('.form-submit-berkas').css('display', 'block')
-                }
-            }
-
-            /*if (file_polis != '') {
-                if (user_role == 3)
-                    $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2 && !confirm_polis && polisActive)
-                    $('.form-submit-berkas').css('display', 'block')
-                $('.input-polis').css('display', 'none')
-                $('#no_polis').prop('readonly', true)
-                $('#tanggal_upload_polis').html('Tanggal Upload : '+tanggal_polis);
-                $('#tanggal_confirm_polis').html('Tanggal Konfirmasi : '+confirm_at_polis);
-                $('#status_confirm_polis').html('Status : '+(confirm_polis ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
-            }
-            else {
-                if (user_role == 2) {
-                    $('#polis_belum_diunggah').html('Berkas belum diunggah.')
-                    $('.input-no-polis').css('display', 'none')
-                    if (polisActive)
-                        $('.form-submit-berkas').css('display', 'none')
-                }
-                else {
-                    if (polisActive)
-                        $('.form-submit-berkas').css('display', 'block')
-                }
-            }
-            if (file_bpkb != '') {
-                if (user_role == 3)
-                    $('.form-submit-berkas').css('display', 'none')
-                if (user_role == 2 && !confirm_bpkb && bpkbActive)
-                    $('.form-submit-berkas').css('display', 'block')
-                $('.input-bpkb').css('display', 'none')
-                $('#no_bpkb').prop('readonly', true)
-                $('#tanggal_upload_bpkb').html('Tanggal Upload : '+tanggal_bpkb);
-                $('#tanggal_confirm_bpkb').html('Tanggal Konfirmasi : '+confirm_at_bpkb);
-                $('#status_confirm_bpkb').html('Status : '+(confirm_bpkb ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
-            }
-            else {
-                if (user_role == 2) {
-                    $('#bpkb_belum_diunggah').html('Berkas belum diunggah.')
-                    $('.input-no-bpkb').css('display', 'none')
-                    if (bpkbActive)
-                        $('.form-submit-berkas').css('display', 'none')
-                }
-                else {
-                    if (bpkbActive)
-                        $('.form-submit-berkas').css('display', 'block')
-                }
-            }*/
-        }
-
         $('#modal-berkas').on("submit", function(event) {
             event.preventDefault();
-            var is_confirm = "{{ Auth::user()->role_id }}" == 2;
+            var is_confirm = "{{ \Session::get(config('global.role_id_session')) }}" != 3;
 
             if (!is_confirm) {
                 // Upload
+                Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                    title: 'Memuat...',
+                    html: 'Silahkan tunggu...',
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
                 const req_id = document.getElementById('id_kkb')
                 const req_no_stnk = document.getElementById('no_stnk')
                 const req_file_stnk = document.getElementById('stnk_scan')
@@ -416,7 +301,10 @@
                     contentType: false,
                     processData: false,
                     success: function(data) {
+                        Swal.close() // close loading dialog
                         if (Array.isArray(data.error)) {
+                            console.log(data.error)
+                            /*ErrorMessage('gagal')
                             for (var i = 0; i < data.error.length; i++) {
                                 var message = data.error[i];
                                 if (message.toLowerCase().includes('no_stnk'))
@@ -431,21 +319,22 @@
                                     showError(req_date, message)
                                 if (message.toLowerCase().includes('bpkb_scan'))
                                     showError(req_image, message)
-                            }
+                            }*/
                         } else {
                             if (data.status == 'success') {
-                                SuccessMessage(data.message);
+                                UploadBerkasSuccessMessage(data.message);
                             } else {
-                                ErrorMessage(data.message)
+                                UploadBerkasErrorMessage(data.message)
                             }
-                            $('#uploadBerkasModal').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
+                            $('#modalUploadBerkas').addClass('hidden')
                         }
                     },
                     error: function(e) {
+                        Swal.close() // close loading dialog
+
                         console.log(e)
-                        ErrorMessage('Terjadi kesalahan')
+                        UploadBerkasErrorMessage('Terjadi kesalahan')
+                        $('#modalUploadBerkas').addClass('hidden')
                     }
                 })
             } else {
@@ -470,21 +359,139 @@
                             }
                         } else {
                             if (data.status == 'success') {
-                                SuccessMessage(data.message);
+                                UploadBerkasSuccessMessage(data.message);
                             } else {
-                                ErrorMessage(data.message)
+                                UploadBerkasErrorMessage(data.message)
                             }
-                            $('#uploadBerkasModal').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
+                            $('#modalUploadBerkas').addClass('hidden')
                         }
                     },
                     error: function(e) {
                         console.log(e)
-                        ErrorMessage('Terjadi kesalahan')
+                        UploadBerkasErrorMessage('Terjadi kesalahan')
+                        $('#modalUploadBerkas').addClass('hidden')
                     }
                 })
             }
         })
+
+        $('#btn-confirm-stnk').on('click', function(e) {
+            // Confirm
+            const req_id_stnk = $('#id_stnk').val()
+            confirmBerkas(req_id_stnk, 0, 0)
+        })
+
+        $('#btn-confirm-bpkb').on('click', function(e) {
+            // Confirm
+            const req_id_bpkb = $('#id_bpkb').val()
+            confirmBerkas(0, 0, req_id_bpkb)
+        })
+
+        $('#btn-confirm-polis').on('click', function(e) {
+            // Confirm
+            const req_id_polis = $('#id_polis').val()
+            confirmBerkas(0, req_id_polis, 0)
+        })
+
+        function confirmBerkas(id_stnk, id_polis, id_bpkb) {
+            Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            var type = '';
+            if (id_stnk != 0 && id_polis == 0 && id_bpkb == 0) {
+                type = 'stnk'
+            }
+            if (id_stnk == 0 && id_polis != 0 && id_bpkb == 0) {
+                type = 'polis'
+            }
+            if (id_stnk == 0 && id_polis == 0 && id_bpkb != 0) {
+                type = 'bpkb'
+            }
+
+            if (id_stnk == 0 && id_polis == 0 && id_bpkb == 0) {
+                Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                    title: 'Gagal',
+                    icon: 'error',
+                    text: 'Harap pilih berkas yang akan dikonfirmasi',
+                    closeOnClickOutside: false
+                });
+            }
+            var url = `{{ route('kredit.confirm_berkas') }}?id_stnk=${id_stnk}&id_polis=${id_polis}&id_bpkb=${id_bpkb}`
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    Swal.close() // close loading dialog
+
+                    console.log(data)
+                    if (Array.isArray(data.error)) {
+                        for (var i = 0; i < data.error.length; i++) {
+                            var message = data.error[i];
+                            console.log(message)
+                        }
+                    } else {
+                        if (data.status == 'success') {
+                            Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                                title: 'Berhasil',
+                                icon: 'success',
+                                timer: 3000,
+                                closeOnClickOutside: false
+                            });
+
+                            if (type == 'stnk')
+                                $('#btn-confirm-stnk').addClass('hidden')
+                            if (type == 'bpkb')
+                                $('#btn-confirm-bpkb').addClass('hidden')
+                            if (type == 'polis')
+                                $('#btn-confirm-polis').addClass('hidden')
+                        } else {
+                            Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                                title: 'Gagal',
+                                icon: 'error',
+                                text: data.message,
+                                closeOnClickOutside: false
+                            });
+                        }
+                        refreshTable()
+                    }
+                },
+                error: function(e) {
+                    Swal.close() // close loading dialog
+
+                    console.log(e)
+                    Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                        title: 'Terjadi kesalahan',
+                        icon: 'error',
+                        text: e,
+                        closeOnClickOutside: false
+                    });
+                    refreshTable()
+                }
+            })
+        }
     </script>
 @endpush

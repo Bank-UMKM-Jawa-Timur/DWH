@@ -1,344 +1,372 @@
 @extends('layout.master')
 
-@section('title', $title)
+@section('modal')
+<!-- Modal-tambah -->
+@include('pages.role.modal.create')
+<!-- Modal-edit -->
+@include('pages.role.modal.edit')
+<!-- Modal-delete -->
+@include('pages.role.modal.delete')
+@endsection
 
 @section('content')
-
-    <div class="panel-header">
-        <div class="page-inner py-5">
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-                <div>
-                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                </div>
+<div class="head-pages">
+    <p class="text-sm">Master</p>
+    <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
+        Role / Peran
+    </h2>
+</div>
+<div class="body-pages">
+    <div class="table-wrapper bg-white border rounded-md w-full p-2">
+        <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+            <div class="title-table lg:p-3 p-2 text-center">
+                <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                    {{$pageTitle}}
+                </h2>
+            </div>
+            <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                <button data-target-id="add-layout-form" type="button"
+                    class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                    <span class="mt-0">
+                        @include('components.svg.plus')
+                    </span>
+                    <span class="lg:block hidden"> Tambah </span>
+                </button>
             </div>
         </div>
-    </div>
-    <div class="page-inner mt--5">
-        <div class="row mt--2">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
-                            Tambah Peran
-                        </button>
+        <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+            <div class="sorty pl-1 w-full">
+                <form id="form" action="" method="GET">
+                    <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                    <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                    name="page_length" id="page_length">
+                        <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                        <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                        <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                        <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                    </select>
+                    <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                </form>
+            </div>
+            <div class="search-table lg:w-96 w-full">
+                <form action="{{ route('role.index') }}" method="GET">
+                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                        <span class="mt-2 ml-3">
+                            @include('components.svg.search')
+                        </span>
+                            <input type="hidden" name="search_by" value="field">
+                            <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
                     </div>
-                    <div class="card-body">
-                        <form id="form" action="" method="get">
-                            <input type="hidden" name="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}">
-                            <div class="d-flex justify-content-between" style="padding-left: 15px;padding-right: 15px;">
-                                <div>
-                                    <div class="form-inline">
-                                        <label>Show</label>
-                                        &nbsp;
-                                        <select class="form-control form-control-sm" name="page_length" id="page_length" >
-                                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
-                                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
-                                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
-                                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
-                                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
-                                        </select>
-                                        &nbsp;
-                                        <label>entries</label>
-                                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="tables mt-2">
+            <table class="table-auto w-full">
+                <thead>
+                    <tr class="bg-danger text-light">
+                        <th scope="col">No</th>
+                        <th scope="col">Nama Peran</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    @forelse ($data as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->name }}</td>
+                            <td>
+                                <div class="dropdown max-w-[450px] mx-auto">
+                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                        Selengkapnya
+                                    </button>
+                                    <ul class="dropdown-menu right-60">
+                                        <li>
+                                            <a class="item-dropdown"
+                                                href="{{ route('role.permission.index', $item->id) }}">
+                                                Hak Akses
+                                            </a>
+                                        </li>
+                                        @if ($item->id > 4)
+                                            <li>
+                                                <a class="item-dropdown btn-edit" data-id="{{ $item->id }}"
+                                                    data-name="{{ $item->name }}">
+                                                    Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="item-dropdown btn-delete" data-id="{{ $item->id }}"
+                                                    data-name="{{ $item->name }}">
+                                                    Hapus
+                                                </a>
+                                            </li>
+                                        @endif
+                                    </ul>
                                 </div>
-                                <div>
-                                    <div class="form-inline">
-                                        <label>Search : </label>
-                                        &nbsp;
-                                        <form action="{{ route('role.index') }}" method="GET">
-                                            <input class="form-control form-control-sm" name="query" value="{{ old('query', Request()->query('query')) }}">
-                                            <input type="hidden" name="search_by" value="field">
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="table-responsive">
-                            <table class="table mt-2" id="basic-datatables">
-                                <thead>
-                                    <tr class="bg-danger text-light">
-                                        <th scope="col">No</th>
-                                        <th scope="col">Nama Peran</th>
-                                        <th scope="col">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody">
-                                    @forelse ($data as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-expanded="false">
-                                                        Selengkapnya
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item"
-                                                            href="{{ route('role.permission.index', $item->id) }}">Hak
-                                                            Akses</a>
-                                                        @if ($item->id > 4)
-                                                        <a class="dropdown-item editModal" data-toggle="modal"
-                                                            data-target="#editModal" data-id="{{ $item->id }}"
-                                                            data-name="{{ $item->name }}" href="#">Edit</a>
-                                                        <a class="dropdown-item deleteModal" data-toggle="modal"
-                                                            data-target="#deleteModal" data-name="{{ $item->name }}"
-                                                            data-id="{{ $item->id }}" href="#">Hapus</a>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="3" class="text-center">
-                                                <span class="text-danger">Maaf data belum tersedia.</span>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="paginated">
-                            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                            {{ $data->links('pagination::bootstrap-5') }}
-                            @endif
-                        </div>
-                    </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-center">
+                                <span class="text-danger">Maaf data belum tersedia.</span>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+            <div class="w-full">
+                <div class="pagination">
+                    @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                    {{ $data->links('pagination::tailwind') }}
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+</div>
+@push('extraScript')
+    <script>
+        $('#page_length').on('change', function() {
+        $('#form').submit()
+    })
+        // add form
+        var form = $("#add-layout-form");
 
-    <!-- Modal-tambah -->
-    <div class="modal hide" id="addModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Tambah {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-add-form">
-                        <div class="form-group name">
-                            <label for="add-name">Nama Peran</label>
-                            <input type="text" class="form-control add-name" id="add-name" name="name">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="add-button">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+        // $("#btn-add").click(function () {
+        //     // form.toggleClass("layout-form-collapse");
+        //     $("#add-layout-form").removeClass('hidden')
+        //     //toggleForm()
+        // });
 
-    <!-- Modal-edit -->
-    <div class="modal hide" id="editModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit {{ $pageTitle }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modal-edit-form" class="edit-form">
-                        <input type="hidden" name="edit_id" id="edit-id">
-                        <div class="form-group name">
-                            <label for="edit-name">Nama Peran</label>
-                            <input type="text" class="form-control edit-name" id="edit-name" name="name"
-                                value="{{ old('name') }}">
-                            <small class="form-text text-danger error"></small>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary" id="edit-button">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+        // $("#form-close").click(function () {
+        //     form.toggleClass("layout-form-collapse");
+        //     //closeForm();
+        //     toggleForm()
+        // });
 
-    {{-- Modal Delete --}}
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="form-group name" id="konfirmasi">
-                        Apakah Anda Ingin Menghapus Role?
-                    </div>
-                    <div class="form-inline">
-                        <button data-dismiss="modal" class="btn btn-danger mr-2">Batal</button>
-                        <form id="delete-form" method="post">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-primary">Hapus</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        function toggleForm() {
+            if (form.hasClass("layout-form-collapse")) {
+                form.removeClass("hidden");
+                $(".layout-overlay-form").removeClass("hidden");
+            } else {
+                form.addClass("hidden");
+                $(".layout-overlay-form").addClass("hidden");
+            }
+            }
+        function closeForm() {
+            form.addClass("hidden");
+            $(".layout-overlay-form").addClass("hidden");
+        }
+        
+        // end add form
 
-    @push('extraScript')
-        <script src="{{ asset('template') }}/assets/js/plugin/datatables/datatables.min.js"></script>
-        <script>
-            $('#page_length').on('change', function() {
-                $('#form').submit()
-            })
+        // edit form
+        $(document).on("click", ".btn-edit", function() {
 
-            // Form
-            $('#add-button').click(function(e) {
-                e.preventDefault()
+            $("#edit-layout-form").toggleClass("hidden")
+            var data_id = '';
+            var data_name = '';
+            if (typeof $(this).data('id') !== 'undefined') {
+                data_id = $(this).data('id');
+            }
+            if (typeof $(this).data('name') !== 'undefined') {
+                data_name = $(this).data('name');
+            }
+            $('#edit-id').val(data_id);
+            $('.edit-name').val(data_name);
 
-                store();
-            })
+            var url = "{{ url('/master/role') }}/" + data_id;
+            $('#edit-form').attr("action", url);
+        })
+        
+        // toggle form edit
+        $(".toggle-form-edit").on("click", function () {
+            const formId = $(this).data("form-id");
+            $("#" + formId).removeClass("hidden");
+            $(".layout-overlay-edit-form").removeClass("hidden");
+        });
 
-            $('#edit-button').click(function(e) {
-                e.preventDefault()
+        $(".close-form-edit").on("click", function () {
+            const formId = $(this).data("form-id");
+            $("#" + formId).addClass("hidden");
+            $(".layout-overlay-edit-form").addClass("hidden");
+        });
+        // end edit form
 
-                update();
-            })
+        $('#page_length').on('change', function() {
+            $('#form').submit()
+        })
 
-            $('#add-name').keypress(function(e) {
-                var key = e.which;
-                if (key == 13) // the enter key code
-                {
-                    store()
-                    return false;
-                }
-            })
+        // Form
+        $('#add-button').click(function(e) {
+            e.preventDefault()
 
-            $('#edit-name').keypress(function(e) {
-                var key = e.which;
-                if (key == 13) // the enter key code
-                {
-                    update()
-                    return false;
-                }
-            })
+            store();
+        })
 
-            function store() {
-                const req_name = document.getElementById('add-name')
+        $('#edit-button').click(function(e) {
+            e.preventDefault()
 
-                if (req_name == '') {
-                    showError(req_name, 'Nama Peran Wajib Diisi');
-                    return false;
-                }
+            update();
+        })
 
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('role.store') }}",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        name: req_name.value
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        if (Array.isArray(data.error)) {
-                            showError(req_name, data.error[0])
+        $('#add-name').keypress(function(e) {
+            var key = e.which;
+            if (key == 13) // the enter key code
+            {
+                store()
+                return false;
+            }
+        })
+
+        $('#edit-name').keypress(function(e) {
+            var key = e.which;
+            if (key == 13) // the enter key code
+            {
+                update()
+                return false;
+            }
+        })
+
+        function store() {
+            const req_name = document.getElementById('add-name')
+
+            if (req_name == '') {
+                showError(req_name, 'Nama Peran Wajib Diisi');
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('role.store') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: req_name.value
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        showError(req_name, data.error[0])
+                    } else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
                         } else {
-                            if (data.status == 'success') {
-                                SuccessMessage(data.message);
-                            } else {
-                                alert(data.message)
-                            }
-                            $('#addModal').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
+                            ErrorMessage(data.message)
                         }
+                        $('#addModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
                     }
-                });
+                }
+            });
+        }
+
+        function update() {
+            const req_id = document.getElementById('edit-id')
+            const req_name = document.getElementById('edit-name')
+
+            if (req_name == '') {
+                showError(req_name, 'Nama Peran Wajib Diisi');
+                return false;
             }
 
-            function update() {
-                const req_id = document.getElementById('edit-id')
-                const req_name = document.getElementById('edit-name')
-
-                if (req_name == '') {
-                    showError(req_name, 'Nama Peran Wajib Diisi');
-                    return false;
-                }
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url('/master/role') }}/" + req_id.value,
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: 'PUT',
-                        name: req_name.value
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        if (Array.isArray(data.error)) {
-                            showError(req_name, data.error[0])
+            $.ajax({
+                type: "POST",
+                url: "{{ url('/master/role') }}/" + req_id.value,
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    _method: 'PUT',
+                    name: req_name.value
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (Array.isArray(data.error)) {
+                        showError(req_name, data.error[0])
+                    } else {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
                         } else {
-                            if (data.status == 'success') {
-                                SuccessMessage(data.message);
-                            } else {
-                                alert(data.message)
-                            }
-                            $('#editModal').modal().hide()
-                            $('body').removeClass('modal-open');
-                            $('.modal-backdrop').remove();
+                            ErrorMessage(data.message)
                         }
+                        $('#editModal').modal().hide()
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
                     }
-                });
-            }
-
-            function showError(input, message) {
-                const formGroup = input.parentElement;
-                const errorSpan = formGroup.querySelector('.error');
-
-                formGroup.classList.add('has-error');
-                errorSpan.innerText = message;
-                input.focus();
-            }
-
-            function SuccessMessage(message) {
-                swal("Berhasil!", message, {
-                    icon: "success",
-                    timer: 3000,
-                    closeOnClickOutside: false
-                }).then(() => {
-                    location.reload();
-                });
-                setTimeout(function() {
-                    location.reload();
-                }, 3000);
-            }
-
-            // Modal
-            $(document).on("click", ".editModal", function() {
-                var data_id = '';
-                var data_name = '';
-                if (typeof $(this).data('id') !== 'undefined') {
-                    data_id = $(this).data('id');
                 }
-                if (typeof $(this).data('name') !== 'undefined') {
-                    data_name = $(this).data('name');
-                }
-                $('#edit-id').val(data_id);
-                $('.edit-name').val(data_name);
+            });
+        }
 
-                var url = "{{ url('/master/role') }}/" + data_id;
-                $('.edit-form').attr("action", url);
-                // })
-            });
-            $(document).on("click", ".deleteModal", function() {
-                var data_id = $(this).data('id');
-                var data_name = $(this).data('name');
-                var url = "{{ url('/master/role') }}/" + data_id;
-                $('#konfirmasi').text("Apakah Kamu Ingin Menghapus Role " + data_name + "?");
-                $('#delete-form').attr("action", url);
-                ("action", url);
-            });
-        </script>
-    @endPush
+        function showError(input, message) {
+            const formGroup = input.parentElement;
+            const errorSpan = formGroup.querySelector('.error');
+
+            formGroup.classList.add('has-error');
+            errorSpan.innerText = message;
+            input.focus();
+        }
+
+        // Modal
+        $(document).on("click", ".editModal", function() {
+            var data_id = '';
+            var data_name = '';
+            if (typeof $(this).data('id') !== 'undefined') {
+                data_id = $(this).data('id');
+            }
+            if (typeof $(this).data('name') !== 'undefined') {
+                data_name = $(this).data('name');
+            }
+            $('#edit-id').val(data_id);
+            $('.edit-name').val(data_name);
+
+            var url = "{{ url('/master/role') }}/" + data_id;
+            $('.edit-form').attr("action", url);
+            // })
+        });
+        $(document).on("click", ".btn-delete", function() {
+            var data_id = $(this).data('id');
+            var data_name = $(this).data('name');
+            Swal.fire({
+                title: 'Konfirmasi',
+                html: 'Anda yakin akan menghapus data ini?',
+                icon: 'question',
+                iconColor: '#DC3545',
+                showCancelButton: true,
+                confirmButtonText: 'Lanjutkan',
+                cancelButtonText: `Batal`,
+                confirmButtonColor: '#DC3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('/master/role') }}/"+data_id,
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            _method: 'DELETE',
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            if (Array.isArray(data.error)) {
+                                showError(req_name, data.error[0])
+                            } else {
+                                if (data.status == 'success') {
+                                    SuccessMessage(data.message);
+                                    //Swal.fire('Saved!', '', 'success')
+                                } else {
+                                    ErrorMessage(data.message)
+                                }
+                            }
+                        }
+                    });
+                }
+            })
+            /*var url = "{{ url('/master/role') }}/" + data_id;
+            $('#konfirmasi').text("Apakah Kamu Ingin Menghapus Role " + data_name + "?");
+            $('#delete-form').attr("action", url);
+            ("action", url);*/
+        });
+    </script>
+@endPush
 @endsection

@@ -1,71 +1,184 @@
-<div class="modal fade" id="confirmModalPenyerahanUnit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <h5 class="modal-title penyerahan-unit-title">Konfirmasi Penyerahan Unit</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" class="text-light">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="title-po">Tanggal : </h5>
-                        <input type="text" class="form-control text-field" id="tanggal_penyerahan_unit" readonly>
-                        <h5 class="title-po">Tanggal Konfirmasi : </h5>
-                        <input type="text" class="form-control text-field" id="tanggal_confirm_penyerahan_unit"
-                            readonly>
-                        <h5 class="title-po">Status : </h5>
-                        <input type="text" class="form-control text-field" id="status_confirm_penyerahan_unit"
-                            readonly>
+
+<div class="modal-overlay hidden font-lexend overflow-auto" id="modalConfirmPenyerahanUnit">
+    <div class="modal modal-tab">
+        <div class="modal-head text-gray-500 text-lg">
+            <div class="title-modal">Konfirmasi Penyerahan Unit</div>
+            <button data-dismiss-id="modalConfirmPenyerahanUnit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" hu viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" d="M17 7L7 17M7 7l10 10" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="gap-5 space-y-5 p-5">
+                <div class="flex gap-5 w-full mt-2">
+                    <div class="input-box w-full space-y-3">
+                        <label for="" class="uppercase appearance-none">Tanggal
+                        </label>
+                        <input type="text" disabled class="p-2 w-full border" id="tanggal_penyerahan_unit" />
                     </div>
-                    <div class="col-sm-6">
-                        <h5 class="title-po">Foto Penyerahan Unit : </h5>
-                        <div class="form-inline mt-1 show-pdf">
-                            <img id="preview_penyerahan_unit" width="100%" height="500px">
-                        </div>
+                    <div class="input-box w-full space-y-3">
+                        <label for="" class="uppercase appearance-none">Tanggal Konfirmasi</label>
+                        <input type="text" disabled class="p-2 w-full border" id="tanggal_confirm_penyerahan_unit" />
                     </div>
+                </div>
+                <div class="input-box w-full space-y-3">
+                    <label for="" class="uppercase appearance-none">Status</label>
+                    <input type="text" disabled class="p-2 w-full border" id="status_confirm_penyerahan_unit" />
                 </div>
 
-            </div>
-            <div class="modal-footer mt-2">
-                <div class="form-inline form-confim">
-                    <button data-dismiss="modal" class="btn btn-danger mr-2">Tidak</button>
-                    <form id="confirm-form-penyerahan-unit">
-                        <input type="hidden" name="confirm_id" id="confirm_id">
-                        <input type="hidden" name="confirm_id_category" id="confirm_id_category">
-                        <button type="submit" class="btn btn-primary">Ya</button>
-                    </form>
+                <div class="space-y-3">
+                    <label for="" class="uppercase appearance-none">Foto Penyerahan Unit</label>
+                    <div class="h-[528px] w-full bg-gray-100">
+                        <img id="preview_penyerahan_unit" class="w-full h-[528px]">
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="modal-footer form-confirm">
+            <form id="confirm-form-penyerahan-unit">
+                <input type="hidden" name="confirm_id" id="confirm_penyerahan_id">
+                <input type="hidden" name="confirm_id_category" id="confirm_penyerahan_id_category">
+                <button type="button" data-dismiss-id="modalConfirmPenyerahanUnit" class="border px-7 py-3 text-black rounded">
+                    Tidak
+                </button>
+                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
+                    Ya
+                </button>
+            </form>
         </div>
     </div>
 </div>
 
 @push('extraScript')
     <script>
-        $('.confirm-penyerahan-unit').on('click', function(e) {
+        function ConfirmPenyerahanUnitSuccessMessage(message) {
+            Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
+                title: 'Berhasil',
+                icon: 'success',
+            }).then((result) => {
+                console.log('then')
+                $("#modalConfirmPenyerahanUnit").addClass("hidden");
+                $('#preload-data').removeClass("hidden")
+                
+                refreshTable()
+            })
+        }
+        
+        function ConfirmPenyerahanUnitErrorMessage(message) {
+            Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                title: 'Gagal',
+                icon: 'error',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#preload-data').removeClass("hidden")
+                    
+                    refreshTable()
+                }
+            })
+        }
+
+        /*$(".toggle-modal").on("click", function () {
+            const targetId = $(this).data("target-id");
+            $("#" + targetId).removeClass("hidden");
+            $(".layout-overlay-edit-form").removeClass("hidden");
+
+            const id_kkb = $(this).data('id_kkb');
             const data_id = $(this).data('id-doc')
             const data_category_doc_id = $(this).data('id-category')
+            const tanggal = $(this).data('tanggal');
             const is_confirm = $(this).data('confirm');
+            const confirm_at = $(this).data('confirm_at');
+            const id_doc = $(this).data('id-doc');
             const status = $(this).data('confirm') ? 'Sudah dikonfirmasi oleh cabang.' :
                 'Belum dikonfirmasi cabang.';
-            const tanggal = $(this).data('tanggal');
-            const confirm_at = $(this).data('confirm_at');
-            const file_bukti = $(this).data('file') ? $(this).data('file') : ''
-            var path_file = "{{ asset('storage') }}" + "/dokumentasi-peyerahan/" + file_bukti;
+            const file = $(this).data('file');
+            var path_file = "{{ asset('storage') }}" + "/dokumentasi-peyerahan/" + file;
 
-            $("#preview_penyerahan_unit").attr("src", path_file);
-            $('#confirm_id').val(data_id)
-            $('#confirm_id_category').val(data_category_doc_id)
-            $('#tanggal_penyerahan_unit').val(tanggal)
-            $('#tanggal_confirm_penyerahan_unit').val(confirm_at)
-            $('#status_confirm_penyerahan_unit').val(status)
+            $("#modalConfirmPenyerahanUnit #preview_penyerahan_unit").attr("src", path_file);
+            $('#modalConfirmPenyerahanUnit #confirm_id').val(data_id)
+            $('#modalConfirmPenyerahanUnit #confirm_id_category').val(data_category_doc_id)
+            $('#modalConfirmPenyerahanUnit #status_confirm_penyerahan_unit').val(status)
+            $('#modalConfirmPenyerahanUnit #tanggal_penyerahan_unit').val(tanggal)
+            $('#modalConfirmPenyerahanUnit #tanggal_confirm_penyerahan_unit').val(confirm_at)
             if (is_confirm) {
-                $('.form-confim').css('display', 'none');
+                $('#modalConfirmPenyerahanUnit .title-modal').html('Penyerahan Unit')
+                $('.form-confirm').css('display', 'none');
                 $('.penyerahan-unit-title').html('Penyerahan Unit');
             }
+            else {
+                var role_id = "{{\Session::get(config('global.role_id_session'))}}"
+                var role_name = "{{\Session::get(config('global.user_role_session'))}}"
+                if (role_id == 2 && role_name == 'Staf Analis Kredit') {
+                    $('#modalConfirmPenyerahanUnit .title-modal').html('Konfirmasi Penyerahan Unit')
+                    $('.form-confirm').css('display', 'block');
+                    $('.penyerahan-unit-title').html('Konfirmasi Penyerahan Unit');
+                }
+                else {
+                    $('#modalConfirmPenyerahanUnit .title-modal').html('Penyerahan Unit')
+                    $('.form-confirm').css('display', 'none');
+                    $('.penyerahan-unit-title').html('Penyerahan Unit');
+                }
+            }
+        });*/
+
+        $("[data-dismiss-id]").on("click", function () {
+            const dismissId = $(this).data("dismiss-id");
+            $("#" + dismissId).addClass("hidden");
+            $(".layout-overlay-edit-form").addClass("hidden");
+        });
+
+        $('#confirm-form-penyerahan-unit').on('submit', function(e) {
+            Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            e.preventDefault()
+            const req_id = $('#confirm_penyerahan_id').val()
+            const req_category_doc_id = $('#confirm_penyerahan_id_category').val()
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('kredit.confirm_penyerahan_unit') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: req_id,
+                    category_id: req_category_doc_id
+                },
+                success: function(data) {
+                    Swal.close()
+
+                    if (Array.isArray(data.error)) {
+                        console.log(data.error)
+                    } else {
+                        if (data.status == 'success') {
+                            ConfirmPenyerahanUnitSuccessMessage(data.message);
+                        } else {
+                            ConfirmPenyerahanUnitErrorMessage(data.message)
+                        }
+                    }
+                },
+                error: function(e) {
+                    console.log('confirm error')
+                    console.log(e)
+                    Swal.close()
+                }
+            })
         })
     </script>
 @endpush

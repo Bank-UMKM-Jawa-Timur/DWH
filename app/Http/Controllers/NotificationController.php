@@ -11,6 +11,7 @@ use finfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class NotificationController extends Controller
 {
@@ -33,16 +34,14 @@ class NotificationController extends Controller
                                     'nt.role_id',
                                 )
                                 ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
-                                ->where('notifications.user_id', Auth::user()->id)
+                                ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                 ->orderBy('notifications.read')
                                 ->orderBy('notifications.created_at', 'DESC')
                                 ->get();
             $param['total_belum_dibaca'] = Notification::select('notifications.id')
-                                            ->join('users AS u', 'u.id', 'notifications.user_id')
-                                            ->where('u.id', Auth::user()->id)
+                                            ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                             ->where('notifications.read', false)
                                             ->count();
-
             return view('pages.notifikasi.index', $param);
         } catch (\Exception $e) {
             return back()->withError('Terjadi kesalahan');
@@ -71,7 +70,7 @@ class NotificationController extends Controller
                                     'nt.role_id',
                                 )
                                 ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
-                                ->where('notifications.user_id', Auth::user()->id)
+                                ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                 ->where('notifications.read', false)
                                 ->orderBy('notifications.read')
                                 ->orderBy('notifications.created_at', 'DESC')
@@ -125,8 +124,7 @@ class NotificationController extends Controller
             $data->read = 1;
             $data->save();
             $total_belum_dibaca = Notification::select('notifications.id')
-                                            ->join('users AS u', 'u.id', 'notifications.user_id')
-                                            ->where('u.id', Auth::user()->id)
+                                            ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                             ->where('notifications.read', false)
                                             ->count();
 
@@ -171,21 +169,49 @@ class NotificationController extends Controller
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
-                    $user = User::get();
+                    // retrieve from api
+                    $host = config('global.los_api_host');
+                    $apiURL = $host . '/kkb/get-data-users-cabang/' . $kredit->kode_cabang;
+
+                    $headers = [
+                        'token' => config('global.los_api_token')
+                    ];
+
+                    $responseBody = null;
+
+                    try {
+                        $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                        $statusCode = $response->status();
+                        $responseBody = json_decode($response->getBody(), true);
+                        $user = $responseBody;
+
+                        if ($user) {
+                            foreach ($user as $key => $item) {
+                                $createNotification = new Notification();
+                                $createNotification->kredit_id = $kreditId;
+                                $createNotification->template_id = $value->id;
+                                $createNotification->user_id = $item['id'];
+                                $createNotification->save();
+                            }
+                        }
+                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                        // return $e->getMessage();
+                    }
                 }
                 else {
                     $arrRole = explode(',', $value->role_id);
                     $user = User::where('kode_cabang', $kredit->kode_cabang)
                                 ->whereIn('role_id', $arrRole)
-                                ->orWhereIn('role_id', $arrRole)
                                 ->get();
-                }
-                foreach ($user as $key => $item) {
-                    $createNotification = new Notification();
-                    $createNotification->kredit_id = $kreditId;
-                    $createNotification->template_id = $value->id;
-                    $createNotification->user_id = $item->id;
-                    $createNotification->save();
+
+                    foreach ($user as $key => $item) {
+                        $createNotification = new Notification();
+                        $createNotification->kredit_id = $kreditId;
+                        $createNotification->template_id = $value->id;
+                        $createNotification->user_id = $item->id;
+                        $createNotification->save();
+                    }
                 }
             }
             DB::commit();
@@ -214,7 +240,36 @@ class NotificationController extends Controller
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
-                    $user = User::get();
+                    // retrieve from api
+                    $host = config('global.los_api_host');
+                    $apiURL = $host . '/kkb/get-data-users-cabang/' . $kredit->kode_cabang;
+
+                    $headers = [
+                        'token' => config('global.los_api_token')
+                    ];
+
+                    $responseBody = null;
+
+                    try {
+                        $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                        $statusCode = $response->status();
+                        $responseBody = json_decode($response->getBody(), true);
+                        $user = $responseBody;
+
+                        if ($user) {
+                            foreach ($user as $key => $item) {
+                                $createNotification = new Notification();
+                                $createNotification->kredit_id = $kreditId;
+                                $createNotification->template_id = $value->id;
+                                $createNotification->user_id = $item['id'];
+                                $createNotification->extra = $extra;
+                                $createNotification->save();
+                            }
+                        }
+                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                        // return $e->getMessage();
+                    }
                 }
                 else {
                     $arrRole = explode(',', $value->role_id);
@@ -222,14 +277,15 @@ class NotificationController extends Controller
                                 ->whereIn('role_id', $arrRole)
                                 ->orWhereIn('role_id', $arrRole)
                                 ->get();
-                }
-                foreach ($user as $key => $item) {
-                    $createNotification = new Notification();
-                    $createNotification->kredit_id = $kreditId;
-                    $createNotification->template_id = $value->id;
-                    $createNotification->user_id = $item->id;
-                    $createNotification->extra = $extra;
-                    $createNotification->save();
+
+                    foreach ($user as $key => $item) {
+                        $createNotification = new Notification();
+                        $createNotification->kredit_id = $kreditId;
+                        $createNotification->template_id = $value->id;
+                        $createNotification->user_id = $item->id;
+                        $createNotification->extra = $extra;
+                        $createNotification->save();
+                    }
                 }
             }
             DB::commit();

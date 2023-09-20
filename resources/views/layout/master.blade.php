@@ -1,154 +1,151 @@
-@include('layout.head')
-@include('sweetalert::alert')
-<div class="wrapper">
-    @include('components.main-header')
-    <!-- Sidebar -->
-    @include('components.sidebar')
-    <div class="main-panel">
-        <div class="container">
-            @yield('content')
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="copyright ml-auto">
-                        @2023 Dashboard KKB | All rights reserved
-                    </div>
-                </div>
-            </footer>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Dashboard KKB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="{{ asset('template/assets/css/new-font.css') }}" rel="stylesheet">
+    <link href="{{ asset('template/assets/css/select2.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('template/assets/css/jquery-ui.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ asset('css/app.css') }}"
+    />
+    <link rel="icon" type="image/x-icon" href="{{asset('template/assets/img/icon_title.ico')}}">
+    @stack('extraStyle')
+  </head>
+  <body>
+    @php
+      $user = \Session::get(config('global.auth_session'));
+      $token = \Session::get(config('global.user_token_session'));
+      $name = \Session::get(config('global.role_id_session')) == 3 ? Auth::user()->email : $user['data']['nama'];
+      $sub_name = \Session::get(config('global.role_id_session')) == 3 ? '' : $user['data']['nip'];
+      $display_role = \Session::get(config('global.role_id_session')) == 3 ? 'Vendor' : $user['role'];
+    @endphp
+    <div class="layout-wrapper font-lexend">
+      <!-- wrapping sidebar and pages -->
+      <div class="layout-container">
+        <!-- sidebar -->
+        @include('components.sidebar')
+        <!-- modal -->
+        @yield('modal')
+
+        <!-- layout overlay -->
+        <div class="layout-overlay lg:hidden hidden"></div>
+        <div class="layout-overlay-form hidden"></div>
+        
+        <div class="modal-overlay hidden" id="preload-data">
+          <div class="flex justify-center mt-[35vh]">
+          <div class="text-center space-y-5">
+            <img src="{{asset('template/assets/img/news/loading.svg')}}" class="max-w-[120px] mx-auto" alt="">
+            <p class="text-white">Updating data...</p>
+          </div>
+          </div>
         </div>
 
-        {{-- notif --}}
-        <div class="quick-sidebar">
-            <a href="#" class="close-quick-sidebar">
-                <i class="flaticon-cross"></i>
-            </a>
-            <div class="quick-sidebar-wrapper">
-                <ul class="nav nav-tabs nav-line nav-color-secondary" role="tablist">
-                    <li class="nav-item"> <a class="nav-link active show" data-toggle="tab" href="#messages"
-                            role="tab" aria-selected="true">Messages</a> </li>
-                </ul>
-                <div class="tab-content mt-3">
-                    <div class="tab-chat tab-pane fade show active" id="messages" role="tabpanel">
-                        <div class="messages-contact">
-                            <div class="quick-wrapper">
-                                <div class="quick-scroll scrollbar-outer">
-                                    <div class="quick-content contact-content">
-                                        <span class="category-title mt-0">Contacts</span>
-                                        <div class="avatar-group">
-                                            <div class="avatar">
-                                                <img src="{{ asset('template') }}/assets/img/jm_denis.jpg"
-                                                    alt="..."
-                                                    class="avatar-img rounded-circle border border-white">
-                                            </div>
-                                            <div class="avatar">
-                                                <img src="{{ asset('template') }}/assets/img/chadengle.jpg"
-                                                    alt="..."
-                                                    class="avatar-img rounded-circle border border-white">
-                                            </div>
-                                            <div class="avatar">
-                                                <img src="{{ asset('template') }}/assets/img/mlane.jpg" alt="..."
-                                                    class="avatar-img rounded-circle border border-white">
-                                            </div>
-                                            <div class="avatar">
-                                                <img src="{{ asset('template') }}/assets/img/talha.jpg" alt="..."
-                                                    class="avatar-img rounded-circle border border-white">
-                                            </div>
-                                            <div class="avatar">
-                                                <span class="avatar-title rounded-circle border border-white">+</span>
-                                            </div>
-                                        </div>
-                                        <span class="category-title">Recent</span>
-                                        <div class="contact-list contact-list-recent">
-                                            <div class="user">
-                                                <a href="#">
-                                                    <div class="avatar avatar-online">
-                                                        <img src="{{ asset('template') }}/assets/img/jm_denis.jpg"
-                                                            alt="..."
-                                                            class="avatar-img rounded-circle border border-white">
-                                                    </div>
-                                                    <div class="user-data">
-                                                        <span class="name">Jimmy Denis</span>
-                                                        <span class="message">How are you ?</span>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="user">
-                                                <a href="#">
-                                                    <div class="avatar avatar-offline">
-                                                        <img src="{{ asset('template') }}/assets/img/chadengle.jpg"
-                                                            alt="..."
-                                                            class="avatar-img rounded-circle border border-white">
-                                                    </div>
-                                                    <div class="user-data">
-                                                        <span class="name">Chad</span>
-                                                        <span class="message">Ok, Thanks !</span>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="user">
-                                                <a href="#">
-                                                    <div class="avatar avatar-offline">
-                                                        <img src="{{ asset('template') }}/assets/img/mlane.jpg"
-                                                            alt="..."
-                                                            class="avatar-img rounded-circle border border-white">
-                                                    </div>
-                                                    <div class="user-data">
-                                                        <span class="name">John Doe</span>
-                                                        <span class="message">Ready for the meeting today
-                                                            with...</span>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <span class="category-title">Other Contacts</span>
-                                        <div class="contact-list">
-                                            <div class="user">
-                                                <a href="#">
-                                                    <div class="avatar avatar-online">
-                                                        <img src="{{ asset('template') }}/assets/img/jm_denis.jpg"
-                                                            alt="..."
-                                                            class="avatar-img rounded-circle border border-white">
-                                                    </div>
-                                                    <div class="user-data2">
-                                                        <span class="name">Jimmy Denis</span>
-                                                        <span class="status">Online</span>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="user">
-                                                <a href="#">
-                                                    <div class="avatar avatar-offline">
-                                                        <img src="{{ asset('template') }}/assets/img/chadengle.jpg"
-                                                            alt="..."
-                                                            class="avatar-img rounded-circle border border-white">
-                                                    </div>
-                                                    <div class="user-data2">
-                                                        <span class="name">Chad</span>
-                                                        <span class="status">Active 2h ago</span>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="user">
-                                                <a href="#">
-                                                    <div class="avatar avatar-away">
-                                                        <img src="{{ asset('template') }}/assets/img/talha.jpg"
-                                                            alt="..."
-                                                            class="avatar-img rounded-circle border border-white">
-                                                    </div>
-                                                    <div class="user-data2">
-                                                        <span class="name">Talha</span>
-                                                        <span class="status">Away</span>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- pages -->
+        <div class="layout-pages box-border">
+            <div class="p-5 space-y-10">
+                <!-- top navigation -->
+                @include('components.top-navigation')
+                <!-- Body -->
+                @yield('content')
             </div>
         </div>
+      </div>
     </div>
-    @include('notifications.modal-notif')
-    @include('layout.footer')
+  </body>
+  <script src="{{ asset('template/assets/js/jquery.min.js') }}"></script>
+  <script src="{{ asset('template/assets/js/sweetalert2.js') }}"></script>
+  <script src="{{ asset('template/assets/js/select2.min.js') }}"></script>
+  <script src="{{ asset('template/assets/js/apexcharts.js') }}"></script>
+  <script src="{{ asset('template/assets/js/jquery-ui.js') }}"></script>
+  <script src="{{ asset('js/app.js') }}"></script>
+
+<script>
+  function SuccessMessage(message) {
+    Swal.fire({
+      title: 'Berhasil',
+      icon: 'success',
+      timer: 3000,
+      closeOnClickOutside: false
+    }).then(() => {
+        location.reload();
+    });
+    setTimeout(function() {
+        location.reload();
+    }, 3000);
+  }
+
+  function ErrorMessage(message) {
+    Swal.fire({
+      title: 'Gagal',
+      icon: 'error',
+      timer: 3000,
+      closeOnClickOutside: false
+    }).then(() => {
+        location.reload();
+    });
+    setTimeout(function() {
+        location.reload();
+    }, 3000);
+  }
+
+  function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
+      try {
+      decimalCount = Math.abs(decimalCount);
+      decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+      const negativeSign = amount < 0 ? "-" : "";
+
+      let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+      let j = (i.length > 3) ? i.length % 3 : 0;
+
+      return negativeSign +
+          (j ? i.substr(0, j) + thousands : '') +
+          i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) +
+          (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+      } catch (e) {
+          console.log(e)
+      }
+  }
+
+  $("#btn-logout").on('click', function() {
+    Swal.fire({
+        title: 'Konfirmasi',
+        html: 'Anda yakin akan mengakhiri sesi ini?',
+        icon: 'question',
+        iconColor: '#DC3545',
+        showCancelButton: true,
+        confirmButtonText: 'Ya',
+        cancelButtonText: `Batal`,
+        confirmButtonColor: '#DC3545'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "POST",
+                url: "{{ route('logout') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data.status == 'success') {
+                      const url = "{{route('login')}}"
+                      window.location.href = url;
+                    } else {
+                      ErrorMessage(data.message)
+                  }
+                }
+            });
+        }
+    })
+  })
+</script>
+  @stack('extraScript')
+</html>

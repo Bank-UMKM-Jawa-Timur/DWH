@@ -6,18 +6,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>  
 @endpush
 @section('content')
-
-    <div class="panel-header">
-        <div class="page-inner py-5">
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-                <div>
-                    <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
-                </div>
+    <div class="page-inner">
+        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+            <div>
+                <h2 class="text-primary pb-2 fw-bold">{{ $pageTitle }}</h2>
             </div>
         </div>
-    </div>
-    <div class="page-inner mt--5">
-        <div class="row mt--2">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{{route('dictionary.index')}}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-arrow-left"></i>
+                    Kembali
+                </a>
+            </div>
+        </div>
+        <div class="row mt-2">
             <div class="col-md-12">
                 <form action="{{ route('dictionary.update', $fileDictionary->id) }}" method="post">
                     @csrf
@@ -30,18 +33,24 @@
                             <div class="row">
                                 <div class="col-md-6 col-lg-6">
                                     <div class="form-group name">
-                                        <label for="filename">File</label>
-                                        <input type="text" class="form-control" id="filename" name="filename"
-                                            value="{{old('filename', $fileDictionary->filename)}}" required>
-                                        <small class="form-text text-danger error"></small>
+                                        <label for="filename">File</label><span class="text-danger text-sm">*</span>
+                                        <input type="text" class="form-control @error('filename') is-invalid @enderror"
+                                            id="filename" name="filename"
+                                            value="{{old('filename', $fileDictionary->filename)}}">
+                                        @error('filename')
+                                            <small class="form-text text-danger error">{{$message}}</small>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-lg-6">
                                     <div class="form-group name">
-                                        <label for="description">Deskripsi</label>
-                                        <input type="text" class="form-control" id="description" name="description"
-                                            value="{{old('filename', $fileDictionary->description)}}">
-                                        <small class="form-text text-danger error"></small>
+                                        <label for="description">Deskripsi</label><span class="text-danger text-sm">*</span>
+                                        <input type="text" class="form-control @error('description') is-invalid @enderror"
+                                            id="description" name="description"
+                                            value="{{old('description', $fileDictionary->description)}}">
+                                        @error('description')
+                                            <small class="form-text text-danger error">{{$message}}</small>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
