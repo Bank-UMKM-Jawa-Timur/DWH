@@ -71,6 +71,10 @@
                 var id = $(identifier).data('id_kkb');
                 $(`#${targetId}`).find('#id_kkb').val(id);
             }
+            else if (targetId == 'modalUploadBerkasTagihan') {
+                var id = $(identifier).data('id_kkb');
+                $(`#${targetId}`).find('#id_kkb').val(id);
+            }
             else if (targetId == 'modalUploadBuktiPembayaran') {
                 var id = $(identifier).data('id_kkb');
                 $(`#${targetId}`).find('#id_kkb').val(id);
@@ -565,6 +569,8 @@
 @include('pages.kredit.modal.upload-penyerahan-unit-modal')
 <!-- Modal Confirm Bukti Penyerahan Unit -->
 @include('pages.kredit.modal.confirm-penyerahan-unit')
+<!-- Modal Upload Tagihan -->
+@include('pages.kredit.modal.upload-berkas-tagihan-modal')
 <!-- Modal Upload Berkas -->
 @include('pages.kredit.modal.upload-berkas-modal')
 <!-- Modal Upload Imbal Jasa -->

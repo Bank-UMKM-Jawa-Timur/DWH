@@ -74,83 +74,103 @@
             @if ($item->tgl_ketersediaan_unit)
                 @if (\Session::get(config('global.role_id_session')) == 3)
                     {{--  vendor  --}}
-                    @if ($item->bukti_pembayaran)
-                        @if ($is_kredit_page)
-                            @if (!$item->bukti_pembayaran->is_confirm)
-                                <a style="cursor: pointer; text-decoration: underline;"
-                                    class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran" data-target-id="modalConfirmBuktiPembayaran"
-                                    data-id-category="1"
-                                    data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
-                                    data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
-                                    data-file="@isset($item->bukti_pembayaran->file){{ $item->bukti_pembayaran->file }}@endisset"
-                                    onclick="showModal(this)"
-                                    href="#">Konfirmasi</a>
-                            @elseif ($item->bukti_pembayaran->is_confirm)
-                                <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
-                                    style="cursor: pointer; text-decoration: underline;"
-                                    data-target-id="modalConfirmBuktiPembayaran"
-                                    data-file="{{ $item->bukti_pembayaran->file }}"
-                                    data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                    data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
-                                    data-confirm_at="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) }}"
-                                    onclick="showModal(this)">
-                                    Selesai
-                                </a>
+                    @if($item->invoice)
+                        @if ($item->bukti_pembayaran)
+                            @if ($is_kredit_page)
+                                @if (!$item->bukti_pembayaran->is_confirm)
+                                    <a style="cursor: pointer; text-decoration: underline;"
+                                        class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran" data-target-id="modalConfirmBuktiPembayaran"
+                                        data-id-category="1"
+                                        data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
+                                        data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
+                                        data-file="@isset($item->bukti_pembayaran->file){{ $item->bukti_pembayaran->file }}@endisset"
+                                        onclick="showModal(this)"
+                                        href="#">Konfirmasi</a>
+                                @elseif ($item->bukti_pembayaran->is_confirm)
+                                    <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
+                                        style="cursor: pointer; text-decoration: underline;"
+                                        data-target-id="modalConfirmBuktiPembayaran"
+                                        data-file="{{ $item->bukti_pembayaran->file }}"
+                                        data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
+                                        data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
+                                        data-confirm_at="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) }}"
+                                        onclick="showModal(this)">
+                                        Selesai
+                                    </a>
+                                @else
+                                    Menunggu Pembayaran dari Cabang
+                                @endif
                             @else
-                                Menunggu Pembayaran dari Cabang
+                                @if (!$item->bukti_pembayaran->is_confirm)
+                                    Menunggu konfirmasi
+                                @elseif ($item->bukti_pembayaran->is_confirm)
+                                    <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
+                                        style="cursor: pointer; text-decoration: underline;"
+                                        data-target-id="modalConfirmBuktiPembayaran"
+                                        data-file="{{ $item->bukti_pembayaran->file }}"
+                                        data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
+                                        data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
+                                        data-confirm_at="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) }}"
+                                        onclick="showModal(this)">
+                                        Selesai
+                                    </a>
+                                @else
+                                    Menunggu Pembayaran dari Cabang
+                                @endif
                             @endif
                         @else
-                            @if (!$item->bukti_pembayaran->is_confirm)
-                                Menunggu konfirmasi
-                            @elseif ($item->bukti_pembayaran->is_confirm)
-                                <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
-                                    style="cursor: pointer; text-decoration: underline;"
-                                    data-target-id="modalConfirmBuktiPembayaran"
-                                    data-file="{{ $item->bukti_pembayaran->file }}"
-                                    data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                    data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
-                                    data-confirm_at="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) }}"
-                                    onclick="showModal(this)">
-                                    Selesai
-                                </a>
-                            @else
-                                Menunggu Pembayaran dari Cabang
-                            @endif
+                            Menunggu Pembayaran dari Cabang
                         @endif
                     @else
-                        Menunggu Pembayaran dari Cabang
+                    <button class="toggle-modal-upload-berkas-tagihan underline" data-target-id="modalUploadBerkasTagihan"
+                        data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
+                        Upload Berkas
+                    </button>
                     @endif
                 @else
                     {{--  role selain vendor  --}}
-                    @if (!$item->bukti_pembayaran && \Session::get(config('global.role_id_session')) != 3)
-                        @if ($is_kredit_page)
-                            @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
-                                <button class="toggle-modal-upload-bukti-pembayaran underline" data-target-id="modalUploadBuktiPembayaran"
-                                    data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
-                                    Bayar
-                                </button>
+                    @if ($item->invoice)
+                        @if (!$item->bukti_pembayaran && \Session::get(config('global.role_id_session')) != 3)
+                            @if ($is_kredit_page)
+                                @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                    <button class="toggle-modal-upload-bukti-pembayaran underline" data-target-id="modalUploadBuktiPembayaran"
+                                        data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
+                                        Bayar
+                                    </button>
+                                @else
+                                    <span>Menunggu pembayaran</span>
+                                @endif
                             @else
                                 <span>Menunggu pembayaran</span>
                             @endif
                         @else
-                            <span>Menunggu pembayaran</span>
-                        @endif
-                    @else
-                        @if ($item->bukti_pembayaran)
-                            @if ($is_kredit_page)
-                                @if (!$item->bukti_pembayaran->is_confirm)
-                                    @if (\Session::get(config('global.role_id_session')) == 3)
-                                        <button class="toggle-modal-confirm-bukti-pembayaran"
-                                            style="cursor: pointer;"
-                                            data-target-id="modalConfirmBuktiPembayaran"
-                                            data-file="{{ $item->bukti_pembayaran->file }}"
-                                            data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                            data-id-category="{{$item->bukti_pembayaran->document_category_id}}"
-                                            data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
-                                            onclick="showModal(this)">
-                                            Konfirmasi
-                                        </button>
-                                    @else
+                            @if ($item->bukti_pembayaran)
+                                @if ($is_kredit_page)
+                                    @if (!$item->bukti_pembayaran->is_confirm)
+                                        @if (\Session::get(config('global.role_id_session')) == 3)
+                                            <button class="toggle-modal-confirm-bukti-pembayaran"
+                                                style="cursor: pointer;"
+                                                data-target-id="modalConfirmBuktiPembayaran"
+                                                data-file="{{ $item->bukti_pembayaran->file }}"
+                                                data-tanggal="{{ $item->bukti_pembayaran->date }}"
+                                                data-id-category="{{$item->bukti_pembayaran->document_category_id}}"
+                                                data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
+                                                onclick="showModal(this)">
+                                                Konfirmasi
+                                            </button>
+                                        @else
+                                            <button class="toggle-modal-bukti-pembayaran underline"
+                                                style="cursor: pointer;"
+                                                data-target-id="modalBuktiPembayaran"
+                                                data-file="{{ $item->bukti_pembayaran->file }}"
+                                                data-tanggal="{{ $item->bukti_pembayaran->date }}"
+                                                data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
+                                                data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
+                                                onclick="showModal(this)">
+                                                Menunggu Konfirmasi Vendor
+                                            </button>
+                                        @endif
+                                    @elseif ($item->bukti_pembayaran->is_confirm)
                                         <button class="toggle-modal-bukti-pembayaran underline"
                                             style="cursor: pointer;"
                                             data-target-id="modalBuktiPembayaran"
@@ -159,40 +179,31 @@
                                             data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
                                             data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
                                             onclick="showModal(this)">
-                                            Menunggu Konfirmasi Vendor
+                                            Selesai
                                         </button>
                                     @endif
-                                @elseif ($item->bukti_pembayaran->is_confirm)
-                                    <button class="toggle-modal-bukti-pembayaran underline"
-                                        style="cursor: pointer;"
-                                        data-target-id="modalBuktiPembayaran"
-                                        data-file="{{ $item->bukti_pembayaran->file }}"
-                                        data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                        data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                        data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
-                                        onclick="showModal(this)">
-                                        Selesai
-                                    </button>
+                                @else
+                                    @if ($item->bukti_pembayaran->is_confirm)
+                                        <button class="toggle-modal-bukti-pembayaran underline"
+                                            style="cursor: pointer;"
+                                            data-target-id="modalBuktiPembayaran"
+                                            data-file="{{ $item->bukti_pembayaran->file }}"
+                                            data-tanggal="{{ $item->bukti_pembayaran->date }}"
+                                            data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
+                                            data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
+                                            onclick="showModal(this)">
+                                            Selesai
+                                        </button>
+                                    @else
+                                        <span>Menunggu konfirmasi</span>
+                                    @endif
                                 @endif
                             @else
-                                @if ($item->bukti_pembayaran->is_confirm)
-                                    <button class="toggle-modal-bukti-pembayaran underline"
-                                        style="cursor: pointer;"
-                                        data-target-id="modalBuktiPembayaran"
-                                        data-file="{{ $item->bukti_pembayaran->file }}"
-                                        data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                        data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                        data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
-                                        onclick="showModal(this)">
-                                        Selesai
-                                    </button>
-                                @else
-                                    <span>Menunggu konfirmasi</span>
-                                @endif
+                                Menunggu cabang mengunggah bukti pembayaran
                             @endif
-                        @else
-                            Menunggu cabang mengunggah bukti pembayaran
                         @endif
+                    @else
+                        Menunggu berkas tagihan diupload vendor
                     @endif
                 @endif
             @else

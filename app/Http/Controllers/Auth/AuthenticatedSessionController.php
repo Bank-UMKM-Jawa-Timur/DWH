@@ -39,7 +39,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        if ($request->input_type == 'bjsc@mail.com') {
+        if ($request->input_type == 'bjsc@mail.com' || $request->input_type == 'necomcersnet@gmail.com') {
             // login vendor
             try {
                 $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
