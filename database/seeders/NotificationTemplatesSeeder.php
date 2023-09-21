@@ -103,5 +103,17 @@ class NotificationTemplatesSeeder extends Seeder
             'action_id' => 14,
             'role_id' => '1,3'
         ]);
+
+        \DB::table('notification_templates')->insert([
+            'title' => 'Upload imbal jasa',
+            'content' => 'Berkas imbal jasa telah diupload oleh cabang.',
+            'action_id' => 15,
+        ]);
+
+        \DB::table('notification_templates')->insert([
+            'title' => 'Konfirmasi imbal jasa',
+            'content' => 'Berkas imbal jasa telah dikonfirmasi oleh vendor.',
+            'action_id' => 50,
+        ]);
     }
 }
