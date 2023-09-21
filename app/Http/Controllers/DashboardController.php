@@ -167,15 +167,19 @@ class DashboardController extends Controller
             }
 
             foreach ($data as $key => $value) {
+                $invoice = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 7)
+                                            ->first();
+
                 $buktiPembayaran = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 1)
                                             ->first();
 
-                $penyerahanUnit = \App\Models\Document::where('kredit_id', $value->id)
+                $penyerahanUnit = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 2)
                                             ->first();
 
-                $stnk = \App\Models\Document::where('kredit_id', $value->id)
+                $stnk = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 3)
                                             ->first();
 
@@ -193,6 +197,7 @@ class DashboardController extends Controller
 
                 $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
 
+                $value->invoice = $invoice;
                 $value->bukti_pembayaran = $buktiPembayaran;
                 $value->penyerahan_unit = $penyerahanUnit;
                 $value->stnk = $stnk;

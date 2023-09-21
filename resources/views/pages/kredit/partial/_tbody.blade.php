@@ -122,10 +122,28 @@
                             Menunggu Pembayaran dari Cabang
                         @endif
                     @else
-                    <button class="toggle-modal-upload-berkas-tagihan underline" data-target-id="modalUploadBerkasTagihan"
-                        data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
-                        Upload Berkas
-                    </button>
+                        @php
+                            $current_date = date('d-m-Y');
+                            $hmin1_tgl_ketersediaan_unit = date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' -1 day'));
+                        @endphp
+                        @if ($current_date == $hmin1_tgl_ketersediaan_unit || $current_date == $item->tgl_ketersediaan_unit)
+                            <span class="text-yellow-600">Harap untuk segera mengunggah berkas!</span>
+                            <br>
+                        @elseif ($current_date > $item->tgl_ketersediaan_unit)
+                            <span class="text-red-600">Harap untuk segera mengunggah berkas!</span>
+                            <br>
+                        @endif
+                        @if ($is_kredit_page)
+                            <button class="toggle-modal-upload-berkas-tagihan underline" data-target-id="modalUploadBerkasTagihan"
+                                data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
+                                Upload Berkas
+                            </button>
+                        @else
+                            @if (($current_date == $hmin1_tgl_ketersediaan_unit || $current_date == $item->tgl_ketersediaan_unit) || $current_date > $item->tgl_ketersediaan_unit)
+                            @else
+                                -
+                            @endif
+                        @endif
                     @endif
                 @else
                     {{--  role selain vendor  --}}
