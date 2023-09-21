@@ -85,7 +85,7 @@
                                         data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
                                         data-file="@isset($item->bukti_pembayaran->file){{ $item->bukti_pembayaran->file }}@endisset"
                                         onclick="showModal(this)"
-                                        href="#">Konfirmasi</a>
+                                        href="#">Konfirmasi Bukti Pembayaran</a>
                                 @elseif ($item->bukti_pembayaran->is_confirm)
                                     <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
                                         style="cursor: pointer; text-decoration: underline;"

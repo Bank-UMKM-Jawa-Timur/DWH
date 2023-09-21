@@ -38,5 +38,9 @@ class DocumentCategoriesSeeder extends Seeder
         $newDoc = new DocumentCategory();
         $newDoc->name = 'Bukti Pembayaran Imbal Jasa';
         $newDoc->save();
+
+        $newDoc = new DocumentCategory();
+        $newDoc->name = 'Tagihan';
+        $newDoc->save();
     }
 }

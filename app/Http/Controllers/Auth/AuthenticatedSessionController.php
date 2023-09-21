@@ -39,23 +39,23 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        if ($request->input_type == 'bjsc@mail.com' || $request->input_type == 'necomcersnet@gmail.com') {
+        if ($request->input_type == 'bjsc@mail.com' || $request->input_type == 'mkhalil26122000@gmail.com') {
             // login vendor
             try {
                 $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
-                if ($user->nip) {
-                    $karyawan = $this->penggunaController->getKaryawan($user->nip);
+                // if ($user->nip) {
+                //     $karyawan = $this->penggunaController->getKaryawan($user->nip);
         
-                    if (gettype($karyawan) == 'string')
-                        session(['nama_karyawan' => 'undifined']);
-                    else {
-                        if ($karyawan)
-                            if (array_key_exists('nama', $karyawan))
-                                session(['nama_karyawan' => $karyawan['nama']]);
-                            else
-                                session(['nama_karyawan' => 'undifined']);
-                    }
-                }
+                //     if (gettype($karyawan) == 'string')
+                //         session(['nama_karyawan' => 'undifined']);
+                //     else {
+                //         if ($karyawan)
+                //             if (array_key_exists('nama', $karyawan))
+                //                 session(['nama_karyawan' => $karyawan['nama']]);
+                //             else
+                //                 session(['nama_karyawan' => 'undifined']);
+                //     }
+                // }
                 if ($user->role_id != 4) {
                     if ($user->first_login == true) {
                         return redirect('first-login?id=' . $user->id);
@@ -67,7 +67,6 @@ class AuthenticatedSessionController extends Controller
                         $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
                         }
                 } else {
-                    return $request->input_type;
                     $request->authenticate();
         
                     $request->session()->regenerate();
