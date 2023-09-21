@@ -459,6 +459,34 @@ class KreditController extends Controller
             ]);
         }
     }
+    public function getDataCabang($kode_cabang) {
+        try {
+            $host = env('BIO_INTERFACE_API_HOST');
+            $apiURL = $host . '/v1/cabang/' . $kode_cabang;
+
+            $response = Http::timeout(3)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+
+            if ($responseBody) {
+                if(array_key_exists('data', $responseBody)){
+                    if ($responseBody['data'])
+                        return $responseBody['data'];
+                }
+                
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Not found',
+                ]);
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 
     public function paginate($items, $perPage = 5, $page = null, $options = [])
     {
@@ -583,11 +611,12 @@ class KreditController extends Controller
 
             // retrieve from api
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             // send notification
             // $this->notificationController->send($action_id, $kkb->kredit_id);
             $notifTemplate = NotificationTemplate::find(2);
-                
-            $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+            
+            $this->notificationController->sendEmail($cabang['email'],  [
                 'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                 'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                 'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -661,11 +690,12 @@ class KreditController extends Controller
 
             // retrieve from api
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             // send notification
             // $this->notificationController->send($action_id, $kkb->kredit_id);
             $notifTemplate = NotificationTemplate::find(5);
                 
-            $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+            $this->notificationController->sendEmail($cabang['email'],  [
                 'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                 'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                 'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -745,10 +775,11 @@ class KreditController extends Controller
 
             // retrieve from api
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
 
             $notifTemplate = NotificationTemplate::find(2);
                 
-            $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+            $this->notificationController->sendEmail($cabang['email'],  [
                 'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                 'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                 'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -828,9 +859,10 @@ class KreditController extends Controller
 
             // retrieve from api
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             $notifTemplate = NotificationTemplate::find(2);
                 
-            $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+            $this->notificationController->sendEmail($cabang['email'],  [
                 'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                 'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                 'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -908,9 +940,10 @@ class KreditController extends Controller
             // send notification
             // $this->notificationController->send($action_id, $request->id_kkb);
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             $notifTemplate = NotificationTemplate::find(2);
                 
-            $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+            $this->notificationController->sendEmail($cabang['email'],  [
                 'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                 'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                 'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -992,9 +1025,11 @@ class KreditController extends Controller
                 $document->save();
 
                 $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                $cabang = $this->getDataCabang($kredit->kode_cabang);
+
                 $notifTemplate = NotificationTemplate::find(7);
                     
-                $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+                $this->notificationController->sendEmail($cabang['email'],  [
                     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -1020,9 +1055,10 @@ class KreditController extends Controller
 
 
                 $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                $cabang = $this->getDataCabang($kredit->kode_cabang);
                 $notifTemplate = NotificationTemplate::find(8);
                     
-                $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+                $this->notificationController->sendEmail($cabang['email'],  [
                     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -1048,9 +1084,10 @@ class KreditController extends Controller
 
 
                 $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                $cabang = $this->getDataCabang($kredit->kode_cabang);
                 $notifTemplate = NotificationTemplate::find(9);
                     
-                $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+                $this->notificationController->sendEmail($cabang['email'],  [
                     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -1289,11 +1326,12 @@ class KreditController extends Controller
                     $action_id = 14;
 
                     $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                    $cabang = $this->getDataCabang($kredit->kode_cabang);
                     // send notification
                     // $this->notificationController->send($action_id, $kkb->kredit_id);
                     $notifTemplate = NotificationTemplate::find(2);
                         
-                    $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+                    $this->notificationController->sendEmail($cabang['email'],  [
                         'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                         'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                         'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -1361,11 +1399,12 @@ class KreditController extends Controller
                 $document->save();
 
                 $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                $cabang = $this->getDataCabang($kredit->kode_cabang);
                 // send notification
                 // $this->notificationController->send($action_id, $kkb->kredit_id);
                 $notifTemplate = NotificationTemplate::find(4);
                     
-                $this->notificationController->sendEmail($dataPO['email_cabang'],  [
+                $this->notificationController->sendEmail($cabang['email'],  [
                     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
@@ -1660,11 +1699,11 @@ class KreditController extends Controller
             $notifTemplate = NotificationTemplate::find(13);
 
             $this->notificationController->sendEmail($vendor->email,  [
-                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                'title' => $notifTemplate ? $notifTemplate->title : 'Upload Imbal Jasa',
                 'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                 'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
                 'to' => $vendor->name,
-                'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+                'body' => $notifTemplate ? $notifTemplate->content : 'Imbal jasa telah di upload'
                 ]);
             }
 
@@ -1714,12 +1753,13 @@ class KreditController extends Controller
             // $this->notificationController->send($action_id, $document->kredit_id);
 
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             // send notification
             // $this->notificationController->send($action_id, $kkb->kredit_id);
             $notifTemplate = NotificationTemplate::find(14);
                 
-            $this->notificationController->sendEmail($dataPO['email_cabang'],  [
-                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+            $this->notificationController->sendEmail($cabang['email'],  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'Konfirmasi Imbal jasa',
                 'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
                 'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
                 'to' => 'Cabang '.$dataPO['cabang'],

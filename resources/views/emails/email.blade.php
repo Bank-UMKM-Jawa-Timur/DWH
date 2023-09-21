@@ -15,7 +15,7 @@
         }
         body{
             background-color: #F2F2F2;
-            font-family: 'Segoe UI', sans-serif !important;
+            font-family:  Calibri, Tahoma, sans-serif !important;
             -webkit-font-smoothing: antialiased;
         }
         .body {
@@ -28,7 +28,7 @@
             width: 100%;
             margin: auto;
             margin-top: 8rem;
-            border: 1px solid #dcdcdc;
+            /* border: 1px solid #dcdcdc; */
             background-color: #fff;
         }
         /* head */
@@ -44,16 +44,21 @@
             margin-top: 4rem;
             padding-bottom: 2rem;
         }
+        .email-wrapper .body-email .gretting{
+            color: gray;
+            font-weight: 400;
+            font-size: 20px;
+        }
         .email-wrapper .body-email .nama-debitur{
             color: gray;
-            font-weight: 600;
-            font-size: 20px;
+            font-weight: 400;
+            font-size: 18px;
         }
         .email-wrapper .body-email .nama-debitur b{
             color: #525252;
         }
         .email-wrapper .body-email .no-po{
-            font-weight: 600;
+            font-weight: 400;
             color: gray;
         }
         .email-wrapper .body-email .message{
@@ -72,6 +77,7 @@
         }
         .footer p{
             color: white;
+            font-family: Calibri, Tahoma, sans-serif !important;
             font-size: 14px;
         }
     </style>
@@ -113,9 +119,19 @@
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td class="body-email">
-                                                <h3 class="nama-debitur">{{$greeting}}, {{$to}}</h3>
-                                                <p class="no-po">Nama Debitur: {{$nama_debitur}}</p>
-                                                <p class="no-po">NO PO: {{$no_po}}</p>
+                                            <h3 class="gretting">{{$greeting}}, {{$to}}</h3>
+                                            {{-- <table>
+                                                <tr>
+                                                    <td><p class="nama-debitur">Nama Debitur </p></td>
+                                                    <td><p class="no-po">: {{$nama_debitur}}</p></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><p class="no-po">NO PO</p></td>
+                                                    <td><p class="no-po">: {{$no_po}}</p></td>
+                                                </tr>
+                                            </table> --}}
+                                                <p class="no-po"><strong>Nama Debitur:</strong> {{$nama_debitur}}</p>
+                                                <p class="no-po"><strong>NO PO:</strong> {{$no_po}}</p><br>
                                                 <p class="message">{{$body}}</p>
                                         </td>
                                     </tr>
