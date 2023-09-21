@@ -186,6 +186,10 @@ class KreditController extends Controller
             }
 
             foreach ($data as $key => $value) {
+                $invoice = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 7)
+                                            ->first();
+
                 $buktiPembayaran = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 1)
                                             ->first();
@@ -212,6 +216,7 @@ class KreditController extends Controller
 
                 $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
 
+                $value->invoice = $invoice;
                 $value->bukti_pembayaran = $buktiPembayaran;
                 $value->penyerahan_unit = $penyerahanUnit;
                 $value->stnk = $stnk;
@@ -372,6 +377,10 @@ class KreditController extends Controller
             }
 
             foreach ($data as $key => $value) {
+                $invoice = Document::where('kredit_id', $value->id)
+                                            ->where('document_category_id', 7)
+                                            ->first();
+                                            
                 $buktiPembayaran = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 1)
                                             ->first();
@@ -398,6 +407,7 @@ class KreditController extends Controller
 
                 $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
 
+                $value->invoice = $invoice;
                 $value->bukti_pembayaran = $buktiPembayaran;
                 $value->penyerahan_unit = $penyerahanUnit;
                 $value->stnk = $stnk;
@@ -495,6 +505,69 @@ class KreditController extends Controller
         return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
+    public function uploadTagihan(Request $request)
+    {
+        $status = '';
+        $message = '';
+        $action_id = 50;
+
+        $validator = Validator::make($request->all(), [
+            'id_kkb' => 'required',
+            'tagihan_scan' => 'required|mimes:pdf|max:2048',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'mimes' => ':attribute harus berupa pdf',
+            'max' => ':attribute maksimal 2 Mb',
+        ], [
+            'id_kkb' => 'Kredit',
+            'tagihan_scan' => 'Scan berkas tagihan',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+
+        try {
+            $file = $request->file('tagihan_scan');
+            $file->storeAs('public/tagihan', $file->hashName());
+            $kkb = KKB::find($request->id_kkb);
+
+            $document = new Document();
+            $document->kredit_id = $kkb->kredit_id;
+            $document->date = date('Y-m-d');
+            $document->file = $file->hashName();
+            $document->document_category_id  = 7;
+            $document->save();
+
+            // send notif
+            $this->notificationController->send($action_id, $kkb->kredit_id);
+
+            $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas tagihan.');
+
+            $status = 'success';
+            $message = 'Berhasil menyimpan data';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $e;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan pada database';
+        } catch (\Throwable $th) {
+            $status = 'failed';
+            $message = 'Terjadi kesalahan ' . $th;
+        } finally {
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+            event(new KreditBroadcast('event created'));
+
+            return response()->json($response);
+        }
+    }
+
     public function uploadBuktiPembayaran(Request $request)
     {
         $status = '';
@@ -510,7 +583,7 @@ class KreditController extends Controller
             'max' => ':attribute maksimal 2 Mb',
         ], [
             'id_kkb' => 'Kredit',
-            'bukti_pembayaran_scan' => 'Scan berkas polisi',
+            'bukti_pembayaran_scan' => 'Scan berkas bukti pembayaran',
         ]);
 
         if ($validator->fails()) {
@@ -523,7 +596,19 @@ class KreditController extends Controller
             $file = $request->file('bukti_pembayaran_scan');
             $file->storeAs('public/dokumentasi-bukti-pembayaran', $file->hashName());
             $kkb = KKB::find($request->id_kkb);
-            $kredit = Kredit::find($kkb->kredit_id);
+            
+            $doc_inv = Document::where('kredit_id', $kkb->kredit_id)
+                                ->where('document_category_id', 7)
+                                ->first();
+            if ($doc_inv) {
+                // Mengkonfirmasi berkas tagihan atau invoice
+                $doc_inv->is_confirm = true;
+                $doc_inv->confirm_at = date('Y-m-d');
+                $doc_inv->confirm_by = \Session::get(config('global.user_id_session'));
+
+                $doc_inv->save();
+            }
+
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
             $document->date = date('Y-m-d');
@@ -768,7 +853,7 @@ class KreditController extends Controller
             $document->document_category_id  = 2;
             $document->save();
 
-            $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas nomor polisi.');
+            $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas nomor polis.');
 
             // send notification
             // $this->notificationController->send($action_id, $request->id_kkb);

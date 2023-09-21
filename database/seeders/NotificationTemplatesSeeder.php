@@ -50,6 +50,12 @@ class NotificationTemplatesSeeder extends Seeder
         ]);
         
         \DB::table('notification_templates')->insert([
+            'title' => 'Upload Tagihan',
+            'content' => 'Tagihan telah diupload oleh vendor.',
+            'action_id' => 50,
+        ]);
+        
+        \DB::table('notification_templates')->insert([
             'title' => 'Kofirmasi Bukti Penyerahan Unit',
             'content' => 'Bukti penyerahan unit telah dikonfirmasi.',
             'action_id' => 8,
@@ -99,15 +105,15 @@ class NotificationTemplatesSeeder extends Seeder
         ]);
 
         \DB::table('notification_templates')->insert([
-            'title' => 'Upload Bukti Pembayaran Imbal Jasa',
-            'content' => 'Bukti pembayaran imbal jasa telah diupload oleh cabang.',
+            'title' => 'Upload imbal jasa',
+            'content' => 'Berkas imbal jasa telah diupload oleh cabang.',
             'action_id' => 15,
         ]);
-        
+
         \DB::table('notification_templates')->insert([
-            'title' => 'Kofirmasi Bukti Pembayaran Imbal Jasa',
-            'content' => 'Bukti pembayaran imbal jasa telah dikonfirmasi.',
-            'action_id' => 16,
+            'title' => 'Konfirmasi imbal jasa',
+            'content' => 'Berkas imbal jasa telah dikonfirmasi oleh vendor.',
+            'action_id' => 50,
         ]);
     }
 }

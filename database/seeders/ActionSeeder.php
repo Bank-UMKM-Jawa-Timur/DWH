@@ -30,8 +30,7 @@ class ActionSeeder extends Seeder
             'KKB-konfirmasi berkas STNK',
             'KKB-konfirmasi berkas Polis',
             'KKB-konfirmasi berkas BPKB',
-            'KKB-atur imbal jasa',
-            'KKB-konfirmasi imbal jasa',
+            'KKB-upload imbal jasa',
             'KKB-detail data',
             'Role-List data',
             'Role-Tambah data',
@@ -65,6 +64,8 @@ class ActionSeeder extends Seeder
             'Target-Edit data',
             'Target-Hapus data',
             'Notifikasi-List data',
+            'KKB-Upload tagihan',
+            'KKB-Konfirmasi imbal jasa'
         ];
 
         for ($i=0; $i < count($actions); $i++) { 

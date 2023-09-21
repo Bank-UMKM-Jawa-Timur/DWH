@@ -9,7 +9,12 @@
                 @endif
                 <th>PO</th>
                 <th>Ketersediaan Unit</th>
+                @if ($role_id == 3)
+                <th>Tagihan</th>
+                @endif
+                @if ($role_id == 2)
                 <th>Bukti Pembayaran</th>
+                @endif
                 <th>Penyerahan Unit</th>
                 <th>Bukti Pembayaran Imbal Jasa</th>
                 <th>Imbal Jasa + 2% Pajak</th>

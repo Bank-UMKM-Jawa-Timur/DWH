@@ -63,7 +63,7 @@
         function showModal(identifier) {
             const targetId = $(identifier).data("target-id");
             const user_role_id = "{{\Session::get(config('global.role_id_session'))}}";
-            
+            console.log(identifier)
             $(`#${targetId}`).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
 
@@ -567,6 +567,8 @@
 @include('pages.kredit.modal.confirm-penyerahan-unit')
 <!-- Modal Upload Berkas -->
 @include('pages.kredit.modal.upload-berkas-modal')
+<!-- Modal Upload Tagihan -->
+@include('pages.kredit.modal.upload-tagihan-modal')
 <!-- Modal Upload Imbal Jasa -->
 @include('pages.kredit.modal.upload-bukti-imbal-jasa')
 <!-- Modal Confirm Imbal Jasa -->
