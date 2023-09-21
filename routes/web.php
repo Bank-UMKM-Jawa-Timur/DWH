@@ -97,7 +97,6 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/dictionary', DictionaryController::class);
     });
 
-
     Route::get('/kredit', [KreditController::class, 'index'])->name('kredit.index');
     Route::post('/kredit/set-tgl-ketersediaan-unit', [KreditController::class, 'setTglKetersedianUnit'])->name('kredit.set_tgl_ketersediaan_unit');
     Route::post('/kredit/set-tgl-penyerahan-unit', [KreditController::class, 'setPenyerahanUnit'])->name('kredit.set_tgl_penyerahan_unit');
@@ -115,6 +114,9 @@ Route::middleware('auth_api')->group(function () {
     Route::post('/kredit/upload-imbal-jasa', [KreditController::class, 'uploadUImbalJasa'])->name('kredit.upload_imbal_jasa');
     Route::post('/kredit/confirm-imbal-jasa', [KreditController::class, 'confirmUploadUImbalJasa'])->name('kredit.confirm-imbal-jasa');
     Route::post('/kredit/load-json', [KreditController::class, 'loadDataJson'])->name('kredit.load_json');
+    Route::get('/import-kkb', function(){
+        return view('pages.import_kkb.index');
+    })->name('importKKb');
 
     Route::get('/log_aktivitas', [LogActivitesController::class, 'index'])->name('log_aktivitas.index');
 

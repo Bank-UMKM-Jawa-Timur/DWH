@@ -100,6 +100,7 @@
     .tables {
         @apply max-[1400px]:overflow-visible min-[320px]:overflow-x-auto p-2;
     }
+
     body {
         @apply overflow-hidden;
     }
@@ -111,6 +112,15 @@
     }
     .table-imbal-jasa {
         @apply border-collapse border;
+    }
+    .table-for-kkb-import{
+        @apply border-collapse border w-full;
+    }
+    .table-for-kkb-import th{
+        @apply border w-full;
+    }
+    .table-for-kkb-import td{
+        @apply border w-full;
     }
     .table-imbal-jasa th {
         @apply border;

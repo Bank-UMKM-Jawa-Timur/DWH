@@ -43,7 +43,7 @@
       <li class="menu-category-link">
         <p>FITUR APLIKASI</p>
       </li>
-      <li class="item-link {{ request()->is('kredit') ? 'active-link' : '' }}">
+      <li class="item-link {{ request()->is('kredit') || request()->is('import-kkb') ? 'active-link' : '' }}">
         <a
           href="{{ route('kredit.index') }}"
           class="nav-link"
