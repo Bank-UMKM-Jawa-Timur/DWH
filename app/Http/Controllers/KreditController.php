@@ -88,6 +88,8 @@ class KreditController extends Controller
                     'kkb.id',
                     'kkb.tgl_ketersediaan_unit',
                 ])
+                ->whereNotNull('kredits.pengajuan_id')
+                ->whereNull('kredits.imported_data_id')
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
                     return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
@@ -1375,7 +1377,7 @@ class KreditController extends Controller
                 }
             }
 
-             // retrieve from api
+            // retrieve from api
             $host = config('global.los_api_host');
             $apiURL = $host . '/kkb/get-data-pengajuan/' . $kredit->pengajuan_id.'/'.$user_id;
 

@@ -596,17 +596,17 @@
                     </h2>
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                @if($is_kredit_page)
-                <a href="{{ route('import-kkb.index') }}">
-                <button type="button"
-                    class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
-                    <span class="lg:mt-1 mt-0">
-                        @include('components.svg.import-table')
-                    </span>
-                    <span class="lg:block hidden"> Import </span>
-                </button>
-                </a>
-                @endif
+                    @if($is_kredit_page)
+                        <a href="{{ route('import-kkb.index') }}">
+                            <button type="button"
+                                class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
+                                <span class="lg:mt-1 mt-0">
+                                    @include('components.svg.import-table')
+                                </span>
+                                <span class="lg:block hidden"> Import </span>
+                            </button>
+                        </a>
+                    @endif
                     @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
                     <form action="" method="get">
                         <button type="submit" class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
