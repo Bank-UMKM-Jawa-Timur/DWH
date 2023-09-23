@@ -597,7 +597,7 @@
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                 @if($is_kredit_page)
-                <a href="{{ route('importKKb') }}">
+                <a href="{{ route('import-kkb.index') }}">
                 <button type="button"
                     class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
                     <span class="lg:mt-1 mt-0">

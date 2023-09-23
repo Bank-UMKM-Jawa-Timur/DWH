@@ -5,14 +5,13 @@
                 <th>No</th>
                 <th width="150">Nama</th>
                 @if ($role_id == 3)
-                    <th>Cabang</th>
+                <th>Cabang</th>
                 @endif
                 <th>PO</th>
                 <th>Ketersediaan Unit</th>
                 @if ($role_id == 3)
                 <th>Tagihan</th>
-                @endif
-                @if ($role_id == 2)
+                @else
                 <th>Bukti Pembayaran</th>
                 @endif
                 <th>Penyerahan Unit</th>

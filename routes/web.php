@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ImportKKBController;
 use App\Http\Controllers\KreditController;
 use App\Http\Controllers\LogActivitesController;
 use App\Http\Controllers\Master\DictionaryController;
@@ -97,26 +98,27 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/dictionary', DictionaryController::class);
     });
 
-    Route::get('/kredit', [KreditController::class, 'index'])->name('kredit.index');
-    Route::post('/kredit/set-tgl-ketersediaan-unit', [KreditController::class, 'setTglKetersedianUnit'])->name('kredit.set_tgl_ketersediaan_unit');
-    Route::post('/kredit/set-tgl-penyerahan-unit', [KreditController::class, 'setPenyerahanUnit'])->name('kredit.set_tgl_penyerahan_unit');
-    Route::post('/kredit/upload-tagihan', [KreditController::class, 'uploadTagihan'])->name('kredit.upload_tagihan');
-    Route::post('/kredit/upload-bukti-pembayaran', [KreditController::class, 'uploadBuktiPembayaran'])->name('kredit.upload_bukti_pembayaran');
-    Route::post('/kredit/upload-polis', [KreditController::class, 'uploadPolis'])->name('kredit.upload_polis');
-    Route::post('/kredit/upload-bpkb', [KreditController::class, 'uploadBpkb'])->name('kredit.upload_bpkb');
-    Route::post('/kredit/upload-stnk', [KreditController::class, 'uploadStnk'])->name('kredit.upload_stnk');
-    Route::post('/kredit/upload-berkas', [KreditController::class, 'uploadBerkas'])->name('kredit.upload_berkas');
-    Route::get('/kredit/confirm-berkas', [KreditController::class, 'confirmBerkas'])->name('kredit.confirm_berkas');
-    Route::post('/kredit/confirm-document', [KreditController::class, 'confirmDocumentCabang'])->name('kredit.confirm_document');
-    Route::post('/kredit/confirm-document-vendor', [KreditController::class, 'confirmDocumentVendor'])->name('kredit.confirm_document_vendor');
-    Route::post('/kredit/confirm-penyerahan-unit', [KreditController::class, 'confirmPenyerahanUnit'])->name('kredit.confirm_penyerahan_unit');
-    Route::get('/kredit/{id}', [KreditController::class, 'show'])->name('kredit.show');
-    Route::post('/kredit/upload-imbal-jasa', [KreditController::class, 'uploadUImbalJasa'])->name('kredit.upload_imbal_jasa');
-    Route::post('/kredit/confirm-imbal-jasa', [KreditController::class, 'confirmUploadUImbalJasa'])->name('kredit.confirm-imbal-jasa');
-    Route::post('/kredit/load-json', [KreditController::class, 'loadDataJson'])->name('kredit.load_json');
-    Route::get('/import-kkb', function(){
-        return view('pages.import_kkb.index');
-    })->name('importKKb');
+    Route::prefix('kredit')->name('kredit.')->group(function() {
+        Route::get('', [KreditController::class, 'index'])->name('index');
+        Route::post('/set-tgl-ketersediaan-unit', [KreditController::class, 'setTglKetersedianUnit'])->name('set_tgl_ketersediaan_unit');
+        Route::post('/set-tgl-penyerahan-unit', [KreditController::class, 'setPenyerahanUnit'])->name('set_tgl_penyerahan_unit');
+        Route::post('/upload-tagihan', [KreditController::class, 'uploadTagihan'])->name('upload_tagihan');
+        Route::post('/upload-bukti-pembayaran', [KreditController::class, 'uploadBuktiPembayaran'])->name('upload_bukti_pembayaran');
+        Route::post('/upload-polis', [KreditController::class, 'uploadPolis'])->name('upload_polis');
+        Route::post('/upload-bpkb', [KreditController::class, 'uploadBpkb'])->name('upload_bpkb');
+        Route::post('/upload-stnk', [KreditController::class, 'uploadStnk'])->name('upload_stnk');
+        Route::post('/upload-berkas', [KreditController::class, 'uploadBerkas'])->name('upload_berkas');
+        Route::get('/confirm-berkas', [KreditController::class, 'confirmBerkas'])->name('confirm_berkas');
+        Route::post('/confirm-document', [KreditController::class, 'confirmDocumentCabang'])->name('confirm_document');
+        Route::post('/confirm-document-vendor', [KreditController::class, 'confirmDocumentVendor'])->name('confirm_document_vendor');
+        Route::post('/confirm-penyerahan-unit', [KreditController::class, 'confirmPenyerahanUnit'])->name('confirm_penyerahan_unit');
+        Route::get('/{id}', [KreditController::class, 'show'])->name('show');
+        Route::post('/upload-imbal-jasa', [KreditController::class, 'uploadUImbalJasa'])->name('upload_imbal_jasa');
+        Route::post('/confirm-imbal-jasa', [KreditController::class, 'confirmUploadUImbalJasa'])->name('confirm-imbal-jasa');
+        Route::post('/load-json', [KreditController::class, 'loadDataJson'])->name('load_json');
+    });
+
+    Route::resource('/import-kkb', ImportKKBController::class);
 
     Route::get('/log_aktivitas', [LogActivitesController::class, 'index'])->name('log_aktivitas.index');
 
