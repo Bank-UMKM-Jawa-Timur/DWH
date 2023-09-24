@@ -1025,6 +1025,9 @@ video {
 .border-b {
   border-bottom-width: 1px;
 }
+.border-b-0 {
+  border-bottom-width: 0px;
+}
 .border-b-2 {
   border-bottom-width: 2px;
 }
@@ -1039,9 +1042,6 @@ video {
 }
 .border-t {
   border-top-width: 1px;
-}
-.border-b-0 {
-  border-bottom-width: 0px;
 }
 .border-\[\#E6E6E6\] {
   --tw-border-opacity: 1;
@@ -1085,6 +1085,10 @@ video {
 .bg-\[\#F9F9F9\] {
   --tw-bg-opacity: 1;
   background-color: rgb(249 249 249 / var(--tw-bg-opacity));
+}
+.bg-\[\#dcdcdc\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 220 220 / var(--tw-bg-opacity));
 }
 .bg-gray-100 {
   --tw-bg-opacity: 1;
@@ -1143,20 +1147,6 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
-.bg-white\/50 {
-  background-color: rgb(255 255 255 / 0.5);
-}
-.bg-white\/80 {
-  background-color: rgb(255 255 255 / 0.8);
-}
-.bg-neutral-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
-}
-.bg-\[\#dcdcdc\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(220 220 220 / var(--tw-bg-opacity));
-}
 .fill-current {
   fill: currentColor;
 }
@@ -1199,6 +1189,10 @@ video {
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
+}
+.px-5 {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 .px-6 {
   padding-left: 1.5rem;
@@ -1243,10 +1237,6 @@ video {
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-}
-.px-5 {
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
 }
 .pb-1 {
   padding-bottom: 0.25rem;

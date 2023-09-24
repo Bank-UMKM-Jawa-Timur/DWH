@@ -115,13 +115,15 @@ class DashboardController extends Controller
 
                     // insert response to object
                     if ($user_id != 0) {
-                        if (array_key_exists('message', $responseBody)) {
-                            if ($responseBody['message'] == 'Data not found') {
-                                unset($data[$key]);
+                        if ($responseBody) {
+                            if (array_key_exists('message', $responseBody)) {
+                                if ($responseBody['message'] == 'Data not found') {
+                                    unset($data[$key]);
+                                }
                             }
-                        }
-                        if (array_key_exists('id_pengajuan', $responseBody)) {
-                            $value->detail = $responseBody;
+                            if (array_key_exists('id_pengajuan', $responseBody)) {
+                                $value->detail = $responseBody;
+                            }
                         }
                     }
                     else {
@@ -208,6 +210,47 @@ class DashboardController extends Controller
             }
 
             $this->param['data'] = $data;
+
+            // imported data
+            $imported = Kredit::select(
+                'kredits.id',
+                'kredits.pengajuan_id',
+                'kredits.kode_cabang',
+                'kkb.id AS kkb_id',
+                'kkb.tgl_ketersediaan_unit',
+                'kkb.id_tenor_imbal_jasa',
+                \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+            )
+                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                ->groupBy([
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.kode_cabang',
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.id',
+                    'kkb.tgl_ketersediaan_unit',
+                ])
+                ->whereNull('kredits.pengajuan_id')
+                ->whereNotNull('kredits.imported_data_id')
+                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
+                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
+                })
+                ->when($request->cabang,function($query,$cbg){
+                    return $query->where('kredits.kode_cabang',$cbg);
+                })
+                ->orderBy('total_file_uploaded')
+                ->orderBy('total_file_confirmed');
+
+            if (is_numeric($page_length))
+                $imported = $imported->paginate($page_length);
+            else
+                $imported = $imported->get();
+
+            $this->param['imported'] = $imported;
 
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {

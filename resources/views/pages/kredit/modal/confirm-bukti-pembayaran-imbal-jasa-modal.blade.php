@@ -131,14 +131,6 @@
                 success: function(data) {
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
-                        /*ErrorMessage('Gagal')
-                        for (var i = 0; i < data.error.length; i++) {
-                            var message = data.error[i];
-                            if (message.toLowerCase().includes('id'))
-                                showError(req_id, message)
-                            if (message.toLowerCase().includes('category_id'))
-                                showError(req_category_doc_id, message)
-                        }*/
                     } else {
                         if (data.status == 'success') {
                             ConfirmImbalJasaSuccessMessage(data.message);

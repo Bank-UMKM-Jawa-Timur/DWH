@@ -3,29 +3,26 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         Pusher.logToConsole = true;
-        const app_key = "{{config('broadcasting.connections.pusher.key')}}"
+        const app_key = "{{ config('broadcasting.connections.pusher.key') }}"
 
         if (app_key) {
             var pusher = new Pusher(app_key, {
                 cluster: 'ap1'
             });
-    
+
             var channel = pusher.subscribe('kredit');
             channel.bind('data-table', function(data) {
                 console.log('Received')
-                console.log(data)
-                //if (data.data != 'confirm berkas')
-                    //refreshTable();
                 refreshTable();
             });
-        }
-        else {
-            console.log(`Pusher app key isn't have value`)
+        } else {
+            //console.log(`Pusher app key isn't have value`)
         }
 
         function refreshTable() {
             console.log('refresh table')
             var page = $("#page").val()
+            var tab_type = $("#tab_type").val()
             var page_length = $("#page_length").val()
             var tAwal = $("#tAwal").val() != 'dd/mm/yyyy' ? $('#tAwal').val() : ''
             var tAkhir = $("#tAkhir").val() != 'dd/mm/yyyy' ? $('#tAkhir').val() : ''
@@ -33,20 +30,27 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{route('kredit.load_json')}}",
+                url: "{{ route('kredit.load_json') }}",
                 data: {
-                    _token: "{{csrf_token()}}",
+                    _token: "{{ csrf_token() }}",
                     page: page,
                     page_length: page_length,
+                    tab_type: tab_type,
                     tAwal: tAwal,
                     tAkhir: tAkhir,
                     status: status,
                 },
                 success: function(response) {
+                    console.log('response')
+                    console.log(response)
                     if (response) {
                         if (response.status == 'success') {
                             if ("html" in response) {
                                 $('#table_content').html(response.html);
+                            }
+                            if ("html_import" in response) {
+                                console.log(response.html_import)
+                                $('#table_content_import').html(response.html_import);
                             }
                         }
                     }
@@ -62,24 +66,24 @@
 
         function showModal(identifier) {
             const targetId = $(identifier).data("target-id");
-            const user_role_id = "{{\Session::get(config('global.role_id_session'))}}";
-            
+            const user_role_id = "{{ \Session::get(config('global.role_id_session')) }}";
+
             $(`#${targetId}`).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
 
             if (targetId == 'modalAturKetersedian') {
                 var id = $(identifier).data('id_kkb');
                 $(`#${targetId}`).find('#id_kkb').val(id);
-            }
-            else if (targetId == 'modalUploadBerkasTagihan') {
+            } else if (targetId == 'modalUploadBerkasTagihan') {
                 var id = $(identifier).data('id_kkb');
                 $(`#${targetId}`).find('#id_kkb').val(id);
-            }
-            else if (targetId == 'modalUploadBuktiPembayaran') {
+            } else if (targetId == 'modalTagihan') {
                 var id = $(identifier).data('id_kkb');
                 $(`#${targetId}`).find('#id_kkb').val(id);
-            }
-            else if (targetId == 'modalConfirmBuktiPembayaran') {
+            } else if (targetId == 'modalUploadBuktiPembayaran') {
+                var id = $(identifier).data('id_kkb');
+                $(`#${targetId}`).find('#id_kkb').val(id);
+            } else if (targetId == 'modalConfirmBuktiPembayaran') {
                 const confirm_id = $(identifier).data('id-doc')
                 const is_confirm = $(identifier).data('confirm')
                 const confirm_category_id = $(identifier).data('id-category')
@@ -98,8 +102,7 @@
                 if (is_confirm) {
                     $(`#${targetId} .modal-footer`).css('display', 'none')
                 }
-            }
-            else if (targetId == 'modalConfirmImbalJasa') {
+            } else if (targetId == 'modalConfirmImbalJasa') {
                 const data_id = $(identifier).data('id')
                 const tanggal = $(identifier).data('tanggal')
                 const nominal = $(identifier).data('nominal')
@@ -118,8 +121,7 @@
                     $(`#${targetId} .title-modal`).html('Bukti Imbal Jasa')
                     $(`#${targetId} .modal-footer`).css('display', 'none')
                 }
-            }
-            else if (targetId == 'modalConfirmPenyerahanUnit') {
+            } else if (targetId == 'modalConfirmPenyerahanUnit') {
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");
 
@@ -145,28 +147,31 @@
                     $(`#${targetId} .title-modal`).html('Penyerahan Unit')
                     $(`#${targetId} .form-confirm`).css('display', 'none');
                     $(`#${targetId} .penyerahan-unit-title`).html('Penyerahan Unit');
-                }
-                else {
-                    var role_id = "{{\Session::get(config('global.role_id_session'))}}"
-                    var role_name = "{{\Session::get(config('global.user_role_session'))}}"
+                } else {
+                    var role_id = "{{ \Session::get(config('global.role_id_session')) }}"
+                    var role_name = "{{ \Session::get(config('global.user_role_session')) }}"
                     if (role_id == 2 && role_name == 'Staf Analis Kredit') {
                         $(`#${targetId} .title-modal`).html('Konfirmasi Penyerahan Unit')
                         $(`#${targetId} .form-confirm`).css('display', 'block');
                         $(`#${targetId} .penyerahan-unit-title`).html('Konfirmasi Penyerahan Unit');
-                    }
-                    else {
+                    } else {
                         $(`#${targetId} .title-modal`).html('Penyerahan Unit')
                         $(`#${targetId} .form-confirm`).css('display', 'none');
                         $(`#${targetId} .penyerahan-unit-title`).html('Penyerahan Unit');
                     }
                 }
-            }
-            else if (targetId == 'modalDetailPo') {
+            } else if (targetId == 'modalDetailPo') {
                 $(".active-tab").trigger("click");
+                const id = $(identifier).data('id');
+                const data_is_import = $(identifier).data('is-import')
+                var url = "{{ url('/kredit') }}/" + id
+                if (data_is_import)
+                    url += "?is_import=true"
+                
                 Swal.fire({
-                showConfirmButton: false,
-                timer: 3000,
-                closeOnClickOutside: true,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    closeOnClickOutside: true,
                     title: 'Memuat data...',
                     html: 'Silahkan tunggu...',
                     allowEscapeKey: false,
@@ -175,16 +180,16 @@
                         Swal.showLoading()
                     }
                 });
-                const id = $(identifier).data('id');
                 $.ajax({
-                    url: "{{ url('/kredit') }}/" + id,
+                    url: url,
                     method: "GET",
                     success: function(response) {
                         for (var i = 0; i < response.data.documents.length; i++) {
                             var content = '';
-                            const document = response.data || response.data.documents[i] ? response.data.documents[i] : null;
+                            const document = response.data || response.data.documents[i] ? response.data
+                                .documents[i] : null;
                             const karyawan = response.data.karyawan ? response.data.karyawan : null;
-                            
+
                             if (document.category == "Penyerahan Unit") {
                                 if (document.file) {
                                     $(`#${targetId} .alert-detailpo`).hide();
@@ -195,7 +200,8 @@
                             if (document.category == "Bukti Pembayaran") {
                                 if (document.file) {
                                     console.log("ada file");
-                                    $(`#${targetId} #detail_bukti_pembayaran`).attr('src', document.file_path+"#navpanes=0")
+                                    $(`#${targetId} #detail_bukti_pembayaran`).attr('src', document.file_path +
+                                        "#navpanes=0")
                                 }
                             }
 
@@ -207,19 +213,23 @@
                                         $(`#${targetId} .alert-stnk-file`).css('display', 'none !important');
                                         $(`#${targetId} #detail_tanggal_unggah_stnk`).val(document.date)
                                         if (document.confirm_at)
-                                            $(`#${targetId} #detail_tanggal_confirm_stnk`).val(document.confirm_at)
+                                            $(`#${targetId} #detail_tanggal_confirm_stnk`).val(document
+                                                .confirm_at)
                                         if (karyawan)
-                                            $(`#${targetId} #detail_status_confirm_stnk`).val(document.is_confirm ?
+                                            $(`#${targetId} #detail_status_confirm_stnk`).val(document
+                                                .is_confirm ?
                                                 'Sudah dikonfirmasi oleh cabang ' + karyawan[
                                                     'entitas']['cab']['nama_cabang'] + '.' :
                                                 'Belum dikonfirmasi')
                                         else
-                                            $(`#${targetId} #detail_status_confirm_stnk`).val(document.is_confirm ?
+                                            $(`#${targetId} #detail_status_confirm_stnk`).val(document
+                                                .is_confirm ?
                                                 'Sudah dikonfirmasi oleh cabang.' :
                                                 'Belum dikonfirmasi')
-                                        $(`#${targetId} #detail_no_stnk`).val(document.text ? document.text : '-')
+                                        $(`#${targetId} #detail_no_stnk`).val(document.text ? document.text :
+                                            '-')
                                         $(`#${targetId} #detail_preview_stnk`).attr('src', document.file_path +
-                                        "#navpanes=0")
+                                            "#navpanes=0")
                                         break;
                                     case 'Polis':
                                         $(`#${targetId} .alert-polis`).css('display', 'none !important')
@@ -227,17 +237,21 @@
                                         $(`#${targetId} .alert-polis-file`).css('display', 'none !important');
                                         $(`#${targetId} #detail_tanggal_unggah_polis`).val(document.date)
                                         if (document.confirm_at)
-                                            $(`#${targetId} #detail_tanggal_confirm_polis`).val(document.confirm_at)
+                                            $(`#${targetId} #detail_tanggal_confirm_polis`).val(document
+                                                .confirm_at)
                                         if (karyawan)
-                                            $(`#${targetId} #detail_status_confirm_polis`).val(document.is_confirm ?
+                                            $(`#${targetId} #detail_status_confirm_polis`).val(document
+                                                .is_confirm ?
                                                 'Sudah dikonfirmasi oleh cabang ' + karyawan[
                                                     'entitas']['cab']['nama_cabang'] + '.' :
                                                 'Belum dikonfirmasi')
                                         else
-                                            $(`#${targetId} #detail_status_confirm_polis`).val(document.is_confirm ?
+                                            $(`#${targetId} #detail_status_confirm_polis`).val(document
+                                                .is_confirm ?
                                                 'Sudah dikonfirmasi oleh cabang.' :
                                                 'Belum dikonfirmasi')
-                                        $(`#${targetId} #detail_no_polis`).val(document.text ? document.text : '-')
+                                        $(`#${targetId} #detail_no_polis`).val(document.text ? document.text :
+                                            '-')
                                         $(`#${targetId} #detail_preview_polis`).attr('src', document
                                             .file_path + "#navpanes=0")
                                         break;
@@ -247,18 +261,22 @@
                                         $(`#${targetId} .alert-bpkb-file`).css('display', 'none !important');
                                         $(`#${targetId} #detail_tanggal_unggah_bpkb`).val(document.date)
                                         if (document.confirm_at)
-                                            $(`#${targetId} #detail_tanggal_confirm_bpkb`).val(document.confirm_at)
+                                            $(`#${targetId} #detail_tanggal_confirm_bpkb`).val(document
+                                                .confirm_at)
                                         if (karyawan)
-                                            $(`#${targetId} #detail_status_confirm_bpkb`).val(document.is_confirm ?
+                                            $(`#${targetId} #detail_status_confirm_bpkb`).val(document
+                                                .is_confirm ?
                                                 'Sudah dikonfirmasi oleh cabang ' + karyawan[
                                                     'entitas']['cab']['nama_cabang'] + '.' :
                                                 'Belum dikonfirmasi')
                                         else
-                                            $(`#${targetId} #detail_status_confirm_bpkb`).val(document.is_confirm ?
+                                            $(`#${targetId} #detail_status_confirm_bpkb`).val(document
+                                                .is_confirm ?
                                                 'Sudah dikonfirmasi oleh cabang.' :
                                                 'Belum dikonfirmasi')
-                                        $(`#${targetId} #detail_no_bpkb`).val(document.text ? document.text : '-')
-                                        $(`#${targetId} #detail_preview_bpkb`).attr('src'    , document
+                                        $(`#${targetId} #detail_no_bpkb`).val(document.text ? document.text :
+                                            '-')
+                                        $(`#${targetId} #detail_preview_bpkb`).attr('src', document
                                             .file_path + "#navpanes=0")
                                         break;
                                     default:
@@ -292,7 +310,7 @@
                                 }
                             }
                         }
-                        console.log(response.data)
+                        
                         if (response.data.documents.length == 0) {
                             $(`#${targetId} .alert-stnk`).removeClass("hidden")
                             $(`#${targetId} .content-stnk`).addClass("hidden")
@@ -300,6 +318,25 @@
                             $(`#${targetId} .content-bpkb`).addClass("hidden")
                             $(`#${targetId} .alert-polis`).removeClass("hidden")
                             $(`#${targetId} .content-polis`).addClass("hidden")
+                        }
+                        if (response.data.import) {
+                            var data = response.data.import;
+                            $(`#${targetId} #detail_nomorPo`).val('-')
+                            $(`#${targetId} #detail_tanggalPo`).val(data.tgl_po)
+                            $(`#${targetId} #detail_nama_pengaju`).val(data.name);
+                            $(`#${targetId} #detail_alamat_pengaju`).val('-');
+                            $(`#${targetId} #detail_cabang`).val(data.cabang);
+                            $(`#${targetId} #detail_no_po`).val('-');
+                            $(`#${targetId} #detail_merk`).val(data.merk);
+                            $(`#${targetId} #detail_tipe`).val(data.tipe);
+                            $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
+                            $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
+                                .harga, 0, ',', '.'));
+                            $(`#${targetId} #detail_jumlah_pesanan`).val(data
+                                .jumlah);
+                            var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
+                                "#navpanes=0";
+                            //$(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
                         }
                         if (response.data.pengajuan) {
                             var data = response.data.pengajuan;
@@ -321,7 +358,7 @@
                             $(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
                         }
                         Swal.close()
-                        
+
                         $(`#${targetId}`).removeClass("hidden");
                         $(`#${targetId} .layout-overlay-edit-form`).removeClass("hidden");
                     },
@@ -332,8 +369,7 @@
                         console.log(error)
                     }
                 })
-            }
-            else if (targetId == 'modalPO') {
+            } else if (targetId == 'modalPO') {
                 $(`#${targetId}`).removeClass("hidden");
                 $(`#${targetId} .layout-overlay-edit-form`).removeClass("hidden");
                 var nomorPo = $(identifier).data('nomorpo');
@@ -344,8 +380,7 @@
                 $(`#${targetId} #nomorPo`).val(nomorPo);
                 $(`#${targetId} #tanggalPo`).val(tanggalPo);
                 $(`#${targetId} #filepo`).attr("src", filePo);
-            }
-            else if (targetId == 'modalUploadBerkas') {
+            } else if (targetId == 'modalUploadBerkas') {
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");
 
@@ -379,8 +414,7 @@
                 if (upload_stnk != '') {
                     if (is_confirm_stnk != '')
                         $(`#${targetId} #btn-confirm-stnk`).addClass('hidden')
-                }
-                else {
+                } else {
                     if (user_role_id == 2)
                         $(`#${targetId} .confirm-input-stnk`).addClass('hidden')
                     $(`#${targetId} #btn-confirm-stnk`).addClass('hidden')
@@ -389,8 +423,7 @@
                 if (upload_bpkb != '') {
                     if (is_confirm_bpkb != '')
                         $(`#${targetId} #btn-confirm-bpkb`).addClass('hidden')
-                }
-                else {
+                } else {
                     if (user_role_id == 2)
                         $(`#${targetId} .confirm-input-bpkb`).addClass('hidden')
                     $(`#${targetId} #btn-confirm-bpkb`).addClass('hidden')
@@ -399,8 +432,7 @@
                 if (upload_polis != '') {
                     if (is_confirm_polis != '')
                         $(`#${targetId} #btn-confirm-polis`).addClass('hidden')
-                }
-                else {
+                } else {
                     if (user_role_id == 2)
                         $(`#${targetId} .confirm-input-polis`).addClass('hidden')
                     $(`#${targetId} #btn-confirm-polis`).addClass('hidden')
@@ -422,16 +454,15 @@
                     $(`#${targetId} #no_stnk`).prop('readonly', true)
                     $(`#${targetId} #modalUploadBerkas #tanggal_upload_stnk`).val(tanggal_stnk);
                     $(`#${targetId} #tanggal_confirm_stnk`).val((confirm_at_stnk));
-                    $(`#${targetId} #status_confirm_stnk`).val((confirm_stnk ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'));
-                }
-                else {
+                    $(`#${targetId} #status_confirm_stnk`).val((confirm_stnk ? 'Sudah dikonfirmasi' :
+                    'Belum dikonfirmasi'));
+                } else {
                     if (user_role == 2) {
                         $(`#${targetId} #stnk_belum_diunggah`).html('Berkas belum diunggah.')
                         $(`#${targetId} .input-no-stnk`).css('display', 'none')
                         if (stnkActive)
                             $(`#${targetId} .form-submit-berkas`).css('display', 'none')
-                    }
-                    else {
+                    } else {
                         if (stnkActive)
                             $(`#${targetId} .form-submit-berkas`).css('display', 'block')
                     }
@@ -458,7 +489,7 @@
                     if (file_bpkb != '')
                         $(`#${targetId} #modal-berkas #bpkb_scan`).val(file_bpkb);
                 } catch (e) {
-                    console.log('error : '+e)
+                    console.log('error : ' + e)
                 }
                 var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis;
                 var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb;
@@ -466,16 +497,16 @@
                 if (file_stnk != '') {
                     var path_stnk = "{{ asset('storage') }}" + "/dokumentasi-stnk/" + file_stnk + "#navpanes=0";
                     $(`#${targetId} #preview_stnk`).attr("src", path_stnk);
-                    if(user_role == 2){
+                    if (user_role == 2) {
                         $(`#${targetId} #alert_stnk`).addClass("hidden")
-                    }else{
+                    } else {
                         $(`#${targetId} #stnk_input`).addClass("hidden")
                     }
                 } else {
                     $(`#${targetId} #preview_stnk`).css("display", 'none');
-                    if(user_role == 2){
+                    if (user_role == 2) {
                         $(`#${targetId} #alert_stnk`).removeClass("hidden")
-                    }else{
+                    } else {
                         $(`#${targetId} #stnk_input`).removeClass("hidden")
                     }
                 }
@@ -484,56 +515,53 @@
                     var path_polis = "{{ asset('storage') }}" + "/dokumentasi-polis/" + file_polis + "#navpanes=0";
                     $(`#${targetId} #preview_polis`).attr("src", path_polis);
                     $(`#${targetId} #polis_input`).addClass("hidden")
-                    if(user_role == 2){
+                    if (user_role == 2) {
                         $(`#${targetId} #alert_polis`).addClass("hidden")
-                    }else{
+                    } else {
                         $(`#${targetId} #polis_input`).addClass("hidden")
                     }
-                    
+
                 } else {
                     $(`#${targetId} #polis_input`).removeClass("hidden")
                     $(`#${targetId} #preview_polis`).css("display", 'none');
-                    if(user_role == 2){
+                    if (user_role == 2) {
                         $(`#${targetId} #alert_polis`).removeClass("hidden")
-                    }else{
+                    } else {
                         $(`#${targetId} #polis_input`).removeClass("hidden")
                     }
                 }
-                
+
                 if (file_bpkb != '') {
                     var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#navpanes=0";
                     $(`#${targetId} #preview_bpkb`).attr("src", path_bpkb);
-                    if(user_role == 2){
+                    if (user_role == 2) {
                         $(`#${targetId} #alert_bpkb`).addClass("hidden")
-                    }else{
+                    } else {
                         $(`#${targetId} #bpkb_input`).addClass("hidden")
                     }
                 } else {
                     $(`#${targetId} #preview_bpkb`).css("display", 'none');
-                    if(user_role == 2){
+                    if (user_role == 2) {
                         $(`#${targetId} #alert_bpkb`).removeClass("hidden")
-                    }else{
+                    } else {
                         $(`#${targetId} #bpkb_input`).removeClass("hidden")
                     }
                 }
-            }
-            else if (targetId == 'modalUploadImbalJasa') {
+            } else if (targetId == 'modalUploadImbalJasa') {
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");
                 const data_id = $(identifier).data('id')
                 const data_nominal = $(identifier).data('nominal')
                 $(`#${targetId} #id_kkbimbaljasa`).val(data_id)
                 $(`#${targetId} #nominal_imbal_jasa`).val(data_nominal)
-            }
-            else if (targetId == 'modalUploadBuktiPenyerahanUnit') {
+            } else if (targetId == 'modalUploadBuktiPenyerahanUnit') {
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");
 
                 const id = $(identifier).data('id_kkb');
 
                 $(`#${targetId} #id_kkb`).val(id)
-            }
-            else if (targetId == 'modalBuktiPembayaran') {
+            } else if (targetId == 'modalBuktiPembayaran') {
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");
 
@@ -553,32 +581,34 @@
     </script>
 @endpush
 @section('modal')
-<!-- Modal-Filter -->
-@include('pages.kredit.modal.filter-modal')
-<!-- Modal PO -->
-@include('pages.kredit.modal.detail-po')
-<!-- Modal Atur Ketersediaan Unit -->
-@include('pages.kredit.modal.atur-ketersediaan-unit-modal')
-<!-- Modal Upload Bukti Pembayaran -->
-@include('pages.kredit.modal.upload-bukti-pembayaran-modal')
-<!-- Modal Preview Bukti Pembayaran -->
-@include('pages.kredit.modal.bukti-pembayaran-modal')
-<!-- Modal Confirm Bukti Pembayaran -->
-@include('pages.kredit.modal.confirm-bukti-pembayaran-modal')
-<!-- Modal Upload Bukti Penyerahan Unit -->
-@include('pages.kredit.modal.upload-penyerahan-unit-modal')
-<!-- Modal Confirm Bukti Penyerahan Unit -->
-@include('pages.kredit.modal.confirm-penyerahan-unit')
-<!-- Modal Upload Tagihan -->
-@include('pages.kredit.modal.upload-berkas-tagihan-modal')
-<!-- Modal Upload Berkas -->
-@include('pages.kredit.modal.upload-berkas-modal')
-<!-- Modal Upload Imbal Jasa -->
-@include('pages.kredit.modal.upload-bukti-imbal-jasa')
-<!-- Modal Confirm Imbal Jasa -->
-@include('pages.kredit.modal.confirm-bukti-pembayaran-imbal-jasa-modal')
-<!-- Modal Detail PO -->
-@include('pages.kredit.modal.detail-modal')
+    <!-- Modal-Filter -->
+    @include('pages.kredit.modal.filter-modal')
+    <!-- Modal PO -->
+    @include('pages.kredit.modal.detail-po')
+    <!-- Modal Atur Ketersediaan Unit -->
+    @include('pages.kredit.modal.atur-ketersediaan-unit-modal')
+    <!-- Modal Upload Bukti Pembayaran -->
+    @include('pages.kredit.modal.upload-bukti-pembayaran-modal')
+    <!-- Modal Preview Bukti Pembayaran -->
+    @include('pages.kredit.modal.bukti-pembayaran-modal')
+    <!-- Modal Confirm Bukti Pembayaran -->
+    @include('pages.kredit.modal.confirm-bukti-pembayaran-modal')
+    <!-- Modal Upload Bukti Penyerahan Unit -->
+    @include('pages.kredit.modal.upload-penyerahan-unit-modal')
+    <!-- Modal Confirm Bukti Penyerahan Unit -->
+    @include('pages.kredit.modal.confirm-penyerahan-unit')
+    <!-- Modal Upload Tagihan -->
+    @include('pages.kredit.modal.upload-berkas-tagihan-modal')
+    <!-- Modal Show Tagihan -->
+    @include('pages.kredit.modal.show-tagihan-modal')
+    <!-- Modal Upload Berkas -->
+    @include('pages.kredit.modal.upload-berkas-modal')
+    <!-- Modal Upload Imbal Jasa -->
+    @include('pages.kredit.modal.upload-bukti-imbal-jasa')
+    <!-- Modal Confirm Imbal Jasa -->
+    @include('pages.kredit.modal.confirm-bukti-pembayaran-imbal-jasa-modal')
+    <!-- Modal Detail PO -->
+    @include('pages.kredit.modal.detail-modal')
 @endsection
 @section('content')
     <div class="head-pages">
@@ -588,105 +618,175 @@
         </h2>
     </div>
     <div class="body-pages">
+        <input type="hidden" name="tab" id="tab_type" value="@isset($_GET['tab_type']) {{$_GET['tab_type']}} @endisset">
         <div class="tab-wrapper flex">
-            <a href="" data-tab="tab-kkb" class="tab-btn bg-white px-5 py-2 border border-b-0 text-theme-primary  rounded-tr-md rounded-tl-md">Data KKB</a></li>
-            <a href="" data-tab="tab-import-kkb" class="tab-btn px-5 py-2 border border-b-0 rounded-tr-md rounded-tl-md">Data Import KKB</a></li>
-       </div>
-       <div id="tab-kkb" class="tab-content">
-           <div class="table-wrapper bg-white border rounded-md w-full p-2">
-            <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                <div class="title-table lg:p-3 p-2 text-center">
-                    <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                        Data KKB
-                    </h2>
-                </div>
-                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                    @if($is_kredit_page)
-                        <a href="{{ route('import-kkb.index') }}">
-                            <button type="button"
-                                class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
-                                <span class="lg:mt-1 mt-0">
-                                    @include('components.svg.import-table')
-                                </span>
-                                <span class="lg:block hidden"> Import </span>
-                            </button>
-                        </a>
-                    @endif
-                    @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
-                    <form action="" method="get">
-                        <button type="submit" class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
-                            <span class="lg:mt-1.5 mt-0">
-                                @include('components.svg.reset')
+            <a href="" data-tab="tab-kkb"
+                class="tab-btn bg-white px-5 py-2 border border-b-0 text-theme-primary  rounded-tr-md rounded-tl-md">Data
+                KKB</a></li>
+            <a href="" data-tab="tab-import-kkb"
+                class="tab-btn px-5 py-2 border border-b-0 rounded-tr-md rounded-tl-md">Data Import KKB</a></li>
+        </div>
+        <div id="tab-kkb" class="tab-content hidden">
+            <div class="table-wrapper bg-white border rounded-md w-full p-2">
+                <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                    <div class="title-table lg:p-3 p-2 text-center">
+                        <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                            Data KKB
+                        </h2>
+                    </div>
+                    <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                        @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
+                            <form action="" method="get">
+                                <button type="submit"
+                                    class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                                    <span class="lg:mt-1.5 mt-0">
+                                        @include('components.svg.reset')
+                                    </span>
+                                    <span class="lg:block hidden"> Reset </span>
+                                </button>
+                            </form>
+                        @endif
+                        <button data-target-id="filter-kkb" type="button"
+                            class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                            <span class="lg:mt-1 mt-0">
+                                @include('components.svg.filter')
                             </span>
-                            <span class="lg:block hidden"> Reset </span>
+                            <span class="lg:block hidden"> Filter </span>
                         </button>
-                    </form>
-                    @endif
-                    <button data-target-id="filter-kkb" type="button"
-                        class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                        <span class="lg:mt-1 mt-0">
-                            @include('components.svg.filter')
-                        </span>
-                        <span class="lg:block hidden"> Filter </span>
-                    </button>
-                </div>
-            </div>
-            <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
-                <div class="sorty pl-1 w-full">
-                    <input type="hidden" name="page" id="page" value="{{isset($_GET['page']) ? $_GET['page'] : 1}}">
-                    <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
-                    <select name="page_length" id="page_length"
-                        class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                        id="">
-                        <option value="">5</option>
-                        <option value="">10</option>
-                        <option value="">15</option>
-                        <option value="">20</option>
-                    </select>
-                    <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
-                </div>
-                <div class="search-table lg:w-96 w-full">
-                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                        <span class="mt-2 ml-3">
-                            @include('components.svg.search')
-                        </span>
-                        <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                            autocomplete="off" />
                     </div>
                 </div>
-            </div>
-            <div id="table_content">
-                @include('pages.kredit.partial._table')
+                <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    <div class="sorty pl-1 w-full">
+                        <input type="hidden" name="page" id="page"
+                            value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
+                        <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select name="page_length" id="page_length"
+                            class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center" id="">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    </div>
+                    <div class="search-table lg:w-96 w-full">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                @include('components.svg.search')
+                            </span>
+                            <input type="search" placeholder="Search"
+                                class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
+                        </div>
+                    </div>
+                </div>
+                <div id="table_content">
+                    @include('pages.kredit.partial._table')
+                </div>
             </div>
         </div>
-       </div>
+        <div id="tab-import-kkb" class="tab-content">
+            <div class="table-wrapper bg-white border rounded-md w-full p-2">
+                <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                    <div class="title-table lg:p-3 p-2 text-center">
+                        <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                            Data Import
+                        </h2>
+                    </div>
+                    <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                        @if ($is_kredit_page)
+                            <a href="{{ route('import-kkb.index') }}">
+                                <button type="button"
+                                    class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
+                                    <span class="lg:mt-1 mt-0">
+                                        @include('components.svg.import-table')
+                                    </span>
+                                    <span class="lg:block hidden"> Import </span>
+                                </button>
+                            </a>
+                        @endif
+                        @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
+                            <form action="" method="get">
+                                <button type="submit"
+                                    class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                                    <span class="lg:mt-1.5 mt-0">
+                                        @include('components.svg.reset')
+                                    </span>
+                                    <span class="lg:block hidden"> Reset </span>
+                                </button>
+                            </form>
+                        @endif
+                        <button data-target-id="filter-kkb" type="button"
+                            class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                            <span class="lg:mt-1 mt-0">
+                                @include('components.svg.filter')
+                            </span>
+                            <span class="lg:block hidden"> Filter </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    <div class="sorty pl-1 w-full">
+                        <input type="hidden" name="page" id="page"
+                            value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
+                        <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select name="page_length" id="page_length"
+                            class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center" id="">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    </div>
+                    <div class="search-table lg:w-96 w-full">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                @include('components.svg.search')
+                            </span>
+                            <input type="search" placeholder="Search"
+                                class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
+                        </div>
+                    </div>
+                </div>
+                <div id="table_content_import">
+                    @include('pages.kredit.partial.imported._table')
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="tab-import-kkb" class="tab-content">
-        <div class="table-wrapper text-center bg-white border rounded-md w-full p-2">
-         <p>There no table here.</p>
-        </div>
-    </div>   
-@endsection
+    @endsection
 
-@push('extraScript')
-<script>
-$(".tab-wrapper .tab-btn").click(function (e) {
-  e.preventDefault();
-  var tabId = $(this).data("tab");
-  $(".tab-content").addClass("hidden");
-  $(".tab-wrapper .tab-btn").removeClass("bg-white border");
-  $(".tab-wrapper .tab-btn").removeClass("text-gray-400");
-  $(".tab-wrapper .tab-btn").removeClass("text-theme-primary");
-  $(".tab-wrapper .tab-btn").addClass("text-gray-400");
-  $(".tab-wrapper .tab-btn").addClass("border-b-2 border");
-  $(this).addClass("bg-white border-b-2");
-  $(this).addClass("text-theme-primary");
-  if (tabId) {
-    $(this).removeClass("text-gray-400");
-    $(this).removeClass("bg-[#dcdcdc]");
-  }
-  $("#" + tabId).removeClass("hidden");
-});
-$("div.tab-wrapper .tab-btn:first").trigger("click");
-</script>
-@endpush
+    @push('extraScript')
+        <script>
+            $(".tab-wrapper .tab-btn").click(function(e) {
+                e.preventDefault();
+                var tabId = $(this).data("tab");
+                $('#tab_type').val(tabId)
+                var btn = $('.pagination').find('a')
+                /*$('.pagination').find('a').each(function(i, obj) {
+                    if (obj.includes('&tab_type')) {
+                        var url = obj.split('')
+                        btn[i].href = obj + '&tab_type='+tabId
+                    }
+                    else
+                        btn[i].href = obj + '&tab_type='+tabId
+                })*/
+                $(".tab-content").addClass("hidden");
+                $(".tab-wrapper .tab-btn").removeClass("bg-white border");
+                $(".tab-wrapper .tab-btn").removeClass("text-gray-400");
+                $(".tab-wrapper .tab-btn").removeClass("text-theme-primary");
+                $(".tab-wrapper .tab-btn").addClass("text-gray-400");
+                $(".tab-wrapper .tab-btn").addClass("border-b-2 border");
+                $(this).addClass("bg-white border-b-2");
+                $(this).addClass("text-theme-primary");
+                if (tabId) {
+                    $(this).removeClass("text-gray-400");
+                    $(this).removeClass("bg-[#dcdcdc]");
+                }
+                $("#" + tabId).removeClass("hidden");
+            });
+            $("div.tab-wrapper .tab-btn:first").trigger("click");
+
+        </script>
+    @endpush
+

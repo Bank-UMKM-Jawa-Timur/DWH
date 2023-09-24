@@ -7,7 +7,6 @@
                 @if ($role_id == 3)
                 <th>Cabang</th>
                 @endif
-                <th>PO</th>
                 <th>Ketersediaan Unit</th>
                 <th>Tagihan</th>
                 <th>Bukti Pembayaran</th>
@@ -22,15 +21,15 @@
             </tr>
         </thead>
         <tbody id="tbody">
-            @include('pages.kredit.partial._tbody')
+            @include('pages.kredit.partial.imported._tbody')
         </tbody>
     </table>
 </div>
 <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
     <div class="w-full">
         <div class="pagination">
-            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $data->links('pagination::tailwind') }}
+            @if($imported instanceof \Illuminate\Pagination\LengthAwarePaginator )
+            {{ $imported->links('pagination::tailwind') }}
             @endif
         </div>
     </div>

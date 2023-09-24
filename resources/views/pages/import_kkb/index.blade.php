@@ -33,18 +33,34 @@
                                 </p>
                             </div>
                             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                                <label for="" class="mr-3 text-sm text-neutral-400">Pilih Cabang</label>
-                                <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                                    name="kode_cabang" id="kode_cabang" required>
-                                    <option value="">-- Pilih Cabang --</option>
-                                    @if ($cabang)
-                                        @for ($i=0;$i<count($cabang); $i++)
-                                            <option value="{{ $cabang[$i]['kode_cabang'] }}" {{ old('kode_cabang') == $cabang[$i]['kode_cabang'] ? 'selected' : '' }}>
-                                                {{ $cabang[$i]['kode_cabang'].' - '.$cabang[$i]['cabang'] }}
-                                            </option>
-                                        @endfor
-                                    @endif
-                                </select>
+                                @if (\Session::get(config('global.role_id_session')) === 4)
+                                    {{--  superadmin  --}}
+                                    <label for="" class="mr-3 text-sm text-neutral-400">Pilih Cabang</label>
+                                    <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                                        name="kode_cabang" id="kode_cabang" required>
+                                        <option value="">-- Pilih Cabang --</option>
+                                        @if ($cabang)
+                                            @for ($i=0;$i<count($cabang); $i++)
+                                                <option value="{{ $cabang[$i]['kode_cabang'] }}" {{ old('kode_cabang') == $cabang[$i]['kode_cabang'] ? 'selected' : '' }}>
+                                                    {{ $cabang[$i]['kode_cabang'].' - '.$cabang[$i]['cabang'] }}
+                                                </option>
+                                            @endfor
+                                        @endif
+                                    </select>
+                                @else
+                                    {{--  selain superadmin  --}}
+                                    <label for="" class="mr-3">Cabang : </label>
+                                    <label for="" class="mr-3">
+                                        @if ($cabang)
+                                            @for ($i=0;$i<count($cabang); $i++)
+                                                @if (Session::get(config('global.user_kode_cabang_session')) == $cabang[$i]['kode_cabang'])
+                                                    {{ $cabang[$i]['kode_cabang'].' - '.$cabang[$i]['cabang'] }}
+                                                @endif
+                                            @endfor
+                                        @endif
+                                    </label>
+                                    <input type="hidden" name="kode_cabang" id="kode_cabang" value="{{Session::get(config('global.user_kode_cabang_session'))}}">
+                                @endif
                                 <input type="file" name="file" id="file" class=""
                                     accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
                                 <button type="button" class="px-6 py-2 bg-green-500 flex gap-3 rounded text-white btn-import">
@@ -112,7 +128,9 @@
 @push('extraScript')
     <script>
         $(document).ready(function() {
-            $('#kode_cabang').select2({});
+            var role_id = "{{\Session::get(config('global.role_id_session'))}}"
+            if (role_id == 4)
+                $('#kode_cabang').select2({});
         })
         $('#import-form').on('submit', function(e) {
             Swal.fire({
@@ -180,14 +198,14 @@
                 var harga_kendaraan = row[8].replaceAll(',.', '')
                 var nominal_realisasi = row[10].replaceAll(',.', '')
                 var nominal_imbal_jasa = row[11].replaceAll(',.', '')
-                var nominal_dp = row[12].replaceAll(',.', '')
+                var nominal_dp = row[13].replaceAll(',.', '')
                 var nominal_pembayaran_imbal_jasa = row[22].replaceAll(',', '')
                 nominal_pembayaran_imbal_jasa = nominal_pembayaran_imbal_jasa.replaceAll('.', '')
 
                 var format_harga_kendaraan = row[8] != '-' ? `Rp ${formatMoney(harga_kendaraan, 0, ',', '.')}` : '-'
                 var format_nominal_realisasi = row[10] != '-' ? `Rp ${formatMoney(nominal_realisasi, 0, ',', '.')}` : '-'
                 var format_nominal_imbal_jasa = row[11] != '-' ? `Rp ${formatMoney(nominal_imbal_jasa, 0, ',', '.')}` : '-'
-                var format_nominal_dp = row[12] != '-' ? `Rp ${formatMoney(nominal_dp, 0, ',', '.')}` : '-'
+                var format_nominal_dp = row[13] != '-' ? `Rp ${formatMoney(nominal_dp, 0, ',', '.')}` : '-'
                 var format_nominal_pembayaran_imbal_jasa = row[22] != '-' ? `Rp ${formatMoney(nominal_pembayaran_imbal_jasa, 0, ',', '.')}` : '-'
 
                 var ket = null
@@ -354,11 +372,13 @@
                             ]
 
                             var arr_data = [];
+                            var arr_index = [];
 
                             for (var i = 1; i <= cell_to_number; i++) {
                                 var arr_row = [];
                                 for (var j = 0; j < cell_range_letter.length; j++) {
                                     var index = `${cell_range_letter[j]}${i}`
+                                    arr_index.push(index)
                                     //arr_row.push(excel[index])
                                     if (i > 2) {
                                         //arr_row.push(excel[index])
@@ -371,6 +391,7 @@
                                 if (arr_row.length > 0)
                                     arr_data.push(arr_row)
                             }
+                            console.log(arr_index)
                             console.log(arr_data)
                             // Show excel data to html table
                             showToTable(arr_data)

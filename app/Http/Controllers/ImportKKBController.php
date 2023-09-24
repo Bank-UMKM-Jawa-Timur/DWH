@@ -6,9 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Alert;
+use Illuminate\Support\Facades\Auth;
 
 class ImportKKBController extends Controller
 {
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
+
     public function index() {
         // retrieve from api
         $host = config('global.los_api_host');
@@ -52,8 +60,8 @@ class ImportKKBController extends Controller
              * 5. Insert to data_po table
              * 6. Check if have keterangan, if exists insert to ket_imported_data table
              * 7. Check if have progress data, if exists insert to documents table
+             * 8. Insert to log_activities table
              */
-
             // Declare request variable
             $req_kode_cabang = $request->kode_cabang;
             $req_nama_debitur = $request->nama_debitur;
@@ -81,11 +89,11 @@ class ImportKKBController extends Controller
             $req_keterangan = $request->keterangan;
             $current_time = date('Y-m-d H:i:s');
             // End Declare request variable
-
+            
             for ($i=0; $i < count($req_nama_debitur); $i++) {
                 // Insert to imported_data table
-                $tgl_po = date('Y-m-d', strtotime($req_tgl_po[$i]));
-                $tgl_realisasi = date('Y-m-d', strtotime($req_tgl_realisasi[$i]));
+                $tgl_po = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_po[$i])));
+                $tgl_realisasi = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_realisasi[$i])));
                 $create_imported_data = DB::table('imported_data')
                                             ->insertGetId([
                                                 'name' => $req_nama_debitur[$i],
@@ -152,74 +160,109 @@ class ImportKKBController extends Controller
                 // End Check if have keterangan, if exists insert to ket_imported_data table
 
                 // Check if have progress data, if exists insert to documents table
+
+                // Bukti Pembayaran
+                $create_bukti_pembayaran = false;
+                $req_tgl_realisasi[$i] = strtolower($req_tgl_realisasi[$i]) == 'belum' || strtolower($req_tgl_realisasi[$i]) == 'sudah' ? '-' : $req_tgl_realisasi[$i];
+                if ($req_tgl_realisasi[$i] != '-') {
+                    $tgl_bukti_pembayaran = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_realisasi[$i])));
+                    if ($req_tgl_realisasi[$i] != '-') {
+                        $create_bukti_pembayaran = DB::table('documents')->insert([
+                            'kredit_id' => $create_kredit,
+                            'date' => $tgl_bukti_pembayaran,
+                            'document_category_id' => 1,
+                            'is_imported_data' => true,
+                            'is_confirm' => true,
+                            'created_at' => $current_time,
+                            'updated_at' => $current_time,
+                        ]);
+                    }
+                }
+
                 // Penyerahan Unit
-                $tgl_penyerahan_unit = date('Y-m-d', strtotime($req_tgl_penyerahan_unit[$i]));
+                $create_penyerahan_unit = false;
+                $req_tgl_penyerahan_unit[$i] = strtolower($req_tgl_penyerahan_unit[$i]) == 'belum' || strtolower($req_tgl_penyerahan_unit[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_unit[$i];
                 if ($req_tgl_penyerahan_unit[$i] != '-') {
-                    DB::table('documents')->insert([
-                        'kredit_id' => $create_kredit,
-                        'date' => $tgl_penyerahan_unit,
-                        'document_category_id' => 2,
-                        'is_imported_data' => true,
-                        'is_confirm' => true,
-                        'created_at' => $current_time,
-                        'updated_at' => $current_time,
-                    ]);
+                    $tgl_penyerahan_unit = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_unit[$i])));
+                    if ($req_tgl_penyerahan_unit[$i] != '-') {
+                        $create_penyerahan_unit = DB::table('documents')->insert([
+                            'kredit_id' => $create_kredit,
+                            'date' => $tgl_penyerahan_unit,
+                            'document_category_id' => 2,
+                            'is_imported_data' => true,
+                            'is_confirm' => true,
+                            'created_at' => $current_time,
+                            'updated_at' => $current_time,
+                        ]);
+                    }
                 }
 
                 // Penyerahan STNK
-                $tgl_penyerahan_stnk = date('Y-m-d', strtotime($req_tgl_penyerahan_stnk[$i]));
-                if ($req_tgl_penyerahan_stnk[$i] != '-'
-                    && strtolower($req_tgl_penyerahan_stnk[$i]) != 'sudah'
-                    && strtolower($req_tgl_penyerahan_stnk[$i]) != 'belum') {
-                    DB::table('documents')->insert([
-                        'kredit_id' => $create_kredit,
-                        'date' => $tgl_penyerahan_stnk,
-                        'document_category_id' => 3,
-                        'is_imported_data' => true,
-                        'is_confirm' => true,
-                        'created_at' => $current_time,
-                        'updated_at' => $current_time,
-                    ]);
+                $create_penyerahan_stnk = false;
+                $req_tgl_penyerahan_stnk[$i] = strtolower($req_tgl_penyerahan_stnk[$i]) == 'belum' || strtolower($req_tgl_penyerahan_stnk[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_stnk[$i];
+                if ($req_tgl_penyerahan_stnk[$i] != '-') {
+                    $tgl_penyerahan_stnk = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_stnk[$i])));
+                    if ($req_tgl_penyerahan_stnk[$i] != '-'
+                        && strtolower($req_tgl_penyerahan_stnk[$i]) != 'sudah'
+                        && strtolower($req_tgl_penyerahan_stnk[$i]) != 'belum') {
+                        $create_penyerahan_stnk = DB::table('documents')->insert([
+                            'kredit_id' => $create_kredit,
+                            'date' => $tgl_penyerahan_stnk,
+                            'document_category_id' => 3,
+                            'is_imported_data' => true,
+                            'is_confirm' => true,
+                            'created_at' => $current_time,
+                            'updated_at' => $current_time,
+                        ]);
+                    }
                 }
 
                 // Penyerahan BPKB
-                $tgl_penyerahan_bpkb = date('Y-m-d', strtotime($req_tgl_penyerahan_bpkb[$i]));
-                if ($req_tgl_penyerahan_bpkb[$i] != '-'
-                    && strtolower($req_tgl_penyerahan_bpkb[$i]) != 'sudah'
-                    && strtolower($req_tgl_penyerahan_bpkb[$i]) != 'belum') {
-                    DB::table('documents')->insert([
-                        'kredit_id' => $create_kredit,
-                        'date' => $tgl_penyerahan_bpkb,
-                        'document_category_id' => 5,
-                        'is_imported_data' => true,
-                        'is_confirm' => true,
-                        'created_at' => $current_time,
-                        'updated_at' => $current_time,
-                    ]);
+                $create_penyerahan_bpkb = false;
+                $req_tgl_penyerahan_bpkb[$i] = strtolower($req_tgl_penyerahan_bpkb[$i]) == 'belum' || strtolower($req_tgl_penyerahan_bpkb[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_bpkb[$i];
+                if ($req_tgl_penyerahan_bpkb[$i] != '-') {
+                    $tgl_penyerahan_bpkb = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_bpkb[$i])));
+                    if ($req_tgl_penyerahan_bpkb[$i] != '-'
+                        && strtolower($req_tgl_penyerahan_bpkb[$i]) != 'sudah'
+                        && strtolower($req_tgl_penyerahan_bpkb[$i]) != 'belum') {
+                        $create_penyerahan_bpkb = DB::table('documents')->insert([
+                            'kredit_id' => $create_kredit,
+                            'date' => $tgl_penyerahan_bpkb,
+                            'document_category_id' => 5,
+                            'is_imported_data' => true,
+                            'is_confirm' => true,
+                            'created_at' => $current_time,
+                            'updated_at' => $current_time,
+                        ]);
+                    }
                 }
 
                 // Penyerahan Polis
-                $tgl_penyerahan_polis = date('Y-m-d', strtotime($req_tgl_penyerahan_polis[$i]));
-                if ($req_tgl_penyerahan_polis[$i] != '-'
-                    && strtolower($req_tgl_penyerahan_polis[$i]) != 'sudah'
-                    && strtolower($req_tgl_penyerahan_polis[$i]) != 'belum') {
-                    DB::table('documents')->insert([
-                        'kredit_id' => $create_kredit,
-                        'date' => $tgl_penyerahan_polis,
-                        'document_category_id' => 4,
-                        'is_imported_data' => true,
-                        'is_confirm' => true,
-                        'created_at' => $current_time,
-                        'updated_at' => $current_time,
-                    ]);
+                $create_penyerahan_polis = false;
+                $req_tgl_penyerahan_polis[$i] = strtolower($req_tgl_penyerahan_polis[$i]) == 'belum' || strtolower($req_tgl_penyerahan_polis[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_polis[$i];
+                if ($req_tgl_penyerahan_polis[$i] != '-') {
+                    $tgl_penyerahan_polis = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_polis[$i])));
+                    if ($req_tgl_penyerahan_polis[$i] != '-'
+                        && strtolower($req_tgl_penyerahan_polis[$i]) != 'sudah'
+                        && strtolower($req_tgl_penyerahan_polis[$i]) != 'belum') {
+                        $create_penyerahan_polis = DB::table('documents')->insert([
+                            'kredit_id' => $create_kredit,
+                            'date' => $tgl_penyerahan_polis,
+                            'document_category_id' => 4,
+                            'is_imported_data' => true,
+                            'is_confirm' => true,
+                            'created_at' => $current_time,
+                            'updated_at' => $current_time,
+                        ]);
+                    }
                 }
 
                 // Pembayaran Imbal Jasa
-                $tgl_pembayaran_imbal_jasa = date('Y-m-d', strtotime($req_tgl_pembayaran_imbal_jasa[$i]));
-                if ($req_tgl_pembayaran_imbal_jasa[$i] != '-'
-                    && strtolower($req_tgl_pembayaran_imbal_jasa[$i]) != 'sudah'
-                    && strtolower($req_tgl_pembayaran_imbal_jasa[$i]) != 'belum') {
-                    DB::table('documents')->insert([
+                $create_pembayaran_imbal_jasa = false;
+                $req_tgl_pembayaran_imbal_jasa[$i] = strtolower($req_tgl_pembayaran_imbal_jasa[$i]) == 'belum' || strtolower($req_tgl_pembayaran_imbal_jasa[$i]) == 'sudah' ? '-' : $req_tgl_pembayaran_imbal_jasa[$i];
+                if ($req_tgl_pembayaran_imbal_jasa[$i] != '-') {
+                    $tgl_pembayaran_imbal_jasa = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_pembayaran_imbal_jasa[$i])));
+                    $create_pembayaran_imbal_jasa = DB::table('documents')->insert([
                         'kredit_id' => $create_kredit,
                         'date' => $tgl_pembayaran_imbal_jasa,
                         'document_category_id' => 6,
@@ -229,8 +272,30 @@ class ImportKKBController extends Controller
                         'updated_at' => $current_time,
                     ]);
                 }
+
+                // Tagihan
+                if ($create_bukti_pembayaran) {
+                    $tgl_tagihan = date('Y-m-d', strtotime($tgl_bukti_pembayaran . ' -1 day')); // H-1 tanggal realisasi
+                    DB::table('documents')->insert([
+                        'kredit_id' => $create_kredit,
+                        'date' => $tgl_tagihan,
+                        'document_category_id' => 7,
+                        'is_imported_data' => true,
+                        'is_confirm' => true,
+                        'created_at' => $current_time,
+                        'updated_at' => $current_time,
+                    ]);
+                    }
                 // End Check if have progress data, if exists insert to documents table
             }
+
+            // Insert to log_activities table
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
+            $this->logActivity->store('Pengguna ' . $name . ' melakukan import data kkb.');
+            // End Insert to log_activities table
 
             DB::commit();
             Alert::success('Sukses', 'Berhasil menyimpan data');
