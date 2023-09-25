@@ -549,32 +549,34 @@
     </script>
 @endpush
 @section('modal')
-<!-- Modal-Filter -->
-@include('pages.kredit.modal.filter-modal')
-<!-- Modal PO -->
-@include('pages.kredit.modal.detail-po')
-<!-- Modal Atur Ketersediaan Unit -->
-@include('pages.kredit.modal.atur-ketersediaan-unit-modal')
-<!-- Modal Upload Bukti Pembayaran -->
-@include('pages.kredit.modal.upload-bukti-pembayaran-modal')
-<!-- Modal Preview Bukti Pembayaran -->
-@include('pages.kredit.modal.bukti-pembayaran-modal')
-<!-- Modal Confirm Bukti Pembayaran -->
-@include('pages.kredit.modal.confirm-bukti-pembayaran-modal')
-<!-- Modal Upload Bukti Penyerahan Unit -->
-@include('pages.kredit.modal.upload-penyerahan-unit-modal')
-<!-- Modal Confirm Bukti Penyerahan Unit -->
-@include('pages.kredit.modal.confirm-penyerahan-unit')
-<!-- Modal Upload Berkas -->
-@include('pages.kredit.modal.upload-berkas-modal')
-<!-- Modal Upload Tagihan -->
-@include('pages.kredit.modal.upload-tagihan-modal')
-<!-- Modal Upload Imbal Jasa -->
-@include('pages.kredit.modal.upload-bukti-imbal-jasa')
-<!-- Modal Confirm Imbal Jasa -->
-@include('pages.kredit.modal.confirm-bukti-pembayaran-imbal-jasa-modal')
-<!-- Modal Detail PO -->
-@include('pages.kredit.modal.detail-modal')
+    <!-- Modal-Filter -->
+    @include('pages.kredit.modal.filter-modal')
+    <!-- Modal PO -->
+    @include('pages.kredit.modal.detail-po')
+    <!-- Modal Atur Ketersediaan Unit -->
+    @include('pages.kredit.modal.atur-ketersediaan-unit-modal')
+    <!-- Modal Upload Bukti Pembayaran -->
+    @include('pages.kredit.modal.upload-bukti-pembayaran-modal')
+    <!-- Modal Preview Bukti Pembayaran -->
+    @include('pages.kredit.modal.bukti-pembayaran-modal')
+    <!-- Modal Confirm Bukti Pembayaran -->
+    @include('pages.kredit.modal.confirm-bukti-pembayaran-modal')
+    <!-- Modal Upload Bukti Penyerahan Unit -->
+    @include('pages.kredit.modal.upload-penyerahan-unit-modal')
+    <!-- Modal Confirm Bukti Penyerahan Unit -->
+    @include('pages.kredit.modal.confirm-penyerahan-unit')
+    <!-- Modal Upload Tagihan -->
+    @include('pages.kredit.modal.upload-berkas-tagihan-modal')
+    <!-- Modal Show Tagihan -->
+    @include('pages.kredit.modal.show-tagihan-modal')
+    <!-- Modal Upload Berkas -->
+    @include('pages.kredit.modal.upload-berkas-modal')
+    <!-- Modal Upload Imbal Jasa -->
+    @include('pages.kredit.modal.upload-bukti-imbal-jasa')
+    <!-- Modal Confirm Imbal Jasa -->
+    @include('pages.kredit.modal.confirm-bukti-pembayaran-imbal-jasa-modal')
+    <!-- Modal Detail PO -->
+    @include('pages.kredit.modal.detail-modal')
 @endsection
 @section('content')
     @php
@@ -599,119 +601,149 @@
         @if(\Session::get(config('global.role_id_session')) == 2)
         @include('pages.dashboard.cabang')
         @endif
-        <div class="table-wrapper bg-white border rounded-md w-full p-2">
-            <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                <div class="title-table lg:p-3 p-2 text-center">
-                    <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                        Data KKB
-                    </h2>
-                </div>
-                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                    @if (isset($_GET['tglAwal']) || isset($_GET['tglAkhir']) || isset($_GET['status']))
-                    <form action="" method="get">
-                        <button type="submit" class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
-                            <span class="lg:mt-1.5 mt-0">
-                                @include('components.svg.reset')
+        <div class="tab-wrapper flex">
+            <a href="" data-tab="tab-kkb"
+                class="tab-btn bg-white px-5 py-2 border border-b-0 text-theme-primary  rounded-tr-md rounded-tl-md">Data
+                KKB</a></li>
+            <a href="" data-tab="tab-import-kkb"
+                class="tab-btn px-5 py-2 border border-b-0 rounded-tr-md rounded-tl-md">Data Import KKB</a></li>
+        </div>
+        <div id="tab-kkb" class="tab-content hidden">
+            <div class="table-wrapper bg-white border rounded-md w-full p-2">
+                <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                    <div class="title-table lg:p-3 p-2 text-center">
+                        <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                            Data KKB
+                        </h2>
+                    </div>
+                    <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                        @if (isset($_GET['tglAwal']) || isset($_GET['tglAkhir']) || isset($_GET['status']))
+                        <form action="" method="get">
+                            <button type="submit" class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                                <span class="lg:mt-1.5 mt-0">
+                                    @include('components.svg.reset')
+                                </span>
+                                <span class="lg:block hidden"> Reset </span>
+                            </button>
+                        </form>
+                        @endif
+                        <button data-target-id="filter-kkb" type="button"
+                            class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                            <span class="lg:mt-1 mt-0">
+                                @include('components.svg.filter')
                             </span>
-                            <span class="lg:block hidden"> Reset </span>
+                            <span class="lg:block hidden"> Filter </span>
                         </button>
-                    </form>
-                    @endif
-                    <button data-target-id="filter-kkb" type="button"
-                        class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                        <span class="lg:mt-1 mt-0">
-                            @include('components.svg.filter')
-                        </span>
-                        <span class="lg:block hidden"> Filter </span>
-                    </button>
+                    </div>
+                </div>
+                <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    <div class="sorty pl-1 w-full">
+                        <form id="form" action="" method="GET">
+                            <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                            <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                            name="page_length" id="page_length">
+                                <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                                <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                                <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                                <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                                <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                            </select>
+                            <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                        </form>
+                    </div>
+                    <div class="search-table lg:w-96 w-full">
+                        <form action="s" method="GET">
+                            <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                                <span class="mt-2 ml-3">
+                                    @include('components.svg.search')
+                                </span>
+                                    <input type="hidden" name="search_by" value="field">
+                                    <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                        name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="tables mt-2">
+                    @include('pages.kredit.partial._table')
+                </div>
+                <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+                    <div class="w-full">
+                        <div class="pagination">
+                            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                            {{ $data->links('pagination::tailwind') }}
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
-                <div class="sorty pl-1 w-full">
-                    <form id="form" action="" method="GET">
-                        <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                        <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                        name="page_length" id="page_length">
-                            <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
-                            <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
-                            <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
-                            <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
-                            <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+        </div>
+        <div id="tab-import-kkb" class="tab-content">
+            <div class="table-wrapper bg-white border rounded-md w-full p-2">
+                <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                    <div class="title-table lg:p-3 p-2 text-center">
+                        <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                            Data Import
+                        </h2>
+                    </div>
+                    <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                        @if ($is_kredit_page)
+                            <a href="{{ route('import-kkb.index') }}">
+                                <button type="button"
+                                    class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
+                                    <span class="lg:mt-1 mt-0">
+                                        @include('components.svg.import-table')
+                                    </span>
+                                    <span class="lg:block hidden"> Import </span>
+                                </button>
+                            </a>
+                        @endif
+                        @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
+                            <form action="" method="get">
+                                <button type="submit"
+                                    class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                                    <span class="lg:mt-1.5 mt-0">
+                                        @include('components.svg.reset')
+                                    </span>
+                                    <span class="lg:block hidden"> Reset </span>
+                                </button>
+                            </form>
+                        @endif
+                        <button data-target-id="filter-kkb" type="button"
+                            class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                            <span class="lg:mt-1 mt-0">
+                                @include('components.svg.filter')
+                            </span>
+                            <span class="lg:block hidden"> Filter </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    <div class="sorty pl-1 w-full">
+                        <input type="hidden" name="page" id="page"
+                            value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
+                        <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select name="page_length" id="page_length"
+                            class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center" id="">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
                         </select>
                         <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
-                    </form>
-                </div>
-                <div class="search-table lg:w-96 w-full">
-                    <form action="s" method="GET">
+                    </div>
+                    <div class="search-table lg:w-96 w-full">
                         <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
                             <span class="mt-2 ml-3">
                                 @include('components.svg.search')
                             </span>
-                                <input type="hidden" name="search_by" value="field">
-                                <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                                    name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+                            <input type="search" placeholder="Search"
+                                class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
                         </div>
-                    </form>
-                </div>
-            </div>
-            <div class="tables mt-2">
-                @include('pages.kredit.partial._table')
-                {{--  <table class="table-auto w-full">
-                    <tr>
-                        <th>No.</th>
-                        <th>Nama</th>
-                        <th>PO</th>
-                        <th>Kendaraan Unit</th>
-                        <th>Bukti Pembayaran</th>
-                        <th>Penyerahan Unit</th>
-                        <th>STNK</th>
-                        <th>POLIS</th>
-                        <th>BPKB</th>
-                        <th>Bukti Pembayaran imbal jasa</th>
-                        <th>Imbal jasa</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Farhan</td>
-                            <td>001/PO/07/2023</td>
-                            <td>15-08-2023</td>
-                            <td>-</td>
-                            <td>22-08-2023</td>
-                            <td>24-08-2023</td>
-                            <td>24-08-2023</td>
-                            <td>24-08-2023</td>
-                            <td>Rp.100.000</td>
-                            <td>Selesai</td>
-                            <td>Done</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Detail</a>
-                                        </li>
-                                        <li class="">
-                                            <a class="item-dropdown" href="#">Hapus</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>  --}}
-            </div>
-            <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                <div class="w-full">
-                    <div class="pagination">
-                        @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                        {{ $data->links('pagination::tailwind') }}
-                        @endif
                     </div>
+                </div>
+                <div id="table_content_import">
+                    @include('pages.kredit.partial.imported._table')
                 </div>
             </div>
         </div>
@@ -722,7 +754,7 @@
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
-        // chart donut
+    // chart donut
     var options = {
         series: [10, 10],
         colors: ["#122C4F", "#DC3545"],
@@ -742,52 +774,77 @@
     var donut = new ApexCharts(document.querySelector(".chart"), options);
     donut.render();
 
-
-    
-// line chart
-var lineOptions = {
-    series: [
-        {
-            name: "Data Set",
-            data: [10],
+    // line chart
+    var lineOptions = {
+        series: [
+            {
+                name: "Data Set",
+                data: [10],
+            },
+        ],
+        chart: {
+            type: "bar",
+            height: 350,
+            stacked: true,
         },
-    ],
-    chart: {
-        type: "bar",
-        height: 350,
-        stacked: true,
-    },
-    colors: ["#DC3545"],
-    responsive: [
-        {
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: "bottom",
-                    offsetX: -10,
-                    offsetY: 0,
+        colors: ["#DC3545"],
+        responsive: [
+            {
+                breakpoint: 480,
+                options: {
+                    legend: {
+                        position: "bottom",
+                        offsetX: -10,
+                        offsetY: 0,
+                    },
                 },
             },
+        ],
+        xaxis: {
+            categories: ["Data Set"],
         },
-    ],
-    xaxis: {
-        categories: ["Data Set"],
-    },
-    fill: {
-        opacity: 1,
-    },
-    legend: {
-        position: "top",
-        offsetX: 0,
-        offsetY: 50,
-    },
-};
+        fill: {
+            opacity: 1,
+        },
+        legend: {
+            position: "top",
+            offsetX: 0,
+            offsetY: 50,
+        },
+    };
 
-var lineChart = document.querySelector(".line-chart");
-var chart = new ApexCharts(lineChart, lineOptions);
-chart.render();
+    var lineChart = document.querySelector(".line-chart");
+    var chart = new ApexCharts(lineChart, lineOptions);
+    chart.render();
 
-
+    $(".tab-wrapper .tab-btn").click(function(e) {
+        e.preventDefault();
+        var tabId = $(this).data("tab");
+        $('#tab_type').val(tabId)
+        var btn = $('.pagination').find('a')
+        /*$('.pagination').find('a').each(function(i, obj) {
+            if (obj.includes('&tab_type')) {
+                var url = obj.split('')
+                btn[i].href = obj + '&tab_type='+tabId
+            }
+            else
+                btn[i].href = obj + '&tab_type='+tabId
+        })*/
+        $(".tab-content").addClass("hidden");
+        $(".tab-wrapper .tab-btn").removeClass("bg-white border");
+        $(".tab-wrapper .tab-btn").removeClass("text-gray-400");
+        $(".tab-wrapper .tab-btn").removeClass("text-theme-primary");
+        $(".tab-wrapper .tab-btn").addClass("text-gray-400");
+        $(".tab-wrapper .tab-btn").addClass("border-b-2 border");
+        $(this).addClass("bg-white border-b-2");
+        $(this).addClass("text-theme-primary");
+        if (tabId) {
+            $(this).removeClass("text-gray-400");
+            $(this).removeClass("bg-[#dcdcdc]");
+        }
+        $("#" + tabId).removeClass("hidden");
+    });
+    $("div.tab-wrapper .tab-btn:first").trigger("click");
 </script>
 @endpush
 @endsection

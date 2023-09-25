@@ -31,15 +31,24 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
+        /**
+         * File path LOS
+         *
+         * upload/{id_pengajuan}/sppk/{filename}
+         * upload/{id_pengajuan}/po/{filename}
+         * upload/{id_pengajuan}/pk/{filename}
+         */
         try {
             $this->param['role_id'] = \Session::get(config('global.role_id_session'));
             $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
             $this->param['is_kredit_page'] = request()->is('kredit');
-            $page_length = $request->page_length ? $request->page_length : 5;
-            $this->param['role'] = $this->getRoleName();
+            // $page_length = $request->page_length ? $request->page_length : 5;
+            $page_length = 20;
+            $this->param['role'] = $this->dashboardContoller->getRoleName();
             $this->param['title'] = 'KKB';
             $this->param['pageTitle'] = 'KKB';
             $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
+            $tab_type = $request->get('tab_type');
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
@@ -58,7 +67,6 @@ class DashboardController extends Controller
                 \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
                 \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
                 \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
                 \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
             )
                 ->join('kkb', 'kkb.kredit_id', 'kredits.id')
@@ -71,8 +79,10 @@ class DashboardController extends Controller
                     'kkb.id',
                     'kkb.tgl_ketersediaan_unit',
                 ])
+                ->whereNotNull('kredits.pengajuan_id')
+                ->whereNull('kredits.imported_data_id')
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [$request->tAwal, $request->tAkhir]);
+                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
                 ->when($request->cabang,function($query,$cbg){
                     return $query->where('kredits.kode_cabang',$cbg);
@@ -84,7 +94,7 @@ class DashboardController extends Controller
                 $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
             }
 
-            if (is_numeric($page_length))
+            if (is_numeric($page_length) && $tab_type == 'tab-kkb')
                 $data = $data->paginate($page_length);
             else
                 $data = $data->get();
@@ -118,7 +128,7 @@ class DashboardController extends Controller
                         if ($responseBody) {
                             if (array_key_exists('message', $responseBody)) {
                                 if ($responseBody['message'] == 'Data not found') {
-                                    unset($data[$key]);
+                                    // unset($data[$key]);
                                 }
                             }
                             if (array_key_exists('id_pengajuan', $responseBody)) {
@@ -208,34 +218,57 @@ class DashboardController extends Controller
                 $value->imbal_jasa = $imbalJasa;
                 $value->set_imbal_jasa = $setImbalJasa;
             }
-
             $this->param['data'] = $data;
-
+            
             // imported data
-            $imported = Kredit::select(
-                'kredits.id',
-                'kredits.pengajuan_id',
-                'kredits.kode_cabang',
-                'kkb.id AS kkb_id',
-                'kkb.tgl_ketersediaan_unit',
-                'kkb.id_tenor_imbal_jasa',
-                \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
-                \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-                \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
-            )
+            $imported = DB::table('imported_data AS import')
+                ->select(
+                    'import.name',
+                    'import.tgl_po',
+                    'import.tgl_realisasi',
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.imported_data_id',
+                    'kredits.kode_cabang',
+                    'kkb.id AS kkb_id',
+                    'kkb.user_id',
+                    'kkb.tgl_ketersediaan_unit',
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.nominal_realisasi',
+                    'kkb.nominal_dp',
+                    'kkb.nominal_imbal_jasa',
+                    'kkb.nominal_pembayaran_imbal_jasa',
+                    'po.merk',
+                    'po.tipe',
+                    'po.tahun_kendaraan',
+                    'po.warna',
+                    'po.keterangan',
+                    'po.jumlah',
+                    'po.harga',
+                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                )
+                ->join('kredits', 'kredits.imported_data_id', 'import.id')
                 ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                ->join('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
                 ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
                 ->groupBy([
                     'kredits.id',
-                    'kredits.pengajuan_id',
+                    'kredits.imported_data_id',
                     'kredits.kode_cabang',
                     'kkb.id_tenor_imbal_jasa',
                     'kkb.id',
                     'kkb.tgl_ketersediaan_unit',
+                    'po.merk',
+                    'po.tipe',
+                    'po.tahun_kendaraan',
+                    'po.warna',
+                    'po.keterangan',
+                    'po.jumlah',
+                    'po.harga',
                 ])
-                ->whereNull('kredits.pengajuan_id')
-                ->whereNotNull('kredits.imported_data_id')
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
                     return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
@@ -245,14 +278,94 @@ class DashboardController extends Controller
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
 
+            if ($this->param['role_id'] == 2) {
+                $imported = $imported->whereNull('kredits.pengajuan_id')
+                                    ->whereNotNull('kredits.imported_data_id')
+                                    ->whereNull('kkb.user_id')
+                                    ->orWhere('kkb.user_id', $user_id)
+                                    ->whereNull('kredits.pengajuan_id')
+                                    ->whereNotNull('kredits.imported_data_id');
+            }
+    
+
             if (is_numeric($page_length))
                 $imported = $imported->paginate($page_length);
             else
                 $imported = $imported->get();
 
-            $this->param['imported'] = $imported;
+            // dd(DB::getQueryLog());
+            foreach ($imported as $key => $value) {
+                // retrieve cabang from api
+                $value->cabang = 'undifined';
+                $host = env('LOS_API_HOST');
+                $apiURL = $host . '/kkb/get-cabang/'. $value->kode_cabang;
 
-            return view('pages.kredit.index', $this->param);
+                $headers = [
+                    'token' => env('LOS_API_TOKEN')
+                ];
+
+                try {
+                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                    $statusCode = $response->status();
+                    $responseBody = json_decode($response->getBody(), true);
+                    // input file path
+                    if ($responseBody) {
+                        if (array_key_exists('cabang', $responseBody))
+                            $value->cabang = $responseBody['cabang'];
+                    }
+                } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                    // return $e->getMessage();
+                }
+
+                // retrieve documents
+                $buktiPembayaran = DB::table('documents AS d')
+                                    ->where('kredit_id', $value->id)
+                                    ->where('document_category_id', 1)
+                                    ->first();
+
+                $invoice = DB::table('documents AS d')
+                                    ->where('kredit_id', $value->id)
+                                    ->where('document_category_id', 7)
+                                    ->first();
+
+                $penyerahanUnit = DB::table('documents AS d')
+                                    ->where('kredit_id', $value->id)
+                                    ->where('document_category_id', 2)
+                                    ->first();
+
+                $stnk = DB::table('documents AS d')
+                            ->where('kredit_id', $value->id)
+                            ->where('document_category_id', 3)
+                            ->first();
+
+                $bpkb = DB::table('documents AS d')
+                            ->where('kredit_id', $value->id)
+                            ->where('document_category_id', 5)
+                            ->first();
+
+                $polis = DB::table('documents AS d')
+                            ->where('kredit_id', $value->id)
+                            ->where('document_category_id', 4)
+                            ->first();
+
+                $imbalJasa = DB::table('documents AS d')
+                            ->where('kredit_id', $value->id)
+                            ->where('document_category_id', 6)
+                            ->first();
+
+                $value->bukti_pembayaran = $buktiPembayaran;
+                $value->invoice = $invoice;
+                $value->penyerahan_unit = $penyerahanUnit;
+                $value->stnk = $stnk;
+                $value->bpkb = $bpkb;
+                $value->polis = $polis;
+                $value->imbal_jasa = $imbalJasa;
+            }
+
+            $this->param['imported'] = $imported;
+            // return $imported;
+            return view('pages.home', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();
             return back()->withError('Terjadi kesalahan');

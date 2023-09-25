@@ -754,39 +754,38 @@
             </div>
         </div>
     </div>
-    @endsection
+@endsection
 
-    @push('extraScript')
-        <script>
-            $(".tab-wrapper .tab-btn").click(function(e) {
-                e.preventDefault();
-                var tabId = $(this).data("tab");
-                $('#tab_type').val(tabId)
-                var btn = $('.pagination').find('a')
-                /*$('.pagination').find('a').each(function(i, obj) {
-                    if (obj.includes('&tab_type')) {
-                        var url = obj.split('')
-                        btn[i].href = obj + '&tab_type='+tabId
-                    }
-                    else
-                        btn[i].href = obj + '&tab_type='+tabId
-                })*/
-                $(".tab-content").addClass("hidden");
-                $(".tab-wrapper .tab-btn").removeClass("bg-white border");
-                $(".tab-wrapper .tab-btn").removeClass("text-gray-400");
-                $(".tab-wrapper .tab-btn").removeClass("text-theme-primary");
-                $(".tab-wrapper .tab-btn").addClass("text-gray-400");
-                $(".tab-wrapper .tab-btn").addClass("border-b-2 border");
-                $(this).addClass("bg-white border-b-2");
-                $(this).addClass("text-theme-primary");
-                if (tabId) {
-                    $(this).removeClass("text-gray-400");
-                    $(this).removeClass("bg-[#dcdcdc]");
+@push('extraScript')
+    <script>
+        $(".tab-wrapper .tab-btn").click(function(e) {
+            e.preventDefault();
+            var tabId = $(this).data("tab");
+            $('#tab_type').val(tabId)
+            var btn = $('.pagination').find('a')
+            /*$('.pagination').find('a').each(function(i, obj) {
+                if (obj.includes('&tab_type')) {
+                    var url = obj.split('')
+                    btn[i].href = obj + '&tab_type='+tabId
                 }
-                $("#" + tabId).removeClass("hidden");
-            });
-            $("div.tab-wrapper .tab-btn:first").trigger("click");
-
-        </script>
-    @endpush
+                else
+                    btn[i].href = obj + '&tab_type='+tabId
+            })*/
+            $(".tab-content").addClass("hidden");
+            $(".tab-wrapper .tab-btn").removeClass("bg-white border");
+            $(".tab-wrapper .tab-btn").removeClass("text-gray-400");
+            $(".tab-wrapper .tab-btn").removeClass("text-theme-primary");
+            $(".tab-wrapper .tab-btn").addClass("text-gray-400");
+            $(".tab-wrapper .tab-btn").addClass("border-b-2 border");
+            $(this).addClass("bg-white border-b-2");
+            $(this).addClass("text-theme-primary");
+            if (tabId) {
+                $(this).removeClass("text-gray-400");
+                $(this).removeClass("bg-[#dcdcdc]");
+            }
+            $("#" + tabId).removeClass("hidden");
+        });
+        $("div.tab-wrapper .tab-btn:first").trigger("click");
+    </script>
+@endpush
 
