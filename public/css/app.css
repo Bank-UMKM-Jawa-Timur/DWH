@@ -1788,19 +1788,9 @@ video {
   }
 }
 .tables {
+  overflow: visible;
+  overflow-x: auto;
   padding: 0.5rem;
-}
-@media (max-width: 1400px) {
-
-  .tables {
-    overflow: visible;
-  }
-}
-@media (min-width: 320px) {
-
-  .tables {
-    overflow-x: auto;
-  }
 }
 body {
   overflow: hidden;

@@ -624,7 +624,7 @@
             {{ $display_role }}
         </h2>
     </div>
-    <div class="body-pages space-y-5">
+    <div class="body-pages">
         
         @if(\Session::get(config('global.role_id_session')) == 1)
         @include('pages.dashboard.pemasaran')

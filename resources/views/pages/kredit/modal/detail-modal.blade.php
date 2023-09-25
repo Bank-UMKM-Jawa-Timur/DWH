@@ -20,7 +20,7 @@
                             <div class="flex gap-5 w-full mt-5">
                                 <div class="input-box w-full space-y-3">
                                     <label for="" class="uppercase appearance-none">Nama</label>
-                                    <input type="text" disabled class="p-2 w-full border" id="detail_nama_pengaju" />
+                                    <input type="text" disabled class="p-2 w-full border"  id="detail_nama_pengaju" />
                                 </div>
                                 <div class="input-box w-full space-y-3">
                                     <label for="" class="uppercase appearance-none">Alamat</label>
@@ -219,8 +219,9 @@
             const dismissId = $(this).data("dismiss-id");
             $("#" + dismissId).addClass("hidden");
             $(".layout-overlay-edit-form").addClass("hidden");
+            $('input').val('');
         });
-        
+
         // tab function
         $(".tab-wrapping .tab-button").click(function (e) {
             e.preventDefault();
