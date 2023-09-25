@@ -167,7 +167,7 @@
                 var url = "{{ url('/kredit') }}/" + id
                 if (data_is_import)
                     url += "?is_import=true"
-                
+
                 Swal.fire({
                     showConfirmButton: false,
                     timer: 3000,
@@ -310,7 +310,7 @@
                                 }
                             }
                         }
-                        
+
                         if (response.data.documents.length == 0) {
                             $(`#${targetId} .alert-stnk`).removeClass("hidden")
                             $(`#${targetId} .content-stnk`).addClass("hidden")
@@ -455,7 +455,7 @@
                     $(`#${targetId} #modalUploadBerkas #tanggal_upload_stnk`).val(tanggal_stnk);
                     $(`#${targetId} #tanggal_confirm_stnk`).val((confirm_at_stnk));
                     $(`#${targetId} #status_confirm_stnk`).val((confirm_stnk ? 'Sudah dikonfirmasi' :
-                    'Belum dikonfirmasi'));
+                        'Belum dikonfirmasi'));
                 } else {
                     if (user_role == 2) {
                         $(`#${targetId} #stnk_belum_diunggah`).html('Berkas belum diunggah.')
@@ -618,7 +618,8 @@
         </h2>
     </div>
     <div class="body-pages">
-        <input type="hidden" name="tab" id="tab_type" value="@isset($_GET['tab_type']) {{$_GET['tab_type']}} @endisset">
+        <input type="hidden" name="tab" id="tab_type"
+            value="@isset($_GET['tab_type']) {{ $_GET['tab_type'] }} @endisset">
         <div class="tab-wrapper flex">
             <a href="" data-tab="tab-kkb"
                 class="tab-btn bg-white px-5 py-2 border border-b-0 text-theme-primary  rounded-tr-md rounded-tl-md">Data
@@ -656,18 +657,28 @@
                     </div>
                 </div>
                 <form action="" id="form_kkb">
-                    <input type="hidden" name="tab_type" class="tab_type_kkb" value="@isset($_GET['tab_type']) {{$_GET['tab_type']}} @endisset">
+                    <input type="hidden" name="tab_type" class="tab_type_kkb"
+                        value="@isset($_GET['tab_type']) {{ $_GET['tab_type'] }} @endisset">
                     <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
                         <div class="sorty pl-1 w-full">
                             <input type="hidden" name="page" id="page"
                                 value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
                             <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
                             <select name="page_length" id="page_length"
-                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center" id="">
-                                <option value="5" @isset($_GET['page_length']) {{$_GET['page_length'] == 5 ? 'selected' : '' }} @endisset>5</option>
-                                <option value="10" @isset($_GET['page_length']) {{$_GET['page_length'] == 10 ? 'selected' : '' }} @endisset>10</option>
-                                <option value="15" @isset($_GET['page_length']) {{$_GET['page_length'] == 15 ? 'selected' : '' }} @endisset>15</option>
-                                <option value="20" @isset($_GET['page_length']) {{$_GET['page_length'] == 20 ? 'selected' : '' }} @endisset>20</option>
+                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                                id="">
+                                <option value="5"
+                                    @isset($_GET['page_length']) {{ $_GET['page_length'] == 5 ? 'selected' : '' }} @endisset>
+                                    5</option>
+                                <option value="10"
+                                    @isset($_GET['page_length']) {{ $_GET['page_length'] == 10 ? 'selected' : '' }} @endisset>
+                                    10</option>
+                                <option value="15"
+                                    @isset($_GET['page_length']) {{ $_GET['page_length'] == 15 ? 'selected' : '' }} @endisset>
+                                    15</option>
+                                <option value="20"
+                                    @isset($_GET['page_length']) {{ $_GET['page_length'] == 20 ? 'selected' : '' }} @endisset>
+                                    20</option>
                             </select>
                             <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
                         </div>
@@ -688,76 +699,84 @@
             </div>
         </div>
     </div>
-        <div id="tab-import-kkb" class="tab-content-table">
-            <div class="table-wrapper bg-white border rounded-md w-full p-2">
-                <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                    <div class="title-table lg:p-3 p-2 text-center">
-                        <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                            Data Import
-                        </h2>
-                    </div>
-                    <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                        @if ($is_kredit_page)
-                            <a href="{{ route('import-kkb.index') }}">
-                                <button type="button"
-                                    class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
-                                    <span class="lg:mt-1 mt-0">
-                                        @include('components.svg.import-table')
-                                    </span>
-                                    <span class="lg:block hidden"> Import </span>
-                                </button>
-                            </a>
-                        @endif
-                        @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
-                            <form action="" method="get">
-                                <button type="submit"
-                                    class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
-                                    <span class="lg:mt-1.5 mt-0">
-                                        @include('components.svg.reset')
-                                    </span>
-                                    <span class="lg:block hidden"> Reset </span>
-                                </button>
-                            </form>
-                        @endif
-                        <button data-target-id="filter-kkb" type="button"
-                            class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                            <span class="lg:mt-1 mt-0">
-                                @include('components.svg.filter')
-                            </span>
-                            <span class="lg:block hidden"> Filter </span>
-                        </button>
-                    </div>
+    <div id="tab-import-kkb" class="tab-content-table">
+        <div class="table-wrapper bg-white border rounded-md w-full p-2">
+            <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                <div class="title-table lg:p-3 p-2 text-center">
+                    <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                        Data Import
+                    </h2>
                 </div>
-                <form action="" id="form_import">
-                    <input type="hidden" name="tab_type" class="tab_type_import" value="@isset($_GET['tab_type']) {{$_GET['tab_type']}} @endisset">
-                    <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
-                        <div class="sorty pl-1 w-full">
-                            <input type="hidden" name="page" id="page"
-                                value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
-                            <label for="page_length_import" class="mr-3 text-sm text-neutral-400">show</label>
-                            <select name="page_length_import" id="page_length_import"
-                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center" id="">
-                                <option value="5" @isset($_GET['page_length_import']) {{$_GET['page_length_import'] == 5 ? 'selected' : '' }} @endisset>5</option>
-                                <option value="10" @isset($_GET['page_length_import']) {{$_GET['page_length_import'] == 10 ? 'selected' : '' }} @endisset>10</option>
-                                <option value="15" @isset($_GET['page_length_import']) {{$_GET['page_length_import'] == 15 ? 'selected' : '' }} @endisset>15</option>
-                                <option value="20" @isset($_GET['page_length_import']) {{$_GET['page_length_import'] == 20 ? 'selected' : '' }} @endisset>20</option>
-                            </select>
-                            <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
-                        </div>
-                        <div class="search-table lg:w-96 w-full">
-                            <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                                <span class="mt-2 ml-3">
-                                    @include('components.svg.search')
+                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                    @if ($is_kredit_page)
+                        <a href="{{ route('import-kkb.index') }}">
+                            <button type="button"
+                                class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
+                                <span class="lg:mt-1 mt-0">
+                                    @include('components.svg.import-table')
                                 </span>
-                                <input type="search" placeholder="Search"
-                                    class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
-                            </div>
+                                <span class="lg:block hidden"> Import </span>
+                            </button>
+                        </a>
+                    @endif
+                    @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
+                        <form action="" method="get">
+                            <button type="submit"
+                                class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                                <span class="lg:mt-1.5 mt-0">
+                                    @include('components.svg.reset')
+                                </span>
+                                <span class="lg:block hidden"> Reset </span>
+                            </button>
+                        </form>
+                    @endif
+                    <button data-target-id="filter-kkb" type="button"
+                        class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                        <span class="lg:mt-1 mt-0">
+                            @include('components.svg.filter')
+                        </span>
+                        <span class="lg:block hidden"> Filter </span>
+                    </button>
+                </div>
+            </div>
+            <form action="" id="form_import">
+                <input type="hidden" name="tab_type" class="tab_type_import"
+                    value="@isset($_GET['tab_type']) {{ $_GET['tab_type'] }} @endisset">
+                <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    <div class="sorty pl-1 w-full">
+                        <input type="hidden" name="page" id="page"
+                            value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
+                        <label for="page_length_import" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select name="page_length_import" id="page_length_import"
+                            class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center" id="">
+                            <option value="5"
+                                @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 5 ? 'selected' : '' }} @endisset>
+                                5</option>
+                            <option value="10"
+                                @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 10 ? 'selected' : '' }} @endisset>
+                                10</option>
+                            <option value="15"
+                                @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 15 ? 'selected' : '' }} @endisset>
+                                15</option>
+                            <option value="20"
+                                @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 20 ? 'selected' : '' }} @endisset>
+                                20</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    </div>
+                    <div class="search-table lg:w-96 w-full">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                @include('components.svg.search')
+                            </span>
+                            <input type="search" placeholder="Search"
+                                class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
                         </div>
                     </div>
-                </form>
-                <div id="table_content_import">
-                    @include('pages.kredit.partial.imported._table')
                 </div>
+            </form>
+            <div id="table_content_import">
+                @include('pages.kredit.partial.imported._table')
             </div>
         </div>
     </div>
@@ -765,7 +784,6 @@
 
 @push('extraScript')
     <script>
-        console.log($('.pagination').parent())
         $('#page_length').on('change', function() {
             $('#form_kkb').submit()
         })
@@ -785,7 +803,7 @@
             if (tabId == 'tab-import-kkb') {
                 $('.tab_type_import').val(tabId)
             }
-            
+
             $(".tab-content-table").addClass("hidden");
             $(".tab-wrapper .tab-btn").removeClass("bg-white border");
             $(".tab-wrapper .tab-btn").removeClass("text-gray-400");
@@ -809,7 +827,7 @@
                         var url_params = url_before[1]
                         var split_param = url_params.split('&')
                         var tab_type_param = '';
-                        for (var j=0; j<split_param.length; j++) {
+                        for (var j = 0; j < split_param.length; j++) {
                             if (split_param[j].includes('tab_type')) {
                                 tab_type_param = split_param[j];
                                 break;
@@ -820,8 +838,7 @@
                             if (!btn_pagination[i].href.includes('type_param'))
                                 btn_pagination[i].href += `&tab_type=${tabId}`
                         }
-                    }
-                    else {
+                    } else {
                         if (!btn_pagination[i].href.includes('type_param'))
                             btn_pagination[i].href += `&tab_type=${tabId}`
                     }
@@ -829,11 +846,10 @@
             })
         });
 
-        var tab_type = "@isset($_GET['tab_type']){{$_GET['tab_type']}}@endisset"
+        var tab_type = "@isset($_GET['tab_type']){{ $_GET['tab_type'] }}@endisset"
         if (tab_type == 'tab-kkb' || !tab_type)
             $("div.tab-wrapper .tab-btn:first").trigger("click");
         if (tab_type == 'tab-import-kkb')
             $("div.tab-wrapper .tab-btn:last").trigger("click");
     </script>
 @endpush
-

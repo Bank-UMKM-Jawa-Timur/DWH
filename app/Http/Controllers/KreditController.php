@@ -42,8 +42,6 @@ class KreditController extends Controller
 
     public function index(Request $request)
     {
-        // $request->merge(['page' => 1]);
-        // return $request;
         /**
          * File path LOS
          *
@@ -397,7 +395,7 @@ class KreditController extends Controller
             }
 
             $this->param['imported'] = $imported;
-            
+
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();
