@@ -44,7 +44,7 @@ class DashboardController extends Controller
             $this->param['is_kredit_page'] = request()->is('kredit');
             // $page_length = $request->page_length ? $request->page_length : 5;
             $page_length = 20;
-            $this->param['role'] = $this->dashboardContoller->getRoleName();
+            $this->param['role'] = $this->getRoleName();
             $this->param['title'] = 'KKB';
             $this->param['pageTitle'] = 'KKB';
             $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
