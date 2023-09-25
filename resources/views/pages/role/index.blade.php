@@ -77,7 +77,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->name }}</td>
                             <td>
-                                <div class="dropdown max-w-[450px] mx-auto">
+                                <div class="dropdown max-w-[450px] mx-auto" >
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                         Selengkapnya
                                     </button>

@@ -98,9 +98,8 @@
     }
 
     .tables {
-        @apply max-[1400px]:overflow-visible min-[320px]:overflow-x-auto p-2;
+        @apply overflow-visible overflow-x-auto p-2;
     }
-
     body {
         @apply overflow-hidden;
     }
@@ -113,13 +112,13 @@
     .table-imbal-jasa {
         @apply border-collapse border;
     }
-    .table-for-kkb-import{
+    .table-for-kkb-import {
         @apply border-collapse border w-full;
     }
-    .table-for-kkb-import th{
+    .table-for-kkb-import th {
         @apply border w-full;
     }
-    .table-for-kkb-import td{
+    .table-for-kkb-import td {
         @apply border w-full;
     }
     .table-imbal-jasa th {
@@ -139,7 +138,7 @@
         @apply text-left;
     }
     table {
-        @apply border-collapse border; 
+        @apply border-collapse border;
     }
     table th {
         @apply font-semibold border border-l-0 border-r-0;
