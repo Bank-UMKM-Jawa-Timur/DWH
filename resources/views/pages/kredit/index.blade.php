@@ -626,7 +626,7 @@
             <a href="" data-tab="tab-import-kkb"
                 class="tab-btn px-5 py-2 border border-b-0 rounded-tr-md rounded-tl-md">Data Import KKB</a></li>
         </div>
-        <div id="tab-kkb" class="tab-content hidden">
+        <div id="tab-kkb" class="tab-content-table hidden">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                     <div class="title-table lg:p-3 p-2 text-center">
@@ -684,7 +684,7 @@
                 </div>
             </div>
         </div>
-        <div id="tab-import-kkb" class="tab-content">
+        <div id="tab-import-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                     <div class="title-table lg:p-3 p-2 text-center">
@@ -771,7 +771,7 @@
                 else
                     btn[i].href = obj + '&tab_type='+tabId
             })*/
-            $(".tab-content").addClass("hidden");
+            $(".tab-content-table").addClass("hidden");
             $(".tab-wrapper .tab-btn").removeClass("bg-white border");
             $(".tab-wrapper .tab-btn").removeClass("text-gray-400");
             $(".tab-wrapper .tab-btn").removeClass("text-theme-primary");
