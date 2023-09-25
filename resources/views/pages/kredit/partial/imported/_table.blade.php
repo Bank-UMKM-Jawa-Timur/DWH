@@ -27,7 +27,7 @@
 </div>
 <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
     <div class="w-full">
-        <div class="pagination">
+        <div class="pagination import-pagination">
             @if($imported instanceof \Illuminate\Pagination\LengthAwarePaginator )
             {{ $imported->links('pagination::tailwind') }}
             @endif

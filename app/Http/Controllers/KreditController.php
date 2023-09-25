@@ -42,6 +42,8 @@ class KreditController extends Controller
 
     public function index(Request $request)
     {
+        // $request->merge(['page' => 1]);
+        // return $request;
         /**
          * File path LOS
          *
@@ -53,13 +55,14 @@ class KreditController extends Controller
             $this->param['role_id'] = \Session::get(config('global.role_id_session'));
             $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
             $this->param['is_kredit_page'] = request()->is('kredit');
-            // $page_length = $request->page_length ? $request->page_length : 5;
-            $page_length = 20;
+            $page_length = $request->page_length ? $request->page_length : 5;
+            $page_length_import = $request->page_length_import ? $request->page_length_import : 5;
             $this->param['role'] = $this->dashboardContoller->getRoleName();
             $this->param['title'] = 'KKB';
             $this->param['pageTitle'] = 'KKB';
             $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
             $tab_type = $request->get('tab_type');
+            $temp_page = $request->page;
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
@@ -105,8 +108,18 @@ class KreditController extends Controller
                 $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
             }
 
-            if (is_numeric($page_length) && $tab_type == 'tab-kkb')
-                $data = $data->paginate($page_length);
+            // set page number
+            if ($tab_type != 'tab-kkb')
+                $request->merge(['page' => 1]);
+            else
+                $request->merge(['page' => $temp_page]);
+
+            if (is_numeric($page_length)) {
+                if ($tab_type == 'tab-kkb')
+                    $data = $data->paginate($page_length);
+                else
+                    $data = $data->paginate($page_length);
+            }
             else
                 $data = $data->get();
 
@@ -297,10 +310,19 @@ class KreditController extends Controller
                                     ->whereNull('kredits.pengajuan_id')
                                     ->whereNotNull('kredits.imported_data_id');
             }
-    
 
-            if (is_numeric($page_length))
-                $imported = $imported->paginate($page_length);
+            // set page number
+            if ($tab_type != 'tab-import-kkb')
+                $request->merge(['page' => 1]);
+            else
+                $request->merge(['page' => $temp_page]);
+
+            if (is_numeric($page_length_import)) {
+                if ($tab_type == 'tab-import-kkb')
+                    $imported = $imported->paginate($page_length_import);
+                else
+                    $imported = $imported->paginate(5);
+            }
             else
                 $imported = $imported->get();
 
@@ -375,7 +397,7 @@ class KreditController extends Controller
             }
 
             $this->param['imported'] = $imported;
-            // return $imported;
+            
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();

@@ -28,7 +28,7 @@
 </div>
 <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
     <div class="w-full">
-        <div class="pagination">
+        <div class="pagination kkb-pagination">
             @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
             {{ $data->links('pagination::tailwind') }}
             @endif

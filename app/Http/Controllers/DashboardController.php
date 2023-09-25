@@ -42,8 +42,7 @@ class DashboardController extends Controller
             $this->param['role_id'] = \Session::get(config('global.role_id_session'));
             $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
             $this->param['is_kredit_page'] = request()->is('kredit');
-            // $page_length = $request->page_length ? $request->page_length : 5;
-            $page_length = 20;
+            $page_length = $request->page_length ? $request->page_length : 5;
             $this->param['role'] = $this->getRoleName();
             $this->param['title'] = 'KKB';
             $this->param['pageTitle'] = 'KKB';
