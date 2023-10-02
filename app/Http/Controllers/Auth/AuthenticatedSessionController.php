@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
                 $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
                 // if ($user->nip) {
                 //     $karyawan = $this->penggunaController->getKaryawan($user->nip);
-        
+
                 //     if (gettype($karyawan) == 'string')
                 //         session(['nama_karyawan' => 'undifined']);
                 //     else {
@@ -61,16 +61,16 @@ class AuthenticatedSessionController extends Controller
                         return redirect('first-login?id=' . $user->id);
                     } else {
                         $request->authenticate();
-        
+
                         $request->session()->regenerate();
-        
+
                         $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
                         }
                 } else {
                     $request->authenticate();
-        
+
                     $request->session()->regenerate();
-        
+
                     $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
                 }
                 Session::put(config('global.role_id_session'), $user->role_id);
@@ -87,7 +87,7 @@ class AuthenticatedSessionController extends Controller
             $host = env('LOS_API_HOST');
             if ($host) {
                 $apiURL = $host . '/login';
-        
+
                 $headers = [
                     'token' => env('LOS_API_TOKEN')
                 ];
@@ -134,13 +134,13 @@ class AuthenticatedSessionController extends Controller
                                             'token' => env('LOS_API_TOKEN'),
                                             'Authorization' => "Bearer $token",
                                         ];
-                            
+
                                         try {
                                             $response = Http::withHeaders($headers)
                                                             ->withOptions(['verify' => false])
                                                             ->post($apiURL);
                                             $responseBody = json_decode($response->getBody(), true);
-                            
+
                                             if ($responseBody) {
                                                 if (array_key_exists('message', $responseBody)) {
                                                     if ($responseBody['message'] == 'Successfully logged out') {
@@ -211,7 +211,7 @@ class AuthenticatedSessionController extends Controller
                                     ->withOptions(['verify' => false])
                                     ->post($apiURL);
                     $responseBody = json_decode($response->getBody(), true);
-    
+
                     if ($responseBody) {
                         if (array_key_exists('message', $responseBody)) {
                             if ($responseBody['message'] == 'Successfully logged out') {
