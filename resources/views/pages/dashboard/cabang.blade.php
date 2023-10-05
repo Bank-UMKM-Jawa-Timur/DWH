@@ -63,18 +63,10 @@
                     </div>
                 </div>
             @empty
-                <div class="card flex p-2 bg-white w-full rounded-md">
-                    <div class="overflow-auto">
-                        <div class="mt-2 pl-2">
-                            <div class="flex gap-3">
-                                <div class="text-theme-primary">Belum dibaca</div>
-                                <div class="text-gray-400">2023-07-31 13:38</div>
-                            </div>
-                            <h2 class="font-bold tracking-tighter text-lg text-theme-text">
-                                Data pengajuan baru - Terdapat data pengajuan baru.
-                            </h2>
-                        </div>
-                    </div>
+                <div class="p-20 space-y-5 border h-full text-center">
+                    <img src="{{asset('template/assets/img/empty.svg')}}"
+                        class="w-20 m-auto" alt="empty">
+                    <p class="text-gray-600">Tidak ada notifikasi yang belum dibaca.</p>
                 </div>
             @endforelse
         </div>
