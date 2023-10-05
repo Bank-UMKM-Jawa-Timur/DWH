@@ -52,7 +52,7 @@ class NotificationTemplatesSeeder extends Seeder
         \DB::table('notification_templates')->insert([
             'title' => 'Upload Tagihan',
             'content' => 'Tagihan telah diupload oleh vendor.',
-            'action_id' => 50,
+            'action_id' => 49,
         ]);
         
         \DB::table('notification_templates')->insert([
