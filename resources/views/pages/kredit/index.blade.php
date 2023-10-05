@@ -631,13 +631,18 @@
         <div id="tab-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                    <div class="title-table lg:p-3 p-2 text-center">
+                    <div class="title-table lg:p-3 p-2 text-left">
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
                             Data KKB
                         </h2>
+                        @if (\Request::get('tab_type') == 'tab-kkb')
+                            @if (\Request::get('tAwal') && \Request::get('tAkhir'))
+                                <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b>.</p>
+                            @endif
+                        @endif
                     </div>
                     <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                        @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
+                        @if (\Request::has('tAwal') || \Request::has('tAkhir') || \Request::has('status'))
                             <form action="" method="get">
                                 <button type="submit"
                                     class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
@@ -648,13 +653,15 @@
                                 </button>
                             </form>
                         @endif
-                        <button data-target-id="filter-kkb" type="button"
-                            class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                            <span class="lg:mt-1 mt-0">
-                                @include('components.svg.filter')
-                            </span>
-                            <span class="lg:block hidden"> Filter </span>
-                        </button>
+                        <a>
+                            <button data-target-id="filter-kkb" type="button"
+                                class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                                <span class="lg:mt-1 mt-0">
+                                    @include('components.svg.filter')
+                                </span>
+                                <span class="lg:block hidden"> Filter </span>
+                            </button>
+                        </a>
                     </div>
                 </div>
                 <form action="" id="form_kkb">
@@ -688,7 +695,7 @@
                                 <span class="mt-2 ml-3">
                                     @include('components.svg.search')
                                 </span>
-                                <input type="search" placeholder="Search"
+                                <input type="search" placeholder="Search" name="query" value="@if(\Request::has('tab_type') )@if(\Request::get('tab_type') == 'tab-kkb'){{\Request::has('query') ?\Request::get('query'):''}}@endif @endif"
                                     class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
                             </div>
                         </div>
@@ -702,10 +709,15 @@
         <div id="tab-import-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                    <div class="title-table lg:p-3 p-2 text-center">
+                    <div class="title-table lg:p-3 p-2 text-left">
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
                             Data Import
                         </h2>
+                        @if (\Request::get('tab_type') == 'tab-import-kkb')
+                            @if (\Request::get('tAwal') && \Request::get('tAkhir'))
+                                <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b>.</p>
+                            @endif
+                        @endif
                     </div>
                     <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                         @if ($is_kredit_page)
@@ -719,24 +731,24 @@
                                 </button>
                             </a>
                         @endif
-                        @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
-                            <form action="" method="get">
-                                <button type="submit"
+                        @if (\Request::has('tAwal') || \Request::has('tAkhir') || \Request::has('status'))
+                                <a href="{{route('kredit.index')}}"
                                     class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
                                     <span class="lg:mt-1.5 mt-0">
                                         @include('components.svg.reset')
                                     </span>
                                     <span class="lg:block hidden"> Reset </span>
-                                </button>
-                            </form>
+                                </a>
                         @endif
-                        <button data-target-id="filter-kkb" type="button"
-                            class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                            <span class="lg:mt-1 mt-0">
-                                @include('components.svg.filter')
-                            </span>
-                            <span class="lg:block hidden"> Filter </span>
-                        </button>
+                        <a>
+                            <button data-target-id="filter-kkb"
+                                class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                                <span class="lg:mt-1 mt-0">
+                                    @include('components.svg.filter')
+                                </span>
+                                <span class="lg:block hidden"> Filter </span>
+                            </button>
+                        </a>
                     </div>
                 </div>
                 <form action="" id="form_import">
@@ -769,7 +781,7 @@
                                 <span class="mt-2 ml-3">
                                     @include('components.svg.search')
                                 </span>
-                                <input type="search" placeholder="Search"
+                                <input type="search" placeholder="Search" name="query" value="@if(\Request::has('tab_type') )@if(\Request::get('tab_type') == 'tab-import-kkb'){{\Request::has('query') ?\Request::get('query'):''}}@endif @endif"
                                     class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
                             </div>
                         </div>

@@ -233,7 +233,7 @@ class KreditController extends Controller
 
             // Search query
             $search_q = strtolower($request->get('query'));
-            if ($search_q) {
+            if ($search_q && $tab_type == 'tab-kkb') {
                 foreach ($data as $key => $value) {
                     $exists = 0;
                     if ($value->detail) {
@@ -254,6 +254,9 @@ class KreditController extends Controller
             }
             
             $this->param['data'] = $data;
+
+            // Search query
+            $search_q = strtolower($request->get('query'));
             
             // imported data
             $imported = DB::table('imported_data AS import')
@@ -310,16 +313,19 @@ class KreditController extends Controller
                 ->when($request->cabang,function($query,$cbg){
                     return $query->where('kredits.kode_cabang',$cbg);
                 })
+                ->when($search_q,function($query,$q){
+                    return $query->where('import.name', 'LIKE', "%$q%");
+                })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
 
             if ($this->param['role_id'] == 2) {
                 $imported = $imported->whereNull('kredits.pengajuan_id')
-                                    ->whereNotNull('kredits.imported_data_id')
-                                    ->whereNull('kkb.user_id')
-                                    ->orWhere('kkb.user_id', $user_id)
-                                    ->whereNull('kredits.pengajuan_id')
-                                    ->whereNotNull('kredits.imported_data_id');
+                                        ->whereNotNull('kredits.imported_data_id')
+                                        ->whereNull('kkb.user_id')
+                                        ->orWhere('kkb.user_id', $user_id)
+                                        ->whereNull('kredits.pengajuan_id')
+                                        ->whereNotNull('kredits.imported_data_id');
             }
 
             // set page number
@@ -337,7 +343,6 @@ class KreditController extends Controller
             else
                 $imported = $imported->get();
 
-            // dd(DB::getQueryLog());
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
@@ -742,7 +747,7 @@ class KreditController extends Controller
                 $value->bpkb = $bpkb;
                 $value->polis = $polis;
                 $value->bukti_imbal_jasa = $imbalJasa;
-                
+
                 usleep(500 * 1000); // sleep for 0.5 millisec
             }
 
