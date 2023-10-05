@@ -121,14 +121,13 @@ class KreditController extends Controller
             else
                 $data = $data->get();
 
+            // retrieve from api
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
             foreach ($data as $key => $value) {
-                // retrieve from api
-                $host = env('LOS_API_HOST');
                 $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
 
                 try {
                     $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
@@ -143,6 +142,20 @@ class KreditController extends Controller
                             $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
                         if (array_key_exists('pk', $responseBody))
                             $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                    }
+                    else {
+                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                        $statusCode = $response->status();
+                        $responseBody = json_decode($response->getBody(), true);
+                        if ($responseBody) {
+                            if (array_key_exists('sppk', $responseBody))
+                                $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                            if (array_key_exists('po', $responseBody))
+                                $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                            if (array_key_exists('pk', $responseBody))
+                                $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                        }
                     }
 
                     // insert response to object
@@ -164,43 +177,6 @@ class KreditController extends Controller
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
-            }
-
-            $data_array = [];
-            if($request->status != null){
-                foreach($data as $rows){
-                    if($rows->status == $request->status){
-                        array_push($data_array,$rows);
-                    }
-                }
-                $this->param['data'] = $this->paginate($data_array);
-            }else{
-                $this->param['data'] = $data;
-            }
-
-            // Search query
-            $search_q = strtolower($request->get('query'));
-            if ($search_q) {
-                foreach ($data as $key => $value) {
-                    $exists = 0;
-                    if ($value->detail) {
-                        if ($value->detail['nama']) {
-                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
-                                $exists++;
-                            }
-                        }
-                        if ($value->detail['no_po']) {
-                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
-                                $exists++;
-                            }
-                        }
-                    }
-                    if ($exists == 0)
-                        unset($data[$key]); // remove data
-                }
-            }
-
-            foreach ($data as $key => $value) {
                 $invoice = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 7)
                                             ->first();
@@ -239,7 +215,44 @@ class KreditController extends Controller
                 $value->polis = $polis;
                 $value->imbal_jasa = $imbalJasa;
                 $value->set_imbal_jasa = $setImbalJasa;
+
+                usleep(500 * 1000); // sleep for 0.5 millisec
             }
+
+            $data_array = [];
+            if($request->status != null){
+                foreach($data as $rows){
+                    if($rows->status == $request->status){
+                        array_push($data_array,$rows);
+                    }
+                }
+                $this->param['data'] = $this->paginate($data_array);
+            }else{
+                $this->param['data'] = $data;
+            }
+
+            // Search query
+            $search_q = strtolower($request->get('query'));
+            if ($search_q) {
+                foreach ($data as $key => $value) {
+                    $exists = 0;
+                    if ($value->detail) {
+                        if ($value->detail['nama']) {
+                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
+                                $exists++;
+                            }
+                        }
+                        if ($value->detail['no_po']) {
+                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
+                                $exists++;
+                            }
+                        }
+                    }
+                    if ($exists == 0)
+                        unset($data[$key]); // remove data
+                }
+            }
+            
             $this->param['data'] = $data;
             
             // imported data
@@ -392,6 +405,8 @@ class KreditController extends Controller
                 $value->bpkb = $bpkb;
                 $value->polis = $polis;
                 $value->imbal_jasa = $imbalJasa;
+
+                usleep(500 * 1000); // sleep for 0.5 millisec
             }
 
             $this->param['imported'] = $imported;
@@ -469,14 +484,13 @@ class KreditController extends Controller
             else
                 $data = $data->get();
 
+            // retrieve from api
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
             foreach ($data as $key => $value) {
-                // retrieve from api
-                $host = env('LOS_API_HOST');
                 $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
 
                 try {
                     $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
@@ -512,41 +526,7 @@ class KreditController extends Controller
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
-            }
 
-            $data_array = [];
-            if($request->status != null){
-                foreach($data as $rows){
-                    if($rows->status == $request->status){
-                        array_push($data_array,$rows);
-                    }
-                }
-                $this->param['data'] = $this->paginate($data_array);
-            }
-
-            // Search query
-            $search_q = strtolower($request->get('query'));
-            if ($search_q) {
-                foreach ($data as $key => $value) {
-                    $exists = 0;
-                    if ($value->detail) {
-                        if ($value->detail['nama']) {
-                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
-                                $exists++;
-                            }
-                        }
-                        if ($value->detail['no_po']) {
-                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
-                                $exists++;
-                            }
-                        }
-                    }
-                    if ($exists == 0)
-                        unset($data[$key]); // remove data
-                }
-            }
-
-            foreach ($data as $key => $value) {
                 $invoice = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 7)
                                             ->first();
@@ -585,6 +565,40 @@ class KreditController extends Controller
                 $value->polis = $polis;
                 $value->imbal_jasa = $imbalJasa;
                 $value->set_imbal_jasa = $setImbalJasa;
+
+                usleep(500 * 1000); // sleep for 0.5 millisec
+            }
+
+            $data_array = [];
+            if($request->status != null){
+                foreach($data as $rows){
+                    if($rows->status == $request->status){
+                        array_push($data_array,$rows);
+                    }
+                }
+                $this->param['data'] = $this->paginate($data_array);
+            }
+
+            // Search query
+            $search_q = strtolower($request->get('query'));
+            if ($search_q) {
+                foreach ($data as $key => $value) {
+                    $exists = 0;
+                    if ($value->detail) {
+                        if ($value->detail['nama']) {
+                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
+                                $exists++;
+                            }
+                        }
+                        if ($value->detail['no_po']) {
+                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
+                                $exists++;
+                            }
+                        }
+                    }
+                    if ($exists == 0)
+                        unset($data[$key]); // remove data
+                }
             }
             
             $this->param['data'] = $data;
@@ -728,6 +742,8 @@ class KreditController extends Controller
                 $value->bpkb = $bpkb;
                 $value->polis = $polis;
                 $value->bukti_imbal_jasa = $imbalJasa;
+                
+                usleep(500 * 1000); // sleep for 0.5 millisec
             }
 
             $this->param['imported'] = $imported;

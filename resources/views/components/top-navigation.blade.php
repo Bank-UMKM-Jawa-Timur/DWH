@@ -72,7 +72,9 @@
                     </button>
                 </div>
             @empty
-                <p>Belum ada notifikasi</p>
+                <div class="p-4 border-b">
+                    <p>Belum ada notifikasi.</p>
+                </div>
             @endforelse
             <div class="footer-notif text-center p-3">
                 <button>Lihat semua</button>

@@ -195,43 +195,6 @@ class DashboardController extends Controller
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
-            }
-
-            $data_array = [];
-            if($request->status != null){
-                foreach($data as $rows){
-                    if($rows->status == $request->status){
-                        array_push($data_array,$rows);
-                    }
-                }
-                $this->param['data'] = $this->paginate($data_array);
-            }else{
-                $this->param['data'] = $data;
-            }
-
-            // Search query
-            $search_q = strtolower($request->get('query'));
-            if ($search_q) {
-                foreach ($data as $key => $value) {
-                    $exists = 0;
-                    if ($value->detail) {
-                        if ($value->detail['nama']) {
-                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
-                                $exists++;
-                            }
-                        }
-                        if ($value->detail['no_po']) {
-                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
-                                $exists++;
-                            }
-                        }
-                    }
-                    if ($exists == 0)
-                        unset($data[$key]); // remove data
-                }
-            }
-
-            foreach ($data as $key => $value) {
                 $invoice = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 7)
                                             ->first();
@@ -270,7 +233,44 @@ class DashboardController extends Controller
                 $value->polis = $polis;
                 $value->imbal_jasa = $imbalJasa;
                 $value->set_imbal_jasa = $setImbalJasa;
+
+                usleep(500 * 1000); // sleep for 0.5 millisec
             }
+
+            $data_array = [];
+            if($request->status != null){
+                foreach($data as $rows){
+                    if($rows->status == $request->status){
+                        array_push($data_array,$rows);
+                    }
+                }
+                $this->param['data'] = $this->paginate($data_array);
+            }else{
+                $this->param['data'] = $data;
+            }
+
+            // Search query
+            $search_q = strtolower($request->get('query'));
+            if ($search_q) {
+                foreach ($data as $key => $value) {
+                    $exists = 0;
+                    if ($value->detail) {
+                        if ($value->detail['nama']) {
+                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
+                                $exists++;
+                            }
+                        }
+                        if ($value->detail['no_po']) {
+                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
+                                $exists++;
+                            }
+                        }
+                    }
+                    if ($exists == 0)
+                        unset($data[$key]); // remove data
+                }
+            }
+            
             $this->param['data'] = $data;
             
             // imported data
@@ -423,6 +423,8 @@ class DashboardController extends Controller
                 $value->bpkb = $bpkb;
                 $value->polis = $polis;
                 $value->imbal_jasa = $imbalJasa;
+
+                usleep(500 * 1000); // sleep for 0.5 millisec
             }
 
             $this->param['imported'] = $imported;
