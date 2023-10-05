@@ -104,6 +104,7 @@ class AuthenticatedSessionController extends Controller
                     if ($responseBody) {
                         if (array_key_exists('status', $responseBody)) {
                             if ($responseBody['status'] == 'berhasil') {
+                                Session::put(config('global.user_token_session'), $responseBody['access_token']);
                                 if ($responseBody['data'] != 'undifined') {
                                     if ($responseBody['role'] == 'Administrator') {
                                         $role_id = 4;
@@ -120,13 +121,13 @@ class AuthenticatedSessionController extends Controller
                                     Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
                                     Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
                                     Session::put(config('global.user_role_session'), $responseBody['role']);
-                                    Session::put(config('global.user_token_session'), $responseBody['access_token']);
                                     Session::put(config('global.user_kode_cabang_session'), $responseBody['kode_cabang']);
 
                                     return redirect()->route('dashboard');
                                 }
                                 else {
                                     $token = \Session::get(config('global.user_token_session'));
+
                                     $host = env('LOS_API_HOST');
                                     if ($host) {
                                         $apiURL = $host . '/logout';
@@ -145,31 +146,13 @@ class AuthenticatedSessionController extends Controller
                                                 if (array_key_exists('message', $responseBody)) {
                                                     if ($responseBody['message'] == 'Successfully logged out') {
                                                         Session::flush();
-                                                        return response()->json([
-                                                            'status' => 'success',
-                                                            'message' => 'Berhasil mengakhiri sesi'
-                                                        ]);
                                                     }
-                                                    else
-                                                        return response()->json([
-                                                            'status' => 'failed',
-                                                            'message' => $responseBody['message']
-                                                        ]);
                                                 }
-                                                else
-                                                    return response()->json([
-                                                        'status' => 'failed',
-                                                        'message' => 'Terjadi kesalahan'
-                                                    ]);
                                             }
                                         } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                                            return response()->json([
-                                                'status' => 'failed',
-                                                'message' => 'Terjadi kesalahan. '.$e->getMessage()
-                                            ]);
                                         }
                                     }
-                                    return back()->withError('Data tidak ditemukan');
+                                    return back()->withError('Data identitas tidak ditemukan');
                                 }
                             }
                             else

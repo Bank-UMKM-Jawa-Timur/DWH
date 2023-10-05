@@ -97,9 +97,14 @@
                     <p class="text-gray-400">{{$sub_name}}</p>
                 </div>
             </div>
-            <a href="" class="block"><button class="p-4 w-full text-left hover:bg-gray-200">
-                    Reset Password
-                </button></a>
+            @php
+                $role = strtolower(\Session::get(config('global.user_role_session')));
+            @endphp
+            @if ($role == 'vendor')
+                <a href="{{route('change_password')}}" class="block"><button class="p-4 w-full text-left hover:bg-gray-200">
+                        Reset Password
+                    </button></a>
+            @endif
             <a href="#" class="block"><button type="button" class="p-4 w-full text-left hover:bg-gray-200"
                 id="btn-logout">
                     Log out

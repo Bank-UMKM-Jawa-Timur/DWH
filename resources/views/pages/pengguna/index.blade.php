@@ -98,13 +98,6 @@
                                     Selengkapnya
                                 </button>
                                 <ul class="dropdown-menu left-3">
-                                    <li class="">
-                                        <a class="item-dropdown toggle-modal" data-target-id="reset-password" href="#">Reset Password</a>
-                                        {{--  <a class="dropdown-item buttonresetpassword" data-toggle="modal"
-                                        data-target="#resetPasswordModal" data-id="{{ $item->id }}"
-                                        href="#" id="buttonresetpassword">Reset
-                                        Password</a>  --}}
-                                    </li>
                                     <li>
                                         <a class="item-dropdown toggle-modal btn-edit" data-id="{{ $item->id }}"
                                             data-name="{{ $item->name }}">
