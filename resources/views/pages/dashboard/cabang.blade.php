@@ -14,7 +14,7 @@
                 <div class="w-full lg:text-right text-center mt-5">
                     <p class="text-gray-500">Target:</p>
                     <h2 class="text-7xl font-bold text-theme-secondary">
-                        20
+                        {{$target->total_unit}}
                     </h2>
                 </div>
                 <div class="chart w-full lg:mt-0 mt-10"></div>
@@ -43,63 +43,40 @@
                 </svg>
             </p>
             <p class="tracking-tighter font-semibold">
-                <span class="px-3 text-white py-1 bg-theme-primary rounded-full">5</span>
+                <span class="px-3 text-white py-1 bg-theme-primary rounded-full">{{count($notification)}}</span>
                 <span class="ml-2">Notifikasi belum dibaca</span>
             </p>
         </div>
         <div class="card-list divide-y h-[300px] overflow-auto">
-            <div class="card flex p-2 bg-white w-full rounded-md">
-                <div class="overflow-auto">
-                    <div class="mt-2 pl-2">
-                        <div class="flex gap-3">
-                            <div class="text-theme-primary">Belum dibaca</div>
-                            <div class="text-gray-400">2023-07-31 13:38</div>
+            @forelse ($notification as $item)
+                <div class="card flex p-2 bg-white w-full rounded-md">
+                    <div class="overflow-auto">
+                        <div class="mt-2 pl-2">
+                            <div class="flex gap-3">
+                                <div class="text-theme-primary">{{$item->read ? 'Sudah dibaca' : 'Belum dibaca'}}</div>
+                                <div class="text-gray-400">{{date('Y-m-d H:i', strtotime($item->created_at))}}</div>
+                            </div>
+                            <h2 class="font-bold tracking-tighter text-lg text-theme-text">
+                                {{$item->title}}
+                            </h2>
                         </div>
-                        <h2 class="font-bold tracking-tighter text-lg text-theme-text">
-                            Data pengajuan baru - Terdapat data pengajuan baru.
-                        </h2>
                     </div>
                 </div>
-            </div>
-            <div class="card flex p-2 bg-white w-full rounded-md">
-                <div class="overflow-auto">
-                    <div class="mt-2 pl-2">
-                        <div class="flex gap-3">
-                            <div class="text-theme-primary">Belum dibaca</div>
-                            <div class="text-gray-400">2023-07-31 13:38</div>
+            @empty
+                <div class="card flex p-2 bg-white w-full rounded-md">
+                    <div class="overflow-auto">
+                        <div class="mt-2 pl-2">
+                            <div class="flex gap-3">
+                                <div class="text-theme-primary">Belum dibaca</div>
+                                <div class="text-gray-400">2023-07-31 13:38</div>
+                            </div>
+                            <h2 class="font-bold tracking-tighter text-lg text-theme-text">
+                                Data pengajuan baru - Terdapat data pengajuan baru.
+                            </h2>
                         </div>
-                        <h2 class="font-bold tracking-tighter text-lg text-theme-text">
-                            Data pengajuan baru - Terdapat data pengajuan baru.
-                        </h2>
                     </div>
                 </div>
-            </div>
-            <div class="card flex p-2 bg-white w-full rounded-md">
-                <div class="overflow-auto">
-                    <div class="mt-2 pl-2">
-                        <div class="flex gap-3">
-                            <div class="text-theme-primary">Belum dibaca</div>
-                            <div class="text-gray-400">2023-07-31 13:38</div>
-                        </div>
-                        <h2 class="font-bold tracking-tighter text-lg text-theme-text">
-                            Data pengajuan baru - Terdapat data pengajuan baru.
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="card flex p-2 bg-white w-full rounded-md">
-                <div class="overflow-auto">
-                    <div class="mt-2 pl-2">
-                        <div class="flex gap-3">
-                            <div class="text-theme-primary">Belum dibaca</div>
-                            <div class="text-gray-400">2023-07-31 13:38</div>
-                        </div>
-                        <h2 class="font-bold tracking-tighter text-lg text-theme-text">
-                            Data pengajuan baru - Terdapat data pengajuan baru.
-                        </h2>
-                    </div>
-                </div>
-            </div>
+            @endforelse
         </div>
     </div>
 </div>

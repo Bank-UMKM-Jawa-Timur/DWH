@@ -39,6 +39,48 @@ class DashboardController extends Controller
          * upload/{id_pengajuan}/pk/{filename}
          */
         try {
+            $total_target = 0;
+            $target = Target::select('id', 'nominal', 'total_unit')->where('is_active', 1)->first();
+            $this->param['target'] = $target;
+
+            $data_realisasi = [];
+            $total_terealisasi = 0;
+
+            $all_data = Kredit::select(
+                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+            )
+                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                ->groupBy([
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.kode_cabang',
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.id',
+                    'kkb.tgl_ketersediaan_unit',
+                ])
+                ->whereNotNull('kredits.pengajuan_id')
+                ->whereNull('kredits.imported_data_id')
+                ->get();
+            foreach ($all_data as $key => $value) {
+                if ($value->status == 'done')
+                    $total_terealisasi++;
+            }
+            if ($target)
+                $total_target = $target->total_unit;
+                
+            $this->param['total_belum_terealisasi'] = $total_target - $total_terealisasi;
+            $this->param['total_terealisasi'] = $total_terealisasi;
+
+            $notification = Notification::select('notifications.id', 'notifications.read', 'notifications.extra', 'notifications.created_at', 'temp.title', 'temp.content')
+                                            ->join('users AS u', 'u.id', 'notifications.user_id')
+                                            ->join('notification_templates AS temp', 'temp.id', 'notifications.template_id')
+                                            ->where('u.id', \Session::get(config('global.user_id_session')))
+                                            ->where('notifications.read', 0)
+                                            ->orderBy('notifications.created_at', 'DESC')
+                                            ->get();
+            $this->param['notification'] = $notification;
+
             $this->param['role_id'] = \Session::get(config('global.role_id_session'));
             $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
             $this->param['is_kredit_page'] = request()->is('kredit');
