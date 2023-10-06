@@ -21,7 +21,7 @@ class AuthWithApi
         // Check session in laravel application
         if (!Session::has(config('global.auth_session'))) {
             if (! $request->expectsJson()) {
-                // return redirect()->route('login');
+                return redirect()->route('login');
             }
             // return redirect('/login');
         }
