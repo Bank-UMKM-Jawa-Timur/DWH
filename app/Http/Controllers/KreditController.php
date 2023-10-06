@@ -218,6 +218,7 @@ class KreditController extends Controller
 
                 usleep(500 * 1000); // sleep for 0.5 millisec
             }
+            // return $data[3]->set_imbal_jasa->imbaljasa;
 
             $data_array = [];
             if($request->status != null){
@@ -759,6 +760,7 @@ class KreditController extends Controller
                 'message' => 'Successfully load data',
                 'html' => $html,
                 'html_import' => $html_import,
+                'data' => $data
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -784,7 +786,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
-        $action_id = 50;
+        $action_id = 49;
 
         $validator = Validator::make($request->all(), [
             'id_kkb' => 'required',

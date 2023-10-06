@@ -164,11 +164,11 @@ class NotificationController extends Controller
 
             // get kredit
             $kredit = Kredit::find($kreditId);
-
             // get user who will be sended the notification
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
+                    // send to all role
                     // retrieve from api
                     $host = config('global.los_api_host');
                     $apiURL = $host . '/kkb/get-data-users-cabang/' . $kredit->kode_cabang;
@@ -200,18 +200,22 @@ class NotificationController extends Controller
                     }
                 }
                 else {
+                    // send to selected role
                     $arrRole = explode(',', $value->role_id);
-                    $user = User::where('kode_cabang', $kredit->kode_cabang)
-                                ->whereIn('role_id', $arrRole)
-                                ->get();
-
-                    foreach ($user as $key => $item) {
-                        $createNotification = new Notification();
-                        $createNotification->kredit_id = $kreditId;
-                        $createNotification->template_id = $value->id;
-                        $createNotification->user_id = $item->id;
-                        $createNotification->save();
+                    if (in_array(3, $arrRole)) {
+                        $user = User::where('kode_cabang', $kredit->kode_cabang)
+                                    ->where('role_id', 3)
+                                    ->get();
+                                    
+                        foreach ($user as $key => $item) {
+                            $createNotification = new Notification();
+                            $createNotification->kredit_id = $kreditId;
+                            $createNotification->template_id = $value->id;
+                            $createNotification->user_id = $item->id;
+                            $createNotification->save();
+                        }
                     }
+dd($arrRole, $user);
                 }
             }
             DB::commit();
