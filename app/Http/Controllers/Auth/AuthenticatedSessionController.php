@@ -58,7 +58,7 @@ class AuthenticatedSessionController extends Controller
                                     'password' => $request->password,
                                 ]);
                 $responseBody = json_decode($response->getBody(), true);
-
+                // return $responseBody;
                 if ($responseBody) {
                     if (array_key_exists('status', $responseBody)) {
                         if (strtolower($responseBody['status']) == 'berhasil') {
@@ -69,7 +69,7 @@ class AuthenticatedSessionController extends Controller
                                 if ($responseBody['role'] == 'Administrator') {
                                     $role_id = 4;
                                 }
-                                else if ($responseBody['role'] == 'Pemasaran') {
+                                else if ($responseBody['role'] == 'Kredit Umum') {
                                     $role_id = 1;
                                 }
                                 else {
@@ -150,7 +150,7 @@ class AuthenticatedSessionController extends Controller
                             return back()->withError($responseBody['message']);
                     }
                     else
-                        return back()->withError('Terjadi kesalahan');
+                        return back()->withError('Terjadi kesalahan 3');
                 }
                 else
                     return back()->withError('Terjadi kesalahan');
