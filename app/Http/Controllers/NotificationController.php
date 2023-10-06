@@ -39,10 +39,13 @@ class NotificationController extends Controller
                                 ->orderBy('notifications.read')
                                 ->orderBy('notifications.created_at', 'DESC')
                                 ->get();
+
             $param['total_belum_dibaca'] = Notification::select('notifications.id')
                                             ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                             ->where('notifications.read', false)
                                             ->count();
+            // return count($param['data']);
+            // return $param['total_belum_dibaca'];
             return view('pages.notifikasi.index', $param);
         } catch (\Exception $e) {
             return back()->withError('Terjadi kesalahan');

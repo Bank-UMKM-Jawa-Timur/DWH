@@ -64,7 +64,7 @@ class KreditController extends Controller
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
-            
+
             $user_id = $token ? $user['id'] : $user->id;
             if (!$token)
                 $user_id = 0; // vendor
@@ -80,7 +80,7 @@ class KreditController extends Controller
                 \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
                 \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
                 \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
-            )
+                )
                 ->join('kkb', 'kkb.kredit_id', 'kredits.id')
                 ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
                 ->groupBy([
@@ -252,12 +252,12 @@ class KreditController extends Controller
                         unset($data[$key]); // remove data
                 }
             }
-            
+
             $this->param['data'] = $data;
 
             // Search query
             $search_q = strtolower($request->get('query'));
-            
+
             // imported data
             $imported = DB::table('imported_data AS import')
                 ->select(
@@ -441,7 +441,7 @@ class KreditController extends Controller
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
-            
+
             $user_id = $token ? $user['id'] : $user->id;
             if (!$token)
                 $user_id = 0; // vendor
@@ -535,7 +535,7 @@ class KreditController extends Controller
                 $invoice = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 7)
                                             ->first();
-                                            
+
                 $buktiPembayaran = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 1)
                                             ->first();
@@ -605,7 +605,7 @@ class KreditController extends Controller
                         unset($data[$key]); // remove data
                 }
             }
-            
+
             $this->param['data'] = $data;
 
             $html = view('pages.kredit.partial._table', $this->param)->render();
@@ -1415,11 +1415,11 @@ class KreditController extends Controller
                         $stnk = Document::find($request->id_stnk);
                         $docCategory = DocumentCategory::select('name')->find($stnk->document_category_id);
                         $doc_cat_name = $docCategory->name;
-    
+
                         // send notification
                         if (!$stnk->is_confirm)
                             $this->notificationController->send(12, $stnk->kredit_id);
-    
+
                         $stnk->is_confirm = 1;
                         $stnk->confirm_at = date('Y-m-d');
                         $stnk->confirm_by = \Session::get(config('global.user_id_session'));
@@ -1443,11 +1443,11 @@ class KreditController extends Controller
                         $polis = Document::find($request->id_polis);
                         $docCategory = DocumentCategory::select('name')->find($polis->document_category_id);
                         $doc_cat_name = $docCategory->name;
-    
+
                         // send notification
                         if (!$polis->is_confirm)
                             $this->notificationController->send(13, $polis->kredit_id);
-    
+
                         $polis->is_confirm = 1;
                         $polis->confirm_at = date('Y-m-d');
                         $polis->confirm_by = \Session::get(config('global.user_id_session'));
@@ -1471,11 +1471,11 @@ class KreditController extends Controller
                         $bpkb = Document::find($request->id_bpkb);
                         $docCategory = DocumentCategory::select('name')->find($bpkb->document_category_id);
                         $doc_cat_name = $docCategory->name;
-    
+
                         // send notification
                         if (!$bpkb->is_confirm)
                             $this->notificationController->send(14, $bpkb->kredit_id);
-    
+
                         $bpkb->is_confirm = 1;
                         $bpkb->confirm_at = date('Y-m-d');
                         $bpkb->confirm_by = \Session::get(config('global.user_id_session'));
@@ -1833,14 +1833,14 @@ class KreditController extends Controller
                     $imported_data->cabang = 'undifined';
                     $host = env('LOS_API_HOST');
                     $apiURL = $host . '/kkb/get-cabang/'. $imported_data->kode_cabang;
-    
+
                     $headers = [
                         'token' => env('LOS_API_TOKEN')
                     ];
-    
+
                     try {
                         $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-    
+
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
                         // input file path
@@ -1882,7 +1882,7 @@ class KreditController extends Controller
                     // return $e->getMessage();
                 }
             }
-            
+
             // retrieve karyawan data
             $karyawan = $this->penggunaController->getKaryawan($user_nip);
 
