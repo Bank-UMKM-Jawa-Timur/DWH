@@ -57,10 +57,10 @@
                                     </p>
                                 </span>
                             </div>
-                            @endif
                         </div>
+                        @endif
                         <div class="input-form space-y-3">
-                            <label for="niporemail"
+                            <label for="password"
                                 class="text-[#576B80] lg:text-sm text-xs font-semibold tracking-tighter">MASUKAN
                                 PASSWORD</label>
                             <div class="input-box border border-[#E6E6E6] rounded-md">
