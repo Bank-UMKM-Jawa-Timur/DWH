@@ -31,9 +31,6 @@ class RedirectIfAuthenticated
                 if ($server_session['status'] == 'sukses') {
                     return redirect()->back();
                 }
-                // else {
-                //     return redirect('/login');
-                // }
             }
         }
         else {

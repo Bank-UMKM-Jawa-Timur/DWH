@@ -10,7 +10,10 @@ use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Http;
@@ -39,137 +42,120 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        if ($request->input_type == 'bjsc@mail.com' || $request->input_type == 'mkhalil26122000@gmail.com') {
-            // login vendor
+        $host = env('LOS_API_HOST');
+        if ($host) {
+            $apiURL = $host . '/login';
+
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
             try {
-                $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
-                // if ($user->nip) {
-                //     $karyawan = $this->penggunaController->getKaryawan($user->nip);
+                $response = Http::withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->post($apiURL, [
+                                    'email' => $request->input_type,
+                                    'password' => $request->password,
+                                ]);
+                $responseBody = json_decode($response->getBody(), true);
 
-                //     if (gettype($karyawan) == 'string')
-                //         session(['nama_karyawan' => 'undifined']);
-                //     else {
-                //         if ($karyawan)
-                //             if (array_key_exists('nama', $karyawan))
-                //                 session(['nama_karyawan' => $karyawan['nama']]);
-                //             else
-                //                 session(['nama_karyawan' => 'undifined']);
-                //     }
-                // }
-                if ($user->role_id != 4) {
-                    if ($user->first_login == true) {
-                        return redirect('first-login?id=' . $user->id);
-                    } else {
-                        $request->authenticate();
+                if ($responseBody) {
+                    if (array_key_exists('status', $responseBody)) {
+                        if (strtolower($responseBody['status']) == 'berhasil') {
+                            Session::put(config('global.user_token_session'), $responseBody['access_token']);
+                            setcookie(config('global.user_token_session'),  $responseBody['access_token']);
 
-                        $request->session()->regenerate();
-
-                        $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
-                        }
-                } else {
-                    $request->authenticate();
-
-                    $request->session()->regenerate();
-
-                    $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
-                }
-                Session::put(config('global.role_id_session'), $user->role_id);
-                Session::put(config('global.user_id_session'), $user->id);
-                Session::put(config('global.user_role_session'), 'Vendor');
-
-                return redirect()->intended(RouteServiceProvider::HOME);
-            }
-            catch (\Exception $e) {
-                return back()->withError('Terjadi kesalahan.'.$e->getMessage());
-            }
-        }
-        else {
-            $host = env('LOS_API_HOST');
-            if ($host) {
-                $apiURL = $host . '/login';
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
-
-                try {
-                    $response = Http::withHeaders($headers)
-                                    ->withOptions(['verify' => false])
-                                    ->post($apiURL, [
-                                        'email' => $request->input_type,
-                                        'password' => $request->password,
-                                    ]);
-                    $responseBody = json_decode($response->getBody(), true);
-
-                    if ($responseBody) {
-                        if (array_key_exists('status', $responseBody)) {
-                            if ($responseBody['status'] == 'berhasil') {
-                                Session::put(config('global.user_token_session'), $responseBody['access_token']);
-                                if ($responseBody['data'] != 'undifined') {
-                                    if ($responseBody['role'] == 'Administrator') {
-                                        $role_id = 4;
-                                    }
-                                    else if ($responseBody['role'] == 'Pemasaran') {
-                                        $role_id = 1;
-                                    }
-                                    else {
-                                        $role_id = 2;
-                                    }
-                                    Session::put(config('global.auth_session'), $responseBody);
-                                    Session::put(config('global.role_id_session'), $role_id);
-                                    Session::put(config('global.user_id_session'), $responseBody['id']);
-                                    Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
-                                    Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
-                                    Session::put(config('global.user_role_session'), $responseBody['role']);
-                                    Session::put(config('global.user_kode_cabang_session'), $responseBody['kode_cabang']);
-
-                                    return redirect()->route('dashboard');
+                            if ($responseBody['data'] != 'undifined') {
+                                if ($responseBody['role'] == 'Administrator') {
+                                    $role_id = 4;
+                                }
+                                else if ($responseBody['role'] == 'Pemasaran') {
+                                    $role_id = 1;
                                 }
                                 else {
-                                    $token = \Session::get(config('global.user_token_session'));
+                                    $role_id = 2;
+                                }
+                                Session::put(config('global.auth_session'), $responseBody);
+                                Session::put(config('global.role_id_session'), $role_id);
+                                Session::put(config('global.user_id_session'), $responseBody['id']);
+                                Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
+                                Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
+                                Session::put(config('global.user_role_session'), $responseBody['role']);
+                                Session::put(config('global.user_kode_cabang_session'), $responseBody['kode_cabang']);
 
-                                    $host = env('LOS_API_HOST');
-                                    if ($host) {
-                                        $apiURL = $host . '/logout';
-                                        $headers = [
-                                            'token' => env('LOS_API_TOKEN'),
-                                            'Authorization' => "Bearer $token",
-                                        ];
+                                return redirect()->route('dashboard');
+                            }
+                            else {
+                                $token = \Session::get(config('global.user_token_session'));
 
-                                        try {
-                                            $response = Http::withHeaders($headers)
-                                                            ->withOptions(['verify' => false])
-                                                            ->post($apiURL);
-                                            $responseBody = json_decode($response->getBody(), true);
+                                $host = env('LOS_API_HOST');
+                                if ($host) {
+                                    $apiURL = $host . '/logout';
+                                    $headers = [
+                                        'token' => env('LOS_API_TOKEN'),
+                                        'Authorization' => "Bearer $token",
+                                    ];
 
-                                            if ($responseBody) {
-                                                if (array_key_exists('message', $responseBody)) {
-                                                    if ($responseBody['message'] == 'Successfully logged out') {
-                                                        Session::flush();
-                                                    }
+                                    try {
+                                        $response = Http::withHeaders($headers)
+                                                        ->withOptions(['verify' => false])
+                                                        ->post($apiURL);
+                                        $responseBody = json_decode($response->getBody(), true);
+
+                                        if ($responseBody) {
+                                            if (array_key_exists('message', $responseBody)) {
+                                                if ($responseBody['message'] == 'Successfully logged out') {
+                                                    Session::flush();
                                                 }
                                             }
-                                        } catch (\Illuminate\Http\Client\ConnectionException $e) {
                                         }
+                                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
                                     }
-                                    return back()->withError('Data identitas tidak ditemukan');
                                 }
+                                return back()->withError('Data identitas tidak ditemukan');
                             }
-                            else
-                                return back()->withError($responseBody['message']);
+                        }
+                        else if (strtolower($responseBody['status']) == 'gagal' && strtolower($responseBody['message']) == 'user tidak ditemukan') {
+                            // login vendor
+                            try {
+                                $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
+                                if ($user->role_id != 4) {
+                                    if ($user->first_login == true) {
+                                        return redirect('first-login?id=' . $user->id);
+                                    } else {
+                                        $request->authenticate();
+
+                                        $request->session()->regenerate();
+
+                                        $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
+                                        }
+                                } else {
+                                    $request->authenticate();
+
+                                    $request->session()->regenerate();
+
+                                    $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
+                                }
+                                Session::put(config('global.role_id_session'), $user->role_id);
+                                Session::put(config('global.user_id_session'), $user->id);
+                                Session::put(config('global.user_role_session'), 'Vendor');
+
+                                return redirect()->intended(RouteServiceProvider::HOME);
+                            }
+                            catch (\Exception $e) {
+                                return back()->withError('Terjadi kesalahan.'.$e->getMessage());
+                            }
                         }
                         else
-                            return back()->withError('Terjadi kesalahan');
+                            return back()->withError($responseBody['message']);
                     }
                     else
                         return back()->withError('Terjadi kesalahan');
-                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    return $e->getMessage();
-                    return back()->withError('Terjadi kesalahan. '.$e->getMessage());
                 }
-            }
-            else {
-                return back()->withError('Host api belum diatur');
+                else
+                    return back()->withError('Terjadi kesalahan');
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                return back()->withError('Terjadi kesalahan. '.$e->getMessage());
             }
         }
     }
@@ -199,6 +185,8 @@ class AuthenticatedSessionController extends Controller
                         if (array_key_exists('message', $responseBody)) {
                             if ($responseBody['message'] == 'Successfully logged out') {
                                 Session::flush();
+                                setcookie(config('global.user_token_session'), ''); // remove token from cookie
+
                                 return response()->json([
                                     'status' => 'success',
                                     'message' => 'Berhasil mengakhiri sesi'

@@ -15,7 +15,6 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        // if (! $request->expectsJson()) {
         if (!Session::has(config('global.auth_session'))) {
             return route('login');
         }
