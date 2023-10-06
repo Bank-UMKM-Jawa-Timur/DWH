@@ -1,6 +1,8 @@
 @forelse ($data as $item)
     <tr>
+        {{--  No  --}}
         <td>{{ $loop->iteration }}</td>
+        {{--  Nama  --}}
         <td>
             @if ($item->detail)
                 {{ array_key_exists('nama', $item->detail) ? $item->detail['nama'] : '-' }}
@@ -8,6 +10,7 @@
                 undifined
             @endif
         </td>
+        {{--  Cabang  --}}
         @if ($role_id == 3)
             <td>
                 @if ($item->detail)
@@ -17,6 +20,7 @@
                 @endif
             </td>
         @endif
+        {{--  No PO  --}}
         <td class="@if ($item->detail) link-po @endif">
             @if ($item->bukti_pembayaran)
                 @if ($item->detail)
@@ -44,6 +48,7 @@
                 @endif
             @endif
         </td>
+        {{--  Ketersediaan Unit  --}}
         <td>
             @if (\Session::get(config('global.role_id_session')) == 3)
                 @if ($is_kredit_page)
@@ -70,6 +75,7 @@
                 <span class="text-danger">Menunggu tanggal ketersediaan unit</span>
             @endif
         </td>
+        {{--  Tagihan  --}}
         <td>
             @if ($item->tgl_ketersediaan_unit)
                 @if ($role_id == 3)
@@ -211,6 +217,7 @@
                 -
             @endif
         </td>
+        {{--  Bukti Pembaaran  --}}
         <td>
             @if ($item->tgl_ketersediaan_unit)
                 @if ($role_id == 3)
@@ -263,28 +270,7 @@
                             Menunggu Pembayaran dari Cabang
                         @endif
                     @else
-                        @php
-                            $current_date = date('d-m-Y');
-                            $hmin1_tgl_ketersediaan_unit = date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' -1 day'));
-                        @endphp
-                        @if ($current_date == $hmin1_tgl_ketersediaan_unit || $current_date == $item->tgl_ketersediaan_unit)
-                            <span class="text-yellow-600">Harap untuk segera mengunggah berkas!</span>
-                            <br>
-                        @elseif ($current_date > $item->tgl_ketersediaan_unit)
-                            <span class="text-red-600">Harap untuk segera mengunggah berkas!</span>
-                            <br>
-                        @endif
-                        @if ($is_kredit_page)
-                            <button class="toggle-modal-upload-berkas-tagihan underline" data-target-id="modalUploadBerkasTagihan"
-                                data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
-                                Upload Berkas
-                            </button>
-                        @else
-                            @if (($current_date == $hmin1_tgl_ketersediaan_unit || $current_date == $item->tgl_ketersediaan_unit) || $current_date > $item->tgl_ketersediaan_unit)
-                            @else
-                                -
-                            @endif
-                        @endif
+                        -
                     @endif
                 @else
                     {{--  role selain vendor  --}}
@@ -369,6 +355,7 @@
                 -
             @endif
         </td>
+        {{--  Penyerehan Unit  --}}
         <td>
             @if ($item->tgl_ketersediaan_unit)
                 @if ($item->bukti_pembayaran)
@@ -523,6 +510,7 @@
                 <span class="text-danger">-</span>
             @endif
         </td>
+        {{--  Bukti Pembayaran Imbal Jasa  --}}
         <td>
             @if (\Session::get(config('global.role_id_session')) == 3)
                 {{--  vendor  --}}
@@ -642,6 +630,7 @@
                 @endif
             @endif
         </td>
+        {{--  Nominal Imbal Jasa  --}}
         <td>
             @if ($item->penyerahan_unit)
                 @if ($is_kredit_page)
@@ -719,6 +708,7 @@
                 <span class="text-warning">-</span>
             @endif
         </td>
+        {{--  STNK  --}}
         <td>
             @if ($item->penyerahan_unit)
                 @if ($is_kredit_page)
@@ -802,6 +792,7 @@
                 <span class="text-warning">-</span>
             @endif
         </td>
+        {{--  BPKB  --}}
         <td>
             @if ($item->penyerahan_unit)
                 @if ($is_kredit_page)
@@ -885,6 +876,7 @@
                 <span class="text-warning">-</span>
             @endif
         </td>
+        {{--  Polis  --}}
         <td>
             @if ($item->penyerahan_unit)
                 @if ($is_kredit_page)
@@ -968,9 +960,11 @@
                 <span class="text-warning">-</span>
             @endif
         </td>
+        {{--  Status  --}}
         <td class="text-center">
             <span class="@if (strtolower($item->status) == 'done') text-blue-600 @else text-grey @endif">{{ ucwords($item->status) }}</span>
         </td>
+        {{--  Aksi  --}}
         <td>
             @if ($is_kredit_page)
                 @if (strtolower($item->status) == 'done')
