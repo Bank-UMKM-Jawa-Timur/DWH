@@ -166,16 +166,17 @@
                                                 Konfirmasi
                                             </button>
                                         @else
-                                            <button class="toggle-modal-bukti-pembayaran underline"
-                                                style="cursor: pointer;"
-                                                data-target-id="modalBuktiPembayaran"
-                                                data-file="{{ $item->bukti_pembayaran->file }}"
-                                                data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                                data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                                data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
+                                            <a class="m-0 tagihan-modal toggle-modal-tagihan"
+                                                style="cursor: pointer; text-decoration: underline;"
+                                                data-target-id="modalTagihan"
+                                                data-id="{{$item->id}}"
+                                                data-file="{{ $item->invoice->file }}"
+                                                data-confirm="{{ $item->invoice->is_confirm }}"
+                                                data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
+                                                data-confirm_at="{{ date('d-m-Y', strtotime($item->invoice->confirm_at)) }}"
                                                 onclick="showModal(this)">
-                                                Menunggu Konfirmasi Vendor
-                                            </button>
+                                                Selesai
+                                            </a>
                                         @endif
                                     @elseif ($item->bukti_pembayaran->is_confirm)
                                         <button class="toggle-modal-bukti-pembayaran underline"
@@ -217,7 +218,7 @@
                 -
             @endif
         </td>
-        {{--  Bukti Pembaaran  --}}
+        {{--  Bukti Pembayaran  --}}
         <td>
             @if ($item->tgl_ketersediaan_unit)
                 @if ($role_id == 3)
@@ -348,7 +349,7 @@
                             @endif
                         @endif
                     @else
-                        Menunggu berkas tagihan diupload vendor
+                        -
                     @endif
                 @endif
             @else

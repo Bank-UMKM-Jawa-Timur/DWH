@@ -31,15 +31,6 @@ class NotificationTemplatesSeeder extends Seeder
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
-
-        \DB::table('notification_templates')->insert([
-            'title' => 'Upload Bukti Penyerahan Unit',
-            'content' => 'Bukti penyerahan unit telah diupload.',
-            'action_id' => 51,
-            'role_id' => '1,2',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ]);
         
         \DB::table('notification_templates')->insert([
             'title' => 'Bukti pembayaran',
@@ -60,8 +51,8 @@ class NotificationTemplatesSeeder extends Seeder
         ]);
         
         \DB::table('notification_templates')->insert([
-            'title' => 'Tanggal Penyerahan Unit',
-            'content' => 'Tanggal penyerahan unit telah diatur.',
+            'title' => 'Penyerahan Unit',
+            'content' => 'Penyerahan unit telah dilakukan.',
             'action_id' => 7,
             'role_id' => '1,2',
             'created_at' => date('Y-m-d H:i:s'),

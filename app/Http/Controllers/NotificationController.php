@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KKB;
 use App\Models\Kredit;
 use App\Models\Notification;
 use App\Models\NotificationTemplate;
@@ -155,73 +156,64 @@ class NotificationController extends Controller
     {
         try {
             DB::beginTransaction();
+            $kkb = KKB::select('id', 'kredit_id', 'user_id')
+                        ->where('kredit_id', $kreditId)
+                        ->first();
+            
+            $user_receiver_id = $kkb ? $kkb->user_id : null;
 
             // get notification template
             $template = NotificationTemplate::where('action_id', $action_id)->get();
-
-            // get roles
-            $roles = Role::pluck('id');
-
-            // get kredit
-            $kredit = Kredit::find($kreditId);
             // get user who will be sended the notification
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
                     // send to all role
-                    // retrieve from api
-                    $host = config('global.los_api_host');
-                    $apiURL = $host . '/kkb/get-data-users-cabang/' . $kredit->kode_cabang;
+                    $user = User::where('role_id', 3)->first();
 
-                    $headers = [
-                        'token' => config('global.los_api_token')
-                    ];
-
-                    $responseBody = null;
-
-                    try {
-                        $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-
-                        $statusCode = $response->status();
-                        $responseBody = json_decode($response->getBody(), true);
-                        $user = $responseBody;
-
-                        if ($user) {
-                            foreach ($user as $key => $item) {
-                                $createNotification = new Notification();
-                                $createNotification->kredit_id = $kreditId;
-                                $createNotification->template_id = $value->id;
-                                $createNotification->user_id = $item['id'];
-                                $createNotification->save();
-                            }
-                        }
-                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                        // return $e->getMessage();
+                    if ($user) {
+                        $createNotification = new Notification();
+                        $createNotification->kredit_id = $kreditId;
+                        $createNotification->template_id = $value->id;
+                        $createNotification->user_id = $user->id;
+                        $createNotification->save();
                     }
+
+                    $createNotification = new Notification();
+                    $createNotification->kredit_id = $kreditId;
+                    $createNotification->template_id = $value->id;
+                    $createNotification->user_id = $user_receiver_id;
+                    $createNotification->save();
                 }
                 else {
                     // send to selected role
                     $arrRole = explode(',', $value->role_id);
                     if (in_array(3, $arrRole)) {
-                        $user = User::where('kode_cabang', $kredit->kode_cabang)
-                                    ->where('role_id', 3)
-                                    ->get();
-                                    
-                        foreach ($user as $key => $item) {
+                        $user = User::where('role_id', 3)->first();
+
+                        if ($user) {
                             $createNotification = new Notification();
                             $createNotification->kredit_id = $kreditId;
                             $createNotification->template_id = $value->id;
-                            $createNotification->user_id = $item->id;
+                            $createNotification->user_id = $user->id;
                             $createNotification->save();
                         }
                     }
-dd($arrRole, $user);
+                    if (in_array(2, $arrRole)) {
+                        $createNotification = new Notification();
+                        $createNotification->kredit_id = $kreditId;
+                        $createNotification->template_id = $value->id;
+                        $createNotification->user_id = $user_receiver_id;
+                        $createNotification->save();
+                    }
                 }
             }
             DB::commit();
         } catch(\Exception $e) {
+            return $e->getMessage();
             DB::rollBack();
         } catch(\Illuminate\Database\QueryException $e) {
+            return $e->getMessage();
             DB::rollBack();
         }
     }

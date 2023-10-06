@@ -33,19 +33,13 @@
             )
             ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
             ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
-            ->orderBy('notifications.read')
+            ->where('notifications.read', 0)
             ->orderBy('notifications.created_at', 'DESC')
             ->limit(5)
             ->get();
-
-            $notif_belum_dibaca = \App\Models\Notification::select('notifications.id')
-                            ->join('users AS u', 'u.id', 'notifications.user_id')
-                            ->where('u.id', \Session::get(config('global.user_id_session')))
-                            ->where('notifications.read', false)
-                            ->count();
         @endphp
         <button class="toggle-notification">
-            @if ($notif_belum_dibaca > 0)
+            @if (count($notification) > 0)
                 <span class="p-2 absolute -mt-1 rounded-full bg-theme-primary"></span>
             @endif
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 36 36">
@@ -61,7 +55,7 @@
             <div class="head border-b w-full text-center p-3">
                 Notification
                 <span class="ml-3 py-1.5 px-3 text-white rounded-full bg-theme-primary">
-                    {{$notif_belum_dibaca}}</span>
+                    {{count($notification)}}</span>
             </div>
             @forelse ($notification as $item)
                 <div class="notif-list grid grid-cols-1 bg-white">

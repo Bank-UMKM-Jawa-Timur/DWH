@@ -218,7 +218,6 @@ class KreditController extends Controller
 
                 usleep(500 * 1000); // sleep for 0.5 millisec
             }
-            // return $data[3]->set_imbal_jasa->imbaljasa;
 
             $data_array = [];
             if($request->status != null){
@@ -1293,56 +1292,84 @@ class KreditController extends Controller
             $kkb = KKB::where('id', $request->id_kkb)->first();
             // stnk
             if ($request->file('stnk_scan')) {
-                $file = $request->file('stnk_scan');
-                $file->storeAs('public/dokumentasi-stnk', $file->hashName());
+                $already_upload = Document::select('id')
+                                            ->where('kredit_id', $kkb->id)
+                                            ->where('document_category_id', 3)
+                                            ->first();
 
-                $document = new Document();
-                $document->kredit_id = $kkb->kredit_id;
-                $document->text = $request->no_stnk;
-                $document->date = date('Y-m-d');
-                $document->file = $file->hashName();
-                $document->document_category_id  = 3;
-                $document->save();
-
-                // send notification
-                $this->notificationController->send(9, $kkb->kredit_id);
+                if (!$already_upload) {
+                    $file = $request->file('stnk_scan');
+                    $file->storeAs('public/dokumentasi-stnk', $file->hashName());
+    
+                    $document = new Document();
+                    $document->kredit_id = $kkb->kredit_id;
+                    $document->text = $request->no_stnk;
+                    $document->date = date('Y-m-d');
+                    $document->file = $file->hashName();
+                    $document->document_category_id  = 3;
+                    $document->save();
+    
+                    // send notification
+                    $this->notificationController->send(9, $kkb->kredit_id);
+                    
+                    // save log
+                    $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
+                }
             }
 
             // polis
             if ($request->file('polis_scan')) {
-                $file = $request->file('polis_scan');
-                $file->storeAs('public/dokumentasi-polis', $file->hashName());
+                $already_upload = Document::select('id')
+                                            ->where('kredit_id', $kkb->id)
+                                            ->where('document_category_id', 4)
+                                            ->first();
 
-                $document = new Document();
-                $document->kredit_id = $kkb->kredit_id;
-                $document->text = $request->no_polis;
-                $document->date = date('Y-m-d');
-                $document->file = $file->hashName();
-                $document->document_category_id  = 4;
-                $document->save();
+                if (!$already_upload) {
+                    $file = $request->file('polis_scan');
+                    $file->storeAs('public/dokumentasi-polis', $file->hashName());
+    
+                    $document = new Document();
+                    $document->kredit_id = $kkb->kredit_id;
+                    $document->text = $request->no_polis;
+                    $document->date = date('Y-m-d');
+                    $document->file = $file->hashName();
+                    $document->document_category_id  = 4;
+                    $document->save();
+    
+                    // send notification
+                    $this->notificationController->send(10, $kkb->kredit_id);
 
-                // send notification
-                $this->notificationController->send(10, $kkb->kredit_id);
+                    // save log
+                    $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
+                }
             }
 
             // bpkb
             if ($request->file('bpkb_scan')) {
-                $file = $request->file('bpkb_scan');
-                $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
+                $already_upload = Document::select('id')
+                                            ->where('kredit_id', $kkb->id)
+                                            ->where('document_category_id', 5)
+                                            ->first();
 
-                $document = new Document();
-                $document->kredit_id = $kkb->kredit_id;
-                $document->text = $request->no_bpkb;
-                $document->date = date('Y-m-d');
-                $document->file = $file->hashName();
-                $document->document_category_id  = 5;
-                $document->save();
+                if (!$already_upload) {
+                    $file = $request->file('bpkb_scan');
+                    $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
+    
+                    $document = new Document();
+                    $document->kredit_id = $kkb->kredit_id;
+                    $document->text = $request->no_bpkb;
+                    $document->date = date('Y-m-d');
+                    $document->file = $file->hashName();
+                    $document->document_category_id  = 5;
+                    $document->save();
+    
+                    // send notification
+                    $this->notificationController->send(11, $kkb->kredit_id);
 
-                // send notification
-                $this->notificationController->send(11, $kkb->kredit_id);
+                    // save log
+                    $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
+                }
             }
-
-            $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
 
             DB::commit();
             $status = 'success';
@@ -1454,7 +1481,7 @@ class KreditController extends Controller
                         $bpkb->confirm_by = \Session::get(config('global.user_id_session'));
                         $bpkb->save();
 
-                        $kredit = Kredit::find($stnk->kredit_id);
+                        $kredit = Kredit::find($bpkb->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
                         if ($kredit->imported_data_id && !$kkb->user_id) {
                             // set user id for kkb data
@@ -1898,7 +1925,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
-        $action_id = 9;
+        $action_id = 15;
 
         $validator = Validator::make($request->all(), [
             'id_kkbimbaljasa' => 'required',
@@ -1971,7 +1998,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
-        $action_id = 9;
+        $action_id = 50;
 
         try {
             $document = Document::find($request->id);

@@ -40,6 +40,7 @@ class KreditController extends Controller
 
             $fields = Validator::make($req, [
                 'pengajuan_id' => ['required', $isUnique],
+                'staf_id' => ['required'],
                 'nomor_po' => ['required'],
                 'kode_cabang' => ['required'],
                 'tenor' => ['required'],
@@ -86,6 +87,7 @@ class KreditController extends Controller
     
                         $createKKB = new KKB();
                         $createKKB->kredit_id = $model->id;
+                        $createKKB->user_id = $request->staf_id;
                         $createKKB->id_tenor_imbal_jasa = $setImbalJasa->id;
                         $createKKB->save();
     
