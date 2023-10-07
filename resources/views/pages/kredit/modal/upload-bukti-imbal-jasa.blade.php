@@ -114,6 +114,7 @@
                 processData: false,
                 success: function(data) {
                     Swal.close()
+                    console.log(data)
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
                         /*UploadImbalJasaErrorMessage('Gagal')

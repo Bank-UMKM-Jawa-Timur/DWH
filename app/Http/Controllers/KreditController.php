@@ -1122,7 +1122,7 @@ class KreditController extends Controller
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
             $cabang = $this->getDataCabang($kredit->kode_cabang);
             // send notification
-            // $this->notificationController->send($action_id, $kkb->kredit_id);
+            $this->notificationController->send($action_id, $kkb->kredit_id);
             $notifTemplate = NotificationTemplate::find(5);
                 
             $this->notificationController->sendEmail($cabang['email'],  [
@@ -2141,7 +2141,6 @@ class KreditController extends Controller
             $kkb = Kredit::where('id', $request->id_kkbimbaljasa)->first();
             $file = $request->file('file_imbal_jasa');
             // $file->storeAs('public/dokumentasi-imbal-jasa', $file->hashName());
-            return $kkb;
             $fileHash = $this->convertImage('public/dokumentasi-imbal-jasa', $file);
             $document = new Document();
             $document->kredit_id = $request->id_kkbimbaljasa;
@@ -2163,7 +2162,7 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas imbal jasa.');
 
             // send notification
-            // $this->notificationController->send($action_id, $request->id_kkbimbaljasa);
+            $this->notificationController->send($action_id, $request->id_kkbimbaljasa);
             $vendor = User::select('users.email', 'v.name')
                         ->join('vendors AS v', 'v.id', 'users.vendor_id')
                         ->where('users.role_id', 3)
@@ -2238,7 +2237,7 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . Auth::user()->name . ' mengkonfirmasi berkas imbal jasa.');
 
             // send notification
-            // $this->notificationController->send($action_id, $document->kredit_id);
+            $this->notificationController->send($action_id, $document->kredit_id);
 
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
             $cabang = $this->getDataCabang($kredit->kode_cabang);
