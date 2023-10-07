@@ -68,17 +68,17 @@ class DashboardController extends Controller
             }
             if ($target)
                 $total_target = $target->total_unit;
-                
+
             $this->param['total_belum_terealisasi'] = $total_target - $total_terealisasi;
             $this->param['total_terealisasi'] = $total_terealisasi;
 
             $notification = Notification::select('notifications.id', 'notifications.read', 'notifications.extra', 'notifications.created_at', 'temp.title', 'temp.content')
-                                            ->join('users AS u', 'u.id', 'notifications.user_id')
-                                            ->join('notification_templates AS temp', 'temp.id', 'notifications.template_id')
-                                            ->where('u.id', \Session::get(config('global.user_id_session')))
-                                            ->where('notifications.read', 0)
-                                            ->orderBy('notifications.created_at', 'DESC')
-                                            ->get();
+                ->join('users AS u', 'u.id', 'notifications.user_id')
+                ->join('notification_templates AS temp', 'temp.id', 'notifications.template_id')
+                ->where('u.id', \Session::get(config('global.user_id_session')))
+                ->where('notifications.read', 0)
+                ->orderBy('notifications.created_at', 'DESC')
+                ->get();
             $this->param['notification'] = $notification;
 
             $this->param['role_id'] = \Session::get(config('global.role_id_session'));
@@ -95,7 +95,7 @@ class DashboardController extends Controller
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
-            
+
             $user_id = $token ? $user['id'] : $user->id;
             if (!$token)
                 $user_id = 0; // vendor
@@ -127,8 +127,8 @@ class DashboardController extends Controller
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
                     return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
-                ->when($request->cabang,function($query,$cbg){
-                    return $query->where('kredits.kode_cabang',$cbg);
+                ->when($request->cabang, function ($query, $cbg) {
+                    return $query->where('kredits.kode_cabang', $cbg);
                 })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
@@ -148,14 +148,13 @@ class DashboardController extends Controller
                     $data = $data->paginate($page_length);
                 else
                     $data = $data->paginate($page_length);
-            }
-            else
+            } else
                 $data = $data->get();
 
             foreach ($data as $key => $value) {
                 // retrieve from api
                 $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
+                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
 
                 $headers = [
                     'token' => env('LOS_API_TOKEN')
@@ -188,40 +187,39 @@ class DashboardController extends Controller
                                 $value->detail = $responseBody;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         $value->detail = $responseBody;
                     }
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
                 $invoice = Document::where('kredit_id', $value->id)
-                                            ->where('document_category_id', 7)
-                                            ->first();
+                    ->where('document_category_id', 7)
+                    ->first();
 
                 $buktiPembayaran = Document::where('kredit_id', $value->id)
-                                            ->where('document_category_id', 1)
-                                            ->first();
+                    ->where('document_category_id', 1)
+                    ->first();
 
                 $penyerahanUnit = Document::where('kredit_id', $value->id)
-                                            ->where('document_category_id', 2)
-                                            ->first();
+                    ->where('document_category_id', 2)
+                    ->first();
 
                 $stnk = Document::where('kredit_id', $value->id)
-                                            ->where('document_category_id', 3)
-                                            ->first();
+                    ->where('document_category_id', 3)
+                    ->first();
 
                 $polis = Document::where('kredit_id', $value->id)
-                                    ->where('document_category_id', 4)
-                                    ->first();
+                    ->where('document_category_id', 4)
+                    ->first();
 
                 $bpkb = Document::where('kredit_id', $value->id)
-                                ->where('document_category_id', 5)
-                                ->first();
+                    ->where('document_category_id', 5)
+                    ->first();
 
                 $imbalJasa = Document::where('kredit_id', $value->id)
-                                    ->where('document_category_id', 6)
-                                    ->first();
+                    ->where('document_category_id', 6)
+                    ->first();
 
                 $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
 
@@ -238,14 +236,14 @@ class DashboardController extends Controller
             }
 
             $data_array = [];
-            if($request->status != null){
-                foreach($data as $rows){
-                    if($rows->status == $request->status){
-                        array_push($data_array,$rows);
+            if ($request->status != null) {
+                foreach ($data as $rows) {
+                    if ($rows->status == $request->status) {
+                        array_push($data_array, $rows);
                     }
                 }
                 $this->param['data'] = $this->paginate($data_array);
-            }else{
+            } else {
                 $this->param['data'] = $data;
             }
 
@@ -270,9 +268,9 @@ class DashboardController extends Controller
                         unset($data[$key]); // remove data
                 }
             }
-            
+
             $this->param['data'] = $data;
-            
+
             // imported data
             $imported = DB::table('imported_data AS import')
                 ->select(
@@ -325,19 +323,19 @@ class DashboardController extends Controller
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
                     return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
-                ->when($request->cabang,function($query,$cbg){
-                    return $query->where('kredits.kode_cabang',$cbg);
+                ->when($request->cabang, function ($query, $cbg) {
+                    return $query->where('kredits.kode_cabang', $cbg);
                 })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
 
             if ($this->param['role_id'] == 2) {
                 $imported = $imported->whereNull('kredits.pengajuan_id')
-                                    ->whereNotNull('kredits.imported_data_id')
-                                    ->whereNull('kkb.user_id')
-                                    ->orWhere('kkb.user_id', $user_id)
-                                    ->whereNull('kredits.pengajuan_id')
-                                    ->whereNotNull('kredits.imported_data_id');
+                    ->whereNotNull('kredits.imported_data_id')
+                    ->whereNull('kkb.user_id')
+                    ->orWhere('kkb.user_id', $user_id)
+                    ->whereNull('kredits.pengajuan_id')
+                    ->whereNotNull('kredits.imported_data_id');
             }
 
             // set page number
@@ -351,8 +349,7 @@ class DashboardController extends Controller
                     $imported = $imported->paginate($page_length_import);
                 else
                     $imported = $imported->paginate(5);
-            }
-            else
+            } else
                 $imported = $imported->get();
 
             // dd(DB::getQueryLog());
@@ -360,7 +357,7 @@ class DashboardController extends Controller
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
                 $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-cabang/'. $value->kode_cabang;
+                $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
 
                 $headers = [
                     'token' => env('LOS_API_TOKEN')
@@ -382,39 +379,39 @@ class DashboardController extends Controller
 
                 // retrieve documents
                 $buktiPembayaran = DB::table('documents AS d')
-                                    ->where('kredit_id', $value->id)
-                                    ->where('document_category_id', 1)
-                                    ->first();
+                    ->where('kredit_id', $value->id)
+                    ->where('document_category_id', 1)
+                    ->first();
 
                 $invoice = DB::table('documents AS d')
-                                    ->where('kredit_id', $value->id)
-                                    ->where('document_category_id', 7)
-                                    ->first();
+                    ->where('kredit_id', $value->id)
+                    ->where('document_category_id', 7)
+                    ->first();
 
                 $penyerahanUnit = DB::table('documents AS d')
-                                    ->where('kredit_id', $value->id)
-                                    ->where('document_category_id', 2)
-                                    ->first();
+                    ->where('kredit_id', $value->id)
+                    ->where('document_category_id', 2)
+                    ->first();
 
                 $stnk = DB::table('documents AS d')
-                            ->where('kredit_id', $value->id)
-                            ->where('document_category_id', 3)
-                            ->first();
+                    ->where('kredit_id', $value->id)
+                    ->where('document_category_id', 3)
+                    ->first();
 
                 $bpkb = DB::table('documents AS d')
-                            ->where('kredit_id', $value->id)
-                            ->where('document_category_id', 5)
-                            ->first();
+                    ->where('kredit_id', $value->id)
+                    ->where('document_category_id', 5)
+                    ->first();
 
                 $polis = DB::table('documents AS d')
-                            ->where('kredit_id', $value->id)
-                            ->where('document_category_id', 4)
-                            ->first();
+                    ->where('kredit_id', $value->id)
+                    ->where('document_category_id', 4)
+                    ->first();
 
                 $imbalJasa = DB::table('documents AS d')
-                            ->where('kredit_id', $value->id)
-                            ->where('document_category_id', 6)
-                            ->first();
+                    ->where('kredit_id', $value->id)
+                    ->where('document_category_id', 6)
+                    ->first();
 
                 $value->bukti_pembayaran = $buktiPembayaran;
                 $value->invoice = $invoice;
@@ -428,6 +425,43 @@ class DashboardController extends Controller
             }
 
             $this->param['imported'] = $imported;
+
+
+
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+
+            $apiCabang = $host . '/kkb/get-cabang/';
+            $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+            $responseCabang = json_decode($api_req->getBody(), true);
+
+            $arr_data = [];
+
+            if ($responseCabang) {
+                // for ($i = 0; $i < count($responseCabang); $i++) {
+                foreach ($responseCabang as $key => $value) {
+                    $kode_cabang = $value['kode_cabang'];
+                    $cabang = $value['cabang'];
+                    $dataChart = DB::table('documents')->select(
+                        'k.id',
+                        // DB::raw("IFNULL((SELECT COUNT(id) FROM documents where kredits.kode_cabang = $kode_cabang), 0) as cabang"),
+                    )
+                    ->leftJoin('kredits AS k', 'documents.kredit_id', 'k.id')
+                    ->where('k.kode_cabang',  $kode_cabang)
+                    ->groupBy('k.id')
+                    ->count();
+                    $d = [
+                        'kode_cabang' => $kode_cabang,
+                        'cabang' => $cabang,
+                        'data' => $dataChart,
+                    ];
+
+                    array_push($arr_data, $d);
+                }
+            }
 
             return view('pages.home', $this->param);
         } catch (\Exception $e) {
