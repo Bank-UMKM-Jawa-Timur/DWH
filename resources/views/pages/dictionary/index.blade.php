@@ -61,7 +61,7 @@
                     </form>
                 </div>
             </div>
-            <div class="tables mt-2">
+            <div class="tables-dictionary mt-2">
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>

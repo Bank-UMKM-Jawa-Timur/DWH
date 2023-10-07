@@ -132,7 +132,7 @@
     $(".add-modal-vendor").on("click", function () {
         var targetId = 'add-vendor';
         $("#" + targetId).removeClass("hidden");
-        form.addClass("layout-form-collapse");
+        // form.addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
             $(".layout-overlay-form").removeClass("hidden");
         }

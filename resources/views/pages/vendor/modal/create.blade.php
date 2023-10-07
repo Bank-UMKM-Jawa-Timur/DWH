@@ -1,4 +1,4 @@
-<div class="layout-form hidden" id="add-vendor">
+<div class="layout-form layout-form-collapse hidden" id="add-vendor">
     <div class="head-form p-4 border-b">
         <h2>TAMBAH VENDOR</h2>
     </div>

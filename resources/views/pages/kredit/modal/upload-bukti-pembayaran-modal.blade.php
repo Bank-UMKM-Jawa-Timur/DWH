@@ -102,7 +102,7 @@
                 processData: false,
                 success: function(data) {
                     Swal.close()
-                    console.log(data)
+                    // console.log(data)
                     if (Array.isArray(data.error)) {
                         for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];

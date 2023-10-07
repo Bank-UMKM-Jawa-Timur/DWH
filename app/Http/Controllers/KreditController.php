@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-
+use Image;
 class KreditController extends Controller
 {
     private $logActivity;
@@ -906,7 +906,7 @@ class KreditController extends Controller
             }
 
             // send notif
-            $this->notificationController->send($action_id, $kkb->kredit_id);
+            // $this->notificationController->send($action_id, $kkb->kredit_id);
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas bukti pembayaran.');
 
@@ -1018,12 +1018,13 @@ class KreditController extends Controller
         try {
             $kkb = KKB::where('id', $request->id_kkb)->first();
             $file = $request->file('upload_penyerahan_unit');
-            $file->storeAs('public/dokumentasi-peyerahan', $file->hashName());
+            // $file->storeAs('public/dokumentasi-peyerahan', $file->hashName());
+            $fileHash = $this->convertImage('public/dokumentasi-peyerahan', $file);
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
             $document->date = date('Y-m-d', strtotime($request->tgl_pengiriman));
             // $document->date = Carbon::now();
-            $document->file = $file->hashName();
+            $document->file = $fileHash;
             $document->document_category_id  = 2;
             $document->save();
 
@@ -1893,6 +1894,17 @@ class KreditController extends Controller
             return response()->json($response);
         }
     }
+    public function convertImage($url_path, $image)
+        {
+            $img = Image::make($image->getRealPath());
+
+            $filename = explode('.', $image->hashName());
+            $result_filename = $filename[0].'.webp';
+            $img->save(storage_path('app/'.$url_path.'/'.$result_filename), 100);
+
+            return $result_filename;
+            
+        }
 
     public function uploadUImbalJasa(Request $request)
     {
@@ -1921,14 +1933,16 @@ class KreditController extends Controller
             $user_id = \Session::get(config('global.user_id_session'));
             $kkb = Kredit::where('id', $request->id_kkbimbaljasa)->first();
             $file = $request->file('file_imbal_jasa');
-            $file->storeAs('public/dokumentasi-imbal-jasa', $file->hashName());
+            // $file->storeAs('public/dokumentasi-imbal-jasa', $file->hashName());
+            return $kkb;
+            $fileHash = $this->convertImage('public/dokumentasi-imbal-jasa', $file);
             $document = new Document();
             $document->kredit_id = $request->id_kkbimbaljasa;
             $document->date = Carbon::now();
-            $document->file = $file->hashName();
+            $document->file = $fileHash;
             $document->document_category_id  = 6;
             $document->save();
-
+            
             $kredit = Kredit::find($document->kredit_id);
             if ($kredit->imported_data_id && !$kkb->user_id) {
                 // set user id for kkb data

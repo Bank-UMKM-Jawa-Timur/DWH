@@ -62,7 +62,7 @@
                 </form>
             </div>
         </div>
-        <div class="tables mt-2">
+        <div class="tables-role overflow-x-auto mt-2">
             <table class="table-auto w-full">
                 <thead>
                     <tr class="bg-danger text-light">
@@ -81,7 +81,7 @@
                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                         Selengkapnya
                                     </button>
-                                    <ul class="dropdown-menu right-60">
+                                    <ul class="dropdown-menu lg:right-60 right-52">
                                         <li>
                                             <a class="item-dropdown"
                                                 href="{{ route('role.permission.index', $item->id) }}">

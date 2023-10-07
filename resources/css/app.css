@@ -98,7 +98,14 @@
     }
 
     .tables {
-        @apply overflow-visible overflow-x-auto p-2;
+        @apply overflow-x-auto p-2;
+    }
+
+    .tables-role {
+        @apply overflow-visible p-2;
+    }
+    .tables-dictionary {
+        @apply overflow-visible p-2;
     }
     body {
         @apply overflow-hidden;

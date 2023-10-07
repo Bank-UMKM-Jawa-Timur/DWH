@@ -4,6 +4,10 @@ $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' }).val("dd/mm/yyyy");
 var sidebar = $(".layout-sidebar");
 var form = $(".layout-form");
 
+$('.dropdown').hover(function(){
+    $('.tables').toggleClass('overflow-x-auto')
+});
+
 // tab function
 $(".tab-wrapping .tab-button").click(function (e) {
     e.preventDefault();

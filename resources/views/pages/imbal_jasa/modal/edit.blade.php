@@ -1,4 +1,4 @@
-<div class="layout-form hidden" id="edit-imbal-jasa">
+<div class="layout-form layout-form-collapse hidden" id="edit-imbal-jasa">
     <div class="head-form p-4 border-b">
         <h2>EDIT IMBAL JASA</h2>
     </div>
