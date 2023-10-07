@@ -413,6 +413,7 @@ class KreditController extends Controller
 
                 usleep(500 * 1000); // sleep for 0.5 millisec
             }
+            // return $imported;
 
             $this->param['imported'] = $imported;
 
@@ -426,7 +427,7 @@ class KreditController extends Controller
     }
 
     public function loadDataJson(Request $request) {
-        try {
+        // try {
             $this->param['role_id'] = \Session::get(config('global.role_id_session'));
             $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
             // $this->param['is_kredit_page'] = request()->is('kredit');
@@ -761,17 +762,19 @@ class KreditController extends Controller
                 'html_import' => $html_import,
                 'data' => $data
             ]);
-        } catch (\Exception $e) {
+        /*} catch (\Exception $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Terjadi kesalahan. '.$e->getMessage()
+                'message' => 'Terjadi kesalahan. '.$e->getMessage(),
+                'error' => $e,
             ]);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Terjadi kesalahan. '.$e->getMessage()
+                'message' => 'Terjadi kesalahan. '.$e->getMessage(),
+                'error' => $e,
             ]);
-        }
+        }*/
     }
 
     public function paginate($items, $perPage = 5, $page = null, $options = [])
