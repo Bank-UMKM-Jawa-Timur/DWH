@@ -526,7 +526,7 @@
                                                 data-id="{{ $item->imbal_jasa['id'] }}"
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['created_at'])->format('d-m-Y') }}"
-                                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
+                                                data-nominal="Rp @if($item->set_imbal_jasa) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 href="#"
                                                 onclick="showModal(this)">Konfirmasi Bukti Pembayaran</a>
