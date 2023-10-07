@@ -7,9 +7,9 @@
 @endsection
 @section('content')
 <div class="head-pages">
-    <p class="text-sm">Master</p>
+    <p class="text-sm">Setting</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-        Vendor
+        setting
     </h2>
 </div>
 <div class="body-pages">
@@ -17,7 +17,7 @@
         <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
             <div class="title-table lg:p-3 p-2 text-center">
                 <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                    Vendor
+                    Setting
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
@@ -26,7 +26,7 @@
                     <span class="lg:mt-0 mt-0">
                         @include('components.svg.plus')
                     </span>
-                    <span class="lg:block hidden"> Tambah Vendor </span>
+                    <span class="lg:block hidden"> Tambah Setting </span>
                 </button>
             </div>
         </div>
@@ -63,20 +63,33 @@
             <table class="table-auto w-full">
                 <tr>
                     <th>No.</th>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Alamat</th>
-                    <th>Nomor HP</th>
+                    <th>pusher_app_key</th>
+                    <th>pusher_app_secret</th>
+                    <th>pusher_cluster</th>
+                    <th>los_host</th>
+                    <th>los_api_host</th>
+                    <th>los_asset_url</th>
+                    <th>bio_interface_api_host</th>
+                    <th>collection_api_host</th>
+                    <th>microsoft_graph_client_id</th>
+                    <th>microsoft_graph_client_secret</th>
+                    <th>microsoft_graph_tenant_id</th>
                     <th>Aksi</th>
                 </tr>
                 <tbody>
                     @forelse ($data as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->email }}</td>
-                        <td>{{ $item->address }}</td>
-                        <td>{{ $item->phone }}</td>
+                        <td>{{ $item->pusher_app_key }}</td>
+                        <td>{{ $item->pusher_app_secret }}</td>
+                        <td>{{ $item->pusher_app_key }}</td>
+                        <td>{{ $item->los_host }}</td>
+                        <td>{{ $item->los_asset_url }}</td>
+                        <td>{{ $item->bio_interface_api_host }}</td>
+                        <td>{{ $item->collection_api_host }}</td>
+                        <td>{{ $item->microsoft_graph_client_id }}</td>
+                        <td>{{ $item->microsoft_graph_client_secret }}</td>
+                        <td>{{ $item->microsoft_graph_tenant_id }}</td>
                         <td>
                             <div class="dropdown max-w-[280px]">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
@@ -86,10 +99,16 @@
                                     <li class="">
                                         <a class="item-dropdown edit-modal-vendor" data-target-id="edit-vendor" href="#"
                                         data-id="{{ $item->id }}"
-                                        data-name="{{ $item->name }}"
-                                        data-email="{{ $item->email }}"
-                                        data-phone="{{ $item->phone }}"
-                                        data-address="{{ $item->address }}">Edit</a>
+                                        data-pusher_app_key="{{ $item->pusher_app_key }}"
+                                        data-pusher_app_secret="{{ $item->pusher_app_secret }}"
+                                        data-pusher_app_key="{{ $item->pusher_app_key }}"
+                                        data-los_asset_url="{{ $item->los_asset_url }}"
+                                        data-bio_interface_api_host="{{ $item->bio_interface_api_host }}"
+                                        data-collection_api_host="{{ $item->collection_api_host }}"
+                                        data-microsoft_graph_client_id="{{ $item->microsoft_graph_client_id }}"
+                                        data-microsoft_graph_client_secret="{{ $item->microsoft_graph_client_secret }}"
+                                        data-microsoft_graph_tenant_id="{{ $item->microsoft_graph_tenant_id }}"
+                                        data-los_host="{{ $item->los_host }}">Edit</a>
                                     </li>
                                     <li class="">
                                         <a class="item-dropdown btn-delete-vendor"
@@ -103,7 +122,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center">
+                        <td colspan="12" class="text-center">
                             <span class="text-danger">Maaf data belum tersedia.</span>
                         </td>
                     </tr>
@@ -132,6 +151,7 @@
     $(".add-modal-vendor").on("click", function () {
         var targetId = 'add-vendor';
         $("#" + targetId).removeClass("hidden");
+        form.addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
             $(".layout-overlay-form").removeClass("hidden");
         }
@@ -141,14 +161,14 @@
         var targetId = 'edit-vendor';
 
         const data_id = $(this).data('id')
-        const data_email = $(this).data('email')
+        const data_pusher_app_secret = $(this).data('pusher_app_secret')
         const data_name = $(this).data('name')
         const data_phone = $(this).data('phone')
         const data_address = $(this).data('address')
 
         $(`#${targetId} #edit-id`).val(data_id)
         $(`#${targetId} #edit-name`).val(data_name)
-        $(`#${targetId} #edit-email`).val(data_email)
+        $(`#${targetId} #edit-pusher_app_secret`).val(data_pusher_app_secret)
         $(`#${targetId} #edit-phone`).val(data_phone)
         $(`#${targetId} #edit-address`).val(data_address)
 
@@ -171,25 +191,8 @@
         e.preventDefault();
         const req_name = document.getElementById('add-name')
         const req_phone = document.getElementById('add-phone')
-        const req_email = document.getElementById('add-email')
+        const req_pusher_app_secret = document.getElementById('add-pusher_app_secret')
         const req_address = document.getElementById('add-address')
-
-        if (req_name == '') {
-            showError(req_name, 'Nama harus diisi.');
-            return false;
-        }
-        if (req_phone == '') {
-            showError(req_phone, 'Nomor HP harus diisi.');
-            return false;
-        }
-        if (req_email == '') {
-            showError(req_email, 'Email harus diisi.');
-            return false;
-        }
-        if (req_address == '') {
-            showError(req_address, 'Alamat harus diisi.');
-            return false;
-        }
 
         $.ajax({
             type: "POST",
@@ -198,7 +201,7 @@
                 _token: "{{ csrf_token() }}",
                 name: req_name.value,
                 phone: req_phone.value,
-                email: req_email.value,
+                pusher_app_secret: req_pusher_app_secret.value,
                 address: req_address.value,
             },
             success: function(data) {
@@ -211,8 +214,8 @@
                             showError(req_name, message)
                         if (message.toLowerCase().includes('nomor'))
                             showError(req_phone, message)
-                        if (message.toLowerCase().includes('email'))
-                            showError(req_email, message)
+                        if (message.toLowerCase().includes('pusher_app_secret'))
+                            showError(req_pusher_app_secret, message)
                         if (message.toLowerCase().includes('address'))
                             showError(req_address, message)
                     }
@@ -236,24 +239,24 @@
         const req_id = document.getElementById('edit-id')
         const req_name = document.getElementById('edit-name')
         const req_phone = document.getElementById('edit-phone')
-        const req_email = document.getElementById('edit-email')
+        const req_pusher_app_secret = document.getElementById('edit-pusher_app_secret')
         const req_address = document.getElementById('edit-address')
         const req_password = document.getElementById('edit-password')
 
         if (req_name == '') {
-            showError(req_name, 'Nama harus diisi.')
+            showError(req_name, 'pusher_app_key harus diisi.')
             return false;
         }
         if (req_phone == '') {
             showError(req_phone, 'Nomor HP harus diisi.')
             return false;
         }
-        if (req_email == '') {
-            showError(req_email, 'Email harus diisi.')
+        if (req_pusher_app_secret == '') {
+            showError(req_pusher_app_secret, 'pusher_app_secret harus diisi.')
             return false;
         }
         if (req_address == '') {
-            showError(req_address, 'Alamat harus diisi.')
+            showError(req_address, 'pusher_cluster harus diisi.')
             return false;
         }
 
@@ -265,7 +268,7 @@
                 _method: 'PUT',
                 name: req_name.value,
                 phone: req_phone.value,
-                email: req_email.value,
+                pusher_app_secret: req_pusher_app_secret.value,
                 address: req_address.value,
                 password: req_password.value,
             },
@@ -279,8 +282,8 @@
                             showError(req_name, message)
                         if (message.toLowerCase().includes('nomor'))
                             showError(req_phone, message)
-                        if (message.toLowerCase().includes('email'))
-                            showError(req_email, message)
+                        if (message.toLowerCase().includes('pusher_app_secret'))
+                            showError(req_pusher_app_secret, message)
                         if (message.toLowerCase().includes('address'))
                             showError(req_address, message)
                         if (message.toLowerCase().includes('cabang'))

@@ -15,6 +15,7 @@ use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\VendorController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TargetController;
 use App\Models\Kredit;
 use Illuminate\Support\Facades\Route;
@@ -75,6 +76,7 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/template-notifikasi', NotificationTemplateController::class);
         Route::resource('/imbal-jasa', ImbalJasaController::class);
         Route::resource('/dictionary', DictionaryController::class);
+        Route::resource('/setting', SettingController::class);
     });
 
     Route::prefix('kredit')->name('kredit.')->group(function() {
