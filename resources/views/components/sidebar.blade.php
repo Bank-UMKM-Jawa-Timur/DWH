@@ -136,11 +136,11 @@
               Template notifikasi
             </li>
           </a>
-          <a href="{{ route('dictionary.index') }}">
+          {{--  <a href="{{ route('dictionary.index') }}">
             <li class="dropdown-item-link {{ request()->is('master/dictionary') ? 'active-dropdown-link' : '' }}">
               Dictionary
             </li>
-          </a>
+          </a>  --}}
         </ul>
       </div>
       @endif
@@ -209,7 +209,7 @@
           <div>Target</div>
         </a>
       </li>
-      <li class="item-link {{ request()->is('collection') ? 'active-link' : '' }}">
+      {{--  <li class="item-link {{ request()->is('collection') ? 'active-link' : '' }}">
         <a
           href="{{ route('collection.index') }}"
           class="nav-link relative"
@@ -231,7 +231,7 @@
           </span>
           <div>Collection</div>
         </a>
-      </li>
+      </li>  --}}
       @endif
       <li class="item-link {{ request()->is('notifikasi') ? 'active-link' : '' }}">
         <a
