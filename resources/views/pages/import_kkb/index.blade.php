@@ -220,7 +220,7 @@
                     for (var j=0; j<ket.length; j++) {
                         if (ket[j]) {
                             ket_hidden_html += `<input type="hidden" name="keterangan[${i}][]" id="keterangan[${i}][]"value="${ket[j]}">`
-                            ket_html += `<span style="text-align: justify !important;">${j}. ${ket[j]}</span>`
+                            ket_html += `<span style="text-align: justify !important;">${j+1}. ${ket[j]}</span>`
                         }
                     }
                 }

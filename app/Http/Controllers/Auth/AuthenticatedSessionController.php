@@ -58,7 +58,7 @@ class AuthenticatedSessionController extends Controller
                                     'password' => $request->password,
                                 ]);
                 $responseBody = json_decode($response->getBody(), true);
-
+                // return $responseBody;
                 if ($responseBody) {
                     if (array_key_exists('status', $responseBody)) {
                         if (strtolower($responseBody['status']) == 'berhasil') {
@@ -69,7 +69,7 @@ class AuthenticatedSessionController extends Controller
                                 if ($responseBody['role'] == 'Administrator') {
                                     $role_id = 4;
                                 }
-                                else if ($responseBody['role'] == 'Pemasaran') {
+                                else if ($responseBody['role'] == 'Kredit Umum') {
                                     $role_id = 1;
                                 }
                                 else {
@@ -149,11 +149,40 @@ class AuthenticatedSessionController extends Controller
                         else
                             return back()->withError($responseBody['message']);
                     }
-                    else
-                        return back()->withError('Terjadi kesalahan');
+                    else 
+                        return back()->withError('Terjadi kesalahan 1');
                 }
-                else
-                    return back()->withError('Terjadi kesalahan');
+                else {
+                    // login vendor
+                    try {
+                        $user = User::where('email', $request->input_type)->orWhere('nip', $request->input_type)->first();
+                        if ($user->role_id != 4) {
+                            if ($user->first_login == true) {
+                                return redirect('first-login?id=' . $user->id);
+                            } else {
+                                $request->authenticate();
+
+                                $request->session()->regenerate();
+
+                                $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
+                                }
+                        } else {
+                            $request->authenticate();
+
+                            $request->session()->regenerate();
+
+                            $this->logActivity->store("Pengguna '$request->input_type' melakukan log in.");
+                        }
+                        Session::put(config('global.role_id_session'), $user->role_id);
+                        Session::put(config('global.user_id_session'), $user->id);
+                        Session::put(config('global.user_role_session'), 'Vendor');
+
+                        return redirect()->intended(RouteServiceProvider::HOME);
+                    }
+                    catch (\Exception $e) {
+                        return back()->withError('Terjadi kesalahan.'.$e->getMessage());
+                    }
+                }
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 return back()->withError('Terjadi kesalahan. '.$e->getMessage());
             }

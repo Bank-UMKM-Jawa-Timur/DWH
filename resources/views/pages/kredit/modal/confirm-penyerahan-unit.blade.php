@@ -37,18 +37,20 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer form-confirm">
-            <form id="confirm-form-penyerahan-unit">
-                <input type="hidden" name="confirm_id" id="confirm_penyerahan_id">
-                <input type="hidden" name="confirm_id_category" id="confirm_penyerahan_id_category">
-                <button type="button" data-dismiss-id="modalConfirmPenyerahanUnit" class="border px-7 py-3 text-black rounded">
-                    Tidak
-                </button>
-                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
-                    Ya
-                </button>
-            </form>
-        </div>
+        @if (\Session::get(config('global.role_id_session')) == 2)
+            <div class="modal-footer form-confirm">
+                <form id="confirm-form-penyerahan-unit">
+                    <input type="hidden" name="confirm_id" id="confirm_penyerahan_id">
+                    <input type="hidden" name="confirm_id_category" id="confirm_penyerahan_id_category">
+                    <button type="button" data-dismiss-id="modalConfirmPenyerahanUnit" class="border px-7 py-3 text-black rounded">
+                        Tidak
+                    </button>
+                    <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
+                        Ya
+                    </button>
+                </form>
+            </div>
+        @endif
     </div>
 </div>
 

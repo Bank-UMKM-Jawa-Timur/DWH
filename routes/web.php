@@ -29,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+// Email
+Route::get('/send-email', [NotificationController::class, 'sendEmail'])->name('sendEmail');
 Route::get('/', function () {
     return redirect()->route('login');
 });

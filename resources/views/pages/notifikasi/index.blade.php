@@ -3,7 +3,7 @@
 @section('title', $title)
 
 @section('modal')
-@include('pages.notifikasi.modal.read')
+    @include('pages.notifikasi.modal.read')
 @endsection
 
 @section('content')
@@ -21,7 +21,7 @@
             <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                 <div class="title-table lg:p-3 p-2 text-center">
                     <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                        ({{ $total_belum_dibaca }}) - Notifikasi 
+                        ({{ $total_belum_dibaca }}) - Notifikasi
                     </h2>
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
@@ -31,8 +31,8 @@
                 <div class="sorty pl-1 w-full">
                     <label for="" class="mr-3 text-sm text-neutral-400">show</label>
                     <select disabled class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                    name="page_length" id="page_length">
-                    <option selected>All</option>
+                        name="page_length" id="page_length">
+                        <option selected>All</option>
                         {{-- <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
                         <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
                         <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
@@ -65,121 +65,126 @@
                     </tr>
                     <tbody>
                         @forelse ($data as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td class="text-left">{{ $item->title }} -
-                                {{ strlen($item->content) >= 100 ? substr($item->content, 0, 100) . '...' : $item->content }}
-                            </td>
-                            <td>{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</td>
-                            <td>
-                            @if ($item->read)
-                                <div class="text-green-600">Sudah Dibaca</div>
-                            @else
-                                <div class="text-theme-primary">Belum Dibaca</div>
-                            @endif
-                            </td>
-                            <td>
-                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn toggle-modal" data-id="{{ $item->id }}" data-target-id="modalNotifikasi">
-                                    Baca
-                                </button>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td class="text-left">{{ $item->title }} -
+                                    {{ strlen($item->content) >= 100 ? substr($item->content, 0, 100) . '...' : $item->content }}
+                                </td>
+                                <td>{{ date('Y-m-d H:i', strtotime($item->created_at)) }}</td>
+                                <td>
+                                    @if ($item->read == 1)
+                                        <div class="text-green-600">Sudah Dibaca</div>
+                                    @else
+                                        <div class="text-theme-primary">Belum Dibaca</div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn toggle-modal"
+                                        data-id="{{ $item->id }}" data-target-id="modalNotifikasi">
+                                        @if ($item->read == 1)
+                                            <div class="text-green-600">Baca Lagi</div>
+                                        @else
+                                            <div class="text-theme-primary">Baca</div>
+                                        @endif
+                                    </button>
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="5" class="text-center">
-                                <span class="text-danger">Tidak ada notifikasi.</span>
-                            </td>
-                        </tr>
-                    @endforelse
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <span class="text-danger">Tidak ada notifikasi.</span>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
             <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
                 <div class="w-full">
                     <div class="pagination">
-                        @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-                        {{ $data->links('pagination::tailwind') }}
+                        @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                            {{ $data->links('pagination::tailwind') }}
                         @endif
                     </div>
                 </div>
             </div>
         </div>
         @push('extraScript')
-        <script>
-            $('[data-dismiss-id]').on('click', function(){
-                location.reload();
-            })
-            $('.toggle-modal').on('click', function(e) {
-                const data_id = $(this).data('id')
-                $.ajax({
-                    type: "GET",
-                    url: "{{ url('/notifikasi') }}/" + data_id,
-                    success: function(response) {
-                        console.log(response)
-                        if (response.status == 'success') {
-                            const notif = response.data
-                            var datetime = notif.created_at.replace("T", " ").substring(0, 16)
-                            $('#title-notif').html(notif.title)
-                            $('#time-notif').html(datetime)
-                            $('#content-notif').html(notif.content)
-                            if (notif.extra) {
-                                $('.extra-notif').empty()
-                                var extra = `<div class="row">
+            <script>
+                $('[data-dismiss-id]').on('click', function() {
+                    location.reload();
+                })
+                $('.toggle-modal').on('click', function(e) {
+                    const data_id = $(this).data('id')
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ url('/notifikasi') }}/" + data_id,
+                        success: function(response) {
+                            console.log(response)
+                            if (response.status == 'success') {
+                                const notif = response.data
+                                var datetime = notif.created_at.replace("T", " ").substring(0, 16)
+                                $('#title-notif').html(notif.title)
+                                $('#time-notif').html(datetime)
+                                $('#content-notif').html(notif.content)
+                                if (notif.extra) {
+                                    $('.extra-notif').empty()
+                                    var extra = `<div class="row">
                                     <div class="col-12">
                                         ${notif.extra}
                                     </div>
                                 </div>`;
-                                $('.extra-notif').append(extra)
+                                    $('.extra-notif').append(extra)
+                                }
+                                // if (notif.read) {
+                                //     $('.modal-notifikasi').show()
+                                //     $('.notification-click').find('.notif-body-card-' + data_id).addClass(
+                                //         'reading')
+                                //     $('.notification-click').find('span').html('Sudah Dibaca')
+                                //     const total_unread = response.total_belum_dibaca
+                                //     if (total_unread > 0) {
+                                //         $('.total-notif-message').html(
+                                //             `Anda mempunyai ${total_unread} notifikasi yang belum dibaca.`)
+                                //     } else {
+                                //         $('.total-notif-message').html(
+                                //             'Anda tidak mempunyai notifikasi yang belum dibaca.')
+                                //     }
+                                // } else {
+                                //     ErrorMessage('Tidak dapat membuka notifikasi')
+                                // }
+                            } else {
+                                ErrorMessage('Terjadi kesalahan')
                             }
-                            // if (notif.read) {
-                            //     $('.modal-notifikasi').show()
-                            //     $('.notification-click').find('.notif-body-card-' + data_id).addClass(
-                            //         'reading')
-                            //     $('.notification-click').find('span').html('Sudah Dibaca')
-                            //     const total_unread = response.total_belum_dibaca
-                            //     if (total_unread > 0) {
-                            //         $('.total-notif-message').html(
-                            //             `Anda mempunyai ${total_unread} notifikasi yang belum dibaca.`)
-                            //     } else {
-                            //         $('.total-notif-message').html(
-                            //             'Anda tidak mempunyai notifikasi yang belum dibaca.')
-                            //     }
-                            // } else {
-                            //     ErrorMessage('Tidak dapat membuka notifikasi')
-                            // }
-                        } else {
-                            ErrorMessage('Terjadi kesalahan')
+                        },
+                        error: function(error) {
+                            console.log(error)
                         }
-                    },
-                    error: function(error) {
-                        console.log(error)
-                    }
+                    })
                 })
-            })
 
-            function ErrorMessage(message) {
-                swal("Gagal!", message, {
-                    icon: "error",
-                    // timer: 3000,
-                    closeOnClickOutside: false
-                }).then(() => {
-                    location.reload();
-                });
-                setTimeout(function() {
-                    location.reload();
-                }, 3000);
-            }
+                function ErrorMessage(message) {
+                    swal("Gagal!", message, {
+                        icon: "error",
+                        // timer: 3000,
+                        closeOnClickOutside: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                    setTimeout(function() {
+                        location.reload();
+                    }, 3000);
+                }
 
-            function showError(input, message) {
-                const inputGroup = input.parentElement;
-                const formGroup = inputGroup.parentElement;
-                const errorSpan = formGroup.querySelector('.error');
+                function showError(input, message) {
+                    const inputGroup = input.parentElement;
+                    const formGroup = inputGroup.parentElement;
+                    const errorSpan = formGroup.querySelector('.error');
 
-                formGroup.classList.add('has-error');
-                errorSpan.innerText = message;
-                input.focus();
-                input.value = '';
-            }
-        </script>
-    @endpush
-@endsection
+                    formGroup.classList.add('has-error');
+                    errorSpan.innerText = message;
+                    input.focus();
+                    input.value = '';
+                }
+            </script>
+        @endpush
+    @endsection

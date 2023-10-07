@@ -66,7 +66,6 @@ class ActionSeeder extends Seeder
             'Notifikasi-List data',
             'KKB-Upload tagihan',
             'KKB-Konfirmasi imbal jasa',
-            'KKB-Upload bukti penyerahan unit',
         ];
 
         for ($i=0; $i < count($actions); $i++) { 
