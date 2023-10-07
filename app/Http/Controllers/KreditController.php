@@ -777,6 +777,65 @@ class KreditController extends Controller
         }*/
     }
 
+    public function getDataPO($pengajuan_id) {
+        try {
+            $host = env('LOS_API_HOST');
+            $apiURL = $host . '/kkb/get-data-pengajuan-by-id/' . $pengajuan_id;
+
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+
+            if ($responseBody) {
+                if (array_key_exists('no_po', $responseBody) && array_key_exists('nama', $responseBody))
+                    return $responseBody;
+                else
+                    return response()->json([
+                        'status' => 'failed',
+                        'message' => 'Not found',
+                    ]);
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    public function getDataCabang($kode_cabang) {
+        try {
+            $host = env('BIO_INTERFACE_API_HOST');
+            $apiURL = $host . '/v1/cabang/' . $kode_cabang;
+
+            $response = Http::timeout(3)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+
+            if ($responseBody) {
+                if(array_key_exists('data', $responseBody)){
+                    if ($responseBody['data'])
+                        return $responseBody['data'];
+                }
+                
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Not found',
+                ]);
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function paginate($items, $perPage = 5, $page = null, $options = [])
     {
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
@@ -815,13 +874,26 @@ class KreditController extends Controller
 
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
+            $kredit = Kredit::find($kkb->kredit_id);
             $document->date = date('Y-m-d');
             $document->file = $file->hashName();
             $document->document_category_id  = 7;
             $document->save();
 
-            // send notif
-            $this->notificationController->send($action_id, $kkb->kredit_id);
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+            // send notification
+            // $this->notificationController->send($action_id, $kkb->kredit_id);
+            $notifTemplate = NotificationTemplate::find(6);
+            
+            $this->notificationController->sendEmail($cabang['email'],  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                'to' => 'Cabang '.$dataPO['cabang'],
+                'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            ]);
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas tagihan.');
 
@@ -879,6 +951,7 @@ class KreditController extends Controller
 
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
+            $kredit = Kredit::find($kkb->kredit_id);
             $document->date = date('Y-m-d');
             $document->file = $file->hashName();
             $document->document_category_id  = 1;
@@ -960,13 +1033,26 @@ class KreditController extends Controller
             DB::beginTransaction();
 
             $kkb = KKB::where('id', $request->id_kkb)->first();
+            $kredit = Kredit::find($kkb->kredit_id);
             $kkb->tgl_ketersediaan_unit = date('Y-m-d', strtotime($request->date));
             $kkb->save();
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal ketersediaan unit.');
 
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             // send notification
-            $this->notificationController->send($action_id, $kkb->kredit_id);
+            // $this->notificationController->send($action_id, $kkb->kredit_id);
+            $notifTemplate = NotificationTemplate::find(2);
+            
+            $this->notificationController->sendEmail($cabang['email'],  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                'to' => 'Cabang '.$dataPO['cabang'],
+                'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            ]);
 
             DB::commit();
 
@@ -1021,6 +1107,7 @@ class KreditController extends Controller
             $kkb = KKB::where('id', $request->id_kkb)->first();
             $file = $request->file('upload_penyerahan_unit');
             $file->storeAs('public/dokumentasi-peyerahan', $file->hashName());
+            $kredit = Kredit::find($kkb->kredit_id);
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
             $document->date = date('Y-m-d', strtotime($request->tgl_pengiriman));
@@ -1031,8 +1118,20 @@ class KreditController extends Controller
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
 
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             // send notification
-            $this->notificationController->send($action_id, $kkb->kredit_id);
+            // $this->notificationController->send($action_id, $kkb->kredit_id);
+            $notifTemplate = NotificationTemplate::find(5);
+                
+            $this->notificationController->sendEmail($cabang['email'],  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                'to' => 'Cabang '.$dataPO['cabang'],
+                'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -1089,6 +1188,8 @@ class KreditController extends Controller
 
             $file = $request->file('polis_scan');
             $file->storeAs('public/dokumentasi-police', $file->hashName());
+            $kkb = KKB::where('id', $request->id_kkb)->first();
+            $kredit = Kredit::find($kkb->kredit_id);
             $document = new Document();
             $document->kredit_id = $request->id_kkb;
             $document->date = $polisDate;
@@ -1100,7 +1201,22 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas nomor polis.');
 
             // send notification
-            $this->notificationController->send($action_id, $request->id_kkb);
+            // $this->notificationController->send($action_id, $request->id_kkb);
+
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+
+            $notifTemplate = NotificationTemplate::find(9);
+                
+            $this->notificationController->sendEmail($cabang['email'],  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                'to' => 'Cabang '.$dataPO['cabang'],
+                'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            ]);
+
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -1157,6 +1273,8 @@ class KreditController extends Controller
             $file = $request->file('bpkb_scan');
             $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
             $document = new Document();
+            $kkb = KKB::where('id', $request->id_kkb)->first();
+            $kredit = Kredit::find($kkb->kredit_id);
             $document->kredit_id = $request->id_kkb;
             $document->date = $bpkbDate;
             $document->text = $request->no_bpkb;
@@ -1167,7 +1285,23 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas BPKB.');
 
             // send notif
-            $this->notificationController->send($action_id, $request->id_kkb);
+            // $this->notificationController->send($action_id, $request->id_kkb);
+
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+            $notifTemplate = NotificationTemplate::find(10);
+                
+            $this->notificationController->sendEmail($cabang['email'],  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                'to' => 'Cabang '.$dataPO['cabang'],
+                'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            ]);
+
+
+
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -1223,6 +1357,7 @@ class KreditController extends Controller
             $kkb = KKB::where('id', $request->id_kkb)->first();
             $file = $request->file('stnk_scan');
             $file->storeAs('public/dokumentasi-stnk', $file->hashName());
+            $kredit = Kredit::find($kkb->kredit_id);
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
             $document->date = $stnkdate;
@@ -1233,7 +1368,19 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas STNK.');
 
             // send notification
-            $this->notificationController->send($action_id, $request->id_kkb);
+            // $this->notificationController->send($action_id, $request->id_kkb);
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+            $notifTemplate = NotificationTemplate::find(8);
+                
+            $this->notificationController->sendEmail($cabang['email'],  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                'to' => 'Cabang '.$dataPO['cabang'],
+                'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            ]);
+
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -1557,7 +1704,8 @@ class KreditController extends Controller
                 $user_id = \Session::get(config('global.user_id_session'));
                 $document = Document::find($request->id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
-
+                $kkb = KKB::where('id', $document->id_kkb)->first();
+                $kredit = Kredit::find($kkb->kredit_id);    
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = \Session::get(config('global.user_id_session'));
@@ -1635,17 +1783,27 @@ class KreditController extends Controller
             if (\Session::get(config('global.role_id_session')) == 3) {
                 // Vendor
                 $document = Document::find($request->id);
+                $kredit = Kredit::find($document->kredit_id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
-
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = \Session::get(config('global.user_id_session'));
                 $document->save();
 
-                if ($request->category_id == 1) {
-                    // send notification
-                    $this->notificationController->send(5, $document->kredit_id);
-                }
+                $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                $cabang = $this->getDataCabang($kredit->kode_cabang);
+                // send notification
+                // $this->notificationController->send($action_id, $kkb->kredit_id);
+                $notifTemplate = NotificationTemplate::find(4);
+                    
+                $this->notificationController->sendEmail($cabang['email'],  [
+                    'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                    'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                    'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                    'to' => 'Cabang '.$dataPO['cabang'],
+                    'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+                ]);
+    
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
 
@@ -1703,7 +1861,8 @@ class KreditController extends Controller
                 $user_id = \Session::get(config('global.user_id_session'));
                 $document = Document::find($request->id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
-
+                // $kkb = KKB::where('id', $document->id_kkb)->first();
+                $kredit = Kredit::find($document->kredit_id);
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = \Session::get(config('global.user_id_session'));
@@ -1720,8 +1879,27 @@ class KreditController extends Controller
                 }
 
                 if ($request->category_id == 2) {
-                    // send notification
-                    $this->notificationController->send(8, $document->kredit_id);
+                $vendor = User::select('users.email', 'v.name')
+                                    ->join('vendors AS v', 'v.id', 'users.vendor_id')
+                                    ->where('users.role_id', 3)
+                                    ->first();
+
+                    // retrieve from api
+                $dataPO = $this->getDataPO($kredit->pengajuan_id);
+
+                if ($vendor) {
+                // send notif
+                $notifTemplate = NotificationTemplate::find(7);
+
+                $this->notificationController->sendEmail($vendor->email,  [
+                    'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                    'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                    'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                    'to' => $vendor->name,
+                    'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+                ]);
+                }
+        
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
@@ -1954,6 +2132,7 @@ class KreditController extends Controller
             $file->storeAs('public/dokumentasi-imbal-jasa', $file->hashName());
             $document = new Document();
             $document->kredit_id = $request->id_kkbimbaljasa;
+            $kredit = Kredit::find($document->kredit_id);
             $document->date = Carbon::now();
             $document->file = $file->hashName();
             $document->document_category_id  = 6;
@@ -1971,7 +2150,27 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas imbal jasa.');
 
             // send notification
-            $this->notificationController->send($action_id, $request->id_kkbimbaljasa);
+            // $this->notificationController->send($action_id, $request->id_kkbimbaljasa);
+            $vendor = User::select('users.email', 'v.name')
+                        ->join('vendors AS v', 'v.id', 'users.vendor_id')
+                        ->where('users.role_id', 3)
+                        ->first();
+
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+
+            if ($vendor) {
+            // send notif
+            $notifTemplate = NotificationTemplate::find(14);
+
+            $this->notificationController->sendEmail($vendor->email,  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'undifned',
+                'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                'to' => $vendor->name,
+                'body' => $notifTemplate ? $notifTemplate->content : 'undifned'
+                ]);
+            }
 
             $status = 'success';
             $message = 'Berhasil mengupload berkas imbal jasa.';
@@ -2026,7 +2225,22 @@ class KreditController extends Controller
             $this->logActivity->store('Pengguna ' . Auth::user()->name . ' mengkonfirmasi berkas imbal jasa.');
 
             // send notification
-            $this->notificationController->send($action_id, $document->kredit_id);
+            // $this->notificationController->send($action_id, $document->kredit_id);
+
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+            // send notification
+            // $this->notificationController->send($action_id, $kkb->kredit_id);
+            $notifTemplate = NotificationTemplate::find(15);
+                
+            $this->notificationController->sendEmail($cabang['email'],  [
+                'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                'to' => 'Cabang '.$dataPO['cabang'],
+                'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            ]);
+
 
             $status = 'success';
             $message = 'Berhasil mengkonfirmasi berkas imbal jasa.';

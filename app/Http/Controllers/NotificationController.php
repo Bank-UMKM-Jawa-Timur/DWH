@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KKB;
+use App\Mail\SendMail;
 use App\Models\Kredit;
 use App\Models\Notification;
 use App\Models\NotificationTemplate;
@@ -13,6 +14,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use PHPMailer\PHPMailer\PHPMailer;  
+use PHPMailer\PHPMailer\Exception;
 
 class NotificationController extends Controller
 {
@@ -292,6 +296,27 @@ class NotificationController extends Controller
             DB::rollBack();
         } catch(\Illuminate\Database\QueryException $e) {
             DB::rollBack();
+        }
+    }
+
+    public function sendEmail($mail_to, $mail_body) {
+        $status = '';
+        $message = '';
+
+        try {
+            // cabang sample email = 'cabangsurabaya@bankumkm.id'
+            Mail::to($mail_to)->send(new SendMail($mail_body));
+
+            $status = 'success';
+            $message = 'Berhasil mengirim email';
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = 'Gagal mengirim email. '.$e->getMessage();
+        } finally {
+            return response()->json([
+                'status' => $status,
+                'message' => $message,
+            ]);
         }
     }
 }
