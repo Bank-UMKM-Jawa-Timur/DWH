@@ -14,6 +14,11 @@
                 <div class="gap-5 space-y-5">
                     <div class="flex gap-5 w-full mt-0">
                         <div class="input-box w-full space-y-3">
+                            <p class="uppercase appearance-none" id="kategori_data"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 w-full mt-0">
+                        <div class="input-box w-full space-y-3">
                             <label for="" class="uppercase appearance-none">Tanggal</label>
                             <input type="text" disabled class="p-2 w-full border" id="tanggal_pembayaran"  />
                         </div>

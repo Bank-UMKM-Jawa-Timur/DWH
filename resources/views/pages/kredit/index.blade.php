@@ -120,7 +120,7 @@
                         $('.alert-bukti-imbal-jasa').removeClass("hidden");
                     }else{
                         $('.content-bukti-imbal-jasa').removeClass("hidden");
-                        $('.alert-bukti-imbal-jasa').addlass("hidden");
+                        $('.alert-bukti-imbal-jasa').addClass("hidden");
                     }
                 })
 
@@ -159,7 +159,7 @@
                         $('.alert-penyerahan-unit').removeClass("hidden");
                     }else{
                         $('.content-penyerahan-unit').removeClass("hidden");
-                        $('.alert-penyerahan-unit').addlass("hidden");
+                        $('.alert-penyerahan-unit').addClass("hidden");
                     }
                 })
 
@@ -235,7 +235,7 @@
                                         $('.alert-po').removeClass("hidden");
                                     }else{
                                         $('.content-po').removeClass("hidden");
-                                        $('.alert-po').addlass("hidden");
+                                        $('.alert-po').addClass("hidden");
                                     }
                                 })
                             }
@@ -252,7 +252,7 @@
                                         $('.alert-dbp').removeClass("hidden");
                                     }else{
                                         $('.content-dbp').removeClass("hidden");
-                                        $('.alert-dbp').addlass("hidden");
+                                        $('.alert-dbp').addClass("hidden");
                                     }
                             })
                         }
@@ -687,6 +687,7 @@
                 const file = $(identifier).data('file');
                 const status = $(identifier).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
                     'Menunggu konfirmasi dari vendor.';
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : '';
                 const tanggal = $(identifier).data('tanggal');
                 const confirm_at = $(identifier).data('confirm_at');
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#navpanes=0";
@@ -696,10 +697,11 @@
                         $('.alert-bukti-pembayaran').removeClass("hidden");
                     }else{
                         $('.content-bukti-pembayaran').removeClass("hidden");
-                        $('.alert-bukti-pembayaran').addlass("hidden");
+                        $('.alert-bukti-pembayaran').addClass("hidden");
                     }
                 })
 
+                $(`#${targetId} #kategori_data`).text(kategori)
                 $('#bukti_pembayaran_img').attr('src', path_file)
                 $('#tanggal_pembayaran').val(tanggal)
                 $('#tanggal_confirm_pembayaran').val(confirm_at)

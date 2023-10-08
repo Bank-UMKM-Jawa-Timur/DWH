@@ -65,12 +65,12 @@
                         $('.alert-tagihan').removeClass("hidden");
                     }else{
                         $('.content-tagihan').removeClass("hidden");
-                        $('.alert-tagihan').addlass("hidden");
+                        $('.alert-tagihan').addClass("hidden");
                     }
                 })
 
             $('#tagihan_file').attr('src', path_file)
-            $('#kategori_data').text(kategori);
+            $('#modalTagihan #kategori_data').text(kategori);
             $('#tanggal_tagihan').val(tanggal)
             $('#status_tagihan').val(status)
         })

@@ -422,6 +422,7 @@ class DashboardController extends Controller
                     'import.tgl_po',
                     'import.tgl_realisasi',
                     'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
                     'kredits.imported_data_id',
                     'kredits.kode_cabang',

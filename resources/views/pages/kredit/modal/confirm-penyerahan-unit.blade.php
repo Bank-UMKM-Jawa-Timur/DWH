@@ -13,7 +13,11 @@
 
         <div class="modal-body">
             <div class="gap-5 space-y-5 p-5">
-                <p class="uppercase appearance-none" id="kategori_data"></p>
+                <div class="flex gap-5 w-full mt-0">
+                    <div class="input-box w-full space-y-3">
+                        <p class="uppercase appearance-none" id="kategori_data"></p>
+                    </div>
+                </div>
                 <div class="flex gap-5 w-full mt-2">
                     <div class="input-box w-full space-y-3">
                         <label for="" class="uppercase appearance-none">Tanggal
@@ -94,50 +98,6 @@
                 }
             })
         }
-
-        /*$(".toggle-modal").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            const id_kkb = $(this).data('id_kkb');
-            const data_id = $(this).data('id-doc')
-            const data_category_doc_id = $(this).data('id-category')
-            const tanggal = $(this).data('tanggal');
-            const is_confirm = $(this).data('confirm');
-            const confirm_at = $(this).data('confirm_at');
-            const id_doc = $(this).data('id-doc');
-            const status = $(this).data('confirm') ? 'Sudah dikonfirmasi oleh cabang.' :
-                'Belum dikonfirmasi cabang.';
-            const file = $(this).data('file');
-            var path_file = "{{ asset('storage') }}" + "/dokumentasi-peyerahan/" + file;
-
-            $("#modalConfirmPenyerahanUnit #preview_penyerahan_unit").attr("src", path_file);
-            $('#modalConfirmPenyerahanUnit #confirm_id').val(data_id)
-            $('#modalConfirmPenyerahanUnit #confirm_id_category').val(data_category_doc_id)
-            $('#modalConfirmPenyerahanUnit #status_confirm_penyerahan_unit').val(status)
-            $('#modalConfirmPenyerahanUnit #tanggal_penyerahan_unit').val(tanggal)
-            $('#modalConfirmPenyerahanUnit #tanggal_confirm_penyerahan_unit').val(confirm_at)
-            if (is_confirm) {
-                $('#modalConfirmPenyerahanUnit .title-modal').html('Penyerahan Unit')
-                $('.form-confirm').css('display', 'none');
-                $('.penyerahan-unit-title').html('Penyerahan Unit');
-            }
-            else {
-                var role_id = "{{\Session::get(config('global.role_id_session'))}}"
-                var role_name = "{{\Session::get(config('global.user_role_session'))}}"
-                if (role_id == 2 && role_name == 'Staf Analis Kredit') {
-                    $('#modalConfirmPenyerahanUnit .title-modal').html('Konfirmasi Penyerahan Unit')
-                    $('.form-confirm').css('display', 'block');
-                    $('.penyerahan-unit-title').html('Konfirmasi Penyerahan Unit');
-                }
-                else {
-                    $('#modalConfirmPenyerahanUnit .title-modal').html('Penyerahan Unit')
-                    $('.form-confirm').css('display', 'none');
-                    $('.penyerahan-unit-title').html('Penyerahan Unit');
-                }
-            }
-        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");

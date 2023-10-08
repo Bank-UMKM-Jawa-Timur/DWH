@@ -393,6 +393,7 @@ class KreditController extends Controller
                     'import.tgl_po',
                     'import.tgl_realisasi',
                     'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
                     'kredits.imported_data_id',
                     'kredits.kode_cabang',
@@ -792,8 +793,10 @@ class KreditController extends Controller
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
-                            if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
-                                $value->detail = $responseBody;
+                            if ($responseBody) {
+                                if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
+                                    $value->detail = $responseBody;
+                                }
                             }
                         }
                     } catch (\Illuminate\Http\Client\ConnectionException $e) {
@@ -888,6 +891,7 @@ class KreditController extends Controller
                     'import.tgl_po',
                     'import.tgl_realisasi',
                     'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
                     'kredits.imported_data_id',
                     'kredits.kode_cabang',
@@ -1856,7 +1860,7 @@ class KreditController extends Controller
 
                         $kredit = Kredit::find($stnk->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
-                        $kredit = Kredit::find($document->kredit_id);
+                        
                         if ($kredit->imported_data_id) {
                             if (!$kredit->is_continue_import) {
                                 $kredit->is_continue_import = true;
