@@ -93,8 +93,8 @@
                         </h2>
                         <p class="text-gray-400">{{$sub_name}}</p>
                     @else
-                        <p class="text-gray-400">{{$sub_name}}</p>
-                        <h2 class="text-theme-text font-semibold">
+                        <p class="text-theme-text font-semibold">{{$sub_name}}</p>
+                        <h2 class="text-gray-400">
                             {{$name}}
                         </h2>
                     @endif
