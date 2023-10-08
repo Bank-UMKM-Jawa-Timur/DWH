@@ -13,6 +13,7 @@
 
         <div class="modal-body">
             <div class="gap-5 space-y-5 p-5">
+                <p class="uppercase appearance-none" id="kategori_data"></p>
                 <div class="flex gap-5 w-full mt-2">
                     <div class="input-box w-full space-y-3">
                         <label for="" class="uppercase appearance-none">Tanggal
@@ -73,11 +74,11 @@
                 console.log('then')
                 $("#modalConfirmPenyerahanUnit").addClass("hidden");
                 $('#preload-data').removeClass("hidden")
-                
+
                 refreshTable()
             })
         }
-        
+
         function ConfirmPenyerahanUnitErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
@@ -88,7 +89,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    
+
                     refreshTable()
                 }
             })

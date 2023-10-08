@@ -15,6 +15,7 @@
             <div class="container mx-auto border-b-2">
                 <div class="p-4">
                     <div>
+                        <p class="uppercase appearance-none" id="kategori_data"></p>
                         <label for="" class="text-2xl tracking-tighter font-semibold">Data Pengajuan</label>
                         <div class="space-y-3 p-1">
                             <div class="flex gap-5 w-full mt-5">
@@ -255,25 +256,25 @@
         $(".tab-wrapping .tab-button").click(function (e) {
             e.preventDefault();
             var tabId = $(this).data("tab");
-        
+
             $(".tab-content").addClass("hidden");
             $(".tab-wrapping .tab-button").removeClass(
             "bg-white border-b border-theme-primary"
             );
             $(".tab-wrapping .tab-button").removeClass("text-gray-400");
             $(".tab-wrapping .tab-button").removeClass("text-theme-primary");
-        
+
             $(".tab-wrapping .tab-button").addClass("text-gray-400");
             $(".tab-wrapping .tab-button").addClass("border-b-2");
-        
+
             $(this).addClass("bg-white border-b-2 border-theme-primary");
             $(this).addClass("text-theme-primary");
-        
+
             if (tabId) {
             $(this).removeClass("text-gray-400");
             $(this).removeClass("bg-gray-100");
             }
-        
+
             $("#" + tabId).removeClass("hidden");
         });
     </script>

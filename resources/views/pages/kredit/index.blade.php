@@ -87,6 +87,7 @@
                 const confirm_id = $(identifier).data('id-doc')
                 const is_confirm = $(identifier).data('confirm')
                 const confirm_category_id = $(identifier).data('id-category')
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
                 const file = $(identifier).data('file');
                 const status = $(identifier).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
                     'Menunggu konfirmasi dari vendor.';
@@ -96,6 +97,7 @@
                 $(`#${targetId} #confirm_bukti_pembayaran_img`).attr('src', path_file)
                 $(`#${targetId} #confirm_tanggal_pembayaran`).val(tanggal)
                 $(`#${targetId} #status_confirm`).val(status)
+                $(`#${targetId} #kategori_data`).text(kategori)
                 $(`#${targetId} #confirm_id`).val(confirm_id)
                 $(`#${targetId} #confirm_id_category`).val(confirm_category_id)
 
@@ -106,6 +108,7 @@
                 const data_id = $(identifier).data('id')
                 const tanggal = $(identifier).data('tanggal')
                 const nominal = $(identifier).data('nominal')
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
                 const is_confirm = $(identifier).data('confirm')
                 const confirm = $(identifier).data('confirm') ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'
                 const file_bukti = $(identifier).data('file') ? $(identifier).data('file') : ''
@@ -123,6 +126,7 @@
 
                 $(`#${targetId} #preview_imbal_jasa`).attr("src", path_file);
                 $(`#${targetId} #id_cat`).val(data_id)
+                $(`#${targetId} #kategori_data`).text(kategori)
                 $(`#${targetId} #tgl_upload_imbal_jasa`).val(tanggal)
                 $(`#${targetId} #nominal_imbal_jasa`).val(nominal)
                 $(`#${targetId} #status_konfirmasi_imbal_jasa`).val(confirm)
@@ -137,6 +141,8 @@
 
                 const id_kkb = $(identifier).data('id_kkb');
                 const data_id = $(identifier).data('id-doc')
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
+
                 const data_category_doc_id = $(identifier).data('id-category')
                 const tanggal = $(identifier).data('tanggal');
                 const is_confirm = $(identifier).data('confirm');
@@ -159,6 +165,7 @@
 
                 $(`#${targetId} #preview_penyerahan_unit`).attr("src", path_file);
                 $(`#${targetId} #confirm_penyerahan_id`).val(data_id)
+                $(`#${targetId} #kategori_data`).text(kategori);
                 $(`#${targetId} #confirm_penyerahan_id_category`).val(data_category_doc_id)
                 $(`#${targetId} #status_confirm_penyerahan_unit`).val(status)
                 $(`#${targetId} #tanggal_penyerahan_unit`).val(tanggal)
@@ -183,11 +190,15 @@
             } else if (targetId == 'modalDetailPo') {
                 $(".active-tab").trigger("click");
                 const id = $(identifier).data('id');
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
+                console.log(kategori)
                 const data_kategori = $(identifier).data('kategori')
                 const data_is_import = data_kategori != 'data_kkb'
                 var url = "{{ url('/kredit') }}/" + id
                 if (data_is_import)
                     url += "?is_import=true"
+
+                $(`#${targetId} #kategori_data`).text(kategori)
 
                 Swal.fire({
                     showConfirmButton: false,
@@ -246,7 +257,7 @@
                             })
                         }
 
-                            
+
                             let category = document.category.toLowerCase();
 
                             if(category === "stnk"){
@@ -420,7 +431,7 @@
                             $(`#${targetId} .alert-polis`).removeClass("hidden")
                             $(`#${targetId} .content-polis`).addClass("hidden")
                         }
-                    
+
                         if (data_is_import) {
                             if (response.data.import) {
                                 console.log('import')

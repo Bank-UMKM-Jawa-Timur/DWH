@@ -14,6 +14,11 @@
                 <div class="gap-5 space-y-5">
                     <div class="flex gap-5 w-full mt-0">
                         <div class="input-box w-full space-y-3">
+                            <p class="uppercase appearance-none" id="kategori_data"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 w-full mt-0">
+                        <div class="input-box w-full space-y-3">
                             <label for="" class="uppercase appearance-none">Tanggal Upload</label>
                             <input type="text" disabled class="p-2 w-full border" id="tanggal_tagihan"  />
                         </div>
@@ -49,6 +54,8 @@
             const status = $(this).data('confirm') ? 'Selesai' :
                 'Menunggu pembayaran tagihan dari cabang.';
             const tanggal = $(this).data('tanggal');
+            const kategori = ($(this).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : '';
+            console.log(kategori);
             const confirm_at = $(this).data('confirm_at');
             var path_file = "{{ asset('storage') }}" + "/tagihan/" + file + "#navpanes=0";
 
@@ -63,6 +70,7 @@
                 })
 
             $('#tagihan_file').attr('src', path_file)
+            $('#kategori_data').text(kategori);
             $('#tanggal_tagihan').val(tanggal)
             $('#status_tagihan').val(status)
         })

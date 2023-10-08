@@ -14,6 +14,11 @@
                 <div class="gap-5 space-y-5">
                     <div class="flex gap-5 w-full mt-0">
                         <div class="input-box w-full space-y-3">
+                            <p class="uppercase appearance-none" id="kategori_data"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 w-full mt-0">
+                        <div class="input-box w-full space-y-3">
                             <label for="" class="uppercase appearance-none">Tanggal Upload</label>
                             <input type="text" disabled class="p-2 w-full border" id="confirm_tanggal_pembayaran"  />
                         </div>
@@ -56,11 +61,11 @@
                 console.log('then')
                 $("#modalConfirmBuktiPembayaran").addClass("hidden");
                 $('#preload-data').removeClass("hidden")
-                
+
                 refreshTable()
             })
         }
-        
+
         function ConfirmPembayaranErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
@@ -71,7 +76,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    
+
                     refreshTable()
                 }
             })

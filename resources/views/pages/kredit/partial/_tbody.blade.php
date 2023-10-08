@@ -98,6 +98,7 @@
                                 style="cursor: pointer; text-decoration: underline;"
                                 data-target-id="modalTagihan"
                                 data-id="{{$item->id}}"
+                                data-kategori="{{$item->kategori}}"
                                 data-file="{{ $item->invoice->file }}"
                                 data-confirm="{{ $item->invoice->is_confirm }}"
                                 data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
@@ -110,6 +111,7 @@
                                 style="cursor: pointer; text-decoration: underline;"
                                 data-target-id="modalTagihan"
                                 data-id="{{$item->id}}"
+                                data-kategori="{{$item->kategori}}"
                                 data-file="{{ $item->invoice->file }}"
                                 data-confirm="{{ $item->invoice->is_confirm }}"
                                 data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
@@ -145,6 +147,7 @@
                                     style="cursor: pointer; text-decoration: underline;"
                                     data-target-id="modalTagihan"
                                     data-id="{{$item->id}}"
+                                    data-kategori="{{$item->kategori}}"
                                     data-file="{{ $item->invoice->file }}"
                                     data-confirm="{{ $item->invoice->is_confirm }}"
                                     data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
@@ -162,6 +165,7 @@
                                     style="cursor: pointer; text-decoration: underline;"
                                     data-target-id="modalTagihan"
                                     data-id="{{$item->id}}"
+                                    data-kategori="{{$item->kategori}}"
                                     data-file="{{ $item->invoice->file }}"
                                     data-confirm="{{ $item->invoice->is_confirm }}"
                                     data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
@@ -193,6 +197,7 @@
                                     <a style="cursor: pointer; text-decoration: underline;"
                                         class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran text-red-600" data-target-id="modalConfirmBuktiPembayaran"
                                         data-id-category="1"
+                                        data-kategori="{{$item->kategori}}"
                                         data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
                                         data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
                                         data-file="@isset($item->bukti_pembayaran->file){{ $item->bukti_pembayaran->file }}@endisset"
@@ -202,6 +207,7 @@
                                     <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
                                         style="cursor: pointer; text-decoration: underline;"
                                         data-target-id="modalConfirmBuktiPembayaran"
+                                        data-kategori="{{$item->kategori}}"
                                         data-file="{{ $item->bukti_pembayaran->file }}"
                                         data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
                                         data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
@@ -219,6 +225,7 @@
                                     <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
                                         style="cursor: pointer; text-decoration: underline;"
                                         data-target-id="modalConfirmBuktiPembayaran"
+                                        data-kategori="{{$item->kategori}}"
                                         data-file="{{ $item->bukti_pembayaran->file }}"
                                         data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
                                         data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
@@ -501,7 +508,7 @@
                                         @endif
                                     @endif
                                 @else
-                                    
+
                                 @endif
                             @else
                                 <span class="text-info">Maksimal
@@ -546,6 +553,7 @@
                                                 class="confirm-imbal-jasa toggle-modal-confirm-imbal-jasa text-red-600" data-target-id="modalConfirmImbalJasa"
                                                 data-id="{{ $item->imbal_jasa['id'] }}"
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['created_at'])->format('d-m-Y') }}"
                                                 data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
@@ -555,6 +563,8 @@
                                             <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
                                                 style="cursor: pointer; text-decoration: underline;"
                                                 data-target-id="modalConfirmImbalJasa"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
                                                 data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
@@ -587,6 +597,7 @@
                             <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
                                 style="cursor: pointer; text-decoration: underline;"
                                 data-target-id="modalConfirmImbalJasa"
+                                data-kategori="{{$item->kategori}}"
                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
                                 data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"                                data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
@@ -613,6 +624,7 @@
                                                 class="toggle-modal-upload-imbal-jasa underline text-red-600"
                                                 data-target-id="modalUploadImbalJasa"
                                                 data-id="{{ $item->id }}"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                                 onclick="showModal(this)">Bayar</a>
                                         @else
@@ -628,6 +640,7 @@
                                         <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
                                             style="cursor: pointer; text-decoration: underline;"
                                             data-target-id="modalConfirmImbalJasa"
+                                            data-kategori="{{$item->kategori}}"
                                             data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                             data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
                                             data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
@@ -1008,6 +1021,7 @@
                                             <a href="#" class="item-dropdown toggle-modal text-red-600"
                                                 data-target-id="modalUploadBuktiPenyerahanUnit"
                                                 data-id_kkb="{{ $item->kkb_id }}"
+                                                data-kategori="{{$item->kategori}}"
                                                 onclick="showModal(this)">Kirim Unit</a>
                                         </li>
                                     @endif

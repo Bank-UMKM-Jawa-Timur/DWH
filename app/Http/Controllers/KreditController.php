@@ -302,7 +302,7 @@ class KreditController extends Controller
                         // return $e->getMessage();
                     }
                 }
-                
+
                 $invoice = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 7)
                                             ->first();
@@ -800,7 +800,7 @@ class KreditController extends Controller
                         // return $e->getMessage();
                     }
                 }
-                
+
                 $invoice = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 7)
                                             ->first();
@@ -1098,7 +1098,7 @@ class KreditController extends Controller
                     if ($responseBody['data'])
                         return $responseBody['data'];
                 }
-                
+
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'Not found',
@@ -1163,7 +1163,7 @@ class KreditController extends Controller
             $this->notificationController->send($action_id, $kkb->kredit_id);
 
             // $notifTemplate = NotificationTemplate::find(6);
-            
+
             // $this->notificationController->sendEmail($cabang['email'],  [
             //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
             //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
@@ -1328,7 +1328,7 @@ class KreditController extends Controller
             // send notification
             $this->notificationController->send($action_id, $kkb->kredit_id);
             // $notifTemplate = NotificationTemplate::find(2);
-            
+
             // $this->notificationController->sendEmail($cabang['email'],  [
             //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
             //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
@@ -1407,7 +1407,7 @@ class KreditController extends Controller
             // send notification
             $this->notificationController->send($action_id, $kkb->kredit_id);
             // $notifTemplate = NotificationTemplate::find(5);
-                
+
             // $this->notificationController->sendEmail($cabang['email'],  [
             //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
             //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
@@ -1491,7 +1491,7 @@ class KreditController extends Controller
             $cabang = $this->getDataCabang($kredit->kode_cabang);
 
             // $notifTemplate = NotificationTemplate::find(9);
-                
+
             // $this->notificationController->sendEmail($cabang['email'],  [
             //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
             //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
@@ -1573,7 +1573,7 @@ class KreditController extends Controller
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
             $cabang = $this->getDataCabang($kredit->kode_cabang);
             // $notifTemplate = NotificationTemplate::find(10);
-                
+
             // $this->notificationController->sendEmail($cabang['email'],  [
             //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
             //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
@@ -1652,7 +1652,7 @@ class KreditController extends Controller
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
             $cabang = $this->getDataCabang($kredit->kode_cabang);
             // $notifTemplate = NotificationTemplate::find(8);
-                
+
             // $this->notificationController->sendEmail($cabang['email'],  [
             //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
             //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
@@ -1729,7 +1729,7 @@ class KreditController extends Controller
                 if (!$already_upload) {
                     $file = $request->file('stnk_scan');
                     $file->storeAs('public/dokumentasi-stnk', $file->hashName());
-    
+
                     $document = new Document();
                     $document->kredit_id = $kkb->kredit_id;
                     $document->text = $request->no_stnk;
@@ -1737,10 +1737,10 @@ class KreditController extends Controller
                     $document->file = $file->hashName();
                     $document->document_category_id  = 3;
                     $document->save();
-    
+
                     // send notification
                     $this->notificationController->send(9, $kkb->kredit_id);
-                    
+
                     // save log
                     $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
                 }
@@ -1756,7 +1756,7 @@ class KreditController extends Controller
                 if (!$already_upload) {
                     $file = $request->file('polis_scan');
                     $file->storeAs('public/dokumentasi-polis', $file->hashName());
-    
+
                     $document = new Document();
                     $document->kredit_id = $kkb->kredit_id;
                     $document->text = $request->no_polis;
@@ -1764,7 +1764,7 @@ class KreditController extends Controller
                     $document->file = $file->hashName();
                     $document->document_category_id  = 4;
                     $document->save();
-    
+
                     // send notification
                     // $this->notificationController->send(10, $kkb->kredit_id);
 
@@ -1783,7 +1783,7 @@ class KreditController extends Controller
                 if (!$already_upload) {
                     $file = $request->file('bpkb_scan');
                     $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
-    
+
                     $document = new Document();
                     $document->kredit_id = $kkb->kredit_id;
                     $document->text = $request->no_bpkb;
@@ -1791,7 +1791,7 @@ class KreditController extends Controller
                     $document->file = $file->hashName();
                     $document->document_category_id  = 5;
                     $document->save();
-    
+
                     // send notification
                     $this->notificationController->send(11, $kkb->kredit_id);
 
@@ -2003,7 +2003,7 @@ class KreditController extends Controller
                 $document = Document::find($request->id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
                 $kkb = KKB::where('id', $document->id_kkb)->first();
-                $kredit = Kredit::find($kkb->kredit_id);    
+                $kredit = Kredit::find($kkb->kredit_id);
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = \Session::get(config('global.user_id_session'));
@@ -2101,7 +2101,7 @@ class KreditController extends Controller
                 $this->notificationController->send($action_id, $kredit->id);
 
                 // $notifTemplate = NotificationTemplate::find(4);
-                    
+
                 // $this->notificationController->sendEmail($cabang['email'],  [
                 //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
                 //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
@@ -2548,9 +2548,9 @@ class KreditController extends Controller
 
             $dataPO = $this->getDataPO($kredit->pengajuan_id);
             $cabang = $this->getDataCabang($kredit->kode_cabang);
-            
+
             // $notifTemplate = NotificationTemplate::find(15);
-                
+
             // $this->notificationController->sendEmail($cabang['email'],  [
             //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
             //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',

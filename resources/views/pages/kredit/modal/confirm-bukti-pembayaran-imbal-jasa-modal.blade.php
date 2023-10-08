@@ -19,6 +19,11 @@
             <input type="hidden" name="id_cat" id="id_cat">
             <div class="modal-body">
                 <div class="gap-5 space-y-5 p-5">
+                    <div class="flex gap-5 w-full mt-0">
+                        <div class="input-box w-full space-y-3">
+                            <p class="uppercase appearance-none" id="kategori_data"></p>
+                        </div>
+                    </div>
                     <div class="flex gap-8">
                         <div class="input-box w-full space-y-3">
                             <label for="" class="uppercase appearance-none">Tanggal Upload</label>
@@ -74,11 +79,11 @@
                 console.log('then')
                 $("#modalConfirmImbalJasa").addClass("hidden");
                 $('#preload-data').removeClass("hidden")
-                
+
                 refreshTable()
             })
         }
-        
+
         function ConfirmImbalJasaErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
@@ -89,7 +94,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    
+
                     refreshTable()
                 }
             })
