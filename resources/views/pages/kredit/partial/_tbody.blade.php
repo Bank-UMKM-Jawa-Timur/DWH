@@ -156,60 +156,19 @@
                                 <span>Menunggu pembayaran</span>
                             @endif
                         @else
+                            {{--  Role selain vendor  --}}
                             @if ($item->bukti_pembayaran)
-                                @if ($is_kredit_page)
-                                    @if (!$item->bukti_pembayaran->is_confirm)
-                                        @if (\Session::get(config('global.role_id_session')) == 3)
-                                            <button class="toggle-modal-confirm-bukti-pembayaran text-red-600"
-                                                style="cursor: pointer;"
-                                                data-target-id="modalConfirmBuktiPembayaran"
-                                                data-file="{{ $item->bukti_pembayaran->file }}"
-                                                data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                                data-id-category="{{$item->bukti_pembayaran->document_category_id}}"
-                                                data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
-                                                onclick="showModal(this)">
-                                                Konfirmasi
-                                            </button>
-                                        @else
-                                            <a class="m-0 tagihan-modal toggle-modal-tagihan"
-                                                style="cursor: pointer; text-decoration: underline;"
-                                                data-target-id="modalConfirmBuktiPembayaran"
-                                                data-file="{{ $item->bukti_pembayaran->file }}"
-                                                data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                                data-id-category="{{$item->bukti_pembayaran->document_category_id}}"
-                                                data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
-                                                onclick="showModal(this)">
-                                                Selesai
-                                            </a>
-                                        @endif
-                                    @elseif ($item->bukti_pembayaran->is_confirm)
-                                        <button class="toggle-modal-bukti-pembayaran underline"
-                                            style="cursor: pointer;"
-                                            data-target-id="modalBuktiPembayaran"
-                                            data-file="{{ $item->bukti_pembayaran->file }}"
-                                            data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                            data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                            data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
-                                            onclick="showModal(this)">
-                                            Selesai
-                                        </button>
-                                    @endif
-                                @else
-                                    @if ($item->bukti_pembayaran->is_confirm)
-                                        <button class="toggle-modal-bukti-pembayaran underline"
-                                            style="cursor: pointer;"
-                                            data-target-id="modalBuktiPembayaran"
-                                            data-file="{{ $item->bukti_pembayaran->file }}"
-                                            data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                            data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                            data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
-                                            onclick="showModal(this)">
-                                            Selesai
-                                        </button>
-                                    @else
-                                        <span>Menunggu konfirmasi</span>
-                                    @endif
-                                @endif
+                                <a class="m-0 tagihan-modal toggle-modal-tagihan"
+                                    style="cursor: pointer; text-decoration: underline;"
+                                    data-target-id="modalTagihan"
+                                    data-id="{{$item->id}}"
+                                    data-file="{{ $item->invoice->file }}"
+                                    data-confirm="{{ $item->invoice->is_confirm }}"
+                                    data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
+                                    data-confirm_at="{{ date('d-m-Y', strtotime($item->invoice->confirm_at)) }}"
+                                    onclick="showModal(this)">
+                                    Selesai
+                                </a>
                             @else
                                 Menunggu cabang mengunggah bukti pembayaran
                             @endif
@@ -1076,6 +1035,7 @@
                             <li>
                                 <a class="item-dropdown toggle-modals"
                                     data-target-id="modalDetailPo" data-id="{{ $item->id }}"
+                                    data-kategori="{{$item->kategori}}"
                                     href="#" onclick="showModal(this)">Detail</a>
                             </li>
                         </ul>
@@ -1083,6 +1043,7 @@
                 @endif
             @else
                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn toggle-modals"
+                    data-kategori="{{$item->kategori}}"
                     data-target-id="modalDetailPo" data-id="{{ $item->id }}" onclick="showModal(this)">
                     Detail
                 </button>

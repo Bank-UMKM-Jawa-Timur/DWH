@@ -163,7 +163,8 @@
             } else if (targetId == 'modalDetailPo') {
                 $(".active-tab").trigger("click");
                 const id = $(identifier).data('id');
-                const data_is_import = $(identifier).data('is-import')
+                const data_kategori = $(identifier).data('kategori')
+                const data_is_import = data_kategori != 'data_kkb'
                 var url = "{{ url('/kredit') }}/" + id
                 if (data_is_import)
                     url += "?is_import=true"
@@ -184,6 +185,7 @@
                     url: url,
                     method: "GET",
                     success: function(response) {
+                        console.log(response)
                         for (var i = 0; i < response.data.documents.length; i++) {
                             var content = '';
                             const document = response.data || response.data.documents[i] ? response.data
@@ -238,7 +240,7 @@
                             }
 
 
-                            if (document.file_path != 'not found') {
+                            if (document.file) {
                                 switch (document.category) {
                                     case 'STNK':
                                         $(`#${targetId} .alert-stnk`).addClass("hidden")
@@ -352,43 +354,49 @@
                             $(`#${targetId} .content-polis`).addClass("hidden")
                         }
                     
-                        if (response.data.import) {
-                            var data = response.data.import;
-                            $(`#${targetId} #detail_nomorPo`).val('-')
-                            $(`#${targetId} #detail_tanggalPo`).val(data.tgl_po)
-                            $(`#${targetId} #detail_nama_pengaju`).val(data.name);
-                            $(`#${targetId} #detail_alamat_pengaju`).val('-');
-                            $(`#${targetId} #detail_cabang`).val(data.cabang);
-                            $(`#${targetId} #detail_no_po`).val('-');
-                            $(`#${targetId} #detail_merk`).val(data.merk);
-                            $(`#${targetId} #detail_tipe`).val(data.tipe);
-                            $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
-                            $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
-                                .harga, 0, ',', '.'));
-                            $(`#${targetId} #detail_jumlah_pesanan`).val(data
-                                .jumlah);
-                            var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
-                                "#navpanes=0";
-                            //$(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
+                        if (data_is_import) {
+                            if (response.data.import) {
+                                console.log('import')
+                                var data = response.data.import;
+                                console.log(data)
+                                $(`#${targetId} #detail_nomorPo`).val('-')
+                                $(`#${targetId} #detail_tanggalPo`).val(data.tgl_po)
+                                $(`#${targetId} #detail_nama_pengaju`).val(data.name);
+                                $(`#${targetId} #detail_alamat_pengaju`).val('-');
+                                $(`#${targetId} #detail_cabang`).val(data.cabang);
+                                $(`#${targetId} #detail_no_po`).val('-');
+                                $(`#${targetId} #detail_merk`).val(data.merk);
+                                $(`#${targetId} #detail_tipe`).val(data.tipe);
+                                $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
+                                $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
+                                    .harga, 0, ',', '.'));
+                                $(`#${targetId} #detail_jumlah_pesanan`).val(data
+                                    .jumlah);
+                                var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
+                                    "#navpanes=0";
+                                //$(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
+                            }
                         }
-                        if (response.data.pengajuan) {
-                            var data = response.data.pengajuan;
-                            $(`#${targetId} #detail_nomorPo`).val(data.no_po)
-                            $(`#${targetId} #detail_tanggalPo`).val(data.tanggal)
-                            $(`#${targetId} #detail_nama_pengaju`).val(data.nama);
-                            $(`#${targetId} #detail_alamat_pengaju`).val(data.alamat_rumah);
-                            $(`#${targetId} #detail_cabang`).val(data.cabang);
-                            $(`#${targetId} #detail_no_po`).val(data.no_po);
-                            $(`#${targetId} #detail_merk`).val(data.merk);
-                            $(`#${targetId} #detail_tipe`).val(data.tipe);
-                            $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
-                            $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
-                                .harga_kendaraan, 0, ',', '.'));
-                            $(`#${targetId} #detail_jumlah_pesanan`).val(data
-                                .jumlah_kendaraan);
-                            var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
-                                "#navpanes=0";
-                            $(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
+                        else {
+                            if (response.data.pengajuan) {
+                                var data = response.data.pengajuan;
+                                $(`#${targetId} #detail_nomorPo`).val(data.no_po)
+                                $(`#${targetId} #detail_tanggalPo`).val(data.tanggal)
+                                $(`#${targetId} #detail_nama_pengaju`).val(data.nama);
+                                $(`#${targetId} #detail_alamat_pengaju`).val(data.alamat_rumah);
+                                $(`#${targetId} #detail_cabang`).val(data.cabang);
+                                $(`#${targetId} #detail_no_po`).val(data.no_po);
+                                $(`#${targetId} #detail_merk`).val(data.merk);
+                                $(`#${targetId} #detail_tipe`).val(data.tipe);
+                                $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
+                                $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
+                                    .harga_kendaraan, 0, ',', '.'));
+                                $(`#${targetId} #detail_jumlah_pesanan`).val(data
+                                    .jumlah_kendaraan);
+                                var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
+                                    "#navpanes=0";
+                                $(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
+                            }
                         }
                         Swal.close()
 

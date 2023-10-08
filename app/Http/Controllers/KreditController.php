@@ -2160,7 +2160,7 @@ class KreditController extends Controller
                                         'import.tgl_po',
                                         'import.tgl_realisasi',
                                         'k.id AS kredit_id',
-                                        'k.id AS kode_cabang',
+                                        'k.kode_cabang AS kode_cabang',
                                         'po.merk',
                                         'po.tipe',
                                         'po.tahun_kendaraan',
