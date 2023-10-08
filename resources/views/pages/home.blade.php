@@ -42,7 +42,6 @@
                 },
                 success: function(response) {
                     console.log('response')
-                    console.log(response)
                     if (response) {
                         if (response.status == 'success') {
                             if ("html" in response) {
@@ -638,8 +637,10 @@
             <a href="" data-tab="tab-kkb"
                 class="tab-btn bg-white px-5 py-2 border border-b-0 text-theme-primary  rounded-tr-md rounded-tl-md">Data
                 KKB</a></li>
-            <a href="" data-tab="tab-import-kkb"
-                class="tab-btn px-5 py-2 border border-b-0 rounded-tr-md rounded-tl-md">Data Import KKB</a></li>
+            @if (\Session::get(config('global.role_id_session')) != 3)
+                <a href="" data-tab="tab-import-kkb"
+                    class="tab-btn px-5 py-2 border border-b-0 rounded-tr-md rounded-tl-md">Data Import Google SpreadSheet</a></li>
+            @endif
         </div>
         <div id="tab-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
@@ -712,91 +713,114 @@
                 </div>
             </div>
         </div>
-        <div id="tab-import-kkb" class="tab-content-table">
-            <div class="table-wrapper bg-white border rounded-md w-full p-2">
-                <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                    <div class="title-table lg:p-3 p-2 text-center">
-                        <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                            Data Import
-                        </h2>
-                    </div>
-                    <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                        @if ($is_kredit_page)
-                            <a href="{{ route('import-kkb.index') }}">
-                                <button type="button"
-                                    class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
-                                    <span class="lg:mt-1 mt-0">
-                                        @include('components.svg.import-table')
-                                    </span>
-                                    <span class="lg:block hidden"> Import </span>
-                                </button>
-                            </a>
-                        @endif
-                        @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
-                            <form action="" method="get">
-                                <button type="submit"
-                                    class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
-                                    <span class="lg:mt-1.5 mt-0">
-                                        @include('components.svg.reset')
-                                    </span>
-                                    <span class="lg:block hidden"> Reset </span>
-                                </button>
-                            </form>
-                        @endif
-                        <button data-target-id="filter-kkb" type="button"
-                            class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                            <span class="lg:mt-1 mt-0">
-                                @include('components.svg.filter')
-                            </span>
-                            <span class="lg:block hidden"> Filter </span>
-                        </button>
-                    </div>
-                </div>
-                <form action="" id="form_import">
-                    <input type="hidden" name="tab_type" class="tab_type_import"
-                        value="@isset($_GET['tab_type']) {{ $_GET['tab_type'] }} @endisset">
-                    <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
-                        <div class="sorty pl-1 w-full">
-                            <input type="hidden" name="page" id="page"
-                                value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
-                            <label for="page_length_import" class="mr-3 text-sm text-neutral-400">show</label>
-                            <select name="page_length_import" id="page_length_import"
-                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center" id="">
-                                <option value="5"
-                                    @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 5 ? 'selected' : '' }} @endisset>
-                                    5</option>
-                                <option value="10"
-                                    @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 10 ? 'selected' : '' }} @endisset>
-                                    10</option>
-                                <option value="15"
-                                    @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 15 ? 'selected' : '' }} @endisset>
-                                    15</option>
-                                <option value="20"
-                                    @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 20 ? 'selected' : '' }} @endisset>
-                                    20</option>
-                            </select>
-                            <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+        @if (\Session::get(config('global.role_id_session')) != 3)
+            <div id="tab-import-kkb" class="tab-content-table">
+                <div class="table-wrapper bg-white border rounded-md w-full p-2">
+                    <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                        <div class="title-table lg:p-3 p-2 text-center">
+                            <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                                Data Import Google SpreadSheet
+                            </h2>
                         </div>
-                        <div class="search-table lg:w-96 w-full">
-                            <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                                <span class="mt-2 ml-3">
-                                    @include('components.svg.search')
+                        <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                            @if ($is_kredit_page)
+                                <a href="{{ route('import-kkb.index') }}">
+                                    <button type="button"
+                                        class="toggle-modal px-6 py-2 border bg-white flex gap-3 rounded text-gray-600">
+                                        <span class="lg:mt-1 mt-0">
+                                            @include('components.svg.import-table')
+                                        </span>
+                                        <span class="lg:block hidden"> Import </span>
+                                    </button>
+                                </a>
+                            @endif
+                            @if (isset($_GET['tAwal']) || isset($_GET['tAkhir']) || isset($_GET['status']))
+                                <form action="" method="get">
+                                    <button type="submit"
+                                        class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                                        <span class="lg:mt-1.5 mt-0">
+                                            @include('components.svg.reset')
+                                        </span>
+                                        <span class="lg:block hidden"> Reset </span>
+                                    </button>
+                                </form>
+                            @endif
+                            <button data-target-id="filter-kkb" type="button"
+                                class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                                <span class="lg:mt-1 mt-0">
+                                    @include('components.svg.filter')
                                 </span>
-                                <input type="search" placeholder="Search"
-                                    class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
+                                <span class="lg:block hidden"> Filter </span>
+                            </button>
+                        </div>
+                    </div>
+                    <form action="" id="form_import">
+                        <input type="hidden" name="tab_type" class="tab_type_import"
+                            value="@isset($_GET['tab_type']) {{ $_GET['tab_type'] }} @endisset">
+                        <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                            <div class="sorty pl-1 w-full">
+                                <input type="hidden" name="page" id="page"
+                                    value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
+                                <label for="page_length_import" class="mr-3 text-sm text-neutral-400">show</label>
+                                <select name="page_length_import" id="page_length_import"
+                                    class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center" id="">
+                                    <option value="5"
+                                        @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 5 ? 'selected' : '' }} @endisset>
+                                        5</option>
+                                    <option value="10"
+                                        @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 10 ? 'selected' : '' }} @endisset>
+                                        10</option>
+                                    <option value="15"
+                                        @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 15 ? 'selected' : '' }} @endisset>
+                                        15</option>
+                                    <option value="20"
+                                        @isset($_GET['page_length_import']) {{ $_GET['page_length_import'] == 20 ? 'selected' : '' }} @endisset>
+                                        20</option>
+                                </select>
+                                <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                            </div>
+                            <div class="search-table lg:w-96 w-full">
+                                <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                                    <span class="mt-2 ml-3">
+                                        @include('components.svg.search')
+                                    </span>
+                                    <input type="search" placeholder="Search"
+                                        class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
+                                </div>
                             </div>
                         </div>
+                    </form>
+                    <div id="table_content_import">
+                        @include('pages.kredit.partial.imported._table')
                     </div>
-                </form>
-                <div id="table_content_import">
-                    @include('pages.kredit.partial.imported._table')
                 </div>
             </div>
-        </div>
+        @endif
     </div>
 
 @push('extraScript')
 <script>
+    // Get Data Chart
+    var dataCabang = [];
+    var dataTotalCabang = [];
+    $.ajax({
+        url: "{{ route('get-data-charts') }}",
+        type: "GET",
+        datatype: "JSON",
+        async: true,
+        success: function(response){
+            $.each(response.data, function(i, v){
+                dataCabang.push(v.cabang);
+                dataTotalCabang.push(v.total);
+            })
+
+            renderChart();
+        }
+    })
+    console.log(dataCabang);
+    console.log(dataTotalCabang);
+    // End Get data Chart
+
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
@@ -824,48 +848,50 @@
     var donut = new ApexCharts(document.querySelector(".chart"), options);
     donut.render();
 
-    // line chart
-    var lineOptions = {
-        series: [
-            {
-                name: "Data Set",
-                data: [10],
+    function renderChart(){
+        // line chart
+        var lineOptions = {
+            series: [
+                {
+                    name: "Total",
+                    data: dataTotalCabang,
+                },
+            ],
+            chart: {
+                type: "bar",
+                height: 350,
+                stacked: true,
             },
-        ],
-        chart: {
-            type: "bar",
-            height: 350,
-            stacked: true,
-        },
-        colors: ["#DC3545"],
-        responsive: [
-            {
-                breakpoint: 480,
-                options: {
-                    legend: {
-                        position: "bottom",
-                        offsetX: -10,
-                        offsetY: 0,
+            colors: ["#DC3545"],
+            responsive: [
+                {
+                    breakpoint: 480,
+                    options: {
+                        legend: {
+                            position: "bottom",
+                            offsetX: -10,
+                            offsetY: 0,
+                        },
                     },
                 },
+            ],
+            xaxis: {
+                categories: dataCabang,
             },
-        ],
-        xaxis: {
-            categories: ["Data Set"],
-        },
-        fill: {
-            opacity: 1,
-        },
-        legend: {
-            position: "top",
-            offsetX: 0,
-            offsetY: 50,
-        },
-    };
-
-    var lineChart = document.querySelector(".line-chart");
-    var chart = new ApexCharts(lineChart, lineOptions);
-    chart.render();
+            fill: {
+                opacity: 1,
+            },
+            legend: {
+                position: "top",
+                offsetX: 0,
+                offsetY: 50,
+            },
+        };
+    
+        var lineChart = document.querySelector(".line-chart");
+        var chart = new ApexCharts(lineChart, lineOptions);
+        chart.render();
+    }
 
     $('#page_length').on('change', function() {
         $('#form_kkb').submit()
