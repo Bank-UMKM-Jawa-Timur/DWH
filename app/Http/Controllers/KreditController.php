@@ -79,12 +79,28 @@ class KreditController extends Controller
                     'kkb.id AS kkb_id',
                     'kkb.tgl_ketersediaan_unit',
                     'kkb.id_tenor_imbal_jasa',
+                    'kkb.nominal_realisasi',
+                    'kkb.nominal_dp',
+                    'kkb.nominal_imbal_jasa',
+                    'kkb.nominal_pembayaran_imbal_jasa',
+                    'import.name',
+                    'import.tgl_po',
+                    'import.tgl_realisasi',
+                    'po.merk',
+                    'po.tipe',
+                    'po.tahun_kendaraan',
+                    'po.warna',
+                    'po.keterangan',
+                    'po.jumlah',
+                    'po.harga',
                     \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
                     \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
                     \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
                     \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
                     )
                     ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('imported_data AS import', 'import.id', 'kredits.imported_data_id')
+                    ->leftJoin('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
                     ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
                     ->groupBy([
                         'kredits.id',
@@ -93,12 +109,23 @@ class KreditController extends Controller
                         'kkb.id_tenor_imbal_jasa',
                         'kkb.id',
                         'kkb.tgl_ketersediaan_unit',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
                     ])
                     ->whereNotNull('kredits.pengajuan_id')
-                    ->whereNull('kredits.imported_data_id')
+                    ->orWhereNotNull('kredits.is_continue_import')
+                    ->orWhereNotNull('kkb.user_id')
                     ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
                         return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
                                     ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
                     })
                     ->when($request->cabang,function($query,$cbg){
                         return $query->where('kredits.kode_cabang',$cbg);
@@ -157,6 +184,9 @@ class KreditController extends Controller
                     ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
                         return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
                                     ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
                     })
                     ->when($request->cabang,function($query,$cbg){
                         return $query->where('kredits.kode_cabang',$cbg);
@@ -329,21 +359,23 @@ class KreditController extends Controller
             $search_q = strtolower($request->get('query'));
             if ($search_q && $tab_type == 'tab-kkb') {
                 foreach ($data as $key => $value) {
-                    $exists = 0;
-                    if ($value->detail) {
-                        if ($value->detail['nama']) {
-                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
-                                $exists++;
+                    if ($value->kategori == 'data_kkb') {
+                        $exists = 0;
+                        if ($value->detail) {
+                            if ($value->detail['nama']) {
+                                if (str_contains(strtolower($value->detail['nama']), $search_q)) {
+                                    $exists++;
+                                }
+                            }
+                            if ($value->detail['no_po']) {
+                                if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
+                                    $exists++;
+                                }
                             }
                         }
-                        if ($value->detail['no_po']) {
-                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
-                                $exists++;
-                            }
-                        }
+                        if ($exists == 0)
+                            unset($data[$key]); // remove data
                     }
-                    if ($exists == 0)
-                        unset($data[$key]); // remove data
                 }
             }
 
@@ -417,9 +449,11 @@ class KreditController extends Controller
                 $imported = $imported->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
                                         ->whereNull('kkb.user_id')
+                                        ->whereNull('kredits.is_continue_import')
                                         ->orWhere('kkb.user_id', $user_id)
                                         ->whereNull('kredits.pengajuan_id')
-                                        ->whereNotNull('kredits.imported_data_id');
+                                        ->whereNotNull('kredits.imported_data_id')
+                                        ->whereNull('kredits.is_continue_import');
             }
 
             // set page number
@@ -966,13 +1000,6 @@ class KreditController extends Controller
             $kkb = KKB::find($request->id_kkb);
             $kredit = Kredit::find($kkb->kredit_id);
 
-            if ($kredit->imported_data_id) {
-                if (!$kredit->is_continue_import) {
-                    $kredit->is_continue_import = true;
-                    $kredit->save();
-                }
-            }
-
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
             $document->date = date('Y-m-d');
@@ -1072,6 +1099,12 @@ class KreditController extends Controller
                 }
 
                 $kredit = Kredit::find($document->kredit_id);
+                if ($kredit->imported_data_id) {
+                    if (!$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
                 if ($kredit->imported_data_id && !$kkb->user_id) {
                     // set user id for kkb data
                     DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1674,6 +1707,13 @@ class KreditController extends Controller
 
                         $kredit = Kredit::find($stnk->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                        $kredit = Kredit::find($document->kredit_id);
+                        if ($kredit->imported_data_id) {
+                            if (!$kredit->is_continue_import) {
+                                $kredit->is_continue_import = true;
+                                $kredit->save();
+                            }
+                        }
                         if ($kredit->imported_data_id && !$kkb->user_id) {
                             // set user id for kkb data
                             DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1702,6 +1742,12 @@ class KreditController extends Controller
 
                         $kredit = Kredit::find($polis->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                        if ($kredit->imported_data_id) {
+                            if (!$kredit->is_continue_import) {
+                                $kredit->is_continue_import = true;
+                                $kredit->save();
+                            }
+                        }
                         if ($kredit->imported_data_id && !$kkb->user_id) {
                             // set user id for kkb data
                             DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1730,6 +1776,12 @@ class KreditController extends Controller
 
                         $kredit = Kredit::find($bpkb->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                        if ($kredit->imported_data_id) {
+                            if (!$kredit->is_continue_import) {
+                                $kredit->is_continue_import = true;
+                                $kredit->save();
+                            }
+                        }
                         if ($kredit->imported_data_id && !$kkb->user_id) {
                             // set user id for kkb data
                             DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1817,6 +1869,12 @@ class KreditController extends Controller
 
                 $kredit = Kredit::find($document->kredit_id);
                 $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                if ($kredit->imported_data_id) {
+                    if (!$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
                 if ($kredit->imported_data_id && !$kkb->user_id) {
                     // set user id for kkb data
                     DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1969,6 +2027,12 @@ class KreditController extends Controller
 
                 $kredit = Kredit::find($document->kredit_id);
                 $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                if ($kredit->imported_data_id) {
+                    if (!$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
                 if ($kredit->imported_data_id && !$kkb->user_id) {
                     // set user id for kkb data
                     DB::table('kkb')->where('id', $kkb->id)->update([
@@ -2239,6 +2303,12 @@ class KreditController extends Controller
             $document->save();
 
             $kredit = Kredit::find($document->kredit_id);
+            if ($kredit->imported_data_id) {
+                if (!$kredit->is_continue_import) {
+                    $kredit->is_continue_import = true;
+                    $kredit->save();
+                }
+            }
             if ($kredit->imported_data_id && !$kkb->user_id) {
                 // set user id for kkb data
                 DB::table('kkb')->where('id', $kkb->id)->update([

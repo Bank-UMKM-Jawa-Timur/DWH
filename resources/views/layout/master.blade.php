@@ -21,10 +21,12 @@
   </head>
   <body>
     @php
-      $name_vendor = DB::table('users')->where('users.id', Auth::user()->id)
-      ->select('vendors.name')
-      ->join('vendors', 'vendors.id', '=', 'users.vendor_id')
-      ->first();
+      if (\Session::get(config('global.role_id_session')) == 3) {
+        $name_vendor = DB::table('users')->where('users.id', Auth::user()->id)
+        ->select('vendors.name')
+        ->join('vendors', 'vendors.id', '=', 'users.vendor_id')
+        ->first();
+      }
       $user = \Session::get(config('global.auth_session'));
       $token = \Session::get(config('global.user_token_session'));
       $name = \Session::get(config('global.role_id_session')) == 3 ? Auth::user()->email : $user['data']['nama'];
