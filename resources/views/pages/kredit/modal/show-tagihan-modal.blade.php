@@ -26,8 +26,14 @@
                     </div>
                     <div class="space-y-3">
                         <label for="" class="uppercase appearance-none">Tagihan</label>
-                        <div class="h-[528px] w-full bg-gray-100">
+                        <div class="content-tagihan h-[528px] w-full bg-gray-100">
                             <iframe id="tagihan_file" src="" class="mt-2" width="100%" height="500"></iframe>
+                        </div>
+                        <div class="alert-tagihan hidden text-center">
+                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                            <p class="font-semibold tracking-tighter text-theme-text">
+                                    File Tagihan Tidak ada di server.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -45,6 +51,16 @@
             const tanggal = $(this).data('tanggal');
             const confirm_at = $(this).data('confirm_at');
             var path_file = "{{ asset('storage') }}" + "/tagihan/" + file + "#navpanes=0";
+
+            fetch(path_file).then(function(response){
+                    if(!response.ok){
+                        $('.content-tagihan').addClass("hidden");
+                        $('.alert-tagihan').removeClass("hidden");
+                    }else{
+                        $('.content-tagihan').removeClass("hidden");
+                        $('.alert-tagihan').addlass("hidden");
+                    }
+                })
 
             $('#tagihan_file').attr('src', path_file)
             $('#tanggal_tagihan').val(tanggal)

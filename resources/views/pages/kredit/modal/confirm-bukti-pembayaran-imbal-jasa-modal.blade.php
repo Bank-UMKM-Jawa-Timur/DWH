@@ -36,9 +36,15 @@
                     </div>
                     <div class="space-y-3">
                         <label for="" class="uppercase appearance-none">Bukti Imbal Jasa</label>
-                        <div class="h-[528px] w-full bg-gray-100">
+                        <div class="content-bukti-imbal-jasa h-[528px] w-full bg-gray-100">
                             <iframe src="" frameborder="0" class="w-full h-[528px]" id="preview_imbal_jasa"
                                 style="width: 100%;"></iframe>
+                        </div>
+                        <div class="alert-bukti-imbal-jasa hidden text-center">
+                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                            <p class="font-semibold tracking-tighter text-theme-text">
+                                    File Bukti Imbal Jasa Tidak ada di server.
+                            </p>
                         </div>
                     </div>
                 </div>

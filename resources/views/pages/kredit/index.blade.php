@@ -78,7 +78,7 @@
                 var id = $(identifier).data('id_kkb');
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalTagihan') {
-                var id = $(identifier).data('id_kkb');
+                var id = $(identifier).data('id');
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalUploadBuktiPembayaran') {
                 var id = $(identifier).data('id_kkb');
@@ -111,6 +111,16 @@
                 const file_bukti = $(identifier).data('file') ? $(identifier).data('file') : ''
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file_bukti;
 
+                fetch(path_file).then(function(response){
+                    if(!response.ok){
+                        $('.content-bukti-imbal-jasa').addClass("hidden");
+                        $('.alert-bukti-imbal-jasa').removeClass("hidden");
+                    }else{
+                        $('.content-bukti-imbal-jasa').removeClass("hidden");
+                        $('.alert-bukti-imbal-jasa').addlass("hidden");
+                    }
+                })
+
                 $(`#${targetId} #preview_imbal_jasa`).attr("src", path_file);
                 $(`#${targetId} #id_cat`).val(data_id)
                 $(`#${targetId} #tgl_upload_imbal_jasa`).val(tanggal)
@@ -136,6 +146,16 @@
                     'Belum dikonfirmasi cabang.';
                 const file = $(identifier).data('file');
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-peyerahan/" + file;
+
+                fetch(path_file).then(function(response){
+                    if(!response.ok){
+                        $('.content-penyerahan-unit').addClass("hidden");
+                        $('.alert-penyerahan-unit').removeClass("hidden");
+                    }else{
+                        $('.content-penyerahan-unit').removeClass("hidden");
+                        $('.alert-penyerahan-unit').addlass("hidden");
+                    }
+                })
 
                 $(`#${targetId} #preview_penyerahan_unit`).attr("src", path_file);
                 $(`#${targetId} #confirm_penyerahan_id`).val(data_id)
@@ -197,25 +217,54 @@
                                     $(`#${targetId} .alert-detailpo`).hide();
                                     $(`#${targetId} .img-detailpo`).attr('src', document.file_path)
                                 }
+                                // console.log(document.file_path)
+                                fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $('.content-po').addClass("hidden");
+                                        $('.alert-po').removeClass("hidden");
+                                    }else{
+                                        $('.content-po').removeClass("hidden");
+                                        $('.alert-po').addlass("hidden");
+                                    }
+                                })
                             }
-
                             if (document.category == "Bukti Pembayaran") {
                                 if (document.file) {
-                                    console.log("ada file");
+                                    // console.log("ada file");
                                     $(`#${targetId} #detail_bukti_pembayaran`).attr('src', document.file_path +
                                         "#navpanes=0")
                                 }
-                            }
+                                // console.log(document.file_path)
+                                fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $('.content-dbp').addClass("hidden");
+                                        $('.alert-dbp').removeClass("hidden");
+                                    }else{
+                                        $('.content-dbp').removeClass("hidden");
+                                        $('.alert-dbp').addlass("hidden");
+                                    }
+                            })
+                        }
+
+                            
                             let category = document.category.toLowerCase();
 
                             if(category === "stnk"){
                                 if(!document.file){
                                     $(`.alert-stnk-detail-modal`).removeClass("hidden")
                                     $(`.content-stnk-detail-modal`).addClass("hidden")
-                                    console.log(`${category} tidak ada`);
                                 }else{
-                                    $(`.alert-stnk-detail-modal`).addClass("hidden")
-                                    $(`.content-stnk-detail-modal`).removeClass("hidden")
+                                fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $(`.alert-stnk-detail-modal`).addClass("hidden")
+                                        $(`.content-stnk-detail-modal`).addClass("hidden")
+                                        $(`.alert-stnk-not-found`).removeClass("hidden")
+                                    }else{
+                                        $(`.alert-stnk-not-found`).addClass("hidden")
+                                        $(`.content-stnk-detail-modal`).removeClass("hidden")
+                                        $(`.alert-stnk-detail-modal`).addClass("hidden")
+                                    }
+                                })
                                 }
                             }
                             if(category === "bpkb"){
@@ -224,8 +273,17 @@
                                     $(`.content-bpkb-detail-modal`).addClass("hidden")
                                     console.log(`${category} tidak ada`);
                                 }else{
-                                    $(`.alert-bpkb-detail-modal`).addClass("hidden")
-                                    $(`.content-bpkb-detail-modal`).removeClass("hidden")
+                                fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $(`.alert-bpkb-detail-modal`).addClass("hidden")
+                                        $(`.content-bpkb-detail-modal`).addClass("hidden")
+                                        $(`.alert-bpkb-not-found`).removeClass("hidden")
+                                    }else{
+                                        $(`.alert-bpkb-not-found`).addClass("hidden")
+                                        $(`.content-bpkb-detail-modal`).removeClass("hidden")
+                                        $(`.alert-bpkb-detail-modal`).addClass("hidden")
+                                    }
+                                })
                                 }
                             }
                             if(category === "polis"){
@@ -234,8 +292,17 @@
                                     $(`.content-polis-detail-modal`).addClass("hidden")
                                     console.log(`${category} tidak ada`);
                                 }else{
-                                    $(`.alert-polis-detail-modal`).addClass("hidden")
-                                    $(`.content-polis-detail-modal`).removeClass("hidden")
+                                    fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $(`.alert-polis-detail-modal`).addClass("hidden")
+                                        $(`.content-polis-detail-modal`).addClass("hidden")
+                                        $(`.alert-polis-not-found`).removeClass("hidden")
+                                    }else{
+                                        $(`.alert-polis-not-found`).addClass("hidden")
+                                        $(`.content-polis-detail-modal`).removeClass("hidden")
+                                        $(`.alert-polis-detail-modal`).addClass("hidden")
+                                    }
+                                })
                                 }
                             }
 
@@ -612,6 +679,15 @@
                 const tanggal = $(identifier).data('tanggal');
                 const confirm_at = $(identifier).data('confirm_at');
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#navpanes=0";
+                fetch(path_file).then(function(response){
+                    if(!response.ok){
+                        $('.content-bukti-pembayaran').addClass("hidden");
+                        $('.alert-bukti-pembayaran').removeClass("hidden");
+                    }else{
+                        $('.content-bukti-pembayaran').removeClass("hidden");
+                        $('.alert-bukti-pembayaran').addlass("hidden");
+                    }
+                })
 
                 $('#bukti_pembayaran_img').attr('src', path_file)
                 $('#tanggal_pembayaran').val(tanggal)
@@ -749,7 +825,6 @@
                 </div>
             </div>
         </div>
-    </div>
     @if (\Session::get(config('global.role_id_session')) != 3)
         <div id="tab-import-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">

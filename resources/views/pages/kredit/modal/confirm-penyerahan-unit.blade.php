@@ -31,8 +31,14 @@
 
                 <div class="space-y-3">
                     <label for="" class="uppercase appearance-none">Foto Penyerahan Unit</label>
-                    <div class="h-[528px] w-full bg-gray-100">
+                    <div class="content-penyerahan-unit h-[528px] w-full bg-gray-100">
                         <img id="preview_penyerahan_unit" class="w-full h-[528px]">
+                    </div>
+                    <div class="alert-penyerahan-unit hidden text-center">
+                        <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                        <p class="font-semibold tracking-tighter text-theme-text">
+                                Gambar Penyerahan Unit Tidak ada di server.
+                        </p>
                     </div>
                 </div>
             </div>

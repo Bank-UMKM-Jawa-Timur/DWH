@@ -79,9 +79,15 @@
 
                             <div class="space-y-3">
                                 <label for="" class="uppercase appearance-none">File PO</label>
-                                <div class="h-[528px] w-full bg-gray-100">
+                                <div class="content-po h-[528px] w-full bg-gray-100">
                                     <iframe id="new_detail_filepo" src="" class="mt-2" width="100%"
                                     height="500"></iframe>
+                                </div>
+                                <div class="alert-po hidden text-center">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                            File PO Tidak ada di server.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -132,9 +138,15 @@
                             </div>
                             <div class="w-full">
                                 <div class="space-y-3">
-                                    <div class="h-[528px] max-w-full mx-auto bg-gray-100">
+                                    <div class="content-dbp h-[528px] max-w-full mx-auto bg-gray-100">
                                         <iframe id="detail_bukti_pembayaran" src="" class="mt-2 w-full"
                                         height="500"></iframe>
+                                    </div>
+                                    <div class="alert-dbp hidden text-center">
+                                        <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                                        <p class="font-semibold tracking-tighter text-theme-text">
+                                                File Bukti Pembayaran Tidak ada di server.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +171,12 @@
                                         File STNK belum di upload
                                     </p>
                                 </div>
-                                
+                                <div class="alert-stnk-not-found hidden text-center">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                            File STNK Tidak ada di server.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -182,6 +199,12 @@
                                         File BPKB belum di upload
                                     </p>
                                 </div>
+                                <div class="alert-bpkb-not-found hidden text-center">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                            File BPKB Tidak ada di server.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -202,6 +225,12 @@
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">
                                         File POLIS belum di upload
+                                    </p>
+                                </div>
+                                <div class="alert-polis-not-found hidden text-center">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                            File BPKB Tidak ada di server.
                                     </p>
                                 </div>
                             </div>

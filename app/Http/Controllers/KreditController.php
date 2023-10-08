@@ -541,8 +541,6 @@ class KreditController extends Controller
 
                 usleep(500 * 1000); // sleep for 0.5 millisec
             }
-            // return $imported;
-
             $this->param['imported'] = $imported;
 
             return view('pages.kredit.index', $this->param);
