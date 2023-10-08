@@ -78,7 +78,7 @@
                 var id = $(identifier).data('id_kkb');
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalTagihan') {
-                var id = $(identifier).data('id_kkb');
+                var id = $(identifier).data('id');
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalUploadBuktiPembayaran') {
                 var id = $(identifier).data('id_kkb');

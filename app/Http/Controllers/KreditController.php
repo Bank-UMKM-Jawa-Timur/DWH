@@ -292,8 +292,10 @@ class KreditController extends Controller
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
-                            if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
-                                $value->detail = $responseBody;
+                            if ($responseBody) {
+                                if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
+                                    $value->detail = $responseBody;
+                                }
                             }
                         }
                     } catch (\Illuminate\Http\Client\ConnectionException $e) {
