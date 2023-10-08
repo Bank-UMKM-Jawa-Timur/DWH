@@ -934,6 +934,7 @@
             @if ($is_kredit_page)
                 @if (strtolower($item->status) == 'done')
                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn toggle-modals"
+                        data-kategori="{{$item->kategori}}"
                         data-target-id="modalDetailPo" data-id="{{ $item->id }}" onclick="showModal(this)">
                         Detail
                     </button>
