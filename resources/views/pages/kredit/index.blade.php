@@ -42,7 +42,6 @@
                 },
                 success: function(response) {
                     console.log('response')
-                    console.log(response)
                     if (response) {
                         if (response.status == 'success') {
                             if ("html" in response) {
