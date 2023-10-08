@@ -13,7 +13,6 @@
             var channel = pusher.subscribe('kredit');
             channel.bind('data-table', function(data) {
                 console.log('Received')
-                $('#preload-data').addClass("hidden")
                 refreshTable();
             });
         } else {
@@ -55,14 +54,13 @@
                             }
                         }
                     }
-                    $('#preload-data').addClass("hidden")
                 },
                 error: function(e) {
                     console.log('Error load json')
                     console.log(e)
-                    $('#preload-data').addClass("hidden")
                 }
             });
+            $('#preload-data').addClass("hidden")
         }
 
         function showModal(identifier) {
