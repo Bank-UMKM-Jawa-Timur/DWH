@@ -143,7 +143,7 @@
                     <div id="tab-stnk" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="content-stnk space-y-5">
+                                <div class="content-stnk-detail-modal space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
                                         <input type="text" disabled class="p-2 w-full border" id="detail_no_stnk" />
@@ -152,7 +152,7 @@
                                         <iframe id="detail_preview_stnk" src="" style="width: 100%" height="450px"></iframe>
                                     </div>
                                 </div>
-                                <div class="alert-stnk hidden">
+                                <div class="alert-stnk-detail-modal hidden">
                                     <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">
@@ -166,7 +166,7 @@
                     <div id="tab-bpkb" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="content-bpkb space-y-5">
+                                <div class="content-bpkb-detail-modal space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
                                         <input type="text" disabled class="p-2 w-full border" id="detail_no_bpkb" />
@@ -175,7 +175,7 @@
                                         <iframe id="detail_preview_bpkb" src="" style="width: 100%" height="450px"></iframe>
                                     </div>
                                 </div>
-                                <div class="alert-bpkb hidden">
+                                <div class="alert-bpkb-detail-modal hidden">
                                     <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">
@@ -188,7 +188,7 @@
                     <div id="tab-polis" class="tab-content hidden">
                         <div class="flex justify-center">
                             <div class="text-center w-full space-y-5">
-                                <div class="content-polis space-y-5">
+                                <div class="content-polis-detail-modal space-y-5">
                                     <div class="input-box w-full space-y-3 text-left">
                                         <label for="" class="uppercase appearance-none">Nomor</label>
                                         <input type="text" disabled class="p-2 w-full border" id="detail_no_polis" />
@@ -197,7 +197,7 @@
                                         <iframe id="detail_preview_polis" src="" width="100%" height="450px"></iframe>
                                     </div>
                                 </div>
-                                <div class="alert-polis hidden">
+                                <div class="alert-polis-detail-modal hidden">
                                     <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
                                         class="max-w-sm mx-auto" />
                                     <p class="font-semibold tracking-tighter text-theme-text">

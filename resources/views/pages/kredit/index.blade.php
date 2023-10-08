@@ -204,6 +204,39 @@
                                         "#navpanes=0")
                                 }
                             }
+                            let category = document.category.toLowerCase();
+
+                            if(category === "stnk"){
+                                if(!document.file){
+                                    $(`.alert-stnk-detail-modal`).removeClass("hidden")
+                                    $(`.content-stnk-detail-modal`).addClass("hidden")
+                                    console.log(`${category} tidak ada`);
+                                }else{
+                                    $(`.alert-stnk-detail-modal`).addClass("hidden")
+                                    $(`.content-stnk-detail-modal`).removeClass("hidden")
+                                }
+                            }
+                            if(category === "bpkb"){
+                                if(!document.file){
+                                    $(`.alert-bpkb-detail-modal`).removeClass("hidden")
+                                    $(`.content-bpkb-detail-modal`).addClass("hidden")
+                                    console.log(`${category} tidak ada`);
+                                }else{
+                                    $(`.alert-bpkb-detail-modal`).addClass("hidden")
+                                    $(`.content-bpkb-detail-modal`).removeClass("hidden")
+                                }
+                            }
+                            if(category === "polis"){
+                                if(!document.file){
+                                    $(`.alert-polis-detail-modal`).removeClass("hidden")
+                                    $(`.content-polis-detail-modal`).addClass("hidden")
+                                    console.log(`${category} tidak ada`);
+                                }else{
+                                    $(`.alert-polis-detail-modal`).addClass("hidden")
+                                    $(`.content-polis-detail-modal`).removeClass("hidden")
+                                }
+                            }
+
 
                             if (document.file_path != 'not found') {
                                 switch (document.category) {
@@ -310,7 +343,6 @@
                                 }
                             }
                         }
-
                         if (response.data.documents.length == 0) {
                             $(`#${targetId} .alert-stnk`).removeClass("hidden")
                             $(`#${targetId} .content-stnk`).addClass("hidden")
@@ -319,6 +351,7 @@
                             $(`#${targetId} .alert-polis`).removeClass("hidden")
                             $(`#${targetId} .content-polis`).addClass("hidden")
                         }
+                    
                         if (response.data.import) {
                             var data = response.data.import;
                             $(`#${targetId} #detail_nomorPo`).val('-')

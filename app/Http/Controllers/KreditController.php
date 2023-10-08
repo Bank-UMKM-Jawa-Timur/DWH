@@ -1485,7 +1485,7 @@ class KreditController extends Controller
                     $document->save();
     
                     // send notification
-                    $this->notificationController->send(10, $kkb->kredit_id);
+                    // $this->notificationController->send(10, $kkb->kredit_id);
 
                     // save log
                     $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
