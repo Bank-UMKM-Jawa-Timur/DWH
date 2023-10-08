@@ -13,6 +13,7 @@
             var channel = pusher.subscribe('kredit');
             channel.bind('data-table', function(data) {
                 console.log('Received')
+                $('#preload-data').addClass("hidden")
                 refreshTable();
             });
         } else {
