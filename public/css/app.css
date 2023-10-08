@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.3.2 | MIT License | https://tailwindcss.com
+! tailwindcss v3.3.3 | MIT License | https://tailwindcss.com
 *//*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
@@ -167,6 +167,8 @@ optgroup,
 select,
 textarea {
   font-family: inherit; /* 1 */
+  font-feature-settings: inherit; /* 1 */
+  font-variation-settings: inherit; /* 1 */
   font-size: 100%; /* 1 */
   font-weight: inherit; /* 1 */
   line-height: inherit; /* 1 */
@@ -301,6 +303,13 @@ ul,
 menu {
   list-style: none;
   margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+dialog {
   padding: 0;
 }
 
@@ -565,6 +574,9 @@ video {
 .right-20 {
   right: 5rem;
 }
+.right-52 {
+  right: 13rem;
+}
 .right-60 {
   right: 15rem;
 }
@@ -713,6 +725,9 @@ video {
 .block {
   display: block;
 }
+.inline-block {
+  display: inline-block;
+}
 .flex {
   display: flex;
 }
@@ -799,6 +814,9 @@ video {
 }
 .w-80 {
   width: 20rem;
+}
+.w-\[40rem\] {
+  width: 40rem;
 }
 .w-\[50rem\] {
   width: 50rem;
@@ -1526,6 +1544,9 @@ video {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+.outline {
+  outline-style: solid;
+}
 .ring-1 {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
@@ -1586,6 +1607,18 @@ video {
 }
 .ease-out {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+::-moz-selection {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 215 218 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(220 53 69 / var(--tw-text-opacity));
+}
+::selection {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 215 218 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(220 53 69 / var(--tw-text-opacity));
 }
 .layout-wrapper {
   width: 100%;
@@ -2787,6 +2820,10 @@ input:checked ~ .line {
 
   .lg\:right-20 {
     right: 5rem;
+  }
+
+  .lg\:right-60 {
+    right: 15rem;
   }
 
   .lg\:mt-0 {

@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer utilities {
+    ::selection {
+        @apply bg-[#F8D7DA] text-theme-primary;
+    }
     .layout-wrapper {
         @apply lg:flex items-stretch w-full;
     }

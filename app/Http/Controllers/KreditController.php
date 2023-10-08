@@ -69,38 +69,131 @@ class KreditController extends Controller
             if (!$token)
                 $user_id = 0; // vendor
 
-            $data = Kredit::select(
-                'kredits.id',
-                'kredits.pengajuan_id',
-                'kredits.kode_cabang',
-                'kkb.id AS kkb_id',
-                'kkb.tgl_ketersediaan_unit',
-                'kkb.id_tenor_imbal_jasa',
-                \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
-                \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-                \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
-                )
-                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
-                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
-                ->groupBy([
+            if (\Session::get(config('global.role_id_session')) != 3) {
+                // Role selain vendor
+                $data = Kredit::select(
                     'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
                     'kredits.kode_cabang',
-                    'kkb.id_tenor_imbal_jasa',
-                    'kkb.id',
+                    'kkb.id AS kkb_id',
                     'kkb.tgl_ketersediaan_unit',
-                ])
-                ->whereNotNull('kredits.pengajuan_id')
-                ->whereNull('kredits.imported_data_id')
-                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
-                })
-                ->when($request->cabang,function($query,$cbg){
-                    return $query->where('kredits.kode_cabang',$cbg);
-                })
-                ->orderBy('total_file_uploaded')
-                ->orderBy('total_file_confirmed');
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.nominal_realisasi',
+                    'kkb.nominal_dp',
+                    'kkb.nominal_imbal_jasa',
+                    'kkb.nominal_pembayaran_imbal_jasa',
+                    'import.name',
+                    'import.tgl_po',
+                    'import.tgl_realisasi',
+                    'po.merk',
+                    'po.tipe',
+                    'po.tahun_kendaraan',
+                    'po.warna',
+                    'po.keterangan',
+                    'po.jumlah',
+                    'po.harga',
+                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                    )
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('imported_data AS import', 'import.id', 'kredits.imported_data_id')
+                    ->leftJoin('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
+                    ])
+                    ->whereNotNull('kredits.pengajuan_id')
+                    ->orWhereNotNull('kredits.is_continue_import')
+                    ->orWhereNotNull('kkb.user_id')
+                    ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                        return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                    ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                    })
+                    ->when($request->cabang,function($query,$cbg){
+                        return $query->where('kredits.kode_cabang',$cbg);
+                    })
+                    ->orderBy('total_file_uploaded')
+                    ->orderBy('total_file_confirmed');
+            }
+            else {
+                // Vendor
+                $data = Kredit::select(
+                    'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
+                    'kredits.pengajuan_id',
+                    'kredits.kode_cabang',
+                    'kkb.id AS kkb_id',
+                    'kkb.tgl_ketersediaan_unit',
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.nominal_realisasi',
+                    'kkb.nominal_dp',
+                    'kkb.nominal_imbal_jasa',
+                    'kkb.nominal_pembayaran_imbal_jasa',
+                    'import.name',
+                    'import.tgl_po',
+                    'import.tgl_realisasi',
+                    'po.merk',
+                    'po.tipe',
+                    'po.tahun_kendaraan',
+                    'po.warna',
+                    'po.keterangan',
+                    'po.jumlah',
+                    'po.harga',
+                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                    )
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('imported_data AS import', 'import.id', 'kredits.imported_data_id')
+                    ->leftJoin('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
+                    ])
+                    ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                        return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                    ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                    })
+                    ->when($request->cabang,function($query,$cbg){
+                        return $query->where('kredits.kode_cabang',$cbg);
+                    })
+                    ->orderBy('total_file_uploaded')
+                    ->orderBy('total_file_confirmed');
+            }
 
             if (\Session::get(config('global.role_id_session')) == 2) {
                 $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
@@ -127,27 +220,15 @@ class KreditController extends Controller
                 'token' => env('LOS_API_TOKEN')
             ];
             foreach ($data as $key => $value) {
-                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
+                if ($value->kategori == 'data_kkb') {
+                    $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
 
-                try {
-                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-
-                    $statusCode = $response->status();
-                    $responseBody = json_decode($response->getBody(), true);
-                    // input file path
-                    if ($responseBody) {
-                        if (array_key_exists('sppk', $responseBody))
-                            $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
-                        if (array_key_exists('po', $responseBody))
-                            $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
-                        if (array_key_exists('pk', $responseBody))
-                            $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
-                    }
-                    else {
+                    try {
                         $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
+                        // input file path
                         if ($responseBody) {
                             if (array_key_exists('sppk', $responseBody))
                                 $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
@@ -156,27 +237,72 @@ class KreditController extends Controller
                             if (array_key_exists('pk', $responseBody))
                                 $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
                         }
-                    }
+                        else {
+                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
-                    // insert response to object
-                    if ($user_id != 0) {
-                        if ($responseBody) {
-                            if (array_key_exists('message', $responseBody)) {
-                                if ($responseBody['message'] == 'Data not found') {
-                                    // unset($data[$key]);
+                            $statusCode = $response->status();
+                            $responseBody = json_decode($response->getBody(), true);
+                            if ($responseBody) {
+                                if (array_key_exists('sppk', $responseBody))
+                                    $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                                if (array_key_exists('po', $responseBody))
+                                    $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                                if (array_key_exists('pk', $responseBody))
+                                    $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                            }
+                        }
+
+                        // insert response to object
+                        if ($user_id != 0) {
+                            if ($responseBody) {
+                                if (array_key_exists('message', $responseBody)) {
+                                    if ($responseBody['message'] == 'Data not found') {
+                                        // unset($data[$key]);
+                                    }
+                                }
+                                if (array_key_exists('id_pengajuan', $responseBody)) {
+                                    $value->detail = $responseBody;
                                 }
                             }
-                            if (array_key_exists('id_pengajuan', $responseBody)) {
+                        }
+                        else {
+                            $value->detail = $responseBody;
+                        }
+                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                        // return $e->getMessage();
+                    }
+                }
+                else {
+                    $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
+
+                    try {
+                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                        $statusCode = $response->status();
+                        $responseBody = json_decode($response->getBody(), true);
+
+                        // input file path
+                        if ($responseBody) {
+                            if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
                                 $value->detail = $responseBody;
                             }
                         }
+                        else {
+                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                            $statusCode = $response->status();
+                            $responseBody = json_decode($response->getBody(), true);
+                            if ($responseBody) {
+                                if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
+                                    $value->detail = $responseBody;
+                                }
+                            }
+                        }
+                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                        // return $e->getMessage();
                     }
-                    else {
-                        $value->detail = $responseBody;
-                    }
-                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    // return $e->getMessage();
                 }
+
                 $invoice = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 7)
                                             ->first();
@@ -235,21 +361,23 @@ class KreditController extends Controller
             $search_q = strtolower($request->get('query'));
             if ($search_q && $tab_type == 'tab-kkb') {
                 foreach ($data as $key => $value) {
-                    $exists = 0;
-                    if ($value->detail) {
-                        if ($value->detail['nama']) {
-                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
-                                $exists++;
+                    if ($value->kategori == 'data_kkb') {
+                        $exists = 0;
+                        if ($value->detail) {
+                            if ($value->detail['nama']) {
+                                if (str_contains(strtolower($value->detail['nama']), $search_q)) {
+                                    $exists++;
+                                }
+                            }
+                            if ($value->detail['no_po']) {
+                                if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
+                                    $exists++;
+                                }
                             }
                         }
-                        if ($value->detail['no_po']) {
-                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
-                                $exists++;
-                            }
-                        }
+                        if ($exists == 0)
+                            unset($data[$key]); // remove data
                     }
-                    if ($exists == 0)
-                        unset($data[$key]); // remove data
                 }
             }
 
@@ -265,6 +393,7 @@ class KreditController extends Controller
                     'import.tgl_po',
                     'import.tgl_realisasi',
                     'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
                     'kredits.imported_data_id',
                     'kredits.kode_cabang',
@@ -308,7 +437,7 @@ class KreditController extends Controller
                     'po.harga',
                 ])
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
+                    return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
                 ->when($request->cabang,function($query,$cbg){
                     return $query->where('kredits.kode_cabang',$cbg);
@@ -323,9 +452,11 @@ class KreditController extends Controller
                 $imported = $imported->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
                                         ->whereNull('kkb.user_id')
+                                        ->whereNull('kredits.is_continue_import')
                                         ->orWhere('kkb.user_id', $user_id)
                                         ->whereNull('kredits.pengajuan_id')
-                                        ->whereNotNull('kredits.imported_data_id');
+                                        ->whereNotNull('kredits.imported_data_id')
+                                        ->whereNull('kredits.is_continue_import');
             }
 
             // set page number
@@ -429,7 +560,6 @@ class KreditController extends Controller
         try {
             $this->param['role_id'] = \Session::get(config('global.role_id_session'));
             $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
-            // $this->param['is_kredit_page'] = request()->is('kredit');
             $this->param['is_kredit_page'] = str_contains(url()->current(), 'kredit');
             $page_length = $request->page_length ? $request->page_length : 5;
             $current_page = $request->page ? $request->page : 1;
@@ -446,45 +576,141 @@ class KreditController extends Controller
             if (!$token)
                 $user_id = 0; // vendor
 
-            $data = Kredit::select(
-                'kredits.id',
-                'kredits.pengajuan_id',
-                'kredits.kode_cabang',
-                'kkb.id AS kkb_id',
-                'kkb.tgl_ketersediaan_unit',
-                'kkb.id_tenor_imbal_jasa',
-                \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
-                \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-                \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                // \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < COALESCE(COUNT(d.id), 0), 'process', 'done') AS status"),
-                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
-            )
-                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
-                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
-                ->groupBy([
+            if (\Session::get(config('global.role_id_session')) != 3) {
+                // Role selain vendor
+                $data = Kredit::select(
                     'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
                     'kredits.kode_cabang',
-                    'kkb.id_tenor_imbal_jasa',
-                    'kkb.id',
+                    'kkb.id AS kkb_id',
                     'kkb.tgl_ketersediaan_unit',
-                ])
-                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
-                })
-                ->when($request->cabang,function($query,$cbg){
-                    return $query->where('kredits.kode_cabang',$cbg);
-                })
-                ->orderBy('total_file_uploaded')
-                ->orderBy('total_file_confirmed');
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.nominal_realisasi',
+                    'kkb.nominal_dp',
+                    'kkb.nominal_imbal_jasa',
+                    'kkb.nominal_pembayaran_imbal_jasa',
+                    'import.name',
+                    'import.tgl_po',
+                    'import.tgl_realisasi',
+                    'po.merk',
+                    'po.tipe',
+                    'po.tahun_kendaraan',
+                    'po.warna',
+                    'po.keterangan',
+                    'po.jumlah',
+                    'po.harga',
+                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                    )
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('imported_data AS import', 'import.id', 'kredits.imported_data_id')
+                    ->leftJoin('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
+                    ])
+                    ->whereNotNull('kredits.pengajuan_id')
+                    ->orWhereNotNull('kredits.is_continue_import')
+                    ->orWhereNotNull('kkb.user_id')
+                    ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                        return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                    ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                    })
+                    ->when($request->cabang,function($query,$cbg){
+                        return $query->where('kredits.kode_cabang',$cbg);
+                    })
+                    ->orderBy('total_file_uploaded')
+                    ->orderBy('total_file_confirmed');
+            }
+            else {
+                // Vendor
+                $data = Kredit::select(
+                    'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
+                    'kredits.pengajuan_id',
+                    'kredits.kode_cabang',
+                    'kkb.id AS kkb_id',
+                    'kkb.tgl_ketersediaan_unit',
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.nominal_realisasi',
+                    'kkb.nominal_dp',
+                    'kkb.nominal_imbal_jasa',
+                    'kkb.nominal_pembayaran_imbal_jasa',
+                    'import.name',
+                    'import.tgl_po',
+                    'import.tgl_realisasi',
+                    'po.merk',
+                    'po.tipe',
+                    'po.tahun_kendaraan',
+                    'po.warna',
+                    'po.keterangan',
+                    'po.jumlah',
+                    'po.harga',
+                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                    )
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('imported_data AS import', 'import.id', 'kredits.imported_data_id')
+                    ->leftJoin('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
+                    ])
+                    ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                        return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                    ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                    })
+                    ->when($request->cabang,function($query,$cbg){
+                        return $query->where('kredits.kode_cabang',$cbg);
+                    })
+                    ->orderBy('total_file_uploaded')
+                    ->orderBy('total_file_confirmed');
+            }
 
             if (\Session::get(config('global.role_id_session')) == 2) {
                 $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
             }
 
-            if (is_numeric($page_length) && $tab_type == 'tab-kkb') {
-                // $data = $data->paginate($page_length);
-                $data = $data->paginate($page_length, ['*'], 'page', $current_page);
+            if (is_numeric($page_length)) {
+                if ($tab_type == 'tab-kkb')
+                    $data = $data->paginate($page_length);
+                else
+                    $data = $data->paginate($page_length);
             }
             else
                 $data = $data->get();
@@ -495,41 +721,87 @@ class KreditController extends Controller
                 'token' => env('LOS_API_TOKEN')
             ];
             foreach ($data as $key => $value) {
-                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
+                if ($value->kategori == 'data_kkb') {
+                    $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id.'/'.$user_id;
 
-                try {
-                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    try {
+                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
 
-                    $statusCode = $response->status();
-                    $responseBody = json_decode($response->getBody(), true);
-                    // input file path
-                    if ($responseBody) {
-                        if (array_key_exists('sppk', $responseBody))
-                            $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
-                        if (array_key_exists('po', $responseBody))
-                            $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
-                        if (array_key_exists('pk', $responseBody))
-                            $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
-                    }
-
-                    // insert response to object
-                    if ($user_id != 0) {
+                        $statusCode = $response->status();
+                        $responseBody = json_decode($response->getBody(), true);
+                        // input file path
                         if ($responseBody) {
-                            if (array_key_exists('message', $responseBody)) {
-                                if ($responseBody['message'] == 'Data not found') {
-                                    unset($data[$key]);
+                            if (array_key_exists('sppk', $responseBody))
+                                $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                            if (array_key_exists('po', $responseBody))
+                                $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                            if (array_key_exists('pk', $responseBody))
+                                $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                        }
+                        else {
+                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                            $statusCode = $response->status();
+                            $responseBody = json_decode($response->getBody(), true);
+                            if ($responseBody) {
+                                if (array_key_exists('sppk', $responseBody))
+                                    $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
+                                if (array_key_exists('po', $responseBody))
+                                    $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
+                                if (array_key_exists('pk', $responseBody))
+                                    $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
+                            }
+                        }
+
+                        // insert response to object
+                        if ($user_id != 0) {
+                            if ($responseBody) {
+                                if (array_key_exists('message', $responseBody)) {
+                                    if ($responseBody['message'] == 'Data not found') {
+                                        // unset($data[$key]);
+                                    }
+                                }
+                                if (array_key_exists('id_pengajuan', $responseBody)) {
+                                    $value->detail = $responseBody;
                                 }
                             }
-                            if (array_key_exists('id_pengajuan', $responseBody)) {
+                        }
+                        else {
+                            $value->detail = $responseBody;
+                        }
+                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                        // return $e->getMessage();
+                    }
+                }
+                else {
+                    $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
+
+                    try {
+                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                        $statusCode = $response->status();
+                        $responseBody = json_decode($response->getBody(), true);
+
+                        // input file path
+                        if ($responseBody) {
+                            if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
                                 $value->detail = $responseBody;
                             }
                         }
+                        else {
+                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                            $statusCode = $response->status();
+                            $responseBody = json_decode($response->getBody(), true);
+                            if ($responseBody) {
+                                if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
+                                    $value->detail = $responseBody;
+                                }
+                            }
+                        }
+                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                        // return $e->getMessage();
                     }
-                    else {
-                        $value->detail = $responseBody;
-                    }
-                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    // return $e->getMessage();
                 }
 
                 $invoice = Document::where('kredit_id', $value->id)
@@ -540,11 +812,11 @@ class KreditController extends Controller
                                             ->where('document_category_id', 1)
                                             ->first();
 
-                $penyerahanUnit = \App\Models\Document::where('kredit_id', $value->id)
+                $penyerahanUnit = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 2)
                                             ->first();
 
-                $stnk = \App\Models\Document::where('kredit_id', $value->id)
+                $stnk = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 3)
                                             ->first();
 
@@ -586,23 +858,25 @@ class KreditController extends Controller
 
             // Search query
             $search_q = strtolower($request->get('query'));
-            if ($search_q) {
+            if ($search_q && $tab_type == 'tab-kkb') {
                 foreach ($data as $key => $value) {
-                    $exists = 0;
-                    if ($value->detail) {
-                        if ($value->detail['nama']) {
-                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
-                                $exists++;
+                    if ($value->kategori == 'data_kkb') {
+                        $exists = 0;
+                        if ($value->detail) {
+                            if ($value->detail['nama']) {
+                                if (str_contains(strtolower($value->detail['nama']), $search_q)) {
+                                    $exists++;
+                                }
+                            }
+                            if ($value->detail['no_po']) {
+                                if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
+                                    $exists++;
+                                }
                             }
                         }
-                        if ($value->detail['no_po']) {
-                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
-                                $exists++;
-                            }
-                        }
+                        if ($exists == 0)
+                            unset($data[$key]); // remove data
                     }
-                    if ($exists == 0)
-                        unset($data[$key]); // remove data
                 }
             }
 
@@ -617,10 +891,12 @@ class KreditController extends Controller
                     'import.tgl_po',
                     'import.tgl_realisasi',
                     'kredits.id',
+                    \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
                     'kredits.imported_data_id',
                     'kredits.kode_cabang',
                     'kkb.id AS kkb_id',
+                    'kkb.user_id',
                     'kkb.tgl_ketersediaan_unit',
                     'kkb.id_tenor_imbal_jasa',
                     'kkb.nominal_realisasi',
@@ -658,16 +934,28 @@ class KreditController extends Controller
                     'po.jumlah',
                     'po.harga',
                 ])
-                ->whereNull('kredits.pengajuan_id')
-                ->whereNotNull('kredits.imported_data_id')
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
+                    return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
                 ->when($request->cabang,function($query,$cbg){
                     return $query->where('kredits.kode_cabang',$cbg);
                 })
+                ->when($search_q,function($query,$q){
+                    return $query->where('import.name', 'LIKE', "%$q%");
+                })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
+
+            if ($this->param['role_id'] == 2) {
+                $imported = $imported->whereNull('kredits.pengajuan_id')
+                                        ->whereNotNull('kredits.imported_data_id')
+                                        ->whereNull('kkb.user_id')
+                                        ->whereNull('kredits.is_continue_import')
+                                        ->orWhere('kkb.user_id', $user_id)
+                                        ->whereNull('kredits.pengajuan_id')
+                                        ->whereNotNull('kredits.imported_data_id')
+                                        ->whereNull('kredits.is_continue_import');
+            }
 
             if (is_numeric($page_length) && $tab_type == 'tab-import-kkb')
                 $imported = $imported->paginate($page_length);
@@ -676,6 +964,7 @@ class KreditController extends Controller
 
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
+                $value->cabang = 'undifined';
                 $host = env('LOS_API_HOST');
                 $apiURL = $host . '/kkb/get-cabang/'. $value->kode_cabang;
 
@@ -699,43 +988,36 @@ class KreditController extends Controller
 
                 // retrieve documents
                 $buktiPembayaran = DB::table('documents AS d')
-                                    ->select('id', 'date', 'document_category_id')
                                     ->where('kredit_id', $value->id)
                                     ->where('document_category_id', 1)
                                     ->first();
 
                 $invoice = DB::table('documents AS d')
-                                    ->select('id', 'date', 'document_category_id')
                                     ->where('kredit_id', $value->id)
                                     ->where('document_category_id', 7)
                                     ->first();
 
                 $penyerahanUnit = DB::table('documents AS d')
-                                    ->select('id', 'date', 'document_category_id')
                                     ->where('kredit_id', $value->id)
                                     ->where('document_category_id', 2)
                                     ->first();
 
                 $stnk = DB::table('documents AS d')
-                            ->select('id', 'date', 'document_category_id')
                             ->where('kredit_id', $value->id)
                             ->where('document_category_id', 3)
                             ->first();
 
                 $bpkb = DB::table('documents AS d')
-                            ->select('id', 'date', 'document_category_id')
                             ->where('kredit_id', $value->id)
                             ->where('document_category_id', 5)
                             ->first();
 
                 $polis = DB::table('documents AS d')
-                            ->select('id', 'date', 'document_category_id')
                             ->where('kredit_id', $value->id)
                             ->where('document_category_id', 4)
                             ->first();
 
                 $imbalJasa = DB::table('documents AS d')
-                            ->select('id', 'date', 'document_category_id')
                             ->where('kredit_id', $value->id)
                             ->where('document_category_id', 6)
                             ->first();
@@ -746,7 +1028,7 @@ class KreditController extends Controller
                 $value->stnk = $stnk;
                 $value->bpkb = $bpkb;
                 $value->polis = $polis;
-                $value->bukti_imbal_jasa = $imbalJasa;
+                $value->imbal_jasa = $imbalJasa;
 
                 usleep(500 * 1000); // sleep for 0.5 millisec
             }
@@ -759,17 +1041,77 @@ class KreditController extends Controller
                 'message' => 'Successfully load data',
                 'html' => $html,
                 'html_import' => $html_import,
-                'data' => $data
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Terjadi kesalahan. '.$e->getMessage()
+                'message' => 'Terjadi kesalahan. '.$e->getMessage(),
+                'error' => $e,
             ]);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Terjadi kesalahan. '.$e->getMessage()
+                'message' => 'Terjadi kesalahan. '.$e->getMessage(),
+                'error' => $e,
+            ]);
+        }
+    }
+
+    public function getDataPO($pengajuan_id) {
+        try {
+            $host = env('LOS_API_HOST');
+            $apiURL = $host . '/kkb/get-data-pengajuan-by-id/' . $pengajuan_id;
+
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+
+            if ($responseBody) {
+                if (array_key_exists('no_po', $responseBody) && array_key_exists('nama', $responseBody))
+                    return $responseBody;
+                else
+                    return response()->json([
+                        'status' => 'failed',
+                        'message' => 'Not found',
+                    ]);
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    public function getDataCabang($kode_cabang) {
+        try {
+            $host = env('BIO_INTERFACE_API_HOST');
+            $apiURL = $host . '/v1/cabang/' . $kode_cabang;
+
+            $response = Http::timeout(3)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+
+            if ($responseBody) {
+                if(array_key_exists('data', $responseBody)){
+                    if ($responseBody['data'])
+                        return $responseBody['data'];
+                }
+
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Not found',
+                ]);
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(),
             ]);
         }
     }
@@ -809,6 +1151,7 @@ class KreditController extends Controller
             $file = $request->file('tagihan_scan');
             $file->storeAs('public/tagihan', $file->hashName());
             $kkb = KKB::find($request->id_kkb);
+            $kredit = Kredit::find($kkb->kredit_id);
 
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
@@ -817,8 +1160,21 @@ class KreditController extends Controller
             $document->document_category_id  = 7;
             $document->save();
 
-            // send notif
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+            // send notification
             $this->notificationController->send($action_id, $kkb->kredit_id);
+
+            // $notifTemplate = NotificationTemplate::find(6);
+
+            // $this->notificationController->sendEmail($cabang['email'],  [
+            //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+            //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+            //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+            //     'to' => 'Cabang '.$dataPO['cabang'],
+            //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            // ]);
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas tagihan.');
 
@@ -876,6 +1232,7 @@ class KreditController extends Controller
 
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
+            $kredit = Kredit::find($kkb->kredit_id);
             $document->date = date('Y-m-d');
             $document->file = $file->hashName();
             $document->document_category_id  = 1;
@@ -895,6 +1252,12 @@ class KreditController extends Controller
                 }
 
                 $kredit = Kredit::find($document->kredit_id);
+                if ($kredit->imported_data_id) {
+                    if (!$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
                 if ($kredit->imported_data_id && !$kkb->user_id) {
                     // set user id for kkb data
                     DB::table('kkb')->where('id', $kkb->id)->update([
@@ -957,13 +1320,26 @@ class KreditController extends Controller
             DB::beginTransaction();
 
             $kkb = KKB::where('id', $request->id_kkb)->first();
+            $kredit = Kredit::find($kkb->kredit_id);
             $kkb->tgl_ketersediaan_unit = date('Y-m-d', strtotime($request->date));
             $kkb->save();
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal ketersediaan unit.');
 
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             // send notification
             $this->notificationController->send($action_id, $kkb->kredit_id);
+            // $notifTemplate = NotificationTemplate::find(2);
+
+            // $this->notificationController->sendEmail($cabang['email'],  [
+            //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+            //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+            //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+            //     'to' => 'Cabang '.$dataPO['cabang'],
+            //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            // ]);
 
             DB::commit();
 
@@ -1018,6 +1394,7 @@ class KreditController extends Controller
             $kkb = KKB::where('id', $request->id_kkb)->first();
             $file = $request->file('upload_penyerahan_unit');
             $file->storeAs('public/dokumentasi-peyerahan', $file->hashName());
+            $kredit = Kredit::find($kkb->kredit_id);
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
             $document->date = date('Y-m-d', strtotime($request->tgl_pengiriman));
@@ -1028,8 +1405,20 @@ class KreditController extends Controller
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengatur tanggal penyerahan unit.');
 
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
             // send notification
             $this->notificationController->send($action_id, $kkb->kredit_id);
+            // $notifTemplate = NotificationTemplate::find(5);
+
+            // $this->notificationController->sendEmail($cabang['email'],  [
+            //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+            //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+            //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+            //     'to' => 'Cabang '.$dataPO['cabang'],
+            //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            // ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -1086,6 +1475,8 @@ class KreditController extends Controller
 
             $file = $request->file('polis_scan');
             $file->storeAs('public/dokumentasi-police', $file->hashName());
+            $kkb = KKB::where('id', $request->id_kkb)->first();
+            $kredit = Kredit::find($kkb->kredit_id);
             $document = new Document();
             $document->kredit_id = $request->id_kkb;
             $document->date = $polisDate;
@@ -1098,6 +1489,20 @@ class KreditController extends Controller
 
             // send notification
             $this->notificationController->send($action_id, $request->id_kkb);
+
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+
+            // $notifTemplate = NotificationTemplate::find(9);
+
+            // $this->notificationController->sendEmail($cabang['email'],  [
+            //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+            //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+            //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+            //     'to' => 'Cabang '.$dataPO['cabang'],
+            //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            // ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -1154,6 +1559,8 @@ class KreditController extends Controller
             $file = $request->file('bpkb_scan');
             $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
             $document = new Document();
+            $kkb = KKB::where('id', $request->id_kkb)->first();
+            $kredit = Kredit::find($kkb->kredit_id);
             $document->kredit_id = $request->id_kkb;
             $document->date = $bpkbDate;
             $document->text = $request->no_bpkb;
@@ -1165,6 +1572,19 @@ class KreditController extends Controller
 
             // send notif
             $this->notificationController->send($action_id, $request->id_kkb);
+
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+            // $notifTemplate = NotificationTemplate::find(10);
+
+            // $this->notificationController->sendEmail($cabang['email'],  [
+            //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+            //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+            //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+            //     'to' => 'Cabang '.$dataPO['cabang'],
+            //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            // ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -1220,6 +1640,7 @@ class KreditController extends Controller
             $kkb = KKB::where('id', $request->id_kkb)->first();
             $file = $request->file('stnk_scan');
             $file->storeAs('public/dokumentasi-stnk', $file->hashName());
+            $kredit = Kredit::find($kkb->kredit_id);
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
             $document->date = $stnkdate;
@@ -1231,6 +1652,18 @@ class KreditController extends Controller
 
             // send notification
             $this->notificationController->send($action_id, $request->id_kkb);
+
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+            // $notifTemplate = NotificationTemplate::find(8);
+
+            // $this->notificationController->sendEmail($cabang['email'],  [
+            //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+            //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+            //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+            //     'to' => 'Cabang '.$dataPO['cabang'],
+            //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            // ]);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -1300,7 +1733,7 @@ class KreditController extends Controller
                 if (!$already_upload) {
                     $file = $request->file('stnk_scan');
                     $file->storeAs('public/dokumentasi-stnk', $file->hashName());
-    
+
                     $document = new Document();
                     $document->kredit_id = $kkb->kredit_id;
                     $document->text = $request->no_stnk;
@@ -1308,10 +1741,10 @@ class KreditController extends Controller
                     $document->file = $file->hashName();
                     $document->document_category_id  = 3;
                     $document->save();
-    
+
                     // send notification
                     $this->notificationController->send(9, $kkb->kredit_id);
-                    
+
                     // save log
                     $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
                 }
@@ -1327,7 +1760,7 @@ class KreditController extends Controller
                 if (!$already_upload) {
                     $file = $request->file('polis_scan');
                     $file->storeAs('public/dokumentasi-polis', $file->hashName());
-    
+
                     $document = new Document();
                     $document->kredit_id = $kkb->kredit_id;
                     $document->text = $request->no_polis;
@@ -1335,9 +1768,9 @@ class KreditController extends Controller
                     $document->file = $file->hashName();
                     $document->document_category_id  = 4;
                     $document->save();
-    
+
                     // send notification
-                    $this->notificationController->send(10, $kkb->kredit_id);
+                    // $this->notificationController->send(10, $kkb->kredit_id);
 
                     // save log
                     $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas.');
@@ -1354,7 +1787,7 @@ class KreditController extends Controller
                 if (!$already_upload) {
                     $file = $request->file('bpkb_scan');
                     $file->storeAs('public/dokumentasi-bpkb', $file->hashName());
-    
+
                     $document = new Document();
                     $document->kredit_id = $kkb->kredit_id;
                     $document->text = $request->no_bpkb;
@@ -1362,7 +1795,7 @@ class KreditController extends Controller
                     $document->file = $file->hashName();
                     $document->document_category_id  = 5;
                     $document->save();
-    
+
                     // send notification
                     $this->notificationController->send(11, $kkb->kredit_id);
 
@@ -1427,6 +1860,13 @@ class KreditController extends Controller
 
                         $kredit = Kredit::find($stnk->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                        
+                        if ($kredit->imported_data_id) {
+                            if (!$kredit->is_continue_import) {
+                                $kredit->is_continue_import = true;
+                                $kredit->save();
+                            }
+                        }
                         if ($kredit->imported_data_id && !$kkb->user_id) {
                             // set user id for kkb data
                             DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1455,6 +1895,12 @@ class KreditController extends Controller
 
                         $kredit = Kredit::find($polis->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                        if ($kredit->imported_data_id) {
+                            if (!$kredit->is_continue_import) {
+                                $kredit->is_continue_import = true;
+                                $kredit->save();
+                            }
+                        }
                         if ($kredit->imported_data_id && !$kkb->user_id) {
                             // set user id for kkb data
                             DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1483,6 +1929,12 @@ class KreditController extends Controller
 
                         $kredit = Kredit::find($bpkb->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                        if ($kredit->imported_data_id) {
+                            if (!$kredit->is_continue_import) {
+                                $kredit->is_continue_import = true;
+                                $kredit->save();
+                            }
+                        }
                         if ($kredit->imported_data_id && !$kkb->user_id) {
                             // set user id for kkb data
                             DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1554,7 +2006,8 @@ class KreditController extends Controller
                 $user_id = \Session::get(config('global.user_id_session'));
                 $document = Document::find($request->id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
-
+                $kkb = KKB::where('id', $document->id_kkb)->first();
+                $kredit = Kredit::find($kkb->kredit_id);
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = \Session::get(config('global.user_id_session'));
@@ -1569,6 +2022,12 @@ class KreditController extends Controller
 
                 $kredit = Kredit::find($document->kredit_id);
                 $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                if ($kredit->imported_data_id) {
+                    if (!$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
                 if ($kredit->imported_data_id && !$kkb->user_id) {
                     // set user id for kkb data
                     DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1611,6 +2070,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
+        $action_id = 5;
 
         $validator = Validator::make($request->all(), [
             'id' => 'required',
@@ -1632,17 +2092,27 @@ class KreditController extends Controller
             if (\Session::get(config('global.role_id_session')) == 3) {
                 // Vendor
                 $document = Document::find($request->id);
+                $kredit = Kredit::find($document->kredit_id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
-
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = \Session::get(config('global.user_id_session'));
                 $document->save();
 
-                if ($request->category_id == 1) {
-                    // send notification
-                    $this->notificationController->send(5, $document->kredit_id);
-                }
+                $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                $cabang = $this->getDataCabang($kredit->kode_cabang);
+                // send notification
+                $this->notificationController->send($action_id, $kredit->id);
+
+                // $notifTemplate = NotificationTemplate::find(4);
+
+                // $this->notificationController->sendEmail($cabang['email'],  [
+                //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                //     'to' => 'Cabang '.$dataPO['cabang'],
+                //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+                // ]);
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
 
@@ -1677,6 +2147,7 @@ class KreditController extends Controller
     {
         $status = '';
         $message = '';
+        $action_id = 8;
 
         $validator = Validator::make($request->all(), [
             'id' => 'required',
@@ -1700,7 +2171,8 @@ class KreditController extends Controller
                 $user_id = \Session::get(config('global.user_id_session'));
                 $document = Document::find($request->id);
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
-
+                // $kkb = KKB::where('id', $document->id_kkb)->first();
+                $kredit = Kredit::find($document->kredit_id);
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
                 $document->confirm_by = \Session::get(config('global.user_id_session'));
@@ -1708,6 +2180,12 @@ class KreditController extends Controller
 
                 $kredit = Kredit::find($document->kredit_id);
                 $kkb = KKB::where('kredit_id', $kredit->id)->first();
+                if ($kredit->imported_data_id) {
+                    if (!$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
                 if ($kredit->imported_data_id && !$kkb->user_id) {
                     // set user id for kkb data
                     DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1717,8 +2195,28 @@ class KreditController extends Controller
                 }
 
                 if ($request->category_id == 2) {
-                    // send notification
-                    $this->notificationController->send(8, $document->kredit_id);
+                    $vendor = User::select('users.email', 'v.name')
+                                        ->join('vendors AS v', 'v.id', 'users.vendor_id')
+                                        ->where('users.role_id', 3)
+                                        ->first();
+
+                        // retrieve from api
+                    $dataPO = $this->getDataPO($kredit->pengajuan_id);
+
+                    if ($vendor) {
+                        // send notif
+                        $this->notificationController->send($action_id, $kkb->kredit_id);
+
+                        // $notifTemplate = NotificationTemplate::find(7);
+
+                        // $this->notificationController->sendEmail($vendor->email,  [
+                        //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+                        //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                        //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                        //     'to' => $vendor->name,
+                        //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+                        // ]);
+                    }
                 }
 
                 $this->logActivity->store('Pengguna ' . $request->name . ' mengkonfirmasi berkas ' . $docCategory->name . '.');
@@ -1815,7 +2313,7 @@ class KreditController extends Controller
                                         'import.tgl_po',
                                         'import.tgl_realisasi',
                                         'k.id AS kredit_id',
-                                        'k.id AS kode_cabang',
+                                        'k.kode_cabang AS kode_cabang',
                                         'po.merk',
                                         'po.tipe',
                                         'po.tahun_kendaraan',
@@ -1951,12 +2449,19 @@ class KreditController extends Controller
             $file->storeAs('public/dokumentasi-imbal-jasa', $file->hashName());
             $document = new Document();
             $document->kredit_id = $request->id_kkbimbaljasa;
+            $kredit = Kredit::find($document->kredit_id);
             $document->date = Carbon::now();
             $document->file = $file->hashName();
             $document->document_category_id  = 6;
             $document->save();
 
             $kredit = Kredit::find($document->kredit_id);
+            if ($kredit->imported_data_id) {
+                if (!$kredit->is_continue_import) {
+                    $kredit->is_continue_import = true;
+                    $kredit->save();
+                }
+            }
             if ($kredit->imported_data_id && !$kkb->user_id) {
                 // set user id for kkb data
                 DB::table('kkb')->where('id', $kkb->id)->update([
@@ -1967,8 +2472,28 @@ class KreditController extends Controller
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas imbal jasa.');
 
-            // send notification
-            $this->notificationController->send($action_id, $request->id_kkbimbaljasa);
+            $vendor = User::select('users.email', 'v.name')
+                        ->join('vendors AS v', 'v.id', 'users.vendor_id')
+                        ->where('users.role_id', 3)
+                        ->first();
+
+            // retrieve from api
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+
+            if ($vendor) {
+                // send notif
+                $this->notificationController->send($action_id, $kkb->kredit_id);
+
+                // $notifTemplate = NotificationTemplate::find(14);
+
+                // $this->notificationController->sendEmail($vendor->email,  [
+                //     'title' => $notifTemplate ? $notifTemplate->title : 'undifned',
+                //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+                //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+                //     'to' => $vendor->name,
+                //     'body' => $notifTemplate ? $notifTemplate->content : 'undifned'
+                //     ]);
+            }
 
             $status = 'success';
             $message = 'Berhasil mengupload berkas imbal jasa.';
@@ -2024,6 +2549,19 @@ class KreditController extends Controller
 
             // send notification
             $this->notificationController->send($action_id, $document->kredit_id);
+
+            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+            $cabang = $this->getDataCabang($kredit->kode_cabang);
+
+            // $notifTemplate = NotificationTemplate::find(15);
+
+            // $this->notificationController->sendEmail($cabang['email'],  [
+            //     'title' => $notifTemplate ? $notifTemplate->title : 'undifined',
+            //     'no_po' => array_key_exists('no_po', $dataPO) ? $dataPO['no_po'] : 'undifined',
+            //     'nama_debitur' => array_key_exists('nama', $dataPO) ? $dataPO['nama'] : 'undifined',
+            //     'to' => 'Cabang '.$dataPO['cabang'],
+            //     'body' => $notifTemplate ? $notifTemplate->content : 'undifined'
+            // ]);
 
             $status = 'success';
             $message = 'Berhasil mengkonfirmasi berkas imbal jasa.';

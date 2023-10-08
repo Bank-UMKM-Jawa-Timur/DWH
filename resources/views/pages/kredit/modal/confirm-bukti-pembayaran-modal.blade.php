@@ -14,6 +14,11 @@
                 <div class="gap-5 space-y-5">
                     <div class="flex gap-5 w-full mt-0">
                         <div class="input-box w-full space-y-3">
+                            <p class="uppercase appearance-none" id="kategori_data"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 w-full mt-0">
+                        <div class="input-box w-full space-y-3">
                             <label for="" class="uppercase appearance-none">Tanggal Upload</label>
                             <input type="text" disabled class="p-2 w-full border" id="confirm_tanggal_pembayaran"  />
                         </div>
@@ -28,16 +33,18 @@
             </div>
         </div>
         <div class="modal-footer">
-            <form id="confirm-form-vendor">
-                <input type="hidden" name="confirm_id" id="confirm_id">
-                <input type="hidden" name="confirm_id_category" id="confirm_id_category">
-                <button type="button" data-dismiss-id="modalConfirmBuktiPembayaran" class="border px-7 py-3 text-black rounded">
-                    Tidak
-                </button>
-                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
-                    Ya
-                </button>
-            </form>
+            @if ($role_id == 3)
+                <form id="confirm-form-vendor">
+                    <input type="hidden" name="confirm_id" id="confirm_id">
+                    <input type="hidden" name="confirm_id_category" id="confirm_id_category">
+                    <button type="button" data-dismiss-id="modalConfirmBuktiPembayaran" class="border px-7 py-3 text-black rounded">
+                        Tidak
+                    </button>
+                    <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
+                        Ya
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
 </div>
@@ -54,11 +61,11 @@
                 console.log('then')
                 $("#modalConfirmBuktiPembayaran").addClass("hidden");
                 $('#preload-data').removeClass("hidden")
-                
+
                 refreshTable()
             })
         }
-        
+
         function ConfirmPembayaranErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
@@ -69,7 +76,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    
+
                     refreshTable()
                 }
             })
@@ -129,6 +136,9 @@
                             ConfirmPembayaranErrorMessage(data.message)
                         }
                     }
+                },
+                error: function(e) {
+                    ConfirmPembayaranErrorMessage(e)
                 }
             })
         })

@@ -97,6 +97,7 @@
                 },
                 success: function(data) {
                     Swal.close()
+                    console.log(data)
                     if (Array.isArray(data.error)) {
                         //AturErrorMessage(req_date, data.error[0])
                     } else {

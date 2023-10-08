@@ -4,10 +4,14 @@
         <td>{{ $loop->iteration }}</td>
         {{--  Nama  --}}
         <td>
-            @if ($item->detail)
-                {{ array_key_exists('nama', $item->detail) ? $item->detail['nama'] : '-' }}
+            @if ($item->kategori == 'data_kkb')
+                @if ($item->detail)
+                    {{ array_key_exists('nama', $item->detail) ? $item->detail['nama'] : '-' }}
+                @else
+                    undifined
+                @endif
             @else
-                undifined
+                {{$item->name}}
             @endif
         </td>
         {{--  Cabang  --}}
@@ -23,26 +27,34 @@
         {{--  No PO  --}}
         <td class="@if ($item->detail) link-po @endif">
             @if ($item->bukti_pembayaran)
-                @if ($item->detail)
-                <button class="toggle-modal-po underline" data-target-id="modalPO"
-                    data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
-                    data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
-                    data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
-                    onclick="showModal(this)">
-                    {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
-                </button>
+                @if ($item->kategori == 'data_kkb')
+                    @if ($item->detail)
+                        <button class="toggle-modal-po underline" data-target-id="modalPO"
+                            data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
+                            data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
+                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
+                            onclick="showModal(this)">
+                            {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
+                        </button>
+                    @else
+                        -
+                    @endif
                 @else
                     -
                 @endif
             @else
-                @if ($item->detail)
-                    <button class="toggle-modal-po underline" data-target-id="modalPO"
-                    data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
-                    data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
-                    data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
-                    onclick="showModal(this)">
-                        {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
-                    </button>
+                @if ($item->kategori == 'data_kkb')
+                    @if ($item->detail)
+                        <button class="toggle-modal-po underline" data-target-id="modalPO"
+                        data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
+                        data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
+                        data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
+                        onclick="showModal(this)">
+                            {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
+                        </button>
+                    @else
+                        -
+                    @endif
                 @else
                     -
                 @endif
@@ -53,7 +65,7 @@
             @if (\Session::get(config('global.role_id_session')) == 3)
                 @if ($is_kredit_page)
                     @if (!$item->tgl_ketersediaan_unit)
-                        <button class="toggle-modal-atur-ketersediaan underline"
+                        <button class="toggle-modal-atur-ketersediaan underline text-red-600"
                             data-target-id="modalAturKetersedian"
                             data-id_kkb="{{ $item->kkb_id }}"
                             onclick="showModal(this)">
@@ -86,6 +98,7 @@
                                 style="cursor: pointer; text-decoration: underline;"
                                 data-target-id="modalTagihan"
                                 data-id="{{$item->id}}"
+                                data-kategori="{{$item->kategori}}"
                                 data-file="{{ $item->invoice->file }}"
                                 data-confirm="{{ $item->invoice->is_confirm }}"
                                 data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
@@ -98,12 +111,13 @@
                                 style="cursor: pointer; text-decoration: underline;"
                                 data-target-id="modalTagihan"
                                 data-id="{{$item->id}}"
+                                data-kategori="{{$item->kategori}}"
                                 data-file="{{ $item->invoice->file }}"
                                 data-confirm="{{ $item->invoice->is_confirm }}"
                                 data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
                                 data-confirm_at="{{ date('d-m-Y', strtotime($item->invoice->confirm_at)) }}"
                                 onclick="showModal(this)">
-                                Menunggu pembayaran cabang
+                                Selesai
                             </a>
                         @endif
                     @else
@@ -111,15 +125,8 @@
                             $current_date = date('d-m-Y');
                             $hmin1_tgl_ketersediaan_unit = date('d-m-Y', strtotime($item->tgl_ketersediaan_unit . ' -1 day'));
                         @endphp
-                        @if ($current_date == $hmin1_tgl_ketersediaan_unit || $current_date == $item->tgl_ketersediaan_unit)
-                            <span class="text-yellow-600">Harap untuk segera mengunggah berkas!</span>
-                            <br>
-                        @elseif ($current_date > $item->tgl_ketersediaan_unit)
-                            <span class="text-red-600">Harap untuk segera mengunggah berkas!</span>
-                            <br>
-                        @endif
                         @if ($is_kredit_page)
-                            <button class="toggle-modal-upload-berkas-tagihan underline"
+                            <button class="toggle-modal-upload-berkas-tagihan underline text-red-600"
                                 data-target-id="modalUploadBerkasTagihan"
                                 data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
                                 Upload Berkas
@@ -140,72 +147,32 @@
                                     style="cursor: pointer; text-decoration: underline;"
                                     data-target-id="modalTagihan"
                                     data-id="{{$item->id}}"
+                                    data-kategori="{{$item->kategori}}"
                                     data-file="{{ $item->invoice->file }}"
                                     data-confirm="{{ $item->invoice->is_confirm }}"
                                     data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
                                     data-confirm_at="{{ date('d-m-Y', strtotime($item->invoice->confirm_at)) }}"
                                     onclick="showModal(this)">
-                                    Menunggu pembayaran cabang
+                                    Lihat Tagihan
                                 </a>
                             @else
                                 <span>Menunggu pembayaran</span>
                             @endif
                         @else
+                            {{--  Role selain vendor  --}}
                             @if ($item->bukti_pembayaran)
-                                @if ($is_kredit_page)
-                                    @if (!$item->bukti_pembayaran->is_confirm)
-                                        @if (\Session::get(config('global.role_id_session')) == 3)
-                                            <button class="toggle-modal-confirm-bukti-pembayaran"
-                                                style="cursor: pointer;"
-                                                data-target-id="modalConfirmBuktiPembayaran"
-                                                data-file="{{ $item->bukti_pembayaran->file }}"
-                                                data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                                data-id-category="{{$item->bukti_pembayaran->document_category_id}}"
-                                                data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
-                                                onclick="showModal(this)">
-                                                Konfirmasi
-                                            </button>
-                                        @else
-                                            <a class="m-0 tagihan-modal toggle-modal-tagihan"
-                                                style="cursor: pointer; text-decoration: underline;"
-                                                data-target-id="modalTagihan"
-                                                data-id="{{$item->id}}"
-                                                data-file="{{ $item->invoice->file }}"
-                                                data-confirm="{{ $item->invoice->is_confirm }}"
-                                                data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
-                                                data-confirm_at="{{ date('d-m-Y', strtotime($item->invoice->confirm_at)) }}"
-                                                onclick="showModal(this)">
-                                                Selesai
-                                            </a>
-                                        @endif
-                                    @elseif ($item->bukti_pembayaran->is_confirm)
-                                        <button class="toggle-modal-bukti-pembayaran underline"
-                                            style="cursor: pointer;"
-                                            data-target-id="modalBuktiPembayaran"
-                                            data-file="{{ $item->bukti_pembayaran->file }}"
-                                            data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                            data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                            data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
-                                            onclick="showModal(this)">
-                                            Selesai
-                                        </button>
-                                    @endif
-                                @else
-                                    @if ($item->bukti_pembayaran->is_confirm)
-                                        <button class="toggle-modal-bukti-pembayaran underline"
-                                            style="cursor: pointer;"
-                                            data-target-id="modalBuktiPembayaran"
-                                            data-file="{{ $item->bukti_pembayaran->file }}"
-                                            data-tanggal="{{ $item->bukti_pembayaran->date }}"
-                                            data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
-                                            data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
-                                            onclick="showModal(this)">
-                                            Selesai
-                                        </button>
-                                    @else
-                                        <span>Menunggu konfirmasi</span>
-                                    @endif
-                                @endif
+                                <a class="m-0 tagihan-modal toggle-modal-tagihan"
+                                    style="cursor: pointer; text-decoration: underline;"
+                                    data-target-id="modalTagihan"
+                                    data-id="{{$item->id}}"
+                                    data-kategori="{{$item->kategori}}"
+                                    data-file="{{ $item->invoice->file }}"
+                                    data-confirm="{{ $item->invoice->is_confirm }}"
+                                    data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
+                                    data-confirm_at="{{ date('d-m-Y', strtotime($item->invoice->confirm_at)) }}"
+                                    onclick="showModal(this)">
+                                    Selesai
+                                </a>
                             @else
                                 Menunggu cabang mengunggah bukti pembayaran
                             @endif
@@ -228,8 +195,9 @@
                             @if ($is_kredit_page)
                                 @if (!$item->bukti_pembayaran->is_confirm)
                                     <a style="cursor: pointer; text-decoration: underline;"
-                                        class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran" data-target-id="modalConfirmBuktiPembayaran"
+                                        class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran text-red-600" data-target-id="modalConfirmBuktiPembayaran"
                                         data-id-category="1"
+                                        data-kategori="{{$item->kategori}}"
                                         data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
                                         data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
                                         data-file="@isset($item->bukti_pembayaran->file){{ $item->bukti_pembayaran->file }}@endisset"
@@ -239,6 +207,7 @@
                                     <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
                                         style="cursor: pointer; text-decoration: underline;"
                                         data-target-id="modalConfirmBuktiPembayaran"
+                                        data-kategori="{{$item->kategori}}"
                                         data-file="{{ $item->bukti_pembayaran->file }}"
                                         data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
                                         data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
@@ -256,6 +225,7 @@
                                     <a class="m-0 bukti-pembayaran-modal toggle-modal-confirm-bukti-pembayaran"
                                         style="cursor: pointer; text-decoration: underline;"
                                         data-target-id="modalConfirmBuktiPembayaran"
+                                        data-kategori="{{$item->kategori}}"
                                         data-file="{{ $item->bukti_pembayaran->file }}"
                                         data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
                                         data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
@@ -279,7 +249,9 @@
                         @if (!$item->bukti_pembayaran && \Session::get(config('global.role_id_session')) != 3)
                             @if ($is_kredit_page)
                                 @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
-                                    <button class="toggle-modal-upload-bukti-pembayaran underline" data-target-id="modalUploadBuktiPembayaran"
+                                    <button class="toggle-modal-upload-bukti-pembayaran underline text-red-600"
+                                        data-kategori="{{ $item->kategori }}"
+                                        data-target-id="modalUploadBuktiPembayaran"
                                         data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
                                         Bayar
                                     </button>
@@ -294,10 +266,11 @@
                                 @if ($is_kredit_page)
                                     @if (!$item->bukti_pembayaran->is_confirm)
                                         @if (\Session::get(config('global.role_id_session')) == 3)
-                                            <button class="toggle-modal-confirm-bukti-pembayaran"
+                                            <button class="toggle-modal-confirm-bukti-pembayaran text-red-600"
                                                 style="cursor: pointer;"
                                                 data-target-id="modalConfirmBuktiPembayaran"
                                                 data-file="{{ $item->bukti_pembayaran->file }}"
+                                                data-kategori="{{ $item->kategori }}"
                                                 data-tanggal="{{ $item->bukti_pembayaran->date }}"
                                                 data-id-category="{{$item->bukti_pembayaran->document_category_id}}"
                                                 data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
@@ -309,6 +282,7 @@
                                                 style="cursor: pointer;"
                                                 data-target-id="modalBuktiPembayaran"
                                                 data-file="{{ $item->bukti_pembayaran->file }}"
+                                                data-kategori="{{ $item->kategori }}"
                                                 data-tanggal="{{ $item->bukti_pembayaran->date }}"
                                                 data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
                                                 data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
@@ -321,6 +295,7 @@
                                             style="cursor: pointer;"
                                             data-target-id="modalBuktiPembayaran"
                                             data-file="{{ $item->bukti_pembayaran->file }}"
+                                            data-kategori="{{ $item->kategori }}"
                                             data-tanggal="{{ $item->bukti_pembayaran->date }}"
                                             data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
                                             data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
@@ -334,6 +309,7 @@
                                             style="cursor: pointer;"
                                             data-target-id="modalBuktiPembayaran"
                                             data-file="{{ $item->bukti_pembayaran->file }}"
+                                            data-kategori="{{ $item->kategori }}"
                                             data-tanggal="{{ $item->bukti_pembayaran->date }}"
                                             data-confirm="{{ $item->bukti_pembayaran->is_confirm }}"
                                             data-confirm_at="{{ $item->bukti_pembayaran->confirm_at ? date('d-m-Y', strtotime($item->bukti_pembayaran->confirm_at)) : '-' }}"
@@ -356,7 +332,7 @@
                 -
             @endif
         </td>
-        {{--  Penyerehan Unit  --}}
+        {{--  Penyerahan Unit  --}}
         <td>
             @if ($item->tgl_ketersediaan_unit)
                 @if ($item->bukti_pembayaran)
@@ -364,11 +340,12 @@
                         @if ($item->bukti_pembayaran->file)
                             @if ($item->penyerahan_unit)
                                 @if ($item->penyerahan_unit['file'])
-                                    @if (\Session::get(config('global.role_id_session')) == 3)
+                                    @if (\Session::get(config('global.role_id_session')) == 3 || \Session::get(config('global.role_id_session')) == 4)
                                         @if ($item->penyerahan_unit['is_confirm'])
                                             <a style="text-decoration: underline; cursor: pointer;"
                                                 class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
                                                 data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                 data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
                                                 data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
@@ -380,6 +357,7 @@
                                             <a style="text-decoration: underline; cursor: pointer;"
                                                 class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
                                                 data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                 data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
                                                 data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
@@ -393,6 +371,7 @@
                                             <a style="text-decoration: underline; cursor: pointer;"
                                                 class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
                                                 data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                 data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
                                                 data-confirm="1"
@@ -402,8 +381,9 @@
                                                 onclick="showModal(this)">{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}</a>
                                         @else
                                             <a style="text-decoration: underline; cursor: pointer;"
-                                                class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                class="toggle-modal text-red-600" data-target-id="modalConfirmPenyerahanUnit"
                                                 data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                 data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
                                                 data-confirm="0"
@@ -414,26 +394,88 @@
                                         @endif
                                     @endif
                                 @else
-                                    
+                                    -
                                 @endif
                             @else
                                 <span class="text-info">Maksimal
                                     {{ date('d-m-Y', strtotime($item->bukti_pembayaran->date . ' +1 day')) }}</span>
                             @endif
                         @else
-                            @if (\Session::get(config('global.role_id_session')) == 3 && \Session::get(config('global.user_role_session')) != $staf_analisa_kredit_role)
-                                <span>Menunggu konfirmasi cabang</span>
+                            @if ($item->kategori == 'data_kkb')
+                                @if (\Session::get(config('global.role_id_session')) == 3 && \Session::get(config('global.user_role_session')) != $staf_analisa_kredit_role)
+                                    <span>Menunggu konfirmasi cabang</span>
+                                @else
+                                    <a style="text-decoration: underline; cursor: pointer;"
+                                        class="toggle-modal text-red-600"
+                                        data-target-id="modalConfirmPenyerahanUnit"
+                                        data-id-category="2"
+                                        data-kategori="{{$item->kategori}}"
+                                        data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
+                                        data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
+                                        data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
+                                        data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}"
+                                        data-confirm_at="{{ $item->penyerahan_unit['confirm_at'] ? date('d-m-Y', strtotime($item->penyerahan_unit['confirm_at'])) : '-' }}"
+                                        onclick="showModal(this)">Konfirmasi</a>
+                                @endif
                             @else
-                                <a style="text-decoration: underline; cursor: pointer;"
-                                    class="toggle-modal"
-                                    data-target-id="modalConfirmPenyerahanUnit"
-                                    data-id-category="2"
-                                    data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
-                                    data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
-                                    data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
-                                    data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}"
-                                    data-confirm_at="{{ $item->penyerahan_unit['confirm_at'] ? date('d-m-Y', strtotime($item->penyerahan_unit['confirm_at'])) : '-' }}"
-                                    onclick="showModal(this)">Konfirmasi</a>
+                                @if ($item->penyerahan_unit)
+                                    @if (\Session::get(config('global.role_id_session')) == 3 || \Session::get(config('global.role_id_session')) == 4)
+                                        @if ($item->penyerahan_unit['is_confirm'])
+                                            <a style="text-decoration: underline; cursor: pointer;"
+                                                class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
+                                                data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
+                                                data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
+                                                data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}"
+                                                data-confirm_at="{{ $item->penyerahan_unit['confirm_at'] ? date('d-m-Y', strtotime($item->penyerahan_unit['confirm_at'])) : '-' }}"
+                                                href="#"
+                                                onclick="showModal(this)">{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}</a>
+                                        @else
+                                            <a style="text-decoration: underline; cursor: pointer;"
+                                                class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
+                                                data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
+                                                data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
+                                                data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}"
+                                                data-confirm_at="{{ $item->penyerahan_unit['confirm_at'] ? date('d-m-Y', strtotime($item->penyerahan_unit['confirm_at'])) : '-' }}"
+                                                href="#"
+                                                onclick="showModal(this)">{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}</a>
+                                        @endif
+                                    @elseif(\Session::get(config('global.role_id_session')) == 2 && \Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                        @if ($item->penyerahan_unit['is_confirm'])
+                                            <a style="text-decoration: underline; cursor: pointer;"
+                                                class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
+                                                data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
+                                                data-confirm="1"
+                                                data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}"
+                                                data-confirm_at="{{ $item->penyerahan_unit['confirm_at'] ? date('d-m-Y', strtotime($item->penyerahan_unit['confirm_at'])) : '-' }}"
+                                                href="#"
+                                                onclick="showModal(this)">{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}</a>
+                                        @else
+                                            <a style="text-decoration: underline; cursor: pointer;"
+                                                class="toggle-modal text-red-600" data-target-id="modalConfirmPenyerahanUnit"
+                                                data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
+                                                data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
+                                                data-confirm="0"
+                                                data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}"
+                                                data-confirm_at="{{ $item->penyerahan_unit['confirm_at'] ? date('d-m-Y', strtotime($item->penyerahan_unit['confirm_at'])) : '-' }}"
+                                                href="#"
+                                                onclick="showModal(this)">Konfirmasi</a>
+                                        @endif
+                                    @endif
+                                @else
+                                    <span class="text-info">Maksimal
+                                        {{ date('d-m-Y', strtotime($item->bukti_pembayaran->date . ' +1 day')) }}</span>
+                                @endif
                             @endif
                         @endif
                     @else
@@ -445,6 +487,7 @@
                                             <a style="text-decoration: underline; cursor: pointer;"
                                                 class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
                                                 data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                 data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
                                                 data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
@@ -456,6 +499,7 @@
                                             <a style="text-decoration: underline; cursor: pointer;"
                                                 class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
                                                 data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                 data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
                                                 data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
@@ -469,6 +513,7 @@
                                             <a style="text-decoration: underline; cursor: pointer;"
                                                 class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
                                                 data-id-category="2"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                 data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
                                                 data-confirm="1"
@@ -481,7 +526,7 @@
                                         @endif
                                     @endif
                                 @else
-                                    
+
                                 @endif
                             @else
                                 <span class="text-info">Maksimal
@@ -491,16 +536,7 @@
                             @if (\Session::get(config('global.role_id_session')) == 3 && \Session::get(config('global.user_role_session')) != $staf_analisa_kredit_role)
                                 <span>Menunggu konfirmasi cabang</span>
                             @else
-                                <a style="text-decoration: underline; cursor: pointer;"
-                                    class="toggle-modal"
-                                    data-target-id="modalConfirmPenyerahanUnit"
-                                    data-id-category="2"
-                                    data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
-                                    data-file="@isset($item->penyerahan_unit['file']){{ $item->penyerahan_unit['file'] }}@endisset"
-                                    data-confirm="{{ $item->penyerahan_unit['is_confirm'] }}"
-                                    data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit['date'])) }}"
-                                    data-confirm_at="{{ $item->penyerahan_unit['confirm_at'] ? date('d-m-Y', strtotime($item->penyerahan_unit['confirm_at'])) : '-' }}"
-                                    onclick="showModal(this)">Konfirmasi</a>
+                                <span>Menunggu konfirmasi</span>
                             @endif
                         @endif
                     @endif
@@ -523,11 +559,12 @@
                                     @if ($item->imbal_jasa)
                                         @if (!$item->imbal_jasa['is_confirm'])
                                             <a style="cursor: pointer; text-decoration: underline;"
-                                                class="confirm-imbal-jasa toggle-modal-confirm-imbal-jasa" data-target-id="modalConfirmImbalJasa"
+                                                class="confirm-imbal-jasa toggle-modal-confirm-imbal-jasa text-red-600" data-target-id="modalConfirmImbalJasa"
                                                 data-id="{{ $item->imbal_jasa['id'] }}"
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['created_at'])->format('d-m-Y') }}"
-                                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
+                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 href="#"
                                                 onclick="showModal(this)">Konfirmasi Bukti Pembayaran</a>
@@ -535,9 +572,11 @@
                                             <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
                                                 style="cursor: pointer; text-decoration: underline;"
                                                 data-target-id="modalConfirmImbalJasa"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-kategori="{{$item->kategori}}"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
+                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                                 data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                                 onclick="showModal(this)">Selesai</a>
@@ -567,10 +606,10 @@
                             <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
                                 style="cursor: pointer; text-decoration: underline;"
                                 data-target-id="modalConfirmImbalJasa"
+                                data-kategori="{{$item->kategori}}"
                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
-                                data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
+                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"                                data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                 onclick="showModal(this)">Selesai</a>
                         @else
@@ -582,46 +621,50 @@
                 @endif
             @else
                 {{--  role selain vendor  --}}
-                @if ($is_kredit_page)
-                    @if ($item->bukti_pembayaran)
-                        @if ($item->bukti_pembayaran['is_confirm'])
-                            @if ($item->penyerahan_unit)
-                                @if ($item->penyerahan_unit['is_confirm'])
-                                    @if (!$item->imbal_jasa)
+                @if ($item->bukti_pembayaran)
+                    @if ($item->bukti_pembayaran['is_confirm'])
+                        @if ($item->penyerahan_unit)
+                            @if ($item->penyerahan_unit['is_confirm'])
+                                @if (!$item->imbal_jasa)
+                                    @if ($is_kredit_page)
                                         @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
                                             <a href="#"
                                                 style="text-decoration: underline; cursor: pointer;"
-                                                class="toggle-modal-upload-imbal-jasa underline"
+                                                class="toggle-modal-upload-imbal-jasa underline text-red-600"
                                                 data-target-id="modalUploadImbalJasa"
                                                 data-id="{{ $item->id }}"
-                                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                                 onclick="showModal(this)">Bayar</a>
+                                        @else
+                                            Menunggu pembayaran
                                         @endif
                                     @else
-                                        @if (!$item->imbal_jasa['is_confirm'])
-                                            <p class="m-0">Menunggu Konfirmasi Vendor</p>
-                                        @elseif ($item->imbal_jasa['is_confirm'])
-                                            <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
-                                                style="cursor: pointer; text-decoration: underline;"
-                                                data-target-id="modalConfirmImbalJasa"
-                                                data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
-                                                data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
-                                                data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
-                                                data-file="{{ $item->imbal_jasa['file'] }}"
-                                                onclick="showModal(this)">Selesai</a>
-                                        @endif
+                                        Menunggu pembayaran
                                     @endif
                                 @else
-                                    Menunggu konfirmasi penyerahan unit
+                                    @if (!$item->imbal_jasa['is_confirm'])
+                                        <p class="m-0">Menunggu Konfirmasi Vendor</p>
+                                    @elseif ($item->imbal_jasa['is_confirm'])
+                                        <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
+                                            style="cursor: pointer; text-decoration: underline;"
+                                            data-target-id="modalConfirmImbalJasa"
+                                            data-kategori="{{$item->kategori}}"
+                                            data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
+                                            data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
+                                            data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
+                                            data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
+                                            data-file="{{ $item->imbal_jasa['file'] }}"
+                                            onclick="showModal(this)">Selesai</a>
+                                    @endif
                                 @endif
                             @else
-                                @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
-                                    Menunggu penyerahan unit
-                                @endif
+                                Menunggu konfirmasi penyerahan unit
                             @endif
                         @else
-                            -
+                            @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                Menunggu penyerahan unit
+                            @endif
                         @endif
                     @else
                         -
@@ -637,12 +680,12 @@
                 @if ($is_kredit_page)
                     @if ($item->imbal_jasa)
                         @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
-                            <a>Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}</a>
+                            <a>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</a>
                         @else
                             @if (\Session::get(config('global.role_id_session')) == 3)
                                 <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                             @else
-                                <span>Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}</span>
+                                <span>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</span>
                             @endif
                         @endif
                     @else
@@ -672,12 +715,12 @@
                 @else
                     @if ($item->imbal_jasa)
                         @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
-                            <a>Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}</a>
+                            <a>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</a>
                         @else
                             @if (\Session::get(config('global.role_id_session')) == 3)
                                 <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                             @else
-                                <span>Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}</span>
+                                <span>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</span>
                             @endif
                         @endif
                     @else
@@ -970,6 +1013,7 @@
             @if ($is_kredit_page)
                 @if (strtolower($item->status) == 'done')
                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn toggle-modals"
+                        data-kategori="{{$item->kategori}}"
                         data-target-id="modalDetailPo" data-id="{{ $item->id }}" onclick="showModal(this)">
                         Detail
                     </button>
@@ -983,9 +1027,10 @@
                                 @if ($item->bukti_pembayaran)
                                     @if (!$item->penyerahan_unit && $item->bukti_pembayaran->is_confirm && \Session::get(config('global.role_id_session')) == 3)
                                         <li>
-                                            <a href="#" class="item-dropdown toggle-modal"
+                                            <a href="#" class="item-dropdown toggle-modal text-red-600"
                                                 data-target-id="modalUploadBuktiPenyerahanUnit"
                                                 data-id_kkb="{{ $item->kkb_id }}"
+                                                data-kategori="{{$item->kategori}}"
                                                 onclick="showModal(this)">Kirim Unit</a>
                                         </li>
                                     @endif
@@ -1071,6 +1116,7 @@
                             <li>
                                 <a class="item-dropdown toggle-modals"
                                     data-target-id="modalDetailPo" data-id="{{ $item->id }}"
+                                    data-kategori="{{$item->kategori}}"
                                     href="#" onclick="showModal(this)">Detail</a>
                             </li>
                         </ul>
@@ -1078,6 +1124,7 @@
                 @endif
             @else
                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn toggle-modals"
+                    data-kategori="{{$item->kategori}}"
                     data-target-id="modalDetailPo" data-id="{{ $item->id }}" onclick="showModal(this)">
                     Detail
                 </button>

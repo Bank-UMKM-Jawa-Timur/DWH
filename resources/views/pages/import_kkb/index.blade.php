@@ -16,22 +16,14 @@
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                     <div class="title-table lg:p-3 p-2 text-center">
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                            Item
+                            Import
                         </h2>
                     </div>
                 </div>
                 <form action="{{ route('import-kkb.store') }}" id="import-form" method="post">
                     @csrf
                     <div class="row">
-                    {{--  <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">  --}}
                         <div class="col-md-6">
-                            <div class="sorty pl-1">
-                                <a href="#" class="font-bold tracking-tighter">Lihat Contoh Format</a>
-                                <p>
-                                    Catatan! Jika menggunakan fitur import, maka data pada
-                                    tabel akan dikosongkan terlebih dahulu.
-                                </p>
-                            </div>
                             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                                 @if (\Session::get(config('global.role_id_session')) === 4)
                                     {{--  superadmin  --}}
@@ -220,7 +212,7 @@
                     for (var j=0; j<ket.length; j++) {
                         if (ket[j]) {
                             ket_hidden_html += `<input type="hidden" name="keterangan[${i}][]" id="keterangan[${i}][]"value="${ket[j]}">`
-                            ket_html += `<span style="text-align: justify !important;">${j}. ${ket[j]}</span>`
+                            ket_html += `<span style="text-align: justify !important;">${j+1}. ${ket[j]}</span>`
                         }
                     }
                 }
