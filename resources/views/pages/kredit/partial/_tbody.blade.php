@@ -4,10 +4,14 @@
         <td>{{ $loop->iteration }}</td>
         {{--  Nama  --}}
         <td>
-            @if ($item->detail)
-                {{ array_key_exists('nama', $item->detail) ? $item->detail['nama'] : '-' }}
+            @if ($item->kategori == 'data_kkb')
+                @if ($item->detail)
+                    {{ array_key_exists('nama', $item->detail) ? $item->detail['nama'] : '-' }}
+                @else
+                    undifined
+                @endif
             @else
-                undifined
+                {{$item->name}}
             @endif
         </td>
         {{--  Cabang  --}}
@@ -23,26 +27,34 @@
         {{--  No PO  --}}
         <td class="@if ($item->detail) link-po @endif">
             @if ($item->bukti_pembayaran)
-                @if ($item->detail)
-                <button class="toggle-modal-po underline" data-target-id="modalPO"
-                    data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
-                    data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
-                    data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
-                    onclick="showModal(this)">
-                    {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
-                </button>
+                @if ($item->kategori == 'data_kkb')
+                    @if ($item->detail)
+                        <button class="toggle-modal-po underline" data-target-id="modalPO"
+                            data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
+                            data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
+                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
+                            onclick="showModal(this)">
+                            {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
+                        </button>
+                    @else
+                        -
+                    @endif
                 @else
                     -
                 @endif
             @else
-                @if ($item->detail)
-                    <button class="toggle-modal-po underline" data-target-id="modalPO"
-                    data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
-                    data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
-                    data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
-                    onclick="showModal(this)">
-                        {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
-                    </button>
+                @if ($item->kategori == 'data_kkb')
+                    @if ($item->detail)
+                        <button class="toggle-modal-po underline" data-target-id="modalPO"
+                        data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
+                        data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
+                        data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
+                        onclick="showModal(this)">
+                            {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
+                        </button>
+                    @else
+                        -
+                    @endif
                 @else
                     -
                 @endif
@@ -103,7 +115,7 @@
                                 data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
                                 data-confirm_at="{{ date('d-m-Y', strtotime($item->invoice->confirm_at)) }}"
                                 onclick="showModal(this)">
-                                Menunggu pembayaran cabang
+                                Selesai
                             </a>
                         @endif
                     @else
@@ -138,7 +150,7 @@
                                     data-tanggal="{{ date('d-m-Y', strtotime($item->invoice->date)) }}"
                                     data-confirm_at="{{ date('d-m-Y', strtotime($item->invoice->confirm_at)) }}"
                                     onclick="showModal(this)">
-                                    Menunggu pembayaran cabang
+                                    Lihat Tagihan
                                 </a>
                             @else
                                 <span>Menunggu pembayaran</span>
@@ -519,7 +531,7 @@
                                                 data-id="{{ $item->imbal_jasa['id'] }}"
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['created_at'])->format('d-m-Y') }}"
-                                                data-nominal="Rp @if($item->set_imbal_jasa) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif"
+                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 href="#"
                                                 onclick="showModal(this)">Konfirmasi Bukti Pembayaran</a>
@@ -529,7 +541,7 @@
                                                 data-target-id="modalConfirmImbalJasa"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
+                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                                 data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                                 onclick="showModal(this)">Selesai</a>
@@ -561,8 +573,7 @@
                                 data-target-id="modalConfirmImbalJasa"
                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
-                                data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
+                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"                                data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                 onclick="showModal(this)">Selesai</a>
                         @else
@@ -586,7 +597,7 @@
                                                 class="toggle-modal-upload-imbal-jasa underline text-red-600"
                                                 data-target-id="modalUploadImbalJasa"
                                                 data-id="{{ $item->id }}"
-                                                data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
+                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                                 onclick="showModal(this)">Bayar</a>
                                         @else
                                             Menunggu pembayaran
@@ -603,7 +614,7 @@
                                             data-target-id="modalConfirmImbalJasa"
                                             data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                             data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                            data-nominal="Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}"
+                                            data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
                                             data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
                                             data-file="{{ $item->imbal_jasa['file'] }}"
                                             onclick="showModal(this)">Selesai</a>
@@ -631,12 +642,12 @@
                 @if ($is_kredit_page)
                     @if ($item->imbal_jasa)
                         @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
-                            <a>Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}</a>
+                            <a>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</a>
                         @else
                             @if (\Session::get(config('global.role_id_session')) == 3)
                                 <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                             @else
-                                <span>Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}</span>
+                                <span>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</span>
                             @endif
                         @endif
                     @else
@@ -666,12 +677,12 @@
                 @else
                     @if ($item->imbal_jasa)
                         @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
-                            <a>Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}</a>
+                            <a>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</a>
                         @else
                             @if (\Session::get(config('global.role_id_session')) == 3)
                                 <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                             @else
-                                <span>Rp {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }}</span>
+                                <span>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</span>
                             @endif
                         @endif
                     @else

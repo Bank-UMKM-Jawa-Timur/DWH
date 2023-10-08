@@ -21,10 +21,14 @@
   </head>
   <body>
     @php
+      $name_vendor = DB::table('users')->where('users.id', Auth::user()->id)
+      ->select('vendors.name')
+      ->join('vendors', 'vendors.id', '=', 'users.vendor_id')
+      ->first();
       $user = \Session::get(config('global.auth_session'));
       $token = \Session::get(config('global.user_token_session'));
       $name = \Session::get(config('global.role_id_session')) == 3 ? Auth::user()->email : $user['data']['nama'];
-      $sub_name = \Session::get(config('global.role_id_session')) == 3 ? '' : $user['data']['nip'];
+      $sub_name = \Session::get(config('global.role_id_session')) == 3 ? strval($name_vendor->name) : $user['data']['nip'];
       $display_role = \Session::get(config('global.role_id_session')) == 3 ? 'Vendor' : $user['role'];
     @endphp
     <div class="layout-wrapper font-lexend">
@@ -38,7 +42,7 @@
         <!-- layout overlay -->
         <div class="layout-overlay lg:hidden hidden"></div>
         <div class="layout-overlay-form hidden"></div>
-        
+
         <div class="modal-overlay hidden" id="preload-data">
           <div class="flex justify-center mt-[35vh]">
           <div class="text-center space-y-5">

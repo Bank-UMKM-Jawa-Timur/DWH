@@ -56,6 +56,7 @@ class AuthenticatedSessionController extends Controller
                                 ->post($apiURL, [
                                     'email' => $request->input_type,
                                     'password' => $request->password,
+                                    'project' => 'dashboard_kkb'
                                 ]);
                 $responseBody = json_decode($response->getBody(), true);
                 // return $responseBody;
