@@ -705,12 +705,6 @@ class KreditController extends Controller
                 $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
             }
 
-            // set page number
-            if ($tab_type != 'tab-kkb')
-                $request->merge(['page' => 1]);
-            else
-                $request->merge(['page' => $temp_page]);
-
             if (is_numeric($page_length)) {
                 if ($tab_type == 'tab-kkb')
                     $data = $data->paginate($page_length);
