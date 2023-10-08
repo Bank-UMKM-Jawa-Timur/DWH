@@ -54,13 +54,14 @@
                             }
                         }
                     }
+                    $('#preload-data').addClass("hidden")
                 },
                 error: function(e) {
                     console.log('Error load json')
                     console.log(e)
+                    $('#preload-data').addClass("hidden")
                 }
             });
-            $('#preload-data').addClass("hidden")
         }
 
         function showModal(identifier) {
