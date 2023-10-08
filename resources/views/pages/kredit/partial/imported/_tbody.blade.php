@@ -68,7 +68,7 @@
                             <br>
                         @endif
                         @if ($is_kredit_page)
-                            <button class="toggle-modal-upload-berkas-tagihan underline"
+                            <button class="toggle-modal-upload-berkas-tagihan underline text-red-600"
                                 data-target-id="modalUploadBerkasTagihan"
                                 data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
                                 Upload Berkas
@@ -135,7 +135,7 @@
                                 @if (property_exists($item->bukti_pembayaran, 'is_confirm'))
                                     @if (!$item->bukti_pembayaran->is_confirm)
                                         <a style="cursor: pointer; text-decoration: underline;"
-                                            class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran" data-target-id="modalConfirmBuktiPembayaran"
+                                            class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran text-red-600" data-target-id="modalConfirmBuktiPembayaran"
                                             data-id-category="1"
                                             data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
                                             data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
@@ -158,7 +158,7 @@
                                     @endif
                                 @else
                                     <a style="cursor: pointer; text-decoration: underline;"
-                                        class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran" data-target-id="modalConfirmBuktiPembayaran"
+                                        class="confirm-bukti-pembayaran toggle-modal-confirm-bukti-pembayaran text-red-600" data-target-id="modalConfirmBuktiPembayaran"
                                         data-id-category="1"
                                         data-tanggal="{{ date('d-m-Y', strtotime($item->bukti_pembayaran->date)) }}"
                                         data-id-doc="{{ $item->bukti_pembayaran ? $item->bukti_pembayaran->id : 0 }}"
@@ -200,7 +200,7 @@
                             <br>
                         @endif
                         @if ($is_kredit_page)
-                            <button class="toggle-modal-upload-berkas-tagihan underline" data-target-id="modalUploadBerkasTagihan"
+                            <button class="toggle-modal-upload-berkas-tagihan underline text-red-600" data-target-id="modalUploadBerkasTagihan"
                                 data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
                                 Upload Berkas
                             </button>
@@ -217,7 +217,7 @@
                         @if (!$item->bukti_pembayaran && \Session::get(config('global.role_id_session')) != 3)
                             @if ($is_kredit_page)
                                 @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
-                                    <button class="toggle-modal-upload-bukti-pembayaran underline" data-target-id="modalUploadBuktiPembayaran"
+                                    <button class="toggle-modal-upload-bukti-pembayaran underline text-red-600" data-target-id="modalUploadBuktiPembayaran"
                                         data-id_kkb="{{ $item->kkb_id }}" onclick="showModal(this)">
                                         Bayar
                                     </button>
@@ -233,7 +233,7 @@
                                     @if (property_exists($item->bukti_pembayaran, 'is_confirm'))
                                         @if (!$item->bukti_pembayaran->is_confirm)
                                             @if (\Session::get(config('global.role_id_session')) == 3)
-                                                <button class="toggle-modal-confirm-bukti-pembayaran"
+                                                <button class="toggle-modal-confirm-bukti-pembayaran text-red-600"
                                                     style="cursor: pointer;"
                                                     data-target-id="modalConfirmBuktiPembayaran"
                                                     data-file="@if($item->bukti_pembayaran->file){{ $item->bukti_pembayaran->file }}@endif"
@@ -345,7 +345,7 @@
                                                     onclick="showModal(this)">{{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }}</a>
                                             @else
                                                 <a style="text-decoration: underline; cursor: pointer;"
-                                                    class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                    class="toggle-modal text-red-600" data-target-id="modalConfirmPenyerahanUnit"
                                                     data-id-category="2"
                                                     data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                     data-file="@isset($item->penyerahan_unit->file){{ $item->penyerahan_unit->file }}@endisset"
@@ -357,7 +357,7 @@
                                             @endif
                                         @else
                                             <a style="text-decoration: underline; cursor: pointer;"
-                                                class="toggle-modal" data-target-id="modalConfirmPenyerahanUnit"
+                                                class="toggle-modal text-red-600" data-target-id="modalConfirmPenyerahanUnit"
                                                 data-id-category="2"
                                                 data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                                 data-file="@isset($item->penyerahan_unit->file){{ $item->penyerahan_unit->file }}@endisset"
@@ -415,7 +415,7 @@
                                 <span>Menunggu konfirmasi cabang</span>
                             @else
                                 <a style="text-decoration: underline; cursor: pointer;"
-                                    class="toggle-modal"
+                                    class="toggle-modal text-red-600"
                                     data-target-id="modalConfirmPenyerahanUnit"
                                     data-id-category="2"
                                     data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
@@ -484,7 +484,7 @@
                                 <span>Menunggu konfirmasi cabang</span>
                             @else
                                 <a style="text-decoration: underline; cursor: pointer;"
-                                    class="toggle-modal"
+                                    class="toggle-modal text-red-600"
                                     data-target-id="modalConfirmPenyerahanUnit"
                                     data-id-category="2"
                                     data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
@@ -516,7 +516,7 @@
                                         @if ($item->imbal_jasa)
                                             @if (!$item->imbal_jasa->is_confirm)
                                                 <a style="cursor: pointer; text-decoration: underline;"
-                                                    class="confirm-imbal-jasa toggle-modal-confirm-imbal-jasa" data-target-id="modalConfirmImbalJasa"
+                                                    class="confirm-imbal-jasa toggle-modal-confirm-imbal-jasa text-red-600" data-target-id="modalConfirmImbalJasa"
                                                     data-id="{{ $item->imbal_jasa->id }}"
                                                     data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
                                                     data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->created_at)->format('d-m-Y') }}"
@@ -588,7 +588,7 @@
                                             @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
                                                 <a href="#"
                                                     style="text-decoration: underline; cursor: pointer;"
-                                                    class="toggle-modal-upload-imbal-jasa underline"
+                                                    class="toggle-modal-upload-imbal-jasa underline text-red-600"
                                                     data-target-id="modalUploadImbalJasa"
                                                     data-id="{{ $item->id }}"
                                                     data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
