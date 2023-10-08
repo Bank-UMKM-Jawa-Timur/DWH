@@ -93,8 +93,9 @@ class KreditController extends Controller
                 ])
                 ->whereNotNull('kredits.pengajuan_id')
                 ->whereNull('kredits.imported_data_id')
-                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
+                ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                ->having('status', strtolower($request->status));
                 })
                 ->when($request->cabang,function($query,$cbg){
                     return $query->where('kredits.kode_cabang',$cbg);

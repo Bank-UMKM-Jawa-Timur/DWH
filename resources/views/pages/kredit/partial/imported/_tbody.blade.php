@@ -518,7 +518,7 @@
                                                 <a style="cursor: pointer; text-decoration: underline;"
                                                     class="confirm-imbal-jasa toggle-modal-confirm-imbal-jasa" data-target-id="modalConfirmImbalJasa"
                                                     data-id="{{ $item->imbal_jasa->id }}"
-                                                    data-file="{{ $item->imported_data_id }}"
+                                                    data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
                                                     data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->created_at)->format('d-m-Y') }}"
                                                     data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
                                                     data-confirm="{{ $item->imbal_jasa->is_confirm }}"
@@ -532,7 +532,7 @@
                                                     data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
                                                     data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
                                                     data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
-                                                    data-file="{{ $item->imported_data_id }}"
+                                                    data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
                                                     onclick="showModal(this)">Selesai</a>
                                             @else
                                                 Menunggu Pembayaran dari Cabang
@@ -567,7 +567,7 @@
                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
                                 data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
                                 data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
-                                data-file="{{ $item->imported_data_id }}"
+                                data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
                                 onclick="showModal(this)">Selesai</a>
                         @else
                             Menunggu Pembayaran dari Cabang
@@ -607,7 +607,7 @@
                                                     data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
                                                     data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
                                                     data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
-                                                    data-file="{{ $item->imported_data_id }}"
+                                                    data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
                                                     onclick="showModal(this)">Selesai</a>
                                             @endif
                                         @endif
