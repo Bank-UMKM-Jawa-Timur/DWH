@@ -147,6 +147,10 @@
                     } else {
                       ErrorMessage(data.message)
                   }
+                },
+                error: function(e) {
+                  console.log(e)
+                  ErrorMessage('Terjadi kesalahan. Harap muat ulang halaman terlebih dahulu.')
                 }
             });
         }
