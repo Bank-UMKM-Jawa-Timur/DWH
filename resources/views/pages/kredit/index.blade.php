@@ -825,6 +825,7 @@
                 </div>
             </div>
         </div>
+    </div>
     @if (\Session::get(config('global.role_id_session')) != 3)
         <div id="tab-import-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
