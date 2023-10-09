@@ -800,6 +800,27 @@
 
 @push('extraScript')
 <script>
+    // Get Data Chart
+    var dataCabang = [];
+    var dataTotalCabang = [];
+    $.ajax({
+        url: "{{ route('get-data-charts') }}",
+        type: "GET",
+        datatype: "JSON",
+        async: true,
+        success: function(response){
+            $.each(response.data, function(i, v){
+                dataCabang.push(v.cabang);
+                dataTotalCabang.push(v.total);
+            })
+
+            renderChart();
+        }
+    })
+    console.log(dataCabang);
+    console.log(dataTotalCabang);
+    // End Get data Chart
+
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
@@ -827,48 +848,50 @@
     var donut = new ApexCharts(document.querySelector(".chart"), options);
     donut.render();
 
-    // line chart
-    var lineOptions = {
-        series: [
-            {
-                name: "Data Set",
-                data: [10],
+    function renderChart(){
+        // line chart
+        var lineOptions = {
+            series: [
+                {
+                    name: "Total",
+                    data: dataTotalCabang,
+                },
+            ],
+            chart: {
+                type: "bar",
+                height: 350,
+                stacked: true,
             },
-        ],
-        chart: {
-            type: "bar",
-            height: 350,
-            stacked: true,
-        },
-        colors: ["#DC3545"],
-        responsive: [
-            {
-                breakpoint: 480,
-                options: {
-                    legend: {
-                        position: "bottom",
-                        offsetX: -10,
-                        offsetY: 0,
+            colors: ["#DC3545"],
+            responsive: [
+                {
+                    breakpoint: 480,
+                    options: {
+                        legend: {
+                            position: "bottom",
+                            offsetX: -10,
+                            offsetY: 0,
+                        },
                     },
                 },
+            ],
+            xaxis: {
+                categories: dataCabang,
             },
-        ],
-        xaxis: {
-            categories: ["Data Set"],
-        },
-        fill: {
-            opacity: 1,
-        },
-        legend: {
-            position: "top",
-            offsetX: 0,
-            offsetY: 50,
-        },
-    };
-
-    var lineChart = document.querySelector(".line-chart");
-    var chart = new ApexCharts(lineChart, lineOptions);
-    chart.render();
+            fill: {
+                opacity: 1,
+            },
+            legend: {
+                position: "top",
+                offsetX: 0,
+                offsetY: 50,
+            },
+        };
+    
+        var lineChart = document.querySelector(".line-chart");
+        var chart = new ApexCharts(lineChart, lineOptions);
+        chart.render();
+    }
 
     $('#page_length').on('change', function() {
         $('#form_kkb').submit()

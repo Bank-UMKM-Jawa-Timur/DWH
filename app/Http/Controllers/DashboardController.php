@@ -641,4 +641,117 @@ class DashboardController extends Controller
 
         return $user ? $user->role_name : '';
     }
+
+    public function getChartData(){
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+
+        $apiCabang = $host . '/kkb/get-cabang/';
+        $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+        $responseCabang = json_decode($api_req->getBody(), true);
+        $dataCharts = [];
+
+        if ($responseCabang) {
+            // for ($i = 0; $i < count($responseCabang); $i++) {
+            foreach ($responseCabang as $key => $value) {
+                $kode_cabang = $value['kode_cabang'];
+                $cabang = $value['cabang'];
+                $dataKredits = Kredit::select(
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.kode_cabang',
+                    'kkb.id AS kkb_id',
+                    'kkb.tgl_ketersediaan_unit',
+                    'kkb.id_tenor_imbal_jasa',
+                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                )
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                    ])
+                    ->whereNotNull('kredits.pengajuan_id')
+                    ->whereNull('kredits.imported_data_id')
+                    ->having("status", 'done')
+                    ->where('kode_cabang', $kode_cabang)
+                    ->count();
+                $dataImported = DB::table('imported_data AS import')
+                    ->select(
+                        'import.name',
+                        'import.tgl_po',
+                        'import.tgl_realisasi',
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.imported_data_id',
+                        'kredits.kode_cabang',
+                        'kkb.id AS kkb_id',
+                        'kkb.user_id',
+                        'kkb.tgl_ketersediaan_unit',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.nominal_realisasi',
+                        'kkb.nominal_dp',
+                        'kkb.nominal_imbal_jasa',
+                        'kkb.nominal_pembayaran_imbal_jasa',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
+                        \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                        \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                        \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                        \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                    )
+                    ->join('kredits', 'kredits.imported_data_id', 'import.id')
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->join('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->having("status", 'done')
+                    ->where('kode_cabang', $kode_cabang)
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.imported_data_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
+                    ])
+                    ->count();
+                $dataCabang = [
+                    'kode_cabang' => $kode_cabang,
+                    'cabang' => $cabang,
+                    'total' => intval($dataKredits) + intval($dataImported),
+                ];
+
+                array_push($dataCharts, $dataCabang);
+            }
+
+            return response()->json([
+                'data' => $dataCharts
+            ]);
+        } else {
+            return response()->json([
+                'data' => null
+            ]);
+        }
+    }
 }
