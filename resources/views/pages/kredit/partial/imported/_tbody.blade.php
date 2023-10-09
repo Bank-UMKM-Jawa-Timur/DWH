@@ -9,7 +9,7 @@
             <td>{{ $item->cabang }} </td>
         @endif
         {{--  Ketersediaan Unit  --}}
-        <td>{{ $item->tgl_ketersediaan_unit }}</td>
+        <td>{{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}</td>
         {{--  Tagihan  --}}
         <td>
             @if ($item->tgl_ketersediaan_unit)
@@ -1085,7 +1085,9 @@
         </td>
     </tr>
 @empty
-    <td colspan="{{ 7 + count($documentCategories) }}" class="text-center">
-        <span class="text-danger">Maaf data belum tersedia.</span>
-    </td>
+    <tr>
+        <td colspan="{{ 7 + count($documentCategories) }}" class="text-center">
+            <span class="text-danger">Maaf data belum tersedia.</span>
+        </td>
+    </tr>
 @endforelse

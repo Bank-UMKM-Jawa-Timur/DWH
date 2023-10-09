@@ -749,16 +749,15 @@
     <div class="body-pages">
         <input type="hidden" name="tab" id="tab_type"
             value="@isset($_GET['tab_type']) {{ $_GET['tab_type'] }} @endisset">
-        <div class="tab-wrapper flex">
-            <a href="" data-tab="tab-kkb"
-                class="tab-btn bg-white px-5 py-2 border border-b-0 text-theme-primary  rounded-tr-md rounded-tl-md">Data
-                KKB</a></li>
-            @if (\Session::get(config('global.role_id_session')) != 3)
+        @if (\Session::get(config('global.role_id_session')) != 3)
+            <div class="tab-wrapper flex">
+                <a href="" data-tab="tab-kkb"
+                    class="tab-btn bg-white px-5 py-2 border border-b-0 text-theme-primary  rounded-tr-md rounded-tl-md">Data
+                    KKB</a></li>
                 <a href="" data-tab="tab-import-kkb"
                     class="tab-btn px-5 py-2 border border-b-0 rounded-tr-md rounded-tl-md">Data Import Google SpreadSheet</a></li>
-            @endif
-        </div>
-
+            </div>
+        @endif
         <div id="tab-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
