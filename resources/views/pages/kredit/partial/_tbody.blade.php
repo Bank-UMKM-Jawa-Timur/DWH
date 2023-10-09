@@ -1132,7 +1132,9 @@
         </td>
     </tr>
 @empty
-    <td colspan="{{ 8 + count($documentCategories) }}" class="text-center">
-        <span class="text-danger">Maaf data belum tersedia.</span>
-    </td>
+    <tr>
+        <td colspan="{{ 8 + count($documentCategories) }}" class="text-center">
+            <span class="text-danger">Maaf data belum tersedia.</span>
+        </td>
+    </tr>
 @endforelse

@@ -384,6 +384,7 @@
                                     arr_data.push(arr_row)
                             }
                             // Show excel data to html table
+                            console.log(arr_data)
                             showToTable(arr_data)
                         }); 
                     }  
