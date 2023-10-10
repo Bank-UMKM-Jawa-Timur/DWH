@@ -10,7 +10,7 @@
             </button>
         </div>
         <form id="modal-imbal-jasa-form">
-            @csrf
+            <input type="hidden" name="_token" id="_token">
             <input type="hidden" name="id_kkbimbaljasa" id="id_kkbimbaljasa">
             <div class="modal-body">
                 <div class="input-box">

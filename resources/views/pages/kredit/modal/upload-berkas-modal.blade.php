@@ -18,8 +18,8 @@
         </div>
 
         <form id="modal-berkas">
+            <input type="hidden" name="_token" id="_token">
             <input type="hidden" name="id_kkb" id="id_kkb">
-            @csrf
             <div class="modal-body">
                 <div class="overflow-x-auto">
                     <ul class="flex tab-wrapping w-full mt-5 border-b-2 p-[6px]">
