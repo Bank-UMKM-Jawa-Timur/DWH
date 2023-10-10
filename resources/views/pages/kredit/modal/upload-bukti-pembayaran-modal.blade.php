@@ -45,7 +45,8 @@
                 $("#modalUploadBuktiPembayaran").addClass("hidden");
                 //$('#preload-data').removeClass("hidden")
                 
-                refreshTable()
+                //refreshTable()
+                location.reload();
             })
         }
         
@@ -60,20 +61,11 @@
                 if (result.isConfirmed) {
                     //$('#preload-data').removeClass("hidden")
                     
-                    refreshTable()
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
-
-        /*$(".toggle-modal-upload-bukti-pembayaran").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            var id = $(this).data('id_kkb');
-
-            $("#modal-bukti-pembayaran").find('#id_kkb').val(id);
-        });*/
 
         $('#modal-bukti-pembayaran').on("submit", function(e) {
             Swal.fire({
