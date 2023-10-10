@@ -53,7 +53,7 @@
                 icon: 'success',
             }).then((result) => {
                 $("#modalUploadImbalJasa").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
+                //$('#preload-data').removeClass("hidden")
                 
                 refreshTable()
             })
@@ -68,7 +68,7 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
+                    //$('#preload-data').removeClass("hidden")
                     
                     refreshTable()
                 }

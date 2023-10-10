@@ -383,7 +383,7 @@
                                                     data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }}"
                                                     data-confirm_at="{{ $item->penyerahan_unit->confirm_at ? date('d-m-Y', strtotime($item->penyerahan_unit->confirm_at)) : '-' }}"
                                                     href="#"
-                                                    onclick="showModal(this)">Menunggu konfirmasi vendor</a>
+                                                    onclick="showModal(this)">Menunggu konfirmasi cabang</a>
                                             @endif
                                         @else
                                             <a style="text-decoration: underline; cursor: pointer;"
@@ -396,7 +396,7 @@
                                                 data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }}"
                                                 data-confirm_at="{{ $item->penyerahan_unit->confirm_at ? date('d-m-Y', strtotime($item->penyerahan_unit->confirm_at)) : '-' }}"
                                                 href="#"
-                                                onclick="showModal(this)">Menunggu konfirmasi vendor</a>
+                                                onclick="showModal(this)">Menunggu konfirmasi cabang</a>
                                         @endif
                                     @endif
                                 @endif
