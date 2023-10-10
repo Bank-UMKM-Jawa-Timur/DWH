@@ -629,7 +629,7 @@
                                                 data-kategori="{{$item->kategori}}"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
+                                                data-nominal="Rp @if(isset($item->set_imbal_jasa->imbaljasa)) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif"
                                                 data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                                 onclick="showModal(this)">Selesai</a>
@@ -705,7 +705,7 @@
                                             data-kategori="{{$item->kategori}}"
                                             data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                             data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                            data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif"
+                                            data-nominal="Rp @if(isset($item->set_imbal_jasa->imbaljasa)) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif"
                                             data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
                                             data-file="{{ $item->imbal_jasa['file'] }}"
                                             onclick="showModal(this)">Selesai</a>
