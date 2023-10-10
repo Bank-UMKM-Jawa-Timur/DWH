@@ -447,8 +447,8 @@ class KreditController extends Controller
                 ->when($request->cabang, function ($query, $cbg) {
                     return $query->where('kredits.kode_cabang', $cbg);
                 })
-                ->when($search_q,function($query,$q){
-                    return $query->where('import.name', 'LIKE', "%$q%");
+                ->when($request->get('query'), function ($query) use ($request) {
+                    return $query->where('import.name', 'like', '%' . $request->get('query') . '%');
                 })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');

@@ -159,7 +159,7 @@ class DashboardController extends Controller
                                     ->having('status', strtolower($request->status));
                     })
                     ->when($request->get('query'), function ($query) use ($request) {
-                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                        return $query->where('import.name', 'like', '%' . $request->get('query') . '%');
                     })
                     ->when($request->cabang,function($query,$cbg){
                         return $query->where('kredits.kode_cabang',$cbg);

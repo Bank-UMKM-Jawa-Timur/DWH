@@ -854,7 +854,7 @@
                                 <span class="mt-2 ml-3">
                                     @include('components.svg.search')
                                 </span>
-                                <input type="search" placeholder="Search"
+                                <input type="search" placeholder="Search" name="query" value="@if(\Request::has('tab_type') )@if(\Request::get('tab_type') == 'tab-kkb'){{\Request::has('query') ?\Request::get('query'):''}}@endif @endif"
                                     class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
                             </div>
                         </div>
@@ -937,7 +937,7 @@
                                 <span class="mt-2 ml-3">
                                     @include('components.svg.search')
                                 </span>
-                                <input type="search" placeholder="Search"
+                                    <input type="search" placeholder="Search" name="query" value="@if(\Request::has('tab_type') )@if(\Request::get('tab_type') == 'tab-kkb'){{\Request::has('query') ?\Request::get('query'):''}}@endif @endif"
                                     class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
                             </div>
                         </div>
