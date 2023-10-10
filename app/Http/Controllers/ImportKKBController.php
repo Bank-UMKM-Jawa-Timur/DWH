@@ -49,7 +49,15 @@ class ImportKKBController extends Controller
 
     private function dateFormat($arr) {
         for ($i=0; $i < count($arr); $i++) { 
-            $arr[$i] = date('Y-m-d', strtotime($arr[$i]));
+            if (strtolower($arr[$i]) == 'belum') {
+                $arr[$i] = '-';
+            }
+            else if (strtolower($arr[$i]) == 'sudah') {
+                $arr[$i] = '-';
+            }
+            else {
+                $arr[$i] = date('Y-m-d', strtotime($arr[$i]));
+            }
         }
 
         return $arr;
@@ -194,7 +202,6 @@ class ImportKKBController extends Controller
 
                 // Bukti Pembayaran
                 $create_bukti_pembayaran = false;
-                $req_tgl_realisasi[$i] = strtolower($req_tgl_realisasi[$i]) == 'belum' || strtolower($req_tgl_realisasi[$i]) == 'sudah' ? '-' : $req_tgl_realisasi[$i];
                 if ($req_tgl_realisasi[$i] != '-') {
                     $tgl_bukti_pembayaran = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_realisasi[$i])));
                     if ($req_tgl_realisasi[$i] != '-') {
@@ -212,7 +219,6 @@ class ImportKKBController extends Controller
 
                 // Penyerahan Unit
                 $create_penyerahan_unit = false;
-                $req_tgl_penyerahan_unit[$i] = strtolower($req_tgl_penyerahan_unit[$i]) == 'belum' || strtolower($req_tgl_penyerahan_unit[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_unit[$i];
                 if ($req_tgl_penyerahan_unit[$i] != '-') {
                     $tgl_penyerahan_unit = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_unit[$i])));
                     if ($req_tgl_penyerahan_unit[$i] != '-') {
@@ -230,7 +236,6 @@ class ImportKKBController extends Controller
 
                 // Penyerahan STNK
                 $create_penyerahan_stnk = false;
-                $req_tgl_penyerahan_stnk[$i] = strtolower($req_tgl_penyerahan_stnk[$i]) == 'belum' || strtolower($req_tgl_penyerahan_stnk[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_stnk[$i];
                 if ($req_tgl_penyerahan_stnk[$i] != '-') {
                     $tgl_penyerahan_stnk = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_stnk[$i])));
                     if ($req_tgl_penyerahan_stnk[$i] != '-'
@@ -250,7 +255,6 @@ class ImportKKBController extends Controller
 
                 // Penyerahan BPKB
                 $create_penyerahan_bpkb = false;
-                $req_tgl_penyerahan_bpkb[$i] = strtolower($req_tgl_penyerahan_bpkb[$i]) == 'belum' || strtolower($req_tgl_penyerahan_bpkb[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_bpkb[$i];
                 if ($req_tgl_penyerahan_bpkb[$i] != '-') {
                     $tgl_penyerahan_bpkb = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_bpkb[$i])));
                     if ($req_tgl_penyerahan_bpkb[$i] != '-'
@@ -270,7 +274,6 @@ class ImportKKBController extends Controller
 
                 // Penyerahan Polis
                 $create_penyerahan_polis = false;
-                $req_tgl_penyerahan_polis[$i] = strtolower($req_tgl_penyerahan_polis[$i]) == 'belum' || strtolower($req_tgl_penyerahan_polis[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_polis[$i];
                 if ($req_tgl_penyerahan_polis[$i] != '-') {
                     $tgl_penyerahan_polis = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_polis[$i])));
                     if ($req_tgl_penyerahan_polis[$i] != '-'
@@ -290,7 +293,6 @@ class ImportKKBController extends Controller
 
                 // Pembayaran Imbal Jasa
                 $create_pembayaran_imbal_jasa = false;
-                $req_tgl_pembayaran_imbal_jasa[$i] = strtolower($req_tgl_pembayaran_imbal_jasa[$i]) == 'belum' || strtolower($req_tgl_pembayaran_imbal_jasa[$i]) == 'sudah' ? '-' : $req_tgl_pembayaran_imbal_jasa[$i];
                 if ($req_tgl_pembayaran_imbal_jasa[$i] != '-') {
                     $tgl_pembayaran_imbal_jasa = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_pembayaran_imbal_jasa[$i])));
                     $create_pembayaran_imbal_jasa = DB::table('documents')->insert([
