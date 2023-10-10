@@ -6,7 +6,7 @@
         <td>
             @if ($item->kategori == 'data_kkb')
                 @if ($item->detail)
-                    {{ array_key_exists('nama', $item->detail) ? $item->detail['nama'] : '-' }}
+                    {{ array_key_exists('nama', $item->detail) ? $item->detail['nama']  : '-' }}
                 @else
                     undifined
                 @endif
@@ -477,9 +477,9 @@
                                     data-kategori="{{$item->kategori}}"
                                     data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                     data-file="@isset($item->penyerahan_unit->file){{ $item->penyerahan_unit->file }}@endisset"
-                                    data-confirm="{{ $item->penyerahan_unit->is_confirm }}"
-                                    data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }}"
-                                    data-confirm_at="{{ $item->penyerahan_unit->confirm_at ? date('d-m-Y', strtotime($item->penyerahan_unit->confirm_at)) : '-' }}"
+                                    data-confirm="@isset($item->penyerahan_unit->is_confirm) {{ $item->penyerahan_unit->is_confirm }} @endisset"
+                                    data-tanggal="@isset($item->penyerahan_unit->date) {{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }} @endisset"
+                                    data-confirm_at="@isset($item->penyerahan_unit->confirm_at) {{ $item->penyerahan_unit->confirm_at ? date('d-m-Y', strtotime($item->penyerahan_unit->confirm_at)) : '-' }} @endisset"
                                     onclick="showModal(this)">Konfirmasi</a>
                             @endif
                         @endif

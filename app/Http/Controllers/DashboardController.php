@@ -335,7 +335,7 @@ class DashboardController extends Controller
                         // return $e->getMessage();
                     }
                 }
-                
+
                 $invoice = Document::where('kredit_id', $value->id)
                                             ->where('document_category_id', 7)
                                             ->first();
@@ -589,7 +589,7 @@ class DashboardController extends Controller
             $apiCabang = $host . '/kkb/get-cabang/';
             $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
             $responseCabang = json_decode($api_req->getBody(), true);
-
+            $param['dataCabang'] = $responseCabang;
             $arr_data = [];
 
             if ($responseCabang) {
