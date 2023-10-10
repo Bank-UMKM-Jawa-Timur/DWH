@@ -67,38 +67,9 @@
                 <div class="mt-2 p-5">
                     <div id="tab-po" class="tab-content">
                         <div class="gap-5 space-y-3">
-                            <div class="flex gap-5 w-full mt-0">
-                                <div class="input-box w-full space-y-3">
-                                    <label for="" class="uppercase appearance-none">Nomor PO</label>
-                                    <input type="text" disabled class="p-2 w-full border" id="detail_nomorPo"/>
-                                </div>
-                                <div class="input-box w-full space-y-3">
-                                    <label for="" class="uppercase appearance-none">Tanggal PO</label>
-                                    <input type="text" disabled class="p-2 w-full border" id="detail_tanggalPo" />
-                                </div>
-                            </div>
-
-                            <div class="space-y-3">
-                                <label for="" class="uppercase appearance-none">File PO</label>
-                                <div class="content-po h-[528px] w-full bg-gray-100">
-                                    <iframe id="new_detail_filepo" src="" class="mt-2" width="100%"
-                                    height="500"></iframe>
-                                </div>
-                                <div class="alert-po hidden text-center">
-                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
-                                    <p class="font-semibold tracking-tighter text-theme-text">
-                                        File PO Tidak ada di server.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="tab-bukti" class="tab-content hidden">
-                        <div class="grid grid-cols-1 lg:space-y-5 gap-5">
                             <div class="space-y-5 w-full">
                                 <div class="">
-                                    <label for="" class="text-2xl tracking-tighter font-semibold">Data
-                                        PO</label>
+                                    <label for="" class="text-2xl tracking-tighter font-semibold">Data PO</label>
                                     <div class="space-y-5 mt-5">
                                         <div class="flex gap-5 w-full mt-2">
                                             <div class="input-box w-full space-y-3">
@@ -137,6 +108,34 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="flex gap-5 w-full mt-0">
+                                <div class="input-box w-full space-y-3">
+                                    <label for="" class="uppercase appearance-none">Nomor PO</label>
+                                    <input type="text" disabled class="p-2 w-full border" id="detail_nomorPo"/>
+                                </div>
+                                <div class="input-box w-full space-y-3">
+                                    <label for="" class="uppercase appearance-none">Tanggal PO</label>
+                                    <input type="text" disabled class="p-2 w-full border" id="detail_tanggalPo" />
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <label for="" class="uppercase appearance-none">File PO</label>
+                                <div class="content-po h-[528px] w-full bg-gray-100">
+                                    <iframe id="new_detail_filepo" src="" class="mt-2" width="100%"
+                                    height="500"></iframe>
+                                </div>
+                                <div class="alert-po hidden text-center">
+                                    <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                                    <p class="font-semibold tracking-tighter text-theme-text">
+                                        File PO Tidak ada di server.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-bukti" class="tab-content hidden">
+                        <div class="grid grid-cols-1 lg:space-y-5 gap-5">
                             <div class="w-full">
                                 <div class="space-y-3">
                                     <div class="content-dbp h-[528px] max-w-full mx-auto bg-gray-100">
