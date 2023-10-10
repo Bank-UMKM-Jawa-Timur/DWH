@@ -48,7 +48,6 @@
                                 $('#table_content').html(response.html);
                             }
                             if ("html_import" in response) {
-                                console.log(response.html_import)
                                 $('#table_content_import').html(response.html_import);
                             }
                         }
@@ -57,10 +56,20 @@
                 },
                 error: function(e) {
                     console.log('Error load json')
-                    console.log(e)
+                    //console.log(e)
                     //$('#preload-data').addClass("hidden")
                 }
             });
+        }
+
+        function generateCsrfToken() {
+            var token = "{{csrf_token()}}"
+            if (token == '') {
+                generateCsrfToken();
+            }
+            else {
+                return token;
+            }
         }
 
         function showModal(identifier) {
@@ -75,12 +84,16 @@
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalUploadBerkasTagihan') {
                 var id = $(identifier).data('id_kkb');
+                const token = generateCsrfToken()
+                $(`#${targetId}`).find('#_token').val(token);
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalTagihan') {
                 var id = $(identifier).data('id');
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalUploadBuktiPembayaran') {
                 var id = $(identifier).data('id_kkb');
+                const token = generateCsrfToken()
+                $(`#${targetId}`).find('#_token').val(token);
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalConfirmBuktiPembayaran') {
                 const confirm_id = $(identifier).data('id-doc')
@@ -502,6 +515,8 @@
             } else if (targetId == 'modalUploadBerkas') {
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");
+                const token = generateCsrfToken()
+                $(`#${targetId}`).find('#_token').val(token);
 
                 var id = $(identifier).data('id_kkb')
                 var id_stnk = $(identifier).data('id-stnk') ? $(identifier).data('id-stnk') : '';
@@ -671,6 +686,8 @@
                 $(".layout-overlay-edit-form").removeClass("hidden");
                 const data_id = $(identifier).data('id')
                 const data_nominal = $(identifier).data('nominal')
+                const token = generateCsrfToken()
+                $(`#${targetId}`).find('#_token').val(token);
                 $(`#${targetId} #id_kkbimbaljasa`).val(data_id)
                 $(`#${targetId} #nominal_imbal_jasa`).val(data_nominal)
             } else if (targetId == 'modalUploadBuktiPenyerahanUnit') {
@@ -678,8 +695,10 @@
                 $(".layout-overlay-edit-form").removeClass("hidden");
 
                 const id = $(identifier).data('id_kkb');
+                const token = generateCsrfToken()
 
                 $(`#${targetId} #id_kkb`).val(id)
+                $(`#${targetId}`).find('#_token').val(token);
             } else if (targetId == 'modalBuktiPembayaran') {
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");

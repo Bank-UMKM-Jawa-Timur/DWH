@@ -10,7 +10,7 @@
             </button>
         </div>
         <form id="modal-tgl-penyerahan" enctype="multipart/form-data">
-            @csrf
+            <input type="hidden" name="_token" id="_token">
             <input type="hidden" name="id_kkb" id="id_kkb">
             <div class="modal-body">
                 <p class="uppercase appearance-none" id="kategori_data"></p>

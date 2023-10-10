@@ -10,7 +10,7 @@
             </button>
         </div>
         <form id="modal-tagihan" enctype="multipart/form-data">
-            @csrf
+            <input type="hidden" name="_token" id="_token">
             <input type="hidden" name="id_kkb" id="id_kkb">
             <div class="modal-body">
                 <div class="input-box space-y-3">
