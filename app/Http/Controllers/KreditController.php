@@ -66,6 +66,7 @@ class KreditController extends Controller
             $user = $token ? $this->getLoginSession() : Auth::user();
 
             $user_id = $token ? $user['id'] : $user->id;
+            $user_cabang =  $user['kode_cabang'];
             if (!$token)
                 $user_id = 0; // vendor
 
@@ -399,8 +400,8 @@ class KreditController extends Controller
                     'kredits.id',
                     \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
-                    'kredits.imported_data_id',
                     'kredits.kode_cabang',
+                    'kredits.imported_data_id',
                     'kkb.id AS kkb_id',
                     'kkb.user_id',
                     'kkb.tgl_ketersediaan_unit',
@@ -453,7 +454,8 @@ class KreditController extends Controller
                 ->orderBy('total_file_confirmed');
 
             if ($this->param['role_id'] == 2) {
-                $imported = $imported->whereNull('kredits.pengajuan_id')
+                $imported = $imported->where('kredits.kode_cabang', $user_cabang)
+                                        ->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
                                         ->whereNull('kkb.user_id')
                                         ->whereNull('kredits.is_continue_import')
@@ -477,7 +479,8 @@ class KreditController extends Controller
             }
             else
                 $imported = $imported->get();
-
+                // return $user_cabang;
+                // return count($imported);
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
@@ -588,6 +591,7 @@ class KreditController extends Controller
             $user = $token ? $this->getLoginSession() : Auth::user();
 
             $user_id = $token ? $user['id'] : $user->id;
+            $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
             if (!$token)
                 $user_id = 0; // vendor
 
@@ -965,11 +969,12 @@ class KreditController extends Controller
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
             if ($this->param['role_id'] == 2) {
-                $imported = $imported->whereNull('kredits.pengajuan_id')
+                $imported = $imported->where('kredits.kode_cabang', $user_cabang)
+                                        ->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
                                         ->whereNull('kkb.user_id')
                                         ->whereNull('kredits.is_continue_import')
-                                        ->orWhere('kkb.user_id', $user_id)
+                                        ->where('kkb.user_id', $user_id)
                                         ->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
                                         ->whereNull('kredits.is_continue_import');
@@ -1049,6 +1054,7 @@ class KreditController extends Controller
 
                 usleep(500 * 1000); // sleep for 0.5 millisec
             }
+
 
             $this->param['imported'] = $imported;
             $html_import = view('pages.kredit.partial.imported._table', $this->param)->render();

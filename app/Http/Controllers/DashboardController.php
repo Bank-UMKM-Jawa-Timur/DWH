@@ -97,6 +97,7 @@ class DashboardController extends Controller
             $user = $token ? $this->getLoginSession() : Auth::user();
 
             $user_id = $token ? $user['id'] : $user->id;
+            $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
             if (!$token)
                 $user_id = 0; // vendor
 
@@ -482,7 +483,8 @@ class DashboardController extends Controller
                 ->orderBy('total_file_confirmed');
 
             if ($this->param['role_id'] == 2) {
-                $imported = $imported->whereNull('kredits.pengajuan_id')
+                $imported = $imported->where('kredits.kode_cabang', $user_cabang)
+                                        ->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
                                         ->whereNull('kkb.user_id')
                                         ->whereNull('kredits.is_continue_import')
