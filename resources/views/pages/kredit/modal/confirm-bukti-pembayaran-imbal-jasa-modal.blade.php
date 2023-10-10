@@ -80,7 +80,8 @@
                 $("#modalConfirmImbalJasa").addClass("hidden");
                 //$('#preload-data').removeClass("hidden")
 
-                refreshTable()
+                //refreshTable()
+                location.reload();
             })
         }
 
@@ -95,7 +96,8 @@
                 if (result.isConfirmed) {
                     //$('#preload-data').removeClass("hidden")
 
-                    refreshTable()
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }

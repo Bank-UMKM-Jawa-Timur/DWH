@@ -54,7 +54,8 @@
                 $("#modalUploadBuktiPenyerahanUnit").addClass("hidden");
                 //$('#preload-data').removeClass("hidden")
 
-                refreshTable()
+                //refreshTable()
+                location.reload();
             })
         }
 
@@ -69,20 +70,11 @@
                 if (result.isConfirmed) {
                     //$('#preload-data').removeClass("hidden")
 
-                    refreshTable()
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
-
-        /*$(".toggle-modal").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            const id = $(this).data('id_kkb');
-
-            $('#modalUploadBuktiPenyerahanUnit #id_kkb').val(id)
-        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
