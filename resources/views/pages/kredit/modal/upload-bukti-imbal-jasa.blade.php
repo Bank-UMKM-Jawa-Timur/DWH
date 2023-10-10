@@ -55,7 +55,8 @@
                 $("#modalUploadImbalJasa").addClass("hidden");
                 //$('#preload-data').removeClass("hidden")
                 
-                refreshTable()
+                //refreshTable()
+                location.reload();
             })
         }
         
@@ -70,18 +71,11 @@
                 if (result.isConfirmed) {
                     //$('#preload-data').removeClass("hidden")
                     
-                    refreshTable()
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
-
-        /*$(".toggle-modal-upload-imbal-jasa").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-            const data_id = $(this).data('id')
-            $('#id_kkbimbaljasa').val(data_id)
-        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");

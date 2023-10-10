@@ -32,11 +32,11 @@
                     <label for="" class="uppercase">Cabang</label>
                     <select name="cabang" class="w-full p-2 border" id="cabang">
                         <option value="">-- Pilih Cabang ---</option>
-                        @forelse ($dataCabang as $item)
-                            <option {{ Request()->cabang == $item['kode_cabang'] ? 'selected' : '' }} value="{{ $item['kode_cabang'] }}">{{ $item['kode_cabang'] }} - {{ $item['cabang'] }}</option>
-                        @empty
-                            <option value="">Response Cabang tidak ada</option>
-                        @endforelse
+                        @isset($dataCabang)
+                            @foreach ($dataCabang as $item)
+                                <option {{ Request()->cabang == $item['kode_cabang'] ? 'selected' : '' }} value="{{ $item['kode_cabang'] }}">{{ $item['kode_cabang'] }} - {{ $item['cabang'] }}</option>
+                            @endforeach
+                        @endisset
                     </select>
                 </div>
             @endif

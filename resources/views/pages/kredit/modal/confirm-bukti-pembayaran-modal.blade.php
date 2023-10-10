@@ -62,7 +62,8 @@
                 $("#modalConfirmBuktiPembayaran").addClass("hidden");
                 //$('#preload-data').removeClass("hidden")
 
-                refreshTable()
+                //refreshTable()
+                location.reload();
             })
         }
 
@@ -77,35 +78,11 @@
                 if (result.isConfirmed) {
                     //$('#preload-data').removeClass("hidden")
 
-                    refreshTable()
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
-
-        /*$(".toggle-modal-confirm-bukti-pembayaran").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            const confirm_id = $(this).data('id-doc')
-            const is_confirm = $(this).data('confirm')
-            const confirm_category_id = $(this).data('id-category')
-            const file = $(this).data('file');
-            const status = $(this).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
-                'Menunggu konfirmasi dari vendor.';
-            const tanggal = $(this).data('tanggal');
-            var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#navpanes=0";
-
-            $('#confirm_bukti_pembayaran_img').attr('src', path_file)
-            $('#confirm_tanggal_pembayaran').val(tanggal)
-            $('#status_confirm').val(status)
-            $('#confirm_id').val(confirm_id)
-            $('#confirm_id_category').val(confirm_category_id)
-
-            if (is_confirm) {
-                $('#modalConfirmBuktiPembayaran .modal-footer').css('display', 'none')
-            }
-        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
