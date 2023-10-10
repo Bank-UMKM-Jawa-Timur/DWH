@@ -53,12 +53,12 @@
                             }
                         }
                     }
-                    $('#preload-data').addClass("hidden")
+                    //$('#preload-data').addClass("hidden")
                 },
                 error: function(e) {
                     console.log('Error load json')
                     console.log(e)
-                    $('#preload-data').addClass("hidden")
+                    //$('#preload-data').addClass("hidden")
                 }
             });
         }
@@ -77,7 +77,7 @@
                 var id = $(identifier).data('id_kkb');
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalTagihan') {
-                var id = $(identifier).data('id_kkb');
+                var id = $(identifier).data('id');
                 $(`#${targetId}`).find('#id_kkb').val(id);
             } else if (targetId == 'modalUploadBuktiPembayaran') {
                 var id = $(identifier).data('id_kkb');
@@ -86,6 +86,7 @@
                 const confirm_id = $(identifier).data('id-doc')
                 const is_confirm = $(identifier).data('confirm')
                 const confirm_category_id = $(identifier).data('id-category')
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
                 const file = $(identifier).data('file');
                 const status = $(identifier).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
                     'Menunggu konfirmasi dari vendor.';
@@ -95,6 +96,7 @@
                 $(`#${targetId} #confirm_bukti_pembayaran_img`).attr('src', path_file)
                 $(`#${targetId} #confirm_tanggal_pembayaran`).val(tanggal)
                 $(`#${targetId} #status_confirm`).val(status)
+                $(`#${targetId} #kategori_data`).text(kategori)
                 $(`#${targetId} #confirm_id`).val(confirm_id)
                 $(`#${targetId} #confirm_id_category`).val(confirm_category_id)
 
@@ -105,13 +107,25 @@
                 const data_id = $(identifier).data('id')
                 const tanggal = $(identifier).data('tanggal')
                 const nominal = $(identifier).data('nominal')
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
                 const is_confirm = $(identifier).data('confirm')
                 const confirm = $(identifier).data('confirm') ? 'Sudah dikonfirmasi' : 'Belum dikonfirmasi'
                 const file_bukti = $(identifier).data('file') ? $(identifier).data('file') : ''
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-imbal-jasa/" + file_bukti;
 
+                fetch(path_file).then(function(response){
+                    if(!response.ok){
+                        $('.content-bukti-imbal-jasa').addClass("hidden");
+                        $('.alert-bukti-imbal-jasa').removeClass("hidden");
+                    }else{
+                        $('.content-bukti-imbal-jasa').removeClass("hidden");
+                        $('.alert-bukti-imbal-jasa').addClass("hidden");
+                    }
+                })
+
                 $(`#${targetId} #preview_imbal_jasa`).attr("src", path_file);
                 $(`#${targetId} #id_cat`).val(data_id)
+                $(`#${targetId} #kategori_data`).text(kategori)
                 $(`#${targetId} #tgl_upload_imbal_jasa`).val(tanggal)
                 $(`#${targetId} #nominal_imbal_jasa`).val(nominal)
                 $(`#${targetId} #status_konfirmasi_imbal_jasa`).val(confirm)
@@ -126,6 +140,8 @@
 
                 const id_kkb = $(identifier).data('id_kkb');
                 const data_id = $(identifier).data('id-doc')
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
+
                 const data_category_doc_id = $(identifier).data('id-category')
                 const tanggal = $(identifier).data('tanggal');
                 const is_confirm = $(identifier).data('confirm');
@@ -136,8 +152,19 @@
                 const file = $(identifier).data('file');
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-peyerahan/" + file;
 
+                fetch(path_file).then(function(response){
+                    if(!response.ok){
+                        $('.content-penyerahan-unit').addClass("hidden");
+                        $('.alert-penyerahan-unit').removeClass("hidden");
+                    }else{
+                        $('.content-penyerahan-unit').removeClass("hidden");
+                        $('.alert-penyerahan-unit').addClass("hidden");
+                    }
+                })
+
                 $(`#${targetId} #preview_penyerahan_unit`).attr("src", path_file);
                 $(`#${targetId} #confirm_penyerahan_id`).val(data_id)
+                $(`#${targetId} #kategori_data`).text(kategori);
                 $(`#${targetId} #confirm_penyerahan_id_category`).val(data_category_doc_id)
                 $(`#${targetId} #status_confirm_penyerahan_unit`).val(status)
                 $(`#${targetId} #tanggal_penyerahan_unit`).val(tanggal)
@@ -162,10 +189,15 @@
             } else if (targetId == 'modalDetailPo') {
                 $(".active-tab").trigger("click");
                 const id = $(identifier).data('id');
-                const data_is_import = $(identifier).data('is-import')
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
+                console.log(kategori)
+                const data_kategori = $(identifier).data('kategori')
+                const data_is_import = data_kategori != 'data_kkb'
                 var url = "{{ url('/kredit') }}/" + id
                 if (data_is_import)
                     url += "?is_import=true"
+
+                $(`#${targetId} #kategori_data`).text(kategori)
 
                 Swal.fire({
                     showConfirmButton: false,
@@ -183,6 +215,7 @@
                     url: url,
                     method: "GET",
                     success: function(response) {
+                        console.log(response)
                         for (var i = 0; i < response.data.documents.length; i++) {
                             var content = '';
                             const document = response.data || response.data.documents[i] ? response.data
@@ -194,17 +227,97 @@
                                     $(`#${targetId} .alert-detailpo`).hide();
                                     $(`#${targetId} .img-detailpo`).attr('src', document.file_path)
                                 }
+                                // console.log(document.file_path)
+                                fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $('.content-po').addClass("hidden");
+                                        $('.alert-po').removeClass("hidden");
+                                    }else{
+                                        $('.content-po').removeClass("hidden");
+                                        $('.alert-po').addClass("hidden");
+                                    }
+                                })
                             }
-
                             if (document.category == "Bukti Pembayaran") {
                                 if (document.file) {
-                                    console.log("ada file");
+                                    // console.log("ada file");
                                     $(`#${targetId} #detail_bukti_pembayaran`).attr('src', document.file_path +
                                         "#navpanes=0")
                                 }
+                                // console.log(document.file_path)
+                                fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $('.content-dbp').addClass("hidden");
+                                        $('.alert-dbp').removeClass("hidden");
+                                    }else{
+                                        $('.content-dbp').removeClass("hidden");
+                                        $('.alert-dbp').addClass("hidden");
+                                    }
+                            })
+                        }
+
+
+                            let category = document.category.toLowerCase();
+
+                            if(category === "stnk"){
+                                if(!document.file){
+                                    $(`.alert-stnk-detail-modal`).removeClass("hidden")
+                                    $(`.content-stnk-detail-modal`).addClass("hidden")
+                                }else{
+                                fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $(`.alert-stnk-detail-modal`).addClass("hidden")
+                                        $(`.content-stnk-detail-modal`).addClass("hidden")
+                                        $(`.alert-stnk-not-found`).removeClass("hidden")
+                                    }else{
+                                        $(`.alert-stnk-not-found`).addClass("hidden")
+                                        $(`.content-stnk-detail-modal`).removeClass("hidden")
+                                        $(`.alert-stnk-detail-modal`).addClass("hidden")
+                                    }
+                                })
+                                }
+                            }
+                            if(category === "bpkb"){
+                                if(!document.file){
+                                    $(`.alert-bpkb-detail-modal`).removeClass("hidden")
+                                    $(`.content-bpkb-detail-modal`).addClass("hidden")
+                                    console.log(`${category} tidak ada`);
+                                }else{
+                                fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $(`.alert-bpkb-detail-modal`).addClass("hidden")
+                                        $(`.content-bpkb-detail-modal`).addClass("hidden")
+                                        $(`.alert-bpkb-not-found`).removeClass("hidden")
+                                    }else{
+                                        $(`.alert-bpkb-not-found`).addClass("hidden")
+                                        $(`.content-bpkb-detail-modal`).removeClass("hidden")
+                                        $(`.alert-bpkb-detail-modal`).addClass("hidden")
+                                    }
+                                })
+                                }
+                            }
+                            if(category === "polis"){
+                                if(!document.file){
+                                    $(`.alert-polis-detail-modal`).removeClass("hidden")
+                                    $(`.content-polis-detail-modal`).addClass("hidden")
+                                    console.log(`${category} tidak ada`);
+                                }else{
+                                    fetch(document.file_path).then(function(response){
+                                    if(!response.ok){
+                                        $(`.alert-polis-detail-modal`).addClass("hidden")
+                                        $(`.content-polis-detail-modal`).addClass("hidden")
+                                        $(`.alert-polis-not-found`).removeClass("hidden")
+                                    }else{
+                                        $(`.alert-polis-not-found`).addClass("hidden")
+                                        $(`.content-polis-detail-modal`).removeClass("hidden")
+                                        $(`.alert-polis-detail-modal`).addClass("hidden")
+                                    }
+                                })
+                                }
                             }
 
-                            if (document.file_path != 'not found') {
+
+                            if (document.file) {
                                 switch (document.category) {
                                     case 'STNK':
                                         $(`#${targetId} .alert-stnk`).addClass("hidden")
@@ -309,7 +422,6 @@
                                 }
                             }
                         }
-
                         if (response.data.documents.length == 0) {
                             $(`#${targetId} .alert-stnk`).removeClass("hidden")
                             $(`#${targetId} .content-stnk`).addClass("hidden")
@@ -318,43 +430,50 @@
                             $(`#${targetId} .alert-polis`).removeClass("hidden")
                             $(`#${targetId} .content-polis`).addClass("hidden")
                         }
-                        if (response.data.import) {
-                            var data = response.data.import;
-                            $(`#${targetId} #detail_nomorPo`).val('-')
-                            $(`#${targetId} #detail_tanggalPo`).val(data.tgl_po)
-                            $(`#${targetId} #detail_nama_pengaju`).val(data.name);
-                            $(`#${targetId} #detail_alamat_pengaju`).val('-');
-                            $(`#${targetId} #detail_cabang`).val(data.cabang);
-                            $(`#${targetId} #detail_no_po`).val('-');
-                            $(`#${targetId} #detail_merk`).val(data.merk);
-                            $(`#${targetId} #detail_tipe`).val(data.tipe);
-                            $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
-                            $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
-                                .harga, 0, ',', '.'));
-                            $(`#${targetId} #detail_jumlah_pesanan`).val(data
-                                .jumlah);
-                            var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
-                                "#navpanes=0";
-                            //$(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
+
+                        if (data_is_import) {
+                            if (response.data.import) {
+                                console.log('import')
+                                var data = response.data.import;
+                                console.log(data)
+                                $(`#${targetId} #detail_nomorPo`).val('-')
+                                $(`#${targetId} #detail_tanggalPo`).val(data.tgl_po)
+                                $(`#${targetId} #detail_nama_pengaju`).val(data.name);
+                                $(`#${targetId} #detail_alamat_pengaju`).val('-');
+                                $(`#${targetId} #detail_cabang`).val(data.cabang);
+                                $(`#${targetId} #detail_no_po`).val('-');
+                                $(`#${targetId} #detail_merk`).val(data.merk);
+                                $(`#${targetId} #detail_tipe`).val(data.tipe);
+                                $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
+                                $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
+                                    .harga, 0, ',', '.'));
+                                $(`#${targetId} #detail_jumlah_pesanan`).val(data
+                                    .jumlah);
+                                var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
+                                    "#navpanes=0";
+                                //$(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
+                            }
                         }
-                        if (response.data.pengajuan) {
-                            var data = response.data.pengajuan;
-                            $(`#${targetId} #detail_nomorPo`).val(data.no_po)
-                            $(`#${targetId} #detail_tanggalPo`).val(data.tanggal)
-                            $(`#${targetId} #detail_nama_pengaju`).val(data.nama);
-                            $(`#${targetId} #detail_alamat_pengaju`).val(data.alamat_rumah);
-                            $(`#${targetId} #detail_cabang`).val(data.cabang);
-                            $(`#${targetId} #detail_no_po`).val(data.no_po);
-                            $(`#${targetId} #detail_merk`).val(data.merk);
-                            $(`#${targetId} #detail_tipe`).val(data.tipe);
-                            $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
-                            $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
-                                .harga_kendaraan, 0, ',', '.'));
-                            $(`#${targetId} #detail_jumlah_pesanan`).val(data
-                                .jumlah_kendaraan);
-                            var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
-                                "#navpanes=0";
-                            $(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
+                        else {
+                            if (response.data.pengajuan) {
+                                var data = response.data.pengajuan;
+                                $(`#${targetId} #detail_nomorPo`).val(data.no_po)
+                                $(`#${targetId} #detail_tanggalPo`).val(data.tanggal)
+                                $(`#${targetId} #detail_nama_pengaju`).val(data.nama);
+                                $(`#${targetId} #detail_alamat_pengaju`).val(data.alamat_rumah);
+                                $(`#${targetId} #detail_cabang`).val(data.cabang);
+                                $(`#${targetId} #detail_no_po`).val(data.no_po);
+                                $(`#${targetId} #detail_merk`).val(data.merk);
+                                $(`#${targetId} #detail_tipe`).val(data.tipe);
+                                $(`#${targetId} #detail_tahun`).val(data.tahun_kendaraan);
+                                $(`#${targetId} #detail_harga`).val('Rp ' + formatMoney(data
+                                    .harga_kendaraan, 0, ',', '.'));
+                                $(`#${targetId} #detail_jumlah_pesanan`).val(data
+                                    .jumlah_kendaraan);
+                                var file_po_path = "{{ config('global.los_asset_url') }}" + data.po +
+                                    "#navpanes=0";
+                                $(`#${targetId} #new_detail_filepo`).attr("src", file_po_path)
+                            }
                         }
                         Swal.close()
 
@@ -567,10 +686,21 @@
                 const file = $(identifier).data('file');
                 const status = $(identifier).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
                     'Menunggu konfirmasi dari vendor.';
+                const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : '';
                 const tanggal = $(identifier).data('tanggal');
                 const confirm_at = $(identifier).data('confirm_at');
                 var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#navpanes=0";
+                fetch(path_file).then(function(response){
+                    if(!response.ok){
+                        $('.content-bukti-pembayaran').addClass("hidden");
+                        $('.alert-bukti-pembayaran').removeClass("hidden");
+                    }else{
+                        $('.content-bukti-pembayaran').removeClass("hidden");
+                        $('.alert-bukti-pembayaran').addClass("hidden");
+                    }
+                })
 
+                $(`#${targetId} #kategori_data`).text(kategori)
                 $('#bukti_pembayaran_img').attr('src', path_file)
                 $('#tanggal_pembayaran').val(tanggal)
                 $('#tanggal_confirm_pembayaran').val(confirm_at)
