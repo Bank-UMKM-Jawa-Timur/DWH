@@ -687,7 +687,7 @@
                                                 data-target-id="modalUploadImbalJasa"
                                                 data-id="{{ $item->id }}"
                                                 data-kategori="{{$item->kategori}}"
-                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @endif @endif"
+                                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
                                                 onclick="showModal(this)">Bayar</a>
                                         @else
                                             Menunggu pembayaran
