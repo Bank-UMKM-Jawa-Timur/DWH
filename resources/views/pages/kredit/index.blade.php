@@ -142,6 +142,7 @@
                 const id_kkb = $(identifier).data('id_kkb');
                 const data_id = $(identifier).data('id-doc')
                 const kategori = ($(identifier).data('kategori') === 'data_import') ? 'Catatan! Data ini merupakan data import google spreadsheet' : ''
+                console.log(kategori);
 
                 const data_category_doc_id = $(identifier).data('id-category')
                 const tanggal = $(identifier).data('tanggal');

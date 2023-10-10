@@ -13,6 +13,7 @@
             @csrf
             <input type="hidden" name="id_kkb" id="id_kkb">
             <div class="modal-body">
+                <p class="uppercase appearance-none" id="kategori_data"></p>
                 <div class="input-box space-y-3">
                     <div class="p-5 space-y-4">
                         <label for="" class="uppercase">Tanggal Pengiriman</label>
@@ -52,11 +53,11 @@
             }).then((result) => {
                 $("#modalUploadBuktiPenyerahanUnit").addClass("hidden");
                 $('#preload-data').removeClass("hidden")
-                
+
                 refreshTable()
             })
         }
-        
+
         function UploadBuktiPenyerahanUnitErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
@@ -67,7 +68,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#preload-data').removeClass("hidden")
-                    
+
                     refreshTable()
                 }
             })

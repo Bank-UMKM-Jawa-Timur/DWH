@@ -6,7 +6,7 @@
         <td>
             @if ($item->kategori == 'data_kkb')
                 @if ($item->detail)
-                    {{ array_key_exists('nama', $item->detail) ? $item->detail['nama'] : '-' }}
+                    {{ array_key_exists('nama', $item->detail) ? $item->detail['nama']  : '-' }}
                 @else
                     undifined
                 @endif

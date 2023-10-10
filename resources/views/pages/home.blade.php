@@ -811,7 +811,7 @@
     var options = {
         labels: ['Belum', 'Sudah'],
         series: [total_belum_terialisasi, total_terealisasi],
-        colors: ["#122C4F", "#DC3545"],
+        colors: [ "#DC3545", "#122C4F"],
         chart: {
             type: "donut",
             width: "100%",
