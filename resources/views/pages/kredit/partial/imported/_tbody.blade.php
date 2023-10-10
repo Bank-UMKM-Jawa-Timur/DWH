@@ -9,7 +9,7 @@
             <td>{{ $item->cabang }} </td>
         @endif
         {{--  Ketersediaan Unit  --}}
-        <td>{{ $item->tgl_ketersediaan_unit }}</td>
+        <td>{{ date('d-m-Y', strtotime($item->tgl_ketersediaan_unit)) }}</td>
         {{--  Tagihan  --}}
         <td>
             @if ($item->tgl_ketersediaan_unit)
@@ -383,7 +383,7 @@
                                                     data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }}"
                                                     data-confirm_at="{{ $item->penyerahan_unit->confirm_at ? date('d-m-Y', strtotime($item->penyerahan_unit->confirm_at)) : '-' }}"
                                                     href="#"
-                                                    onclick="showModal(this)">Menunggu konfirmasi vendor</a>
+                                                    onclick="showModal(this)">Menunggu konfirmasi cabang</a>
                                             @endif
                                         @else
                                             <a style="text-decoration: underline; cursor: pointer;"
@@ -396,7 +396,7 @@
                                                 data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }}"
                                                 data-confirm_at="{{ $item->penyerahan_unit->confirm_at ? date('d-m-Y', strtotime($item->penyerahan_unit->confirm_at)) : '-' }}"
                                                 href="#"
-                                                onclick="showModal(this)">Menunggu konfirmasi vendor</a>
+                                                onclick="showModal(this)">Menunggu konfirmasi cabang</a>
                                         @endif
                                     @endif
                                 @endif
@@ -488,9 +488,9 @@
                                     data-kategori="{{$item->kategori}}"
                                     data-id-doc="{{ $item->penyerahan_unit ? $item->penyerahan_unit->id : 0 }}"
                                     data-file="@isset($item->penyerahan_unit->file){{ $item->penyerahan_unit->file }}@endisset"
-                                    data-confirm="{{ $item->penyerahan_unit->is_confirm }}"
-                                    data-tanggal="{{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }}"
-                                    data-confirm_at="{{ $item->penyerahan_unit->confirm_at ? date('d-m-Y', strtotime($item->penyerahan_unit->confirm_at)) : '-' }}"
+                                    data-confirm="@isset($item->penyerahan_unit->is_confirm) {{ $item->penyerahan_unit->is_confirm }} @endisset"
+                                    data-tanggal="@isset($item->penyerahan_unit->date) {{ date('d-m-Y', strtotime($item->penyerahan_unit->date)) }} @endisset"
+                                    data-confirm_at="@isset($item->penyerahan_unit->confirm_at) {{ $item->penyerahan_unit->confirm_at ? date('d-m-Y', strtotime($item->penyerahan_unit->confirm_at)) : '-' }} @endisset"
                                     onclick="showModal(this)">Konfirmasi</a>
                             @endif
                         @endif
@@ -1085,7 +1085,9 @@
         </td>
     </tr>
 @empty
-    <td colspan="{{ 7 + count($documentCategories) }}" class="text-center">
-        <span class="text-danger">Maaf data belum tersedia.</span>
-    </td>
+    <tr>
+        <td colspan="{{ 7 + count($documentCategories) }}" class="text-center">
+            <span class="text-danger">Maaf data belum tersedia.</span>
+        </td>
+    </tr>
 @endforelse

@@ -108,6 +108,9 @@ Route::middleware('auth_api')->group(function () {
     Route::post('/collection/upload', [CollectionController::class, 'upload'])->name('collection.upload');
     Route::post('/collection', [CollectionController::class, 'store'])->name('collection.store');
     Route::post('/collection/page', [CollectionController::class, 'getPage'])->name('collection.page');
+
+    // Get Data For Charts
+    Route::get('/get-data-charts', [DashboardController::class, 'getChartData'])->name('get-data-charts');
 });
 
 

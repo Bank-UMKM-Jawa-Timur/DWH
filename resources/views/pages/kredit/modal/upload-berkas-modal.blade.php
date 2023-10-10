@@ -181,7 +181,7 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
+                    //$('#preload-data').removeClass("hidden")
                     
                     refreshTable()
                 }
@@ -191,7 +191,7 @@
         $("#btn-close-modal").on("click", function () {
             $("#modalUploadBerkas").addClass("hidden");
             $(".layout-overlay-edit-form").addClass("hidden");
-            $('#preload-data').removeClass("hidden")
+            //$('#preload-data').removeClass("hidden")
             
             refreshTable()
             //const dismissId = $(this).data("dismiss-id");

@@ -47,6 +47,14 @@ class ImportKKBController extends Controller
         return view('pages.import_kkb.index', $params);
     }
 
+    private function dateFormat($arr) {
+        for ($i=0; $i < count($arr); $i++) { 
+            $arr[$i] = date('Y-m-d', strtotime($arr[$i]));
+        }
+
+        return $arr;
+    }
+
     public function store(Request $request) {
         try {
             DB::beginTransaction();
@@ -65,6 +73,9 @@ class ImportKKBController extends Controller
             $req_kode_cabang = $request->kode_cabang;
             $req_nama_debitur = $request->nama_debitur;
             $req_tgl_po = $request->tgl_po;
+            if ($req_tgl_po) {
+                $req_tgl_po = $this->dateFormat($req_tgl_po);
+            }
             $req_merk_kendaraan = $request->merk_kendaraan;
             $req_tipe_kendaraan = $request->tipe_kendaraan;
             $req_tahun_kendaraan = $request->tahun_kendaraan;
@@ -76,14 +87,35 @@ class ImportKKBController extends Controller
             $req_nominal_imbal_jasa = $request->nominal_imbal_jasa;
             $req_nominal_dp = $request->nominal_dp;
             $req_tgl_realisasi = $request->tgl_realisasi;
+            if ($req_tgl_realisasi) {
+                $req_tgl_realisasi = $this->dateFormat($req_tgl_realisasi);
+            }
             $req_tgl_pelunasan = $request->tgl_pelunasan;
+            if ($req_tgl_pelunasan) {
+                $req_tgl_pelunasan = $this->dateFormat($req_tgl_pelunasan);
+            }
             $req_tgl_penyerahan_unit = $request->tgl_penyerahan_unit;
+            if ($req_tgl_penyerahan_unit) {
+                $req_tgl_penyerahan_unit = $this->dateFormat($req_tgl_penyerahan_unit);
+            }
             $req_tgl_penyerahan_stnk = $request->tgl_penyerahan_stnk;
+            if ($req_tgl_penyerahan_stnk) {
+                $req_tgl_penyerahan_stnk = $this->dateFormat($req_tgl_penyerahan_stnk);
+            }
             $req_tgl_penyerahan_bpkb = $request->tgl_penyerahan_bpkb;
+            if ($req_tgl_penyerahan_bpkb) {
+                $req_tgl_penyerahan_bpkb = $this->dateFormat($req_tgl_penyerahan_bpkb);
+            }
             $req_tgl_penyerahan_polis = $request->tgl_penyerahan_polis;
+            if ($req_tgl_penyerahan_polis) {
+                $req_tgl_penyerahan_polis = $this->dateFormat($req_tgl_penyerahan_polis);
+            }
             $req_bpkb_via_bjsc = $request->bpkb_via_bjsc;
             $req_polis_via_bjsc = $request->polis_via_bjsc;
             $req_tgl_pembayaran_imbal_jasa = $request->tgl_pembayaran_imbal_jasa;
+            if ($req_tgl_pembayaran_imbal_jasa) {
+                $req_tgl_pembayaran_imbal_jasa = $this->dateFormat($req_tgl_pembayaran_imbal_jasa);
+            }
             $req_nominal_pembayaran_imbal_jasa = $request->nominal_pembayaran_imbal_jasa;
             $req_keterangan = $request->keterangan;
             $current_time = date('Y-m-d H:i:s');

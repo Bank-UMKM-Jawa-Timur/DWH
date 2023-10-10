@@ -383,9 +383,8 @@
                                 if (arr_row.length > 0)
                                     arr_data.push(arr_row)
                             }
-                            console.log(arr_index)
-                            console.log(arr_data)
                             // Show excel data to html table
+                            console.log(arr_data)
                             showToTable(arr_data)
                         }); 
                     }  

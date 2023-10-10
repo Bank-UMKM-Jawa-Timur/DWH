@@ -75,6 +75,7 @@ class KreditController extends Controller
                     'kredits.id',
                     \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
+                    'kredits.imported_data_id',
                     'kredits.kode_cabang',
                     'kkb.id AS kkb_id',
                     'kkb.tgl_ketersediaan_unit',
@@ -105,6 +106,7 @@ class KreditController extends Controller
                     ->groupBy([
                         'kredits.id',
                         'kredits.pengajuan_id',
+                        'kredits.imported_data_id',
                         'kredits.kode_cabang',
                         'kkb.id_tenor_imbal_jasa',
                         'kkb.id',
@@ -139,6 +141,7 @@ class KreditController extends Controller
                     'kredits.id',
                     \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
+                    'kredits.imported_data_id',
                     'kredits.kode_cabang',
                     'kkb.id AS kkb_id',
                     'kkb.tgl_ketersediaan_unit',
@@ -169,6 +172,7 @@ class KreditController extends Controller
                     ->groupBy([
                         'kredits.id',
                         'kredits.pengajuan_id',
+                        'kredits.imported_data_id',
                         'kredits.kode_cabang',
                         'kkb.id_tenor_imbal_jasa',
                         'kkb.id',
@@ -593,6 +597,7 @@ class KreditController extends Controller
                     'kredits.id',
                     \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
+                    'kredits.imported_data_id',
                     'kredits.kode_cabang',
                     'kkb.id AS kkb_id',
                     'kkb.tgl_ketersediaan_unit',
@@ -623,6 +628,7 @@ class KreditController extends Controller
                     ->groupBy([
                         'kredits.id',
                         'kredits.pengajuan_id',
+                        'kredits.imported_data_id',
                         'kredits.kode_cabang',
                         'kkb.id_tenor_imbal_jasa',
                         'kkb.id',
@@ -657,6 +663,7 @@ class KreditController extends Controller
                     'kredits.id',
                     \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
                     'kredits.pengajuan_id',
+                    'kredits.imported_data_id',
                     'kredits.kode_cabang',
                     'kkb.id AS kkb_id',
                     'kkb.tgl_ketersediaan_unit',
@@ -687,6 +694,7 @@ class KreditController extends Controller
                     ->groupBy([
                         'kredits.id',
                         'kredits.pengajuan_id',
+                        'kredits.imported_data_id',
                         'kredits.kode_cabang',
                         'kkb.id_tenor_imbal_jasa',
                         'kkb.id',

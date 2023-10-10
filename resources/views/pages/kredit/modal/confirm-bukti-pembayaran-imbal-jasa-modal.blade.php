@@ -78,7 +78,7 @@
             }).then((result) => {
                 console.log('then')
                 $("#modalConfirmImbalJasa").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
+                //$('#preload-data').removeClass("hidden")
 
                 refreshTable()
             })
@@ -93,7 +93,7 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
+                    //$('#preload-data').removeClass("hidden")
 
                     refreshTable()
                 }

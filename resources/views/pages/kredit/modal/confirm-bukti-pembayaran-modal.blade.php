@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            @if (\Session::get(config('global.role_id_session')) == 3)
+            @if ($role_id == 3)
                 <form id="confirm-form-vendor">
                     <input type="hidden" name="confirm_id" id="confirm_id">
                     <input type="hidden" name="confirm_id_category" id="confirm_id_category">
@@ -60,7 +60,7 @@
             }).then((result) => {
                 console.log('then')
                 $("#modalConfirmBuktiPembayaran").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
+                //$('#preload-data').removeClass("hidden")
 
                 refreshTable()
             })
@@ -75,7 +75,7 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
+                    //$('#preload-data').removeClass("hidden")
 
                     refreshTable()
                 }
