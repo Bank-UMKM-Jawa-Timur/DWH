@@ -556,45 +556,44 @@
                 {{--  vendor  --}}
                 @if ($is_kredit_page)
                     @if ($item->bukti_pembayaran)
-                        @if (property_exists($item->bukti_pembayaran, 'is_confirm'))
-                            @if ($item->bukti_pembayaran->is_confirm)
-                                @if ($item->penyerahan_unit)
-                                    @if ($item->penyerahan_unit->is_confirm)
-                                        @if ($item->imbal_jasa)
-                                            @if (!$item->imbal_jasa->is_confirm)
-                                                <a style="cursor: pointer; text-decoration: underline;"
-                                                    class="confirm-imbal-jasa toggle-modal-confirm-imbal-jasa text-red-600" data-target-id="modalConfirmImbalJasa"
-                                                    data-id="{{ $item->imbal_jasa->id }}"
-                                                    data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
-                                                    data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->created_at)->format('d-m-Y') }}"
-                                                    data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
-                                                    data-confirm="{{ $item->imbal_jasa->is_confirm }}"
-                                                    href="#"
-                                                    onclick="showModal(this)">Konfirmasi Bukti Pembayaran</a>
-                                            @elseif ($item->imbal_jasa->is_confirm)
-                                                <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
-                                                    style="cursor: pointer; text-decoration: underline;"
-                                                    data-target-id="modalConfirmImbalJasa"
-                                                    data-confirm="{{ $item->imbal_jasa->is_confirm }}"
-                                                    data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
-                                                    data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @else 0 @endif"
-                                                    data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
-                                                    data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
-                                                    onclick="showModal(this)">Selesai</a>
-                                            @else
-                                                Menunggu Pembayaran dari Cabang
-                                            @endif
+                        @if ($item->bukti_pembayaran['is_confirm'])
+                            @if ($item->penyerahan_unit)
+                                @if ($item->penyerahan_unit['is_confirm'])
+                                    @if ($item->imbal_jasa)
+                                        @if (!$item->imbal_jasa['is_confirm'])
+                                            <a style="cursor: pointer; text-decoration: underline;"
+                                                class="confirm-imbal-jasa toggle-modal-confirm-imbal-jasa text-red-600" data-target-id="modalConfirmImbalJasa"
+                                                data-id="{{ $item->imbal_jasa['id'] }}"
+                                                data-file="{{ $item->imbal_jasa['file'] }}"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['created_at'])->format('d-m-Y') }}"
+                                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
+                                                data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
+                                                href="#"
+                                                onclick="showModal(this)">Konfirmasi Bukti Pembayaran</a>
+                                        @elseif ($item->imbal_jasa['is_confirm'])
+                                            <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
+                                                style="cursor: pointer; text-decoration: underline;"
+                                                data-target-id="modalConfirmImbalJasa"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
+                                                data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
+                                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
+                                                data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
+                                                data-file="{{ $item->imbal_jasa['file'] }}"
+                                                onclick="showModal(this)">Selesai</a>
                                         @else
-                                            Menunggu pembayaran imbal jasa
+                                            Menunggu Pembayaran dari Cabang
                                         @endif
                                     @else
-                                        Menunggu konfirmasi penyerahan unit
+                                        Menunggu pembayaran imbal jasa
                                     @endif
                                 @else
-                                    Menunggu penyerahan unit
+                                    Menunggu konfirmasi penyerahan unit
                                 @endif
                             @else
-                                -
+                                Menunggu penyerahan unit
                             @endif
                         @else
                             -
@@ -604,17 +603,17 @@
                     @endif
                 @else
                     @if ($item->imbal_jasa)
-                        @if (!$item->imbal_jasa->is_confirm)
+                        @if (!$item->imbal_jasa['is_confirm'])
                             Menunggu konfirmasi
-                        @elseif ($item->imbal_jasa->is_confirm)
+                        @elseif ($item->imbal_jasa['is_confirm'])
                             <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
                                 style="cursor: pointer; text-decoration: underline;"
                                 data-target-id="modalConfirmImbalJasa"
-                                data-confirm="{{ $item->imbal_jasa->is_confirm }}"
-                                data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
-                                data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @else 0 @endif"
-                                data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
-                                data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
+                                data-kategori="{{$item->kategori}}"
+                                data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
+                                data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
+                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
+                                data-file="{{ $item->imbal_jasa['file'] }}"
                                 onclick="showModal(this)">Selesai</a>
                         @else
                             Menunggu Pembayaran dari Cabang
@@ -625,50 +624,50 @@
                 @endif
             @else
                 {{--  role selain vendor  --}}
-                @if ($is_kredit_page)
-                    @if ($item->bukti_pembayaran)
-                        @if (property_exists($item->bukti_pembayaran, 'is_confirm'))
-                            @if ($item->bukti_pembayaran->is_confirm)
-                                @if ($item->penyerahan_unit)
-                                    @if ($item->penyerahan_unit->is_confirm)
-                                        @if (!$item->imbal_jasa)
-                                            @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
-                                                <a href="#"
-                                                    style="text-decoration: underline; cursor: pointer;"
-                                                    class="toggle-modal-upload-imbal-jasa underline text-red-600"
-                                                    data-target-id="modalUploadImbalJasa"
-                                                    data-id="{{ $item->id }}"
-                                                    data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
-                                                    onclick="showModal(this)">Bayar</a>
-                                            @else
-                                                -
-                                            @endif
+                @if ($item->bukti_pembayaran)
+                    @if ($item->bukti_pembayaran['is_confirm'])
+                        @if ($item->penyerahan_unit)
+                            @if ($item->penyerahan_unit['is_confirm'])
+                                @if (!$item->imbal_jasa)
+                                    @if ($is_kredit_page)
+                                        @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                            <a href="#"
+                                                style="text-decoration: underline; cursor: pointer;"
+                                                class="toggle-modal-upload-imbal-jasa underline text-red-600"
+                                                data-target-id="modalUploadImbalJasa"
+                                                data-id="{{ $item->id }}"
+                                                data-kategori="{{$item->kategori}}"
+                                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
+                                                onclick="showModal(this)">Bayar</a>
                                         @else
-                                            @if (!$item->imbal_jasa->is_confirm)
-                                                <p class="m-0">Menunggu Konfirmasi Vendor</p>
-                                            @elseif ($item->imbal_jasa->is_confirm)
-                                                <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
-                                                    style="cursor: pointer; text-decoration: underline;"
-                                                    data-target-id="modalConfirmImbalJasa"
-                                                    data-confirm="{{ $item->imbal_jasa->is_confirm }}"
-                                                    data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
-                                                    data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @else 0 @endif"
-                                                    data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
-                                                    data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
-                                                    onclick="showModal(this)">Selesai</a>
-                                            @endif
+                                            Menunggu pembayaran
                                         @endif
                                     @else
-                                        Menunggu konfirmasi penyerahan unit
+                                        Menunggu pembayaran
                                     @endif
                                 @else
-                                    Menunggu penyerahan unit
+                                    @if (!$item->imbal_jasa['is_confirm'])
+                                        <p class="m-0">Menunggu Konfirmasi Vendor</p>
+                                    @elseif ($item->imbal_jasa['is_confirm'])
+                                        <a class="bukti-pembayaran-modal toggle-modal-confirm-imbal-jasa"
+                                            style="cursor: pointer; text-decoration: underline;"
+                                            data-target-id="modalConfirmImbalJasa"
+                                            data-kategori="{{$item->kategori}}"
+                                            data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
+                                            data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
+                                            data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif"
+                                            data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
+                                            data-file="{{ $item->imbal_jasa['file'] }}"
+                                            onclick="showModal(this)">Selesai</a>
+                                    @endif
                                 @endif
                             @else
-                                -
+                                Menunggu konfirmasi penyerahan unit
                             @endif
                         @else
-                            -
+                            @if (\Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                Menunggu penyerahan unit
+                            @endif
                         @endif
                     @else
                         -
@@ -682,37 +681,54 @@
         <td>
             @if ($item->penyerahan_unit)
                 @if ($is_kredit_page)
-                    @if (property_exists($item, 'imbal_jasa'))
-                        @if ($item->imbal_jasa)
-                            @if ($item->imported_data_id && $item->imbal_jasa->is_confirm)
-                                <a>Rp {{ number_format($item->nominal_pembayaran_imbal_jasa, 0, '', '.') }}</a>
-                            @else
-                                @if (\Session::get(config('global.role_id_session')) == 3)
-                                    <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
-                                @else
-                                    <span>Rp {{ number_format($item->nominal_pembayaran_imbal_jasa, 0, '', '.') }}</span>
-                                @endif
-                            @endif
-                        @else
-                            -
-                        @endif
-                    @else
-                        -
-                    @endif
-                @else
                     @if ($item->imbal_jasa)
-                        @if ($item->imported_data_id && $item->imbal_jasa->is_confirm)
-                            <a>Rp {{ number_format($item->nominal_pembayaran_imbal_jasa, 0, '', '.') }}</a>
+                        @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
+                            <span>Rp @isset($item->set_imbal_jasa->imbaljasa) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset</span>
                         @else
                             @if (\Session::get(config('global.role_id_session')) == 3)
                                 <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                             @else
-                                <span>Rp {{ number_format($item->nominal_pembayaran_imbal_jasa, 0, '', '.') }}</span>
+                                <span>Rp @isset($item->set_imbal_jasa->imbaljasa) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset</span>
                             @endif
                         @endif
                     @else
                         @if ($item->imbal_jasa)
-                            @if ($item->imported_data_id && $item->imbal_jasa->is_confirm)
+                            @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
+                                @if ($item->stnk && $item->polis && $item->bpkb)
+                                    @if (\Session::get(config('global.role_id_session')) == 2 && \Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
+                                        <span class="text-info">Silahkan upload bukti
+                                            transfer imbal
+                                            jasa</span>
+                                    @else
+                                        <span class="text-info">Menunggu bukti transfer
+                                            imbal
+                                            jasa</span>
+                                    @endif
+                                @else
+                                    <span class="text-warning">Menunggu penyerahan semua
+                                        berkas</span>
+                                @endif
+                            @else
+                                -
+                            @endif
+                        @else
+                            <span class="text-warning">-</span>
+                        @endif
+                    @endif
+                @else
+                    @if ($item->imbal_jasa)
+                        @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
+                            <span>Rp @isset($item->set_imbal_jasa->imbaljasa) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset</span>
+                        @else
+                            @if (\Session::get(config('global.role_id_session')) == 3)
+                                <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
+                            @else
+                                <span>Rp @isset($item->set_imbal_jasa->imbaljasa) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset</span>
+                            @endif
+                        @endif
+                    @else
+                        @if ($item->imbal_jasa)
+                            @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
                                 @if ($item->stnk && $item->polis && $item->bpkb)
                                     @if (\Session::get(config('global.role_id_session')) == 2 && \Session::get(config('global.user_role_session')) == $staf_analisa_kredit_role)
                                         <span class="text-info">Silahkan upload bukti

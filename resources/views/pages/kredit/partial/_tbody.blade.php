@@ -617,7 +617,7 @@
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                                 data-kategori="{{$item->kategori}}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['created_at'])->format('d-m-Y') }}"
-                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif"
+                                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 href="#"
                                                 onclick="showModal(this)">Konfirmasi Bukti Pembayaran</a>
@@ -629,7 +629,7 @@
                                                 data-kategori="{{$item->kategori}}"
                                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif"
+                                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
                                                 data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa['confirm_at'])->format('d-m-Y') }}"
                                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                                 onclick="showModal(this)">Selesai</a>
@@ -662,7 +662,7 @@
                                 data-kategori="{{$item->kategori}}"
                                 data-confirm="{{ $item->imbal_jasa['is_confirm'] }}"
                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa['date'])->format('d-m-Y') }}"
-                                data-nominal="Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif"
+                                data-nominal="Rp @isset($item) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset"
                                 data-file="{{ $item->imbal_jasa['file'] }}"
                                 onclick="showModal(this)">Selesai</a>
                         @else
@@ -733,12 +733,12 @@
                 @if ($is_kredit_page)
                     @if ($item->imbal_jasa)
                         @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
-                            <a>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</a>
+                            <span>Rp @isset($item->set_imbal_jasa->imbaljasa) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset</span>
                         @else
                             @if (\Session::get(config('global.role_id_session')) == 3)
                                 <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                             @else
-                                <span>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</span>
+                                <span>Rp @isset($item->set_imbal_jasa->imbaljasa) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset</span>
                             @endif
                         @endif
                     @else
@@ -768,12 +768,12 @@
                 @else
                     @if ($item->imbal_jasa)
                         @if ($item->imbal_jasa['file'] && $item->imbal_jasa['is_confirm'])
-                            <a>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</a>
+                            <span>Rp @isset($item->set_imbal_jasa->imbaljasa) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset</span>
                         @else
                             @if (\Session::get(config('global.role_id_session')) == 3)
                                 <span class="text-info">Silahkan konfirmasi bukti transfer imbal jasa</span>
                             @else
-                                <span>Rp @if(property_exists($item, 'set_imbal_jasa')) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @else 0 @endif</span>
+                                <span>Rp @isset($item->set_imbal_jasa->imbaljasa) @if(property_exists($item->set_imbal_jasa, 'imbaljasa')) {{ number_format($item->set_imbal_jasa->imbaljasa, 0, '', '.') }} @else 0 @endif @endisset</span>
                             @endif
                         @endif
                     @else
