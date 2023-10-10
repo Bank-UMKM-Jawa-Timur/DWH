@@ -577,7 +577,7 @@
                                                     data-target-id="modalConfirmImbalJasa"
                                                     data-confirm="{{ $item->imbal_jasa->is_confirm }}"
                                                     data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
-                                                    data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
+                                                    data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @else 0 @endif"
                                                     data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
                                                     data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
                                                     onclick="showModal(this)">Selesai</a>
@@ -612,7 +612,7 @@
                                 data-target-id="modalConfirmImbalJasa"
                                 data-confirm="{{ $item->imbal_jasa->is_confirm }}"
                                 data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
-                                data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
+                                data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @else 0 @endif"
                                 data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
                                 data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
                                 onclick="showModal(this)">Selesai</a>
@@ -652,7 +652,7 @@
                                                     data-target-id="modalConfirmImbalJasa"
                                                     data-confirm="{{ $item->imbal_jasa->is_confirm }}"
                                                     data-tanggal="{{ \Carbon\Carbon::parse($item->imbal_jasa->date)->format('d-m-Y') }}"
-                                                    data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @endif"
+                                                    data-nominal="Rp @if(property_exists($item, 'nominal_imbal_jasa')) {{ number_format($item->nominal_imbal_jasa, 0, '', '.') }} @else 0 @endif"
                                                     data-confirm_at="{{ \Carbon\Carbon::parse($item->imbal_jasa->confirm_at)->format('d-m-Y') }}"
                                                     data-file="@isset($item->imbal_jasa->file){{ $item->imbal_jasa->file }}@endisset"
                                                     onclick="showModal(this)">Selesai</a>
