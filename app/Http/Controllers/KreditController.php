@@ -130,7 +130,7 @@ class KreditController extends Controller
                         return $query->where('import.name', 'like', '%'.$request->get('query').'%');
                     })
                     ->when($request->cabang,function($query,$cbg){
-                        return $query->where('kredits.kode_cabang',$cbg);
+                        return $query->having('kredits.kode_cabang',$cbg);
                     })
                     ->orderBy('total_file_uploaded')
                     ->orderBy('total_file_confirmed');
@@ -193,7 +193,7 @@ class KreditController extends Controller
                         return $query->where('import.name', 'like', '%'.$request->get('query').'%');
                     })
                     ->when($request->cabang,function($query,$cbg){
-                        return $query->where('kredits.kode_cabang',$cbg);
+                        return $query->having('kredits.kode_cabang',$cbg);
                     })
                     ->orderBy('total_file_uploaded')
                     ->orderBy('total_file_confirmed');
@@ -443,8 +443,8 @@ class KreditController extends Controller
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
                     return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
-                ->when($request->cabang,function($query,$cbg){
-                    return $query->where('kredits.kode_cabang',$cbg);
+                ->when($request->cabang, function ($query, $cbg) {
+                    return $query->where('kredits.kode_cabang', $cbg);
                 })
                 ->when($search_q,function($query,$q){
                     return $query->where('import.name', 'LIKE', "%$q%");
@@ -551,6 +551,17 @@ class KreditController extends Controller
 
             $this->param['imported'] = $imported;
 
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+            $apiCabang = $host . '/kkb/get-cabang/';
+            $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+            $responseCabang = json_decode($api_req->getBody(), true);
+            // return $responseCabang;
+            $this->param['dataCabang'] = $responseCabang;
+            // return $this->param['dataCabang'];
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -945,15 +956,14 @@ class KreditController extends Controller
                 ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
                     return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
                 })
-                ->when($request->cabang,function($query,$cbg){
-                    return $query->where('kredits.kode_cabang',$cbg);
+                ->when($request->cabang, function ($query, $cbg) {
+                    return $query->where('kredits.kode_cabang', $cbg);
                 })
                 ->when($search_q,function($query,$q){
                     return $query->where('import.name', 'LIKE', "%$q%");
                 })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
-
             if ($this->param['role_id'] == 2) {
                 $imported = $imported->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
@@ -969,7 +979,6 @@ class KreditController extends Controller
                 $imported = $imported->paginate($page_length);
             else
                 $imported = $imported->get();
-
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
@@ -1868,7 +1877,7 @@ class KreditController extends Controller
 
                         $kredit = Kredit::find($stnk->kredit_id);
                         $kkb = KKB::where('kredit_id', $kredit->id)->first();
-                        
+
                         if ($kredit->imported_data_id) {
                             if (!$kredit->is_continue_import) {
                                 $kredit->is_continue_import = true;
