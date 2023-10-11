@@ -1110,6 +1110,7 @@ class KreditController extends Controller
             ]);
         }
     }
+
     public function getDataCabang($kode_cabang) {
         try {
             $host = env('BIO_INTERFACE_API_HOST');
@@ -1291,7 +1292,7 @@ class KreditController extends Controller
             }
 
             // send notif
-            $this->notificationController->send($action_id, $kkb->kredit_id);
+            return $this->notificationController->send($action_id, $kkb->kredit_id);
 
             $this->logActivity->store('Pengguna ' . $request->name . ' mengunggah berkas bukti pembayaran.');
 

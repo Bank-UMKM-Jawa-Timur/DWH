@@ -57,7 +57,37 @@ class NotificationController extends Controller
             return back()->withError('Terjadi kesalahan pada database');
         }
     }
+    public function getDataPO($pengajuan_id) {
+        try {
+            $host = env('LOS_API_HOST');
+            $apiURL = $host . '/kkb/get-data-pengajuan-by-id/' . $pengajuan_id;
 
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+
+            if ($responseBody) {
+                if (array_key_exists('no_po', $responseBody) && array_key_exists('nama', $responseBody))
+                    return $responseBody;
+                else
+                    return response()->json([
+                        'status' => 'failed',
+                        'message' => 'Not found',
+                    ]);
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    
     public function listJson()
     {
         $status = '';
@@ -159,6 +189,12 @@ class NotificationController extends Controller
         }
     }
 
+    public function getDataImportById($import_id) {
+        $data = DB::select("SELECT * FROM imported_data WHERE id=$import_id");
+        
+        return $data;
+    }
+
     public function send($action_id, $kreditId)
     {
         try {
@@ -166,7 +202,8 @@ class NotificationController extends Controller
             $kkb = KKB::select('id', 'kredit_id', 'user_id')
                         ->where('kredit_id', $kreditId)
                         ->first();
-            
+            $kredit = Kredit::find($kkb->kredit_id);
+            $is_import = $kredit->imported_data_id != null;
             $user_receiver_id = $kkb ? $kkb->user_id : null;
 
             // get notification template
@@ -179,11 +216,38 @@ class NotificationController extends Controller
                     $user = User::where('role_id', 3)->first();
 
                     if ($user) {
-                        $createNotification = new Notification();
-                        $createNotification->kredit_id = $kreditId;
-                        $createNotification->template_id = $value->id;
-                        $createNotification->user_id = $user->id;
-                        $createNotification->save();
+                        // $createNotification = new Notification();
+                        // $createNotification->kredit_id = $kreditId;
+                        // $createNotification->template_id = $value->id;
+                        // $createNotification->user_id = $user->id;
+                        // $createNotification->save();
+                        $dataPO = null;
+                        $no_po = 'undifined';
+                        $nama_debitur = 'undifined';
+                        if ($is_import) {
+                            $dataPO = $this->getDataImportById($kredit->imported_data_id);
+                            $no_po = 'Import Data Google Spreadsheet';
+                            // $nama_debitur = $dataPO->name;
+                        }
+                        else {
+                            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                            if (!array_key_exists('status', $dataPO)) {
+                                if (array_key_exists('id_pengajuan', $dataPO)) {
+                                    $no_po = $dataPO['no_po'];
+                                    $nama_debitur = $dataPO['nama'];
+                                }
+                            }
+                        }
+                        // $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                        $this->sendEmail($user->email,  [
+                            'title' => $template ? $template->title : 'undifined',
+                            'no_po' => $no_po,
+                            'nama_debitur' => $nama_debitur,
+                            'to' => $user->name,
+                            'body' => $template ? $template->content : 'undifined'
+                        ]);
+
+                        return 'send email';
                     }
 
                     $createNotification = new Notification();
@@ -199,11 +263,38 @@ class NotificationController extends Controller
                         $user = User::where('role_id', 3)->first();
 
                         if ($user) {
-                            $createNotification = new Notification();
-                            $createNotification->kredit_id = $kreditId;
-                            $createNotification->template_id = $value->id;
-                            $createNotification->user_id = $user->id;
-                            $createNotification->save();
+                            // $createNotification = new Notification();
+                            // $createNotification->kredit_id = $kreditId;
+                            // $createNotification->template_id = $value->id;
+                            // $createNotification->user_id = $user->id;
+                            // $createNotification->save();
+                            $dataPO = null;
+                            $no_po = 'undifined';
+                            $nama_debitur = 'undifined';
+                            if ($is_import) {
+                                $dataPO = $this->getDataImportById($kredit->imported_data_id);
+                                $no_po = 'Import Data Google Spreadsheet';
+                                // $nama_debitur = $dataPO->name;
+                            }
+                            else {
+                                $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                                if (!array_key_exists('status', $dataPO)) {
+                                    if (array_key_exists('id_pengajuan', $dataPO)) {
+                                        $no_po = $dataPO['no_po'];
+                                        $nama_debitur = $dataPO['nama'];
+                                    }
+                                }
+                            }
+                            // $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                            $this->sendEmail($user->email,  [
+                                'title' => $template ? $template->title : 'undifined',
+                                'no_po' => $no_po,
+                                'nama_debitur' => $nama_debitur,
+                                'to' => $user->name,
+                                'body' => $template ? $template->content : 'undifined'
+                            ]);
+
+                            return 'send email';
                         }
                     }
                     if (in_array(2, $arrRole)) {
@@ -262,12 +353,12 @@ class NotificationController extends Controller
 
                         if ($user) {
                             foreach ($user as $key => $item) {
-                                $createNotification = new Notification();
-                                $createNotification->kredit_id = $kreditId;
-                                $createNotification->template_id = $value->id;
-                                $createNotification->user_id = $item['id'];
-                                $createNotification->extra = $extra;
-                                $createNotification->save();
+                                // $createNotification = new Notification();
+                                // $createNotification->kredit_id = $kreditId;
+                                // $createNotification->template_id = $value->id;
+                                // $createNotification->user_id = $item['id'];
+                                // $createNotification->extra = $extra;
+                                // $createNotification->save();
                             }
                         }
                     } catch (\Illuminate\Http\Client\ConnectionException $e) {
