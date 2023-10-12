@@ -121,8 +121,37 @@ class KreditController extends Controller
                         'po.harga',
                     ])
                     ->whereNotNull('kredits.pengajuan_id')
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
+                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    })
+                    ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                        return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                    ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                    })
+                    ->when($request->cabang,function($query,$cbg){
+                        return $query->having('kredits.kode_cabang',$cbg);
+                    })
                     ->orWhereNotNull('kredits.is_continue_import')
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
+                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    })
+                    ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                        return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                    ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                    })
+                    ->when($request->cabang,function($query,$cbg){
+                        return $query->having('kredits.kode_cabang',$cbg);
+                    })
                     ->orWhereNotNull('kkb.user_id')
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
+                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    })
                     ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
                         return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
                                     ->having('status', strtolower($request->status));
@@ -198,10 +227,6 @@ class KreditController extends Controller
                     })
                     ->orderBy('total_file_uploaded')
                     ->orderBy('total_file_confirmed');
-            }
-
-            if (\Session::get(config('global.role_id_session')) == 2) {
-                $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
             }
 
             // set page number
@@ -441,15 +466,6 @@ class KreditController extends Controller
                     'po.jumlah',
                     'po.harga',
                 ])
-                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
-                })
-                ->when($request->cabang, function ($query, $cbg) {
-                    return $query->where('kredits.kode_cabang', $cbg);
-                })
-                ->when($request->get('query'), function ($query) use ($request) {
-                    return $query->where('import.name', 'like', '%' . $request->get('query') . '%');
-                })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
 
@@ -459,10 +475,28 @@ class KreditController extends Controller
                                         ->whereNotNull('kredits.imported_data_id')
                                         ->whereNull('kkb.user_id')
                                         ->whereNull('kredits.is_continue_import')
+                                        ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
+                                            return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
+                                        })
+                                        ->when($request->cabang, function ($query, $cbg) {
+                                            return $query->where('kredits.kode_cabang', $cbg);
+                                        })
+                                        ->when($request->get('query'), function ($query) use ($request) {
+                                            return $query->where('import.name', 'like', '%' . $request->get('query') . '%');
+                                        })
                                         ->orWhere('kkb.user_id', $user_id)
                                         ->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
-                                        ->whereNull('kredits.is_continue_import');
+                                        ->whereNull('kredits.is_continue_import')
+                                        ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
+                                            return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
+                                        })
+                                        ->when($request->cabang, function ($query, $cbg) {
+                                            return $query->where('kredits.kode_cabang', $cbg);
+                                        })
+                                        ->when($request->get('query'), function ($query) use ($request) {
+                                            return $query->where('import.name', 'like', '%' . $request->get('query') . '%');
+                                        });
             }
 
             // set page number
@@ -479,8 +513,7 @@ class KreditController extends Controller
             }
             else
                 $imported = $imported->get();
-                // return $user_cabang;
-                // return count($imported);
+
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
@@ -646,8 +679,9 @@ class KreditController extends Controller
                         'po.harga',
                     ])
                     ->whereNotNull('kredits.pengajuan_id')
-                    ->orWhereNotNull('kredits.is_continue_import')
-                    ->orWhereNotNull('kkb.user_id')
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
+                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    })
                     ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
                         return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
                                     ->having('status', strtolower($request->status));
@@ -656,7 +690,35 @@ class KreditController extends Controller
                         return $query->where('import.name', 'like', '%'.$request->get('query').'%');
                     })
                     ->when($request->cabang,function($query,$cbg){
-                        return $query->where('kredits.kode_cabang',$cbg);
+                        return $query->having('kredits.kode_cabang',$cbg);
+                    })
+                    ->orWhereNotNull('kredits.is_continue_import')
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
+                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    })
+                    ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                        return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                    ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                    })
+                    ->when($request->cabang,function($query,$cbg){
+                        return $query->having('kredits.kode_cabang',$cbg);
+                    })
+                    ->orWhereNotNull('kkb.user_id')
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
+                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    })
+                    ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
+                        return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
+                                    ->having('status', strtolower($request->status));
+                    })
+                    ->when($request->get('query'), function ($query) use ($request) {
+                        return $query->where('import.name', 'like', '%'.$request->get('query').'%');
+                    })
+                    ->when($request->cabang,function($query,$cbg){
+                        return $query->having('kredits.kode_cabang',$cbg);
                     })
                     ->orderBy('total_file_uploaded')
                     ->orderBy('total_file_confirmed');
@@ -719,14 +781,10 @@ class KreditController extends Controller
                         return $query->where('import.name', 'like', '%'.$request->get('query').'%');
                     })
                     ->when($request->cabang,function($query,$cbg){
-                        return $query->where('kredits.kode_cabang',$cbg);
+                        return $query->having('kredits.kode_cabang',$cbg);
                     })
                     ->orderBy('total_file_uploaded')
                     ->orderBy('total_file_confirmed');
-            }
-
-            if (\Session::get(config('global.role_id_session')) == 2) {
-                $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
             }
 
             if (is_numeric($page_length)) {
@@ -957,33 +1015,44 @@ class KreditController extends Controller
                     'po.jumlah',
                     'po.harga',
                 ])
-                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
-                })
-                ->when($request->cabang, function ($query, $cbg) {
-                    return $query->where('kredits.kode_cabang', $cbg);
-                })
-                ->when($search_q,function($query,$q){
-                    return $query->where('import.name', 'LIKE', "%$q%");
-                })
                 ->orderBy('total_file_uploaded')
                 ->orderBy('total_file_confirmed');
+
             if ($this->param['role_id'] == 2) {
                 $imported = $imported->where('kredits.kode_cabang', $user_cabang)
                                         ->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
                                         ->whereNull('kkb.user_id')
                                         ->whereNull('kredits.is_continue_import')
-                                        ->where('kkb.user_id', $user_id)
+                                        ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
+                                            return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
+                                        })
+                                        ->when($request->cabang, function ($query, $cbg) {
+                                            return $query->where('kredits.kode_cabang', $cbg);
+                                        })
+                                        ->when($request->get('query'), function ($query) use ($request) {
+                                            return $query->where('import.name', 'like', '%' . $request->get('query') . '%');
+                                        })
+                                        ->orWhere('kkb.user_id', $user_id)
                                         ->whereNull('kredits.pengajuan_id')
                                         ->whereNotNull('kredits.imported_data_id')
-                                        ->whereNull('kredits.is_continue_import');
+                                        ->whereNull('kredits.is_continue_import')
+                                        ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
+                                            return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
+                                        })
+                                        ->when($request->cabang, function ($query, $cbg) {
+                                            return $query->where('kredits.kode_cabang', $cbg);
+                                        })
+                                        ->when($request->get('query'), function ($query) use ($request) {
+                                            return $query->where('import.name', 'like', '%' . $request->get('query') . '%');
+                                        });
             }
 
             if (is_numeric($page_length) && $tab_type == 'tab-import-kkb')
                 $imported = $imported->paginate($page_length);
             else
                 $imported = $imported->get();
+    
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
