@@ -63,6 +63,7 @@ class NotificationTemplatesSeeder extends Seeder
             'title' => 'Upload Tagihan',
             'content' => 'Tagihan telah diupload oleh vendor.',
             'action_id' => 49,
+            'role_id' => '2',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
@@ -132,6 +133,7 @@ class NotificationTemplatesSeeder extends Seeder
             'title' => 'Upload imbal jasa',
             'content' => 'Berkas imbal jasa telah diupload oleh cabang.',
             'action_id' => 15,
+            'role_id' => '3',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
@@ -140,6 +142,7 @@ class NotificationTemplatesSeeder extends Seeder
             'title' => 'Konfirmasi imbal jasa',
             'content' => 'Berkas imbal jasa telah dikonfirmasi oleh vendor.',
             'action_id' => 50,
+            'role_id' => '2',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);

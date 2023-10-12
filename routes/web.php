@@ -91,7 +91,6 @@ Route::middleware('auth_api')->group(function () {
         Route::post('/upload-stnk', [KreditController::class, 'uploadStnk'])->name('upload_stnk');
         Route::post('/upload-berkas', [KreditController::class, 'uploadBerkas'])->name('upload_berkas');
         Route::get('/confirm-berkas', [KreditController::class, 'confirmBerkas'])->name('confirm_berkas');
-        Route::post('/confirm-document', [KreditController::class, 'confirmDocumentCabang'])->name('confirm_document');
         Route::post('/confirm-document-vendor', [KreditController::class, 'confirmDocumentVendor'])->name('confirm_document_vendor');
         Route::post('/confirm-penyerahan-unit', [KreditController::class, 'confirmPenyerahanUnit'])->name('confirm_penyerahan_unit');
         Route::get('/{id}', [KreditController::class, 'show'])->name('show');
