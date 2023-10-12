@@ -90,7 +90,9 @@ class NotificationTemplatesSeeder extends Seeder
             'title' => 'Upload Polis',
             'content' => 'Polis telah diupload.',
             'action_id' => 10,
-            'role_id' => '1,2'
+            'role_id' => '1,2',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
         \DB::table('notification_templates')->insert([
