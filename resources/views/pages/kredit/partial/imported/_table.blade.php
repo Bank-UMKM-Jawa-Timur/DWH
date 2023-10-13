@@ -5,7 +5,7 @@
                 <th>No</th>
                 <th width="150">Nama</th>
                 @if ($role_id == 3 || $role_id == 1 || $role_id == 4)
-                <th>Cabang</th>
+                    <th>Cabang</th>
                 @endif
                 <th>Ketersediaan Unit</th>
                 <th>Tagihan</th>
@@ -21,15 +21,29 @@
             </tr>
         </thead>
         <tbody id="tbody">
-            @include('pages.kredit.partial.imported._tbody')
+            @if (Request()->query != null)
+                @if (\Session::get(config('global.role_id_session')) != 3)
+                    @include('pages.kredit.partial.imported._tbodySearch')
+                @endif
+            @else
+                @include('pages.kredit.partial.imported._tbody')
+            @endif
         </tbody>
     </table>
 </div>
 <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
     <div class="w-full">
         <div class="pagination import-pagination">
-            @if($imported instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $imported->links('pagination::tailwind') }}
+            @if (Request()->query != null)
+                @if (\Session::get(config('global.role_id_session')) != 3)
+                    @if ($importedSearch instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        {{ $importedSearch->links('pagination::tailwindSearch') }}
+                    @endif
+                @endif
+            @else
+                @if ($imported instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    {{ $imported->links('pagination::tailwind') }}
+                @endif
             @endif
         </div>
     </div>
