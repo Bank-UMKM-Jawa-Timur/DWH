@@ -24,7 +24,7 @@
             console.log('refresh table')
             var page = $("#page").val()
             var tab_type = $("#tab_type").val()
-            var page_length = $("#page_length").val()
+            var page_length = tab_type == 'data_kkb' ? $("#page_length").val() : $("#page_length_import").val()
             var tAwal = $("#tAwal").val() != 'dd/mm/yyyy' ? $('#tAwal').val() : ''
             var tAkhir = $("#tAkhir").val() != 'dd/mm/yyyy' ? $('#tAkhir').val() : ''
             var status = $("#status").val()
@@ -858,7 +858,6 @@
                 </div>
             </div>
         </div>
-    </div>
     @if (\Session::get(config('global.role_id_session')) != 3)
         <div id="tab-import-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
@@ -948,7 +947,7 @@
         </div>
     @endif
     </div>
-
+</div>
 @endsection
 
 @push('extraScript')

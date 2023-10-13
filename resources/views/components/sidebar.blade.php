@@ -233,29 +233,30 @@
         </a>
       </li>  --}}
       @endif
-      <li class="item-link {{ request()->is('notifikasi') ? 'active-link' : '' }}">
-        <a
-          href="{{ route('notification.index') }}"
-          class="nav-link relative"
-        >
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon-nav"
-              viewBox="0 0 14 14"
-            >
-              <path
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M7 .5a4.29 4.29 0 0 1 4.29 4.29c0 4.77 1.74 5.71 2.21 5.71H.5c.48 0 2.21-.95 2.21-5.71A4.29 4.29 0 0 1 7 .5ZM5.5 12.33a1.55 1.55 0 0 0 3 0"
-              />
-            </svg>
-          </span>
-          <div>Notifikasi</div>
-        </a>
-      </li>
-
+      @if (\Session::get(config('global.role_id_session')) != 3)
+        <li class="item-link {{ request()->is('notifikasi') ? 'active-link' : '' }}">
+          <a
+            href="{{ route('notification.index') }}"
+            class="nav-link relative"
+          >
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon-nav"
+                viewBox="0 0 14 14"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M7 .5a4.29 4.29 0 0 1 4.29 4.29c0 4.77 1.74 5.71 2.21 5.71H.5c.48 0 2.21-.95 2.21-5.71A4.29 4.29 0 0 1 7 .5ZM5.5 12.33a1.55 1.55 0 0 0 3 0"
+                />
+              </svg>
+            </span>
+            <div>Notifikasi</div>
+          </a>
+        </li>
+      @endif
     </ul>
   </aside>

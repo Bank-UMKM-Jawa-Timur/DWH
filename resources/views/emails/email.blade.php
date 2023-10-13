@@ -110,7 +110,7 @@
                                 <table>
                                     <tr>
                                         <td class="email-head">
-                                            <img src="{{ asset('template/assets') }}/img/news/logo.png" alt="logonya masih belum ada coy">
+                                            <img src="{{ asset('template/assets') }}/img/news/logo.png" alt="logo">
                                             <h1 class="title">{{ $title }}</h1>
                                         </td>
                                     </tr>
@@ -120,18 +120,9 @@
                                     <tr>
                                         <td class="body-email">
                                             <h3 class="gretting">{{$greeting}}, {{$to}}</h3>
-                                            {{-- <table>
-                                                <tr>
-                                                    <td><p class="nama-debitur">Nama Debitur </p></td>
-                                                    <td><p class="no-po">: {{$nama_debitur}}</p></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><p class="no-po">NO PO</p></td>
-                                                    <td><p class="no-po">: {{$no_po}}</p></td>
-                                                </tr>
-                                            </table> --}}
                                                 <p class="no-po"><strong>Nama Debitur:</strong> {{$nama_debitur}}</p>
-                                                <p class="no-po"><strong>NO PO:</strong> {{$no_po}}</p><br>
+                                                <p class="no-po"><strong>NO PO:</strong> {{$no_po}}</p>
+                                                <p class="no-po"><strong>Tanggal:</strong> {{$tanggal}}</p><br>
                                                 <p class="message">{{$body}}</p>
                                         </td>
                                     </tr>

@@ -7,6 +7,9 @@
                 <h3 class="title" id="title-notif"> - </h3>
                 <span class="time" id="time-notif"> - </span>
                 <hr>
+                <p class="no-po"><strong>Nama Debitur:</strong> Nama</p>
+                <p class="no-po"><strong>NO PO:</strong> NOPO</p>
+                <p class="no-po"><strong>Tanggal:</strong> TANGGAL</p><br>
                 <p id="content-notif"</p>
                 <div class="extra-notif">
                 </div>
