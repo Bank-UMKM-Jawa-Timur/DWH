@@ -581,8 +581,6 @@ class KreditController extends Controller
                 usleep(500 * 1000); // sleep for 0.5 millisec
             }
 
-
-
             if ($request->query != null) {
                 // role selain vendor
                 if (\Session::get(config('global.role_id_session')) != 3) {
@@ -747,8 +745,6 @@ class KreditController extends Controller
                         usleep(500 * 1000); // sleep for 0.5 millisec
                     }
 
-
-
                     // data search
                     $apiDataPengajuanSearch = $host . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
                     $api_req_pengajuan = Http::timeout(6)->withHeaders($headers)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
@@ -767,13 +763,6 @@ class KreditController extends Controller
                     else
                         $request->merge(['page' => $temp_page]);
 
-                    // if (is_numeric($page_length)) {
-                    //     if ($tab_type == 'tab-kkb')
-                    //         $responseDataPengajuanSearch = $responseDataPengajuanSearch->paginate($page_length);
-                    //     else
-                    //         $responseDataPengajuanSearch = $responseDataPengajuanSearch->paginate($page_length);
-                    // } else
-                    //     $responseDataPengajuanSearch = $responseDataPengajuanSearch->get();
                     $page = $temp_page;
                     $total = $responseDataPengajuanSearch['total']; //total items in array
                     $limit = $request->page_length ? $request->page_length : 5; //per page
@@ -790,7 +779,6 @@ class KreditController extends Controller
                         'data' => $data,
                         'dataSearch' => $orders
                     ];
-                    // return $orders;
                 } else {
                     // Vendor
                     $dataSearch = Kredit::select(
@@ -858,14 +846,10 @@ class KreditController extends Controller
                         ->get();
                 }
             }
-            // return $host;
-            // $apiDataPengajuanSearch = $host . '/kkb/get-data-pengajuan-search/'. $user_id .'?query='. $request->query;
-            // $api_data_pengajuan_search = Http::timeout(6)->withHeaders($headers)->get($apiDataPengajuanSearch);
-            // return $api_data_pengajuan_search;
             $this->param['imported'] = $imported;
             $this->param['dataSearch'] = $orders;
             $this->param['importedSearch'] = $importedSearch;
-
+// return $this->param;
             $host = env('LOS_API_HOST');
             $headers = [
                 'token' => env('LOS_API_TOKEN')
@@ -876,11 +860,8 @@ class KreditController extends Controller
             $responseCabang = json_decode($api_req->getBody(), true);
 
 
-
-            // return $apiDataPengajuanSearch;
-            // return $api_req_pengajuan;
             $this->param['dataCabang'] = $responseCabang;
-            // return $this->param['dataCabang'];
+
             return view('pages.kredit.index', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -944,15 +925,6 @@ class KreditController extends Controller
             ])
             ->where('kredits.pengajuan_id', $pengajuan_id)
             ->first();
-
-        $data->invoice = null;
-        $data->bukti_pembayaran = null;
-        $data->penyerahan_unit = null;
-        $data->stnk = null;
-        $data->bpkb = null;
-        $data->polis = null;
-        $data->imbal_jasa = null;
-        $data->set_imbal_jasa = null;
 
         if ($data) {
             $invoice = Document::where('kredit_id', $data->id)

@@ -14,7 +14,7 @@
                 {{$item->name}}
             @endif
         </td>
-         {{--  Cabang  --}}
+        {{--  Cabang  --}}
         @if ($role_id == 3)
             <td>
                 @if ($item->detail)

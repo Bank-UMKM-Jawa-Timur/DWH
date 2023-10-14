@@ -21,7 +21,7 @@
             </tr>
         </thead>
         <tbody id="tbody">
-            @if (Request()->query != null)
+            @if (Request::has('query'))
                 @if (\Session::get(config('global.role_id_session')) != 3)
                     @include('pages.kredit.partial.imported._tbodySearch')
                 @endif
@@ -34,7 +34,7 @@
 <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
     <div class="w-full">
         <div class="pagination import-pagination">
-            @if (Request()->query != null)
+            @if (Request::has('query'))
                 @if (\Session::get(config('global.role_id_session')) != 3)
                     @if ($importedSearch instanceof \Illuminate\Pagination\LengthAwarePaginator)
                         {{ $importedSearch->links('pagination::tailwindSearch') }}
