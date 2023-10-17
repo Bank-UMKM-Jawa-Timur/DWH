@@ -20,11 +20,12 @@ use PHPMailer\PHPMailer\Exception;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
             $param['title'] = 'Notifikasi';
             $param['pageTitle'] = 'Notifikasi';
+            $limit = $request->has('page_length') ? $request->page_length : 5;
 
             $param['data'] = Notification::select(
                                     'notifications.id',
@@ -40,16 +41,22 @@ class NotificationController extends Controller
                                 )
                                 ->join('notification_templates AS nt', 'nt.id', 'notifications.template_id')
                                 ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
+                                ->when($request->get('query'), function($query) use ($request) {
+                                    return $query->where('nt.title', 'like', '%'.$request->get('query').'%')
+                                        ->orWhere('nt.content', 'like', '%'.$request->get('query').'%');
+                                })
                                 ->orderBy('notifications.read')
                                 ->orderBy('notifications.created_at', 'DESC')
-                                ->get();
+                                ->paginate($limit);
 
+            $param['total'] = Notification::select('notifications.id')
+                                            ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
+                                            ->count();
             $param['total_belum_dibaca'] = Notification::select('notifications.id')
                                             ->where('notifications.user_id', \Session::get(config('global.user_id_session')))
                                             ->where('notifications.read', false)
                                             ->count();
-            // return count($param['data']);
-            // return $param['total_belum_dibaca'];
+                                            
             return view('pages.notifikasi.index', $param);
         } catch (\Exception $e) {
             return back()->withError('Terjadi kesalahan');
@@ -57,7 +64,37 @@ class NotificationController extends Controller
             return back()->withError('Terjadi kesalahan pada database');
         }
     }
+    public function getDataPO($pengajuan_id) {
+        try {
+            $host = env('LOS_API_HOST');
+            $apiURL = $host . '/kkb/get-data-pengajuan-by-id/' . $pengajuan_id;
 
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+
+            if ($responseBody) {
+                if (array_key_exists('no_po', $responseBody) && array_key_exists('nama', $responseBody))
+                    return $responseBody;
+                else
+                    return response()->json([
+                        'status' => 'failed',
+                        'message' => 'Not found',
+                    ]);
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    
     public function listJson()
     {
         $status = '';
@@ -159,6 +196,12 @@ class NotificationController extends Controller
         }
     }
 
+    public function getDataImportById($import_id) {
+        $data = DB::select("SELECT * FROM imported_data WHERE id=$import_id LIMIT 1");
+        
+        return $data;
+    }
+
     public function send($action_id, $kreditId)
     {
         try {
@@ -166,11 +209,15 @@ class NotificationController extends Controller
             $kkb = KKB::select('id', 'kredit_id', 'user_id')
                         ->where('kredit_id', $kreditId)
                         ->first();
-            
+            $kredit = Kredit::find($kkb->kredit_id);
+            $is_import = $kredit->imported_data_id != null;
             $user_receiver_id = $kkb ? $kkb->user_id : null;
+            $tanggal = date('d-m-Y');
+            $res_email = null;
 
             // get notification template
             $template = NotificationTemplate::where('action_id', $action_id)->get();
+
             // get user who will be sended the notification
             foreach ($template as $key => $value) {
                 // get kode cabang
@@ -179,11 +226,34 @@ class NotificationController extends Controller
                     $user = User::where('role_id', 3)->first();
 
                     if ($user) {
-                        $createNotification = new Notification();
-                        $createNotification->kredit_id = $kreditId;
-                        $createNotification->template_id = $value->id;
-                        $createNotification->user_id = $user->id;
-                        $createNotification->save();
+                        $dataPO = null;
+                        $no_po = 'undifined';
+                        $nama_debitur = 'undifined';
+                        if ($is_import) {
+                            $dataPO = $this->getDataImportById($kredit->imported_data_id);
+                            if (count($dataPO) > 0)
+                                $dataPO = $dataPO[0];
+                            $no_po = 'Import Data Google Spreadsheet';
+                            $nama_debitur = $dataPO->name;
+                        }
+                        else {
+                            $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                            if (!array_key_exists('status', $dataPO)) {
+                                if (array_key_exists('id_pengajuan', $dataPO)) {
+                                    $no_po = $dataPO['no_po'];
+                                    $nama_debitur = $dataPO['nama'];
+                                }
+                            }
+                        }
+
+                        $res_email = $this->sendEmail($user->email,  [
+                            'title' => $value->title,
+                            'tanggal' => $tanggal,
+                            'no_po' => $no_po,
+                            'nama_debitur' => $nama_debitur,
+                            'to' => $user->name,
+                            'body' => $value->content,
+                        ]);
                     }
 
                     $createNotification = new Notification();
@@ -199,11 +269,34 @@ class NotificationController extends Controller
                         $user = User::where('role_id', 3)->first();
 
                         if ($user) {
-                            $createNotification = new Notification();
-                            $createNotification->kredit_id = $kreditId;
-                            $createNotification->template_id = $value->id;
-                            $createNotification->user_id = $user->id;
-                            $createNotification->save();
+                            $dataPO = null;
+                            $no_po = 'undifined';
+                            $nama_debitur = 'undifined';
+                            if ($is_import) {
+                                $dataPO = $this->getDataImportById($kredit->imported_data_id);
+                                if (count($dataPO) > 0)
+                                    $dataPO = $dataPO[0];
+                                $no_po = 'Import Data Google Spreadsheet';
+                                $nama_debitur = $dataPO->name;
+                            }
+                            else {
+                                $dataPO = $this->getDataPO($kredit->pengajuan_id);
+                                if (!array_key_exists('status', $dataPO)) {
+                                    if (array_key_exists('id_pengajuan', $dataPO)) {
+                                        $no_po = $dataPO['no_po'];
+                                        $nama_debitur = $dataPO['nama'];
+                                    }
+                                }
+                            }
+
+                            $res_email = $this->sendEmail($user->email,  [
+                                'title' => $value->title,
+                                'tanggal' => $tanggal,
+                                'no_po' => $no_po,
+                                'nama_debitur' => $nama_debitur,
+                                'to' => $user->name,
+                                'body' => $value->content,
+                            ]);
                         }
                     }
                     if (in_array(2, $arrRole)) {
@@ -216,85 +309,13 @@ class NotificationController extends Controller
                 }
             }
             DB::commit();
+
+            return $res_email;
         } catch(\Exception $e) {
             return $e->getMessage();
             DB::rollBack();
         } catch(\Illuminate\Database\QueryException $e) {
             return $e->getMessage();
-            DB::rollBack();
-        }
-    }
-
-    public function sendWithExtra($action_id, $kreditId, $extra)
-    {
-        try {
-            DB::beginTransaction();
-
-            // get notification template
-            $template = NotificationTemplate::where('action_id', $action_id)->get();
-
-            // get roles
-            $roles = Role::pluck('id');
-
-            // get kredit
-            $kredit = Kredit::find($kreditId);
-
-            // get user who will be sended the notification
-            foreach ($template as $key => $value) {
-                // get kode cabang
-                if (!$value->role_id && $value->all_role) {
-                    // retrieve from api
-                    $host = config('global.los_api_host');
-                    $apiURL = $host . '/kkb/get-data-users-cabang/' . $kredit->kode_cabang;
-
-                    $headers = [
-                        'token' => config('global.los_api_token')
-                    ];
-
-                    $responseBody = null;
-
-                    try {
-                        $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-
-                        $statusCode = $response->status();
-                        $responseBody = json_decode($response->getBody(), true);
-                        $user = $responseBody;
-
-                        if ($user) {
-                            foreach ($user as $key => $item) {
-                                $createNotification = new Notification();
-                                $createNotification->kredit_id = $kreditId;
-                                $createNotification->template_id = $value->id;
-                                $createNotification->user_id = $item['id'];
-                                $createNotification->extra = $extra;
-                                $createNotification->save();
-                            }
-                        }
-                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                        // return $e->getMessage();
-                    }
-                }
-                else {
-                    $arrRole = explode(',', $value->role_id);
-                    $user = User::where('kode_cabang', $kredit->kode_cabang)
-                                ->whereIn('role_id', $arrRole)
-                                ->orWhereIn('role_id', $arrRole)
-                                ->get();
-
-                    foreach ($user as $key => $item) {
-                        $createNotification = new Notification();
-                        $createNotification->kredit_id = $kreditId;
-                        $createNotification->template_id = $value->id;
-                        $createNotification->user_id = $item->id;
-                        $createNotification->extra = $extra;
-                        $createNotification->save();
-                    }
-                }
-            }
-            DB::commit();
-        } catch(\Exception $e) {
-            DB::rollBack();
-        } catch(\Illuminate\Database\QueryException $e) {
             DB::rollBack();
         }
     }
@@ -316,6 +337,8 @@ class NotificationController extends Controller
             return response()->json([
                 'status' => $status,
                 'message' => $message,
+                'mail_to' => $mail_to,
+                'mail_body' => $mail_body,
             ]);
         }
     }

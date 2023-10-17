@@ -27,33 +27,37 @@
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                 </div>
             </div>
-            <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
-                <div class="sorty pl-1 w-full">
-                    <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                    <select disabled class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                        name="page_length" id="page_length">
-                        <option selected>All</option>
-                        {{-- <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
-                        <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
-                        <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
-                        <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
-                        <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option> --}}
-                    </select>
-                    <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
-                </div>
-                <div class="search-table lg:w-96 w-full">
-                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                        <span class="mt-2 ml-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                    d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
-                            </svg>
-                        </span>
-                        <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                            autocomplete="off" />
+            <form id="form" method="get">
+                <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    <div class="sorty pl-1 w-full">
+                        <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                            name="page_length" id="page_length">
+                            <option value="5"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 5 ? 'selected' : '' }} @endisset>5</option>
+                            <option value="10"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 10 ? 'selected' : '' }} @endisset>10</option>
+                            <option value="15"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 15 ? 'selected' : '' }} @endisset>15</option>
+                            <option value="20"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 20 ? 'selected' : '' }} @endisset>20</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    </div>
+                    <div class="search-table lg:w-96 w-full">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
+                                </svg>
+                            </span>
+                            <input type="search" placeholder="Search" name="query" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                autocomplete="off" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
             <div class="tables mt-2">
                 <table class="table-auto w-full">
                     <tr>
@@ -111,6 +115,9 @@
         </div>
         @push('extraScript')
             <script>
+                $('#page_length').on('change', function() {
+                    $('#form').submit()
+                })
                 $('[data-dismiss-id]').on('click', function() {
                     location.reload();
                 })
@@ -136,22 +143,6 @@
                                 </div>`;
                                     $('.extra-notif').append(extra)
                                 }
-                                // if (notif.read) {
-                                //     $('.modal-notifikasi').show()
-                                //     $('.notification-click').find('.notif-body-card-' + data_id).addClass(
-                                //         'reading')
-                                //     $('.notification-click').find('span').html('Sudah Dibaca')
-                                //     const total_unread = response.total_belum_dibaca
-                                //     if (total_unread > 0) {
-                                //         $('.total-notif-message').html(
-                                //             `Anda mempunyai ${total_unread} notifikasi yang belum dibaca.`)
-                                //     } else {
-                                //         $('.total-notif-message').html(
-                                //             'Anda tidak mempunyai notifikasi yang belum dibaca.')
-                                //     }
-                                // } else {
-                                //     ErrorMessage('Tidak dapat membuka notifikasi')
-                                // }
                             } else {
                                 ErrorMessage('Terjadi kesalahan')
                             }

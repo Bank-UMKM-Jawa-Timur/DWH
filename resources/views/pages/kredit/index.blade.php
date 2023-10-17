@@ -24,7 +24,7 @@
             console.log('refresh table')
             var page = $("#page").val()
             var tab_type = $("#tab_type").val()
-            var page_length = $("#page_length").val()
+            var page_length = tab_type == 'data_kkb' ? $("#page_length").val() : $("#page_length_import").val()
             var tAwal = $("#tAwal").val() != 'dd/mm/yyyy' ? $('#tAwal').val() : ''
             var tAkhir = $("#tAkhir").val() != 'dd/mm/yyyy' ? $('#tAkhir').val() : ''
             var status = $("#status").val()
@@ -771,15 +771,15 @@
     <div class="body-pages">
         <input type="hidden" name="tab" id="tab_type"
             value="@isset($_GET['tab_type']) {{ $_GET['tab_type'] }} @endisset">
-        @if (\Session::get(config('global.role_id_session')) != 3)
             <div class="tab-wrapper flex">
                 <a href="" data-tab="tab-kkb"
                     class="tab-btn bg-white px-5 py-2 border border-b-0 text-theme-primary  rounded-tr-md rounded-tl-md">Data
                     KKB</a></li>
+                @if (\Session::get(config('global.role_id_session')) != 3)
                 <a href="" data-tab="tab-import-kkb"
                     class="tab-btn px-5 py-2 border border-b-0 rounded-tr-md rounded-tl-md">Data Import Google SpreadSheet</a></li>
+                @endif
             </div>
-        @endif
         <div id="tab-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
@@ -825,8 +825,7 @@
                                 value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
                             <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
                             <select name="page_length" id="page_length"
-                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                                id="">
+                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center">
                                 <option value="5"
                                     @isset($_GET['page_length']) {{ $_GET['page_length'] == 5 ? 'selected' : '' }} @endisset>
                                     5</option>
@@ -935,20 +934,19 @@
                                 <span class="mt-2 ml-3">
                                     @include('components.svg.search')
                                 </span>
-                                <input type="search" placeholder="Search" name="query" value="@if(\Request::has('tab_type') )@if(\Request::get('tab_type') == 'tab-import-kkb'){{\Request::has('query') ?\Request::get('query'):''}}@endif @endif"
+                                <input type="search" placeholder="Search" name="query" value="@if(\Request::has('tab_type'))@if(\Request::get('tab_type') == 'tab-import-kkb'){{\Request::has('query')?\Request::get('query'):''}}@endif @endif"
                                     class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
                             </div>
                         </div>
                     </div>
+                    <div id="table_content_import">
+                        @include('pages.kredit.partial.imported._table')
+                    </div>
                 </form>
-                <div id="table_content_import">
-                    @include('pages.kredit.partial.imported._table')
-                </div>
             </div>
         </div>
     @endif
-    </div>
-
+</div>
 @endsection
 
 @push('extraScript')
@@ -965,6 +963,7 @@
         $(".tab-wrapper .tab-btn").click(function(e) {
             e.preventDefault();
             tabId = $(this).data("tab")
+            console.log('asdaddsasd ')
             $('#tab_type').val(tabId)
             if (tabId == 'tab-kkb') {
                 $('.tab_type_kkb').val(tabId)

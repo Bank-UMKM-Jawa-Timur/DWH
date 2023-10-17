@@ -24,7 +24,7 @@
             console.log('refresh table')
             var page = $("#page").val()
             var tab_type = $("#tab_type").val()
-            var page_length = $("#page_length").val()
+            var page_length = tab_type == 'data_kkb' ? $("#page_length").val() : $("#page_length_import").val()
             var tAwal = $("#tAwal").val() != 'dd/mm/yyyy' ? $('#tAwal').val() : ''
             var tAkhir = $("#tAkhir").val() != 'dd/mm/yyyy' ? $('#tAkhir').val() : ''
             var status = $("#status").val()
@@ -832,8 +832,7 @@
                                 value="{{ isset($_GET['page']) ? $_GET['page'] : 1 }}">
                             <label for="page_length" class="mr-3 text-sm text-neutral-400">show</label>
                             <select name="page_length" id="page_length"
-                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                                id="">
+                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center">
                                 <option value="5"
                                     @isset($_GET['page_length']) {{ $_GET['page_length'] == 5 ? 'selected' : '' }} @endisset>
                                     5</option>
@@ -949,7 +948,7 @@
             </div>
         </div>
     @endif
-
+</div>
 @push('extraScript')
 <script>
     // Get Data Chart
@@ -974,6 +973,10 @@
     // End Get data Chart
 
     $('#page_length').on('change', function() {
+        $('#form').submit()
+    })
+
+    $('#page_length_import').on('change', function() {
         $('#form').submit()
     })
     var total_belum_terialisasi = parseInt("{{$total_belum_terealisasi}}")
@@ -1057,6 +1060,7 @@
     $(".tab-wrapper .tab-btn").click(function(e) {
         e.preventDefault();
         tabId = $(this).data("tab")
+        console.log(tabId)
         $('#tab_type').val(tabId)
         if (tabId == 'tab-kkb') {
             $('.tab_type_kkb').val(tabId)

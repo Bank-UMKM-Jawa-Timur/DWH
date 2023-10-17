@@ -5,7 +5,7 @@
                 <th>No</th>
                 <th width="150">Nama</th>
                 @if ($role_id == 3)
-                <th>Cabang</th>
+                    <th>Cabang</th>
                 @endif
                 <th>PO</th>
                 <th>Ketersediaan Unit</th>
@@ -22,15 +22,25 @@
             </tr>
         </thead>
         <tbody id="tbody">
-            @include('pages.kredit.partial._tbody')
+            @if (Request::has('query'))
+                @include('pages.kredit.partial._tbody_search')
+            @else
+                @include('pages.kredit.partial._tbody')
+            @endif
         </tbody>
     </table>
 </div>
 <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
     <div class="w-full">
         <div class="pagination kkb-pagination">
-            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
-            {{ $data->links('pagination::tailwind') }}
+            @if (Request::has('query') || Request::has('page_length'))
+                @if ($dataSearch instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    {{ $dataSearch->links('pagination::tailwind') }}
+                @endif
+            @else
+                @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    {{ $data->links('pagination::tailwind') }}
+                @endif
             @endif
         </div>
     </div>
