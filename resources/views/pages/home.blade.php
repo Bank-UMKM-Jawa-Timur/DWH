@@ -948,7 +948,7 @@
             </div>
         </div>
     @endif
-
+</div>
 @push('extraScript')
 <script>
     // Get Data Chart
@@ -1060,6 +1060,7 @@
     $(".tab-wrapper .tab-btn").click(function(e) {
         e.preventDefault();
         tabId = $(this).data("tab")
+        console.log(tabId)
         $('#tab_type').val(tabId)
         if (tabId == 'tab-kkb') {
             $('.tab_type_kkb').val(tabId)
