@@ -250,6 +250,7 @@ class KreditController extends Controller
             $headers = [
                 'token' => env('LOS_API_TOKEN')
             ];
+
             foreach ($data as $key => $value) {
                 if ($value->kategori == 'data_kkb') {
                     $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
@@ -319,10 +320,8 @@ class KreditController extends Controller
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
-                            if ($responseBody) {
-                                if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
-                                    $value->detail = $responseBody;
-                                }
+                            if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
+                                $value->detail = $responseBody;
                             }
                         }
                     } catch (\Illuminate\Http\Client\ConnectionException $e) {
@@ -780,76 +779,46 @@ class KreditController extends Controller
                         'dataSearch' => $orders
                     ];
                 } else {
-                    // Vendor
-                    $dataSearch = Kredit::select(
-                        'kredits.id',
-                        \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
-                        'kredits.pengajuan_id',
-                        'kredits.imported_data_id',
-                        'kredits.kode_cabang',
-                        'kkb.id AS kkb_id',
-                        'kkb.tgl_ketersediaan_unit',
-                        'kkb.id_tenor_imbal_jasa',
-                        'kkb.nominal_realisasi',
-                        'kkb.nominal_dp',
-                        'kkb.nominal_imbal_jasa',
-                        'kkb.nominal_pembayaran_imbal_jasa',
-                        'import.name',
-                        'import.tgl_po',
-                        'import.tgl_realisasi',
-                        'po.merk',
-                        'po.tipe',
-                        'po.tahun_kendaraan',
-                        'po.warna',
-                        'po.keterangan',
-                        'po.jumlah',
-                        'po.harga',
-                        \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
-                        \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-                        \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                        \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
-                    )
-                        ->join(
-                            'kkb',
-                            'kkb.kredit_id',
-                            'kredits.id'
-                        )
-                        ->leftJoin('imported_data AS import', 'import.id', 'kredits.imported_data_id')
-                        ->leftJoin('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
-                        ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
-                        ->where('import.name', 'like', '%' . $request->get('query') . '%')
-                        ->groupBy([
-                            'kredits.id',
-                            'kredits.pengajuan_id',
-                            'kredits.imported_data_id',
-                            'kredits.kode_cabang',
-                            'kkb.id_tenor_imbal_jasa',
-                            'kkb.id',
-                            'kkb.tgl_ketersediaan_unit',
-                            'po.merk',
-                            'po.tipe',
-                            'po.tahun_kendaraan',
-                            'po.warna',
-                            'po.keterangan',
-                            'po.jumlah',
-                            'po.harga',
-                        ])
-                        ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
-                            return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
-                                ->having('status', strtolower($request->status));
-                        })
-                        ->when($request->cabang, function ($query, $cbg) {
-                            return $query->having('kredits.kode_cabang', $cbg);
-                        })
-                        ->orderBy('total_file_uploaded')
-                        ->orderBy('total_file_confirmed')
-                        ->get();
+                    $apiDataPengajuanSearch = $host . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
+                    $api_req_pengajuan = Http::timeout(6)->withHeaders($headers)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
+                    $responseDataPengajuanSearch = json_decode($api_req_pengajuan->getBody(), true);
+                    $arr_response_search = $responseDataPengajuanSearch['data'];
+
+                    $result_search = [];
+                    for ($i = 0; $i < count($arr_response_search); $i++) {
+                        $detail = $this->loadKreditById($arr_response_search[$i]['id_pengajuan']);
+                        $detail['detail'] = $arr_response_search[$i];
+                        array_push($result_search, $detail);
+                    }
+
+                    if ($tab_type != 'tab-kkb')
+                        $request->merge(['page' => 1]);
+                    else
+                        $request->merge(['page' => $temp_page]);
+
+                    $page = $temp_page;
+                    $total = count($responseDataPengajuanSearch); //total items in array
+                    $limit = $request->page_length ? $request->page_length : 5; //per page
+                    $totalPages = ceil($total / $limit); //calculate total pages
+                    $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
+                    $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
+                    $offset = ($page - 1) * $limit;
+                    if ($offset < 0) $offset = 0;
+                    $responseDataPengajuanSearch = array_slice($result_search, $offset, $limit);
+
+
+                    $orders = PaginateController::paginate($responseDataPengajuanSearch, $limit, $page);
                 }
             }
             $this->param['imported'] = $imported;
-            $this->param['dataSearch'] = $orders;
-            $this->param['importedSearch'] = $importedSearch;
-// return $this->param;
+
+            if ($request->get('query') != null) {
+                $this->param['dataSearch'] = $orders;
+                if (\Session::get(config('global.role_id_session')) != 3) {
+                    $this->param['importedSearch'] = $importedSearch;
+                }
+            }
+            // return $this->param;
             $host = env('LOS_API_HOST');
             $headers = [
                 'token' => env('LOS_API_TOKEN')
@@ -1539,7 +1508,8 @@ class KreditController extends Controller
         }
     }
 
-    public function getDataCabang($kode_cabang) {
+    public function getDataCabang($kode_cabang)
+    {
         try {
             $host = env('BIO_INTERFACE_API_HOST');
             $apiURL = $host . '/v1/cabang/' . $kode_cabang;
