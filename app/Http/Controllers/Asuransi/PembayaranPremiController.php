@@ -24,7 +24,7 @@ class PembayaranPremiController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.pembayaran_premi.create');
     }
 
     /**

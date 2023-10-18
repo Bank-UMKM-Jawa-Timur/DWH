@@ -61,6 +61,7 @@
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
+                        <th>Cabang</th>
                         <th>Nama Debitur</th>
                         <th>No Aplikasi</th>
                         <th>No Polis</th>
@@ -71,6 +72,7 @@
                     <tbody>
                         <tr>
                             <td>1</td>
+                            <td>Surabaya</td>
                             <td>KASMAN</td>
                             <td>K21002022000010</td>
                             <td>3/SP-02/JSB/630/VI-2022</td>

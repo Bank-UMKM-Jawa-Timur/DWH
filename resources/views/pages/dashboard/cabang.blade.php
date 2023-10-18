@@ -1,3 +1,49 @@
+<div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 justify-center gap-5 mb-5">
+    <div class="card bg-white w-full p-5 border">
+        <div class="flex justify-between gap-5">
+            <h2 class="mt-3">Pengajuan DiProsess</h2>
+            <div class="bg-[#FCF18F] p-3 rounded-full">
+                @include('components.svg.clock')
+            </div>
+        </div>
+        <div class="p-3">
+            <h2 class="text-5xl font-bold">23</h2>
+        </div>
+    </div>
+    <div class="card bg-white w-full p-5 border">
+        <div class="flex justify-between gap-5">
+            <h2 class="mt-3">Pengajuan Bulan Ini</h2>
+            <div class="bg-[#FFCED3] p-3 text-theme-primary rounded-full">
+                @include('components.svg.calendar')
+            </div>
+        </div>
+        <div class="p-3">
+            <h2 class="text-5xl font-bold">13</h2>
+        </div>
+    </div>
+    <div class="card bg-white w-full p-5 border">
+        <div class="flex justify-between gap-5">
+            <h2 class="mt-3">Pengajuan Selesai</h2>
+            <div class="bg-[#CEF9CE] text-[#16DA12] p-3 rounded-full">
+                @include('components.svg.clock')
+            </div>
+        </div>
+        <div class="p-3">
+            <h2 class="text-5xl font-bold">43</h2>
+        </div>
+    </div>
+    <div class="card bg-white w-full p-5 border">
+        <div class="flex justify-between gap-5">
+            <h2 class="mt-3">Total import Google Spreadsheet</h2>
+            <div class="bg-[#C4E6D6] text-[#169B5B] p-3 rounded-full">
+                @include('components.svg.google-spreadsheet')
+            </div>
+        </div>
+        <div class="p-3">
+            <h2 class="text-5xl font-bold">63</h2>
+        </div>
+    </div>
+</div>
 <div class="lg:flex grid grid-cols-1 gap-5">
     <div class="card w-full bg-white border rounded">
         <div class="head border-b p-2 font-lexend relative text-center">
