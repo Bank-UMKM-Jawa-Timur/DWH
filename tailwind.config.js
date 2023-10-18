@@ -20,6 +20,7 @@ module.exports = {
                 "theme-text": "#5C5C5C",
                 "theme-pages": "#F5F5F9",
                 "theme-btn": "#696CFF",
+                disabled: "#FAFAFA",
             },
         },
     },
