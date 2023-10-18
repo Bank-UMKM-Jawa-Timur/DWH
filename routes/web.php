@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Asuransi\PelaporanPelunasanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\DashboardController;
@@ -13,6 +14,9 @@ use App\Http\Controllers\Master\NotificationTemplateController;
 use App\Http\Controllers\Master\PenggunaController;
 use App\Http\Controllers\Master\RoleController;
 use App\Http\Controllers\Master\VendorController;
+use App\Http\Controllers\Asuransi\RegistrasiController;
+use App\Http\Controllers\Asuransi\PengajuanKlaimController;
+use App\Http\Controllers\Asuransi\PembayaranPremiController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TargetController;
@@ -78,6 +82,13 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/template-notifikasi', NotificationTemplateController::class);
         Route::resource('/imbal-jasa', ImbalJasaController::class);
         Route::resource('/dictionary', DictionaryController::class);
+    });
+
+    Route::prefix('asuransi')->group(function() {
+        Route::resource('/registrasi', RegistrasiController::class);
+        Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
+        Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);
+        Route::resource('/pembayaran-premi', PembayaranPremiController::class);
     });
 
     Route::prefix('kredit')->name('kredit.')->group(function() {

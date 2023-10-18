@@ -259,7 +259,7 @@
         </li>
       @endif
       @if (\Session::get(config('global.role_id_session')) != 3)
-      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'active-link' : '' }}">
+      <li class="item-link dropdown-toggle {{ request()->is('asuransi/registrasi', 'asuransi/registrasi/*', 'asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*', 'asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*', 'asuransi/pelaporan-pelunasan', 'asuransi/pelaporan-pelunasan/*') ? 'active-link' : '' }}">
         <div class="relative">
           <a
             href="#"
@@ -298,21 +298,21 @@
         </div>
       </li>
       <!-- dropdown -->
-      <div class="dropdown-menu-link  {{ request()->is('master/template-notifikasi', 'master/template-notifikasi/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'show' : 'hidden' }}">
+      <div class="dropdown-menu-link  {{ request()->is('asuransi/registrasi', 'asuransi/registrasi/*', 'asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*', 'asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*','asuransi/pelaporan-pelunasan', 'asuransi/pelaporan-pelunasan/*') ? 'show' : 'hidden' }}">
         <ul class="menu-dropdown">
           <!-- add rule class active-dropdown-link for active navigation -->
-          <a href="">
-            <li class="dropdown-item-link {{ request()->is('master/role') ? 'active-dropdown-link' : '' }}">
+          <a href="{{ route('registrasi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('asuransi/registrasi', 'asuransi/registrasi/*') ? 'active-dropdown-link' : '' }}">
               Registrasi
             </li>
           </a>
-          <a href="">
-            <li class="dropdown-item-link {{ request()->is('master/vendor') ? 'active-dropdown-link' : '' }}">
-              Pengjuan Klaim
+          <a href="{{ route('pengajuan-klaim.index') }}">
+            <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+            Pengajuan Klaim
             </li>
           </a>
-          <a href="">
-            <li class="dropdown-item-link {{ request()->is('master/kategori-dokumen') ? 'active-dropdown-link' : '' }}">
+          <a href="{{ route('pembayaran-premi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*') ? 'active-dropdown-link' : '' }}">
               Pembayaran Premi
             </li>
           </a>
