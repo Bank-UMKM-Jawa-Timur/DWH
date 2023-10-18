@@ -138,7 +138,7 @@
                                                 <a class="item-dropdown" href="#">Pembatalan</a>
                                             </li>
                                             <li class="">
-                                                <a class="item-dropdown" href="{{ route('pelaporan-pelunasan.index') }}">Pelaporan Pelunasan</a>
+                                                <a class="item-dropdown" href="#">Inquery</a>
                                             </li>
                                         </ul>
                                     </div>
