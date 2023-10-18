@@ -20,6 +20,7 @@
     @stack('extraStyle')
   </head>
   <body>
+    @include('sweetalert::alert')
     @php
       if (\Session::get(config('global.role_id_session')) == 3) {
         $name_vendor = DB::table('users')->where('users.id', Auth::user()->id)

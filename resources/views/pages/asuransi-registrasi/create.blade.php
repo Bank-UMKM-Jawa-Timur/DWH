@@ -12,7 +12,7 @@
         <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
             <div class="input-box space-y-3">
                 <label class="uppercase">Pilih Data Pengajuan</label>
-                <select name="" class="w-full p-2 border">
+                <select name="pengajuan" id="pengajuan" class="w-full p-2 border">
                     <option selected>-- Pilih Data Pengajuan ---</option>
                 </select>
             </div>
@@ -223,6 +223,8 @@
 
 @push('extraScript')
 <script>
+    $('#pengajuan').select2();
+    
     $('#form-reset').on('click', function(){
         $('#form-asuransi-registrasi')[0].reset();
         if($('#form-asuransi-registrasi .datepicker')[0]){
