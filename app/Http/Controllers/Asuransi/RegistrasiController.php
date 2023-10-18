@@ -7,6 +7,7 @@ use App\Http\Controllers\LogActivitesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Alert;
+use Illuminate\Support\Facades\Http;
 
 class RegistrasiController extends Controller
 {
@@ -34,6 +35,15 @@ class RegistrasiController extends Controller
                             ->orWhere('no_polis', 'LIKE', "%$q%")
                             ->orWhere('tgl_polis', 'LIKE', "%$q%")
                             ->orWhere('tgl_rekam', 'LIKE', "%$q%");
+            }
+            if ($request->has('tAwal') && $request->has('tAkhir')) {
+                $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
+                $tAkhir = date('Y-m-d', strtotime($request->get('tAkhir')));
+                $status = $request->get('status');
+                $data = $data->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                            ->where('status', $status)
+                            ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
+                            ->where('status', $status);
             }
             $data = $data->orderBy('no_aplikasi')->paginate($page_length);
 
@@ -66,48 +76,37 @@ class RegistrasiController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+    public function getUser($user_id) {
+        $failed_response = [
+            'status' => 'gagal',
+            'message' => 'Gagal mengambil data'
+        ];
+        
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+        $apiURL = $host . "/kkb/get-data-users-by-id/$user_id";
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+        try {
+            $response = Http::timeout(3)
+                            ->withHeaders($headers)
+                            ->withOptions(['verify' => false])
+                            ->get($apiURL);
+            $responseBody = json_decode($response->getBody(), true);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+            if ($responseBody) {
+                if (array_key_exists('id', $responseBody)) {
+                    return $responseBody;
+                }
+            }
+            return $failed_response;
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            $failed_response = [
+                'status' => 'gagal',
+                'message' => $e->getMessage(),
+            ];
+            return $failed_response;
+        }
     }
 }
