@@ -1,21 +1,15 @@
 @extends('layout.master')
-@push('extraStyle')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
-@endpush
 @section('modal')
 <!-- Modal-tambah -->
 @include('pages.perusahaan_asuransi.modal.create')
 <!-- Modal-edit -->
 @include('pages.perusahaan_asuransi.modal.edit')
-<!-- Modal-Rincian bayar -->
-@include('pages.pembayaran_premi.modal.modal-rincian-bayar');
 @endsection
 @section('content')
 <div class="head-pages">
     <p class="text-sm">Master</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-        Pembayaran Premi
+        Perusahaan Asuransi
     </h2>
 </div>
 <div class="body-pages">
@@ -23,16 +17,16 @@
         <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
             <div class="title-table lg:p-3 p-2 text-center">
                 <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                    Pembayaran Premi
+                    Perusahaan Asuransi
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                 <button data-target-id="add-perusahaan-asuransi"
-                    class="add-modal-pembayaran-premi px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                    class="add-modal-perusahaan-asuransi px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                     <span class="lg:mt-0 mt-0">
                         @include('components.svg.plus')
                     </span>
-                    <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
+                    <span class="lg:block hidden"> Tambah Perusahaan Asuransi </span>
                 </button>
             </div>
         </div>
@@ -69,36 +63,36 @@
             <table class="table-auto w-full">
                 <tr>
                     <th>No.</th>
-                    <th>No Aplikasi</th>
-                    <th>No Bukti Pembayaran</th>
-                    <th>Tanggal Bayar</th>
-                    <th>Total Premi</th>
-                    <th>No Rekening</th>
-                    <th>No PK</th>
-                    <th>Periode Bayar</th>
-                    <th>Total Periode</th>
+                    <th>Nama</th>
+                    <th>Alamat</th>
+                    <th>Telepon</th>
                     <th>Aksi</th>
                 </tr>
                 <tbody>
                     @forelse ($data as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->no_aplikasi }}</td>
-                        <td>{{ $item->nobukti_pembayaran }}</td>
-                        <td>{{ $item->tgl_bayar }}</td>
-                        <td>{{ $item->total_premi }}</td>
-                        <td>{{ $item->no_rek }}</td>
-                        <td>{{ $item->no_pk }}</td>
-                        <td>{{ $item->periode_bayar }}</td>
-                        <td>{{ $item->total_periode }}</td>
+                        <td>{{ $item->nama }}</td>
+                        <td>{{ $item->alamat }}</td>
+                        <td>{{ $item->telp }}</td>
                         <td>
-                            <div class="dropdown">
+                            <div class="dropdown max-w-[280px]">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
+                                    Selengkapnya
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li class="">
-                                        <a class="item-dropdown" href="#" onclick="alertWarning()">Cek Status</a>
+                                        <a class="item-dropdown edit-modal-perusahaan-asuransi" data-target-id="edit-perusahaan-asuransi" href="#"
+                                        data-id="{{ $item->id }}"
+                                        data-nama="{{ $item->nama }}"
+                                        data-telp="{{ $item->telp }}"
+                                        data-alamat="{{ $item->alamat }}">Edit</a>
+                                    </li>
+                                    <li class="">
+                                        <a class="item-dropdown btn-delete-perusahaan-asuransi"
+                                        href="#"
+                                        data-id="{{ $item->id }}"
+                                        data-name="{{ $item->name }}">Hapus</a>
                                     </li>
                                 </ul>
                             </div>
@@ -117,15 +111,15 @@
         <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
             <div class="w-full">
                 <div class="pagination">
-                    {{-- @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                    @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
                     {{ $data->links('pagination::tailwind') }}
-                    @endif --}}
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
+
 @push('extraScript')
 <script>
     $('#page_length').on('change', function() {
@@ -317,21 +311,6 @@
             }
         })
     })
-
-    $('.add-modal-pembayaran-premi').on('click', function (e) { 
-        alertWarning()
-    });
-
-    function alertWarning() {
-        Swal.fire({
-            title: 'Warning',
-            html: 'Data Masih Belum Dilengkapi!',
-            icon: 'warning',
-            iconColor: '#DC3545',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#DC3545'
-        })
-    }
 
     function showError(input, message) {
         console.log(message);

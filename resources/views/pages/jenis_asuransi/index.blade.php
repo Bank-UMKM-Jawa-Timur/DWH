@@ -1,21 +1,15 @@
 @extends('layout.master')
-@push('extraStyle')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
-@endpush
 @section('modal')
 <!-- Modal-tambah -->
-@include('pages.perusahaan_asuransi.modal.create')
+@include('pages.jenis_asuransi.modal.create')
 <!-- Modal-edit -->
-@include('pages.perusahaan_asuransi.modal.edit')
-<!-- Modal-Rincian bayar -->
-@include('pages.pembayaran_premi.modal.modal-rincian-bayar');
+@include('pages.jenis_asuransi.modal.edit')
 @endsection
 @section('content')
 <div class="head-pages">
     <p class="text-sm">Master</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-        Pembayaran Premi
+        Jenis Asuransi
     </h2>
 </div>
 <div class="body-pages">
@@ -23,16 +17,16 @@
         <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
             <div class="title-table lg:p-3 p-2 text-center">
                 <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                    Pembayaran Premi
+                    Jenis Asuransi
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <button data-target-id="add-perusahaan-asuransi"
-                    class="add-modal-pembayaran-premi px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                <button data-target-id="add-jenis-asuransi"
+                    class="add-modal-jenis-asuransi px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                     <span class="lg:mt-0 mt-0">
                         @include('components.svg.plus')
                     </span>
-                    <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
+                    <span class="lg:block hidden"> Tambah Jenis Asuransi </span>
                 </button>
             </div>
         </div>
@@ -53,7 +47,7 @@
                 </form>
             </div>
             <div class="search-table lg:w-96 w-full">
-                <form action="{{ route('perusahaan-asuransi.index') }}" method="GET">
+                <form action="{{ route('jenis-asuransi.index') }}" method="GET">
                     <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
                         <span class="mt-2 ml-3">
                             @include('components.svg.search')
@@ -69,36 +63,35 @@
             <table class="table-auto w-full">
                 <tr>
                     <th>No.</th>
-                    <th>No Aplikasi</th>
-                    <th>No Bukti Pembayaran</th>
-                    <th>Tanggal Bayar</th>
-                    <th>Total Premi</th>
-                    <th>No Rekening</th>
-                    <th>No PK</th>
-                    <th>Periode Bayar</th>
-                    <th>Total Periode</th>
+                    <th>Produk Kredit Id</th>
+                    <th>Jenis Kredit</th>
+                    <th>Jenis</th>
                     <th>Aksi</th>
                 </tr>
                 <tbody>
                     @forelse ($data as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->no_aplikasi }}</td>
-                        <td>{{ $item->nobukti_pembayaran }}</td>
-                        <td>{{ $item->tgl_bayar }}</td>
-                        <td>{{ $item->total_premi }}</td>
-                        <td>{{ $item->no_rek }}</td>
-                        <td>{{ $item->no_pk }}</td>
-                        <td>{{ $item->periode_bayar }}</td>
-                        <td>{{ $item->total_periode }}</td>
+                        <td>{{ $item->produk_kredit_id != NULL ? $item->produk_kredit_id : "-" }}</td>
+                        <td>{{ $item->jenis_kredit }}</td>
+                        <td>{{ $item->jenis }}</td>
                         <td>
-                            <div class="dropdown">
+                            <div class="dropdown max-w-[280px]">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
+                                    Selengkapnya
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li class="">
-                                        <a class="item-dropdown" href="#" onclick="alertWarning()">Cek Status</a>
+                                        <a class="item-dropdown edit-modal-jenis-asuransi" data-target-id="edit-jenis-asuransi" href="#"
+                                        data-id="{{ $item->id }}"
+                                        data-jenis-kredit="{{ $item->jenis_kredit }}"
+                                        data-jenis="{{ $item->jenis }}">Edit</a>
+                                    </li>
+                                    <li class="">
+                                        <a class="item-dropdown btn-delete-jenis-asuransi"
+                                        href="#"
+                                        data-id="{{ $item->id }}"
+                                        data-jenis-kredit="{{ $item->jenis_kredit }}">Hapus</a>
                                     </li>
                                 </ul>
                             </div>
@@ -117,23 +110,28 @@
         <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
             <div class="w-full">
                 <div class="pagination">
-                    {{-- @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                    @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator )
                     {{ $data->links('pagination::tailwind') }}
-                    @endif --}}
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
+
 @push('extraScript')
 <script>
+    $(document).ready(function() {
+        $('.select-jenis-kredit').select2({
+            width: 'resolve',
+        });
+    });
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
 
-    $(".add-modal-perusahaan-asuransi").on("click", function () {
-        var targetId = 'add-perusahaan-asuransi';
+    $(".add-modal-jenis-asuransi").on("click", function () {
+        var targetId = 'add-jenis-asuransi';
         $("#" + targetId).removeClass("hidden");
         form.addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
@@ -141,20 +139,28 @@
         }
     });
 
-    $(".edit-modal-perusahaan-asuransi").on("click", function () {
-        var targetId = 'edit-perusahaan-asuransi';
+    $(".edit-modal-jenis-asuransi").on("click", function () {
+        var targetId = 'edit-jenis-asuransi';
 
-        const data_id = $(this).data('id')
-        const data_nama = $(this).data('nama')
-        const data_telp = $(this).data('telp')
-        const data_alamat = $(this).data('alamat')
+        var data_id = '';
+        var data_jenis_kredit = '';
+        var data_jenis = '';
+
+        if (typeof $(this).data('id') !== 'undefined') {
+            data_id = $(this).data('id');
+        }
+        if (typeof $(this).data('jenis-kredit') !== 'undefined') {
+            data_jenis_kredit = $(this).data('jenis-kredit');
+        }
+        if (typeof $(this).data('jenis') !== 'undefined') {
+            data_jenis = $(this).data('jenis');
+        }
 
         $(`#${targetId} #edit-id`).val(data_id)
-        $(`#${targetId} #edit-nama`).val(data_nama)
-        $(`#${targetId} #edit-telp`).val(data_telp)
-        $(`#${targetId} #edit-alamat`).val(data_alamat)
+        $(`#${targetId} .edit-jenis-kredit`).val(data_jenis_kredit).change()
+        $(`#${targetId} #edit-jenis`).val(data_jenis)
         
-        $("#" + targetId).removeClass("hidden");
+        $(`#${targetId}`).removeClass("hidden");
         $(".layout-form").addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
             $(".layout-overlay-form").removeClass("hidden");
@@ -171,31 +177,25 @@
     
     $("#simpanButton").on('click', function(e) {
         e.preventDefault();
-        const req_nama = document.getElementById('add-nama')
-        const req_alamat = document.getElementById('add-alamat')
-        const req_telp = document.getElementById('add-telp')
+        const req_jenis_kredit = document.getElementById('add-jenis-kredit')
+        const req_jenis = document.getElementById('add-jenis')
 
-        if (req_nama == '') {
-            showError(req_nama, 'Nama harus diisi.');
+        if (req_jenis_kredit == '') {
+            showError(req_jenis_kredit, 'Jenis Kredit harus diisi.');
             return false;
         }
-        if (req_alamat == '') {
-            showError(req_alamat, 'Alamat harus diisi.');
-            return false;
-        }
-        if (req_telp == '') {
-            showError(req_telp, 'Nomor HP harus diisi.');
+        if (req_jenis == '') {
+            showError(req_jenis, 'Jenis harus diisi.');
             return false;
         }
 
         $.ajax({
             type: "POST",
-            url: "{{ route('perusahaan-asuransi.store') }}",
+            url: "{{ route('jenis-asuransi.store') }}",
             data: {
                 _token: "{{ csrf_token() }}",
-                nama: req_nama.value,
-                alamat: req_alamat.value,
-                telp: req_telp.value,
+                jenis_kredit: req_jenis_kredit.value,
+                jenis: req_jenis.value,
             },
             success: function(data) {
                 console.log(data.message);
@@ -203,12 +203,10 @@
                     for (var i = 0; i < data.error.length; i++) {
                         var message = data.error[i];
 
-                        if (message.toLowerCase().includes('nama'))
-                            showError(req_nama, message)
-                        if (message.toLowerCase().includes('alamat'))
-                            showError(req_alamat, message)
-                        if (message.toLowerCase().includes('telp'))
-                            showError(req_telp, message)
+                        if (message.toLowerCase().includes('jenis_kredit'))
+                            showError(req_jenis_kredit, message)
+                        if (message.toLowerCase().includes('jenis'))
+                            showError(req_jenis, message)
                     }
                 } else {
                   SuccessMessage(data.message);
@@ -217,7 +215,7 @@
                     // } else {
                     //     ErrorMessage(data.message)
                     // }
-                    $('#add-perusahaan-asuransi').addClass('hidden')
+                    $('#add-jenis-asuransi').addClass('hidden')
                 }
             },
             error: function(e) {
@@ -229,32 +227,26 @@
     $('#edit-button').click(function(e) {
         e.preventDefault()
         const req_id = document.getElementById('edit-id')
-        const req_nama = document.getElementById('edit-nama')
-        const req_telp = document.getElementById('edit-telp')
-        const req_alamat = document.getElementById('edit-alamat')
+        const req_jenis_kredit = document.getElementById('edit-jenis-kredit')
+        const req_jenis = document.getElementById('edit-jenis')
 
-        if (req_nama == '') {
-            showError(req_nama, 'Nama harus diisi.')
+        if (req_jenis_kredit == '') {
+            showError(req_jenis_kredit, 'Jenis Kredit harus diisi.');
             return false;
         }
-        if (req_telp == '') {
-            showError(req_telp, 'Nomor HP harus diisi.')
-            return false;
-        }
-        if (req_alamat == '') {
-            showError(req_alamat, 'Alamat harus diisi.')
+        if (req_jenis == '') {
+            showError(req_jenis, 'Jenis harus diisi.');
             return false;
         }
 
         $.ajax({
             type: "POST",
-            url: "{{ url('/master/perusahaan-asuransi') }}/" + req_id.value,
+            url: "{{ url('/master/jenis-asuransi') }}/" + req_id.value,
             data: {
                 _token: "{{ csrf_token() }}",
                 _method: 'PUT',
-                nama: req_nama.value,
-                alamat: req_alamat.value,
-                telp: req_telp.value,
+                jenis_kredit: req_jenis_kredit.value,
+                jenis: req_jenis.value,
             },
             success: function(data) {
                 console.log(data.message);
@@ -262,12 +254,10 @@
                     for (var i = 0; i < data.error.length; i++) {
                         var message = data.error[i];
 
-                        if (message.toLowerCase().includes('nama'))
-                            showError(req_nama, message)
-                        if (message.toLowerCase().includes('alamat'))
-                            showError(req_alamat, message)
-                        if (message.toLowerCase().includes('telp'))
-                            showError(req_telp, message)
+                        if (message.toLowerCase().includes('jenis_kredit'))
+                            showError(req_jenis_kredit, message)
+                        if (message.toLowerCase().includes('jenis'))
+                            showError(req_jenis, message)
                     }
                 } else {
                     // if (data.status == 'success') {
@@ -284,7 +274,7 @@
         });
     })
 
-    $('.btn-delete-perusahaan-asuransi').on('click', function(e) {
+    $('.btn-delete-jenis-asuransi').on('click', function(e) {
         const data_id = $(this).data('id')
         Swal.fire({
             title: 'Konfirmasi',
@@ -299,7 +289,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: "{{ url('/master/perusahaan-asuransi') }}/"+data_id,
+                    url: "{{ url('/master/jenis-asuransi') }}/"+data_id,
                     data: {
                         _token: "{{ csrf_token() }}",
                         _method: 'DELETE',
@@ -317,21 +307,6 @@
             }
         })
     })
-
-    $('.add-modal-pembayaran-premi').on('click', function (e) { 
-        alertWarning()
-    });
-
-    function alertWarning() {
-        Swal.fire({
-            title: 'Warning',
-            html: 'Data Masih Belum Dilengkapi!',
-            icon: 'warning',
-            iconColor: '#DC3545',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#DC3545'
-        })
-    }
 
     function showError(input, message) {
         console.log(message);
