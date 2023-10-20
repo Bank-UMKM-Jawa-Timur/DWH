@@ -27,13 +27,12 @@
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <button data-target-id="add-perusahaan-asuransi"
-                    class="add-modal-pembayaran-premi px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                <a href="{{route('pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                     <span class="lg:mt-0 mt-0">
                         @include('components.svg.plus')
                     </span>
                     <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
-                </button>
+                </a>
             </div>
         </div>
         <div
@@ -318,9 +317,9 @@
         })
     })
 
-    $('.add-modal-pembayaran-premi').on('click', function (e) { 
-        alertWarning()
-    });
+    //$('.add-modal-pembayaran-premi').on('click', function (e) { 
+    //  alertWarning()
+    //});
 
     function alertWarning() {
         Swal.fire({
@@ -344,4 +343,3 @@
     }
 </script>
 @endpush
-@endsection
