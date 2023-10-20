@@ -40,9 +40,9 @@ class PerusahaanAsuransiController extends Controller
                         orderBy('nama');
         if ($searchQuery && $searchBy === 'field') {
             $query->where(function ($q) use ($searchQuery) {
-                $q->where('nama', '=', $searchQuery)
-                    ->orWhere('alamat', '=', $searchQuery)
-                    ->orWhere('telp', '=', $searchQuery);
+                $q->where('nama', 'LIKE', "%$searchQuery%")
+                    ->orWhere('alamat', 'LIKE', "%$searchQuery%")
+                    ->orWhere('telp', 'LIKE', "%$searchQuery%");
             });
         }
         if (is_numeric($page_length)) {
