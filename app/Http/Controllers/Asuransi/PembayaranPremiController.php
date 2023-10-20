@@ -35,14 +35,14 @@ class PembayaranPremiController extends Controller
                         orderBy('no_aplikasi');
         if ($searchQuery && $searchBy === 'field') {
             $query->where(function ($q) use ($searchQuery) {
-                $q->where('no_aplikasi', '=', $searchQuery)
-                    ->orWhere('nobukti_pembayaran', '=', $searchQuery)
-                    ->orWhere('tgl_bayar', '=', $searchQuery)
-                    ->orWhere('total_premi', '=', $searchQuery)
-                    ->orWhere('no_rek', '=', $searchQuery)
-                    ->orWhere('no_pk', '=', $searchQuery)
-                    ->orWhere('periode_bayar', '=', $searchQuery)
-                    ->orWhere('total_periode', '=', $searchQuery);
+                $q->where('no_aplikasi', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('tgl_bayar', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('total_premi', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('no_rek', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('no_pk', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('periode_bayar', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('total_periode', 'like', '%' . $searchQuery . '%');
             });
         }
         if (is_numeric($page_length)) {

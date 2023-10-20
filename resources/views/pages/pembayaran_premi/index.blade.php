@@ -52,7 +52,7 @@
                 </form>
             </div>
             <div class="search-table lg:w-96 w-full">
-                <form action="{{ route('perusahaan-asuransi.index') }}" method="GET">
+                <form action="{{ route('pembayaran-premi.index') }}" method="GET">
                     <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
                         <span class="mt-2 ml-3">
                             @include('components.svg.search')
