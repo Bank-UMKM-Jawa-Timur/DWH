@@ -71,19 +71,7 @@
             class="nav-link relative"
           >
             <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon-nav"
-                viewBox="0 0 14 14"
-              >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m13.5 4l-3 3L7 2L3.5 7l-3-3v6.5A1.5 1.5 0 0 0 2 12h10a1.5 1.5 0 0 0 1.5-1.5Z"
-                />
-              </svg>
+              @include('components.svg.insurance')
             </span>
             <div>Asuransi</div>
           </a>
@@ -125,7 +113,7 @@
       </div>
       @endif
       @if (\Session::get(config('global.role_id_session')) == 4)
-      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'active-link' : '' }}">
+      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*') ? 'active-link' : '' }}">
         <div class="relative">
           <a
             href="#"
@@ -164,7 +152,7 @@
         </div>
       </li>
       <!-- dropdown -->
-      <div class="dropdown-menu-link  {{ request()->is('master/template-notifikasi', 'master/template-notifikasi/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'show' : 'hidden' }}">
+      <div class="dropdown-menu-link  {{ request()->is('master/template-notifikasi', 'master/template-notifikasi/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*') ? 'show' : 'hidden' }}">
         <ul class="menu-dropdown">
           <!-- add rule class active-dropdown-link for active navigation -->
           <a href="{{ route('role.index') }}">
@@ -195,6 +183,16 @@
           <a href="{{ route('template-notifikasi.index') }}">
             <li class="dropdown-item-link {{ request()->is('master/template-notifikasi') ? 'active-dropdown-link' : '' }}">
               Template notifikasi
+            </li>
+          </a>
+          <a href="{{ route('perusahaan-asuransi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/perusahaan-asuransi') ? 'active-dropdown-link' : '' }}">
+              Perusahaan Asuransi
+            </li>
+          </a>
+          <a href="{{ route('jenis-asuransi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/jenis-asuransi') ? 'active-dropdown-link' : '' }}">
+              Jenis Asuransi
             </li>
           </a>
           {{--  <a href="{{ route('dictionary.index') }}">

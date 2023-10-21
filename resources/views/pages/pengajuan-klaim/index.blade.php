@@ -1,9 +1,4 @@
-@extends('layout.master')
-@push('extraStyle')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
-@endpush
-@section('content')
+
 @extends('layout.master')
 @push('extraStyle')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
@@ -67,6 +62,7 @@
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
+                        <th>Cabang</th>
                         <th>No Aplikasi</th>
                         <th>No Rekening</th>
                         <th>No Klaim</th>
@@ -80,6 +76,7 @@
                     <tbody>
                         <tr>
                             <td>1</td>
+                            <td>Surabaya</td>
                             <td>K21002022000010</td>
                             <td>21000572548826</td>
                             <td>2225</td>
@@ -125,6 +122,4 @@
             </div>
         </div>
     </div>
-@endsection
-
 @endsection

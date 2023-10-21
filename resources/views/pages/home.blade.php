@@ -783,6 +783,8 @@
         @if(\Session::get(config('global.role_id_session')) == 2)
         @include('pages.dashboard.cabang')
         @endif
+
+        @if(\Session::get(config('global.role_id_session')) != 2)
         <input type="hidden" name="tab" id="tab_type"
             value="@isset($_GET['tab_type']) {{ $_GET['tab_type'] }} @endisset">
         <div class="tab-wrapper flex mt-3">
@@ -947,6 +949,7 @@
                 </div>
             </div>
         </div>
+    @endif
     @endif
 </div>
 @push('extraScript')
