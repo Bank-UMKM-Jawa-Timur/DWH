@@ -20,112 +20,231 @@
             </button> --}}
         </div>
     </div>
-    <div class="body-pages p-5">
-        <div class="lg:flex grid md:grid-cols-1 grid-cols-1 w-full gap-5">
-            {{-- form pilih no_apk --}}
-            <div class="bg-white lg:w-80 w-full p-5 border">
+<div class="body-pages">
+    <div class="bg-white w-full p-5">
+        <form id="form-pengajuan-klaim" action="" method="" class="space-y-5 " accept="">
+            {{-- form data 1 --}}
+            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
-                    <label for="add-role" class="uppercase">NO_APP<span class="text-theme-primary">*</span> </label>
-                    <select name="" class="w-full p-2 border">
-                        <option selected>-- Pilih No Aplikasi ---</option>
-                    </select>
+                    <label for="" class="uppercase">No Klaim<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="no_klaim" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
                 </div>
-                <div class="p-2 mt-3 mb-3 space-y-4">
-                    <div class="input-checked flex gap-5">
-                        <input type="checkbox" name="" id="jaminan" class="accent-theme-primary" checked>
-                        <label for="jaminan">Jaminan</label>
-                    </div>
-                    <div class="input-checked flex gap-5">
-                        <input type="checkbox" name="" id="jiwa" class="accent-theme-primary">
-                        <label for="jiwa">Jiwa</label>
-                    </div>
-                    <div class="input-checked flex gap-5">
-                        <input type="checkbox" name="" id="kredit" class="accent-theme-primary">
-                        <label for="kredit">Kredit</label>
-                    </div>
+                <div class="input-box-calendar space-y-3">
+                    <label for="" class="uppercase">Nomor Rekening<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="no_rek" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
                 </div>
-                <div class="p-2">
-                    <button href="{{route('pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                        <span class="lg:mt-0 mt-0">
-                            @include('components.svg.plus')
-                        </span>
-                        <span class="lg:block hidden"> Pilih data</span>
-                    </button>
+                <div class="input-box-calendar space-y-3">
+                    <label for="" class="uppercase">No Aplikasi<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="no_aplikasi" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
                 </div>
             </div>
-            <div class="w-full">
-                <div class="table-wrapper bg-white border rounded-md w-full p-2">
-                    <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                        <div class="title-table lg:p-3 p-2 text-center">
-                            <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                                Pembayaran Premi
-                            </h2>
-                        </div>
+            {{-- form data  2 --}}
+            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                <div class="input-box space-y-3">
+                    <label for="" class="uppercase">Nilai Persetujuan<span class="text-theme-primary">*</span></label>
+                    <input type="text" class="p-2 w-full border" id="nilai_persetujuan" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+                <div class="input-box-calendar space-y-3">
+                    <label for="" class="uppercase">Tanggal Klaim<span class="text-theme-primary">*</span></label>
+                    <div class="flex border justify-center tgl_klaim">
+                        <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
+                        <input type="text" class="datepicker p-2 w-full" value="dd/mm/yyyy" id="tgl_klaim" name=""/>
                     </div>
-
-                    <div class="tables mt-2">
-                        <table class="table-auto w-full">
-                            <tr>
-                                <th>No.</th>
-                                <th>No Aplikasi.</th>
-                                <th>No Rekening.</th>
-                                <th>Premi</th>
-                                <th>No PK</th>
-                                <th>No Polis</th>
-                                <th>Periode Bayar</th>
-                                <th>Total Periode Bayar</th>
-                            </tr>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>K21002022000010</td>
-                                    <td><input type="text" placeholder="Input nilai disini.." class="bg-white border px-5 py-2"></td>
-                                    <td>K21002022000010</td>
-                                    <td>PK/0001/CU/73/0122-0132</td>
-                                    <td>3/SP-02/JSB/630/VI-2022</td>
-                                    <td><input type="text" placeholder="Input nilai disini.." class="bg-white border px-5 py-2"></td>
-                                    <td><input type="text" placeholder="Input nilai disini.." class="bg-white border px-5 py-2"></td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>K21002022000010</td>
-                                    <td><input type="text" placeholder="Input nilai disini.." class="bg-white  border px-5 py-2"></td>
-                                    <td>K21002022000010</td>
-                                    <td>PK/0001/CU/73/0122-0132</td>
-                                    <td>3/SP-02/JSB/630/VI-2022</td>
-                                    <td><input type="text" placeholder="Input nilai disini.." class="bg-white border px-5 py-2"></td>
-                                    <td><input type="text" placeholder="Input nilai disini.." class="bg-white border px-5 py-2"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-end">
-                        <button href="{{route('pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                            <span class="lg:mt-0 mt-0">
-                                @include('components.svg.plus')
-                            </span>
-                            <span class=""> Simpan data</span>
-                        </button>
-                    </div>
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+                <div class="input-box-calendar space-y-3">
+                    <label for="" class="uppercase">No Rekening Debet<span class="text-theme-primary">*</span></label>
+                    <input type="text" class="disabled-input p-2 w-full border" id="no_rek_debit" name=""/>
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
                 </div>
             </div>
+            {{-- form data 3 --}}
+            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                <div class="input-box space-y-3">
+                    <label for="" class="uppercase">No Polis<span class="text-theme-primary">*</span></label>
+                    <input type="text" class="p-2 w-full border" id="no_polis" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+            </div>
+            <div class="title-form">
+                <h2 class="text-theme-primary font-bold text-lg">Rincian Bayar</h2>
+            </div>
+            {{-- form rincian bayar 1 --}}
+            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                <div class="input-box space-y-3">
+                    <label for="" class="uppercase">Premi<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="premi" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+                <div class="input-box-calendar space-y-3">
+                    <label for="" class="uppercase">Nomor Rekening<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="no_rek2" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+                <div class="input-box-calendar space-y-3">
+                    <label for="" class="uppercase">No Pk<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="no_pk" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+            </div>
+            {{-- form rincian bayar 2 --}}
+            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                <div class="input-box space-y-3">
+                    <label for="" class="uppercase">No Aplikasi<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="no_aplikasi2" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+                <div class="input-box-calendar space-y-3">
+                    <label for="" class="uppercase">No Polis<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="no_polis2" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+                <div class="input-box-calendar space-y-3">
+                    <label for="" class="uppercase">Periode<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="periode" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+            </div>
+            {{-- form rincian bayar 3 --}}
+            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                <div class="input-box space-y-3">
+                    <label for="" class="uppercase">Total Bayar<span class="text-theme-primary">*</span></label>
+                    <input type="text" class=" p-2 w-full border" id="total_bayar" name="" />
+                    {{-- <small class="form-text text-red-600 error"></small> --}}
+                </div>
+            </div>
+            <div class="flex gap-5">
+                <button id="btn-simpan" type="button" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                    <span class="lg:mt-0 mt-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" d="M5 12h14m-7-7v14" />
+                        </svg>
+                    </span>
+                    <span class="lg:block hidden"> Simpan  </span>
+                </button>
+            <button type="button"
+                id="form-reset"
+                class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                <span class="lg:mt-1.5 mt-0">
+                    @include('components.svg.reset')
+                </span>
+                <span class="lg:block hidden"> Reset </span>
+            </button>
+            </div>
+            </form>
         </div>
     </div>
 @endsection
 
 @push('extraScript')
-    <script>
-        $('#form-reset').on('click', function() {
-            $('#form-pengajuan-klaim')[0].reset();
-            if ($('#form-pengajuan-klaim .datepicker')[0]) {
-                $('.datepicker').val('dd/mm/yyyy');
-            }
-        })
+<script>
+    $('#form-reset').on('click', function(){
+        $('.form-text.text-red-600.error').remove();
+        $('#form-pengajuan-klaim')[0].reset();
+        if($('#form-pengajuan-klaim .datepicker')[0]){
+            $('.datepicker').val('dd/mm/yyyy');
+        }
+    })
 
-        // function addInputRincian(data) {
-        //         for (var i = 0; i < data.length; i++) {
-        //             var row = data[i]
-        //             var new_tr = `
+    var no_klaim = document.getElementById('no_klaim');
+    var no_rek = document.getElementById('no_rek');
+    var no_aplikasi = document.getElementById('no_aplikasi');
+    var nilai_persetujuan = document.getElementById('nilai_persetujuan');
+    var tgl_klaim = document.getElementById('tgl_klaim');
+    var no_rek_debit = document.getElementById('no_rek_debit');
+    var no_polis = document.getElementById('no_polis');
+    var premi = document.getElementById('premi');
+    var no_rek2 = document.getElementById('no_rek2');
+    var no_pk = document.getElementById('no_pk');
+    var no_aplikasi2 = document.getElementById('no_aplikasi2');
+    var no_polis2 = document.getElementById('no_polis2');
+    var periode = document.getElementById('periode');
+    var total_bayar = document.getElementById('total_bayar');
+
+    var msg_validasi = `<small class="form-text text-red-600 error">Data wajib di isi.</small>`;
+
+    $('#btn-simpan').on('click', function () { 
+        $('.form-text.text-red-600.error').remove();
+
+        if (no_klaim.value === '') {
+            $(`${msg_validasi}`).insertAfter(no_klaim);
+        }
+        if(no_rek.value === ''){
+            $(`${msg_validasi}`).insertAfter(no_rek);
+        }
+        if(no_aplikasi.value === ''){
+            $(`${msg_validasi}`).insertAfter(no_aplikasi);
+        }
+        if(nilai_persetujuan.value === ''){
+            $(`${msg_validasi}`).insertAfter(nilai_persetujuan);
+        }
+        if(tgl_klaim.value === 'dd/mm/yyyy'){
+            var class_tgl_klaim = document.getElementsByClassName("tgl_klaim");
+            $(`${msg_validasi}`).insertAfter(class_tgl_klaim);
+        }
+        if(no_rek_debit.value === ''){
+            $(`${msg_validasi}`).insertAfter(no_rek_debit);
+        }
+        if(no_polis.value === ''){
+            $(`${msg_validasi}`).insertAfter(no_polis);
+        }
+        if(premi.value === ''){
+            $(`${msg_validasi}`).insertAfter(premi);
+        }
+        if(no_rek2.value === ''){
+            $(`${msg_validasi}`).insertAfter(no_rek2);
+        }
+        if(no_pk.value === ''){
+            $(`${msg_validasi}`).insertAfter(no_pk);
+        }
+        if(no_aplikasi2.value === ''){
+            $(`${msg_validasi}`).insertAfter(no_aplikasi2);
+        }
+        if(no_polis2.value === ''){
+            $(`${msg_validasi}`).insertAfter(no_polis2);
+        }
+        if(periode.value === ''){
+            $(`${msg_validasi}`).insertAfter(periode);
+        }
+        if(total_bayar.value === ''){
+            $(`${msg_validasi}`).insertAfter(total_bayar);
+        }
+    });
+
+    var tgl_awal_kredit = document.getElementById('tgl_awal_kredit');
+    var tgl_akhir_kredit = document.getElementById('tgl_akhir_kredit');
+    var tgl_lahir = document.getElementById('tgl_lahir');
+    var up = document.getElementById('up');
+
+    $('#btn-hitung').on('click', function () { 
+        $('.form-text.text-red-600.error').remove();
+
+        if(tgl_awal_kredit.value === 'dd/mm/yyyy'){
+            var class_tgl_awal_kredit = document.getElementsByClassName("tgl_awal_kredit");
+            $(`${msg_validasi}`).insertAfter(class_tgl_awal_kredit);
+        }
+        if(tgl_akhir_kredit.value === 'dd/mm/yyyy'){
+            var class_tgl_akhir_kredit = document.getElementsByClassName("tgl_akhir_kredit");
+            $(`${msg_validasi}`).insertAfter(class_tgl_akhir_kredit);
+        }
+        if(tgl_lahir.value === 'dd/mm/yyyy'){
+            var class_tgl_lahir = document.getElementsByClassName("tgl_lahir");
+            $(`${msg_validasi}`).insertAfter(class_tgl_lahir);
+        }
+        if(up.value === ''){
+            $(`${msg_validasi}`).insertAfter(up);
+        }
+    })
+
+    // function addInputRincian(data) {
+    //         for (var i = 0; i < data.length; i++) {
+    //             var row = data[i]
+    //             var new_tr = `
     //             <tr>
     //                 <td><span id="number[]">${(i+1)}</span></td>
     //                 <td>
