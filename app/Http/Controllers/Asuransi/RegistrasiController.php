@@ -71,12 +71,15 @@ class RegistrasiController extends Controller
         $headers = [
             'token' => env('LOS_API_TOKEN')
         ];
+        
         $apiPengajuan = $host . '/v1/get-list-pengajuan/' . $user_id;
         $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
         $response = json_decode($api_req->getBody(), true);
-
-        // return $response['total_data'];
-            $dataPengajuan = $response['data'];
+        $dataPengajuan = [];
+        if (is_array($response)) {
+            if (array_key_exists('data', $response))
+                $dataPengajuan = $response['data'];
+        }
 
         $dataAsuransi = DB::table('mst_jenis_asuransi')->get();
 
