@@ -69,12 +69,34 @@
                     <th>Aksi</th>
                 </tr>
                 <tbody>
+                    @php
+                        
+                    @endphp
                     @forelse ($data as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->produk_kredit_id != NULL ? $item->produk_kredit_id : "-" }}</td>
                         <td>{{ $item->jenis_kredit }}</td>
-                        <td>{{ $item->jenis }}</td>
+                        <td>
+                            @php
+                                $exJenis = explode(',', $item->jenis);
+                            @endphp
+                            @forelse ($exJenis as $jenis_key => $v)
+                                @php
+                                    if ($v == 1) {
+                                        $dataJenis = "Jaminan";
+                                    }else if($v == 2){
+                                        $dataJenis = "Jiwa";
+                                    }else{
+                                        $dataJenis = "Kredit(Penjaminan)";
+                                    }
+                                    $splitter = $jenis_key == count($exJenis) - 1 ? '' : ',';
+                                @endphp
+                                {{ $dataJenis . $splitter }}
+                            @empty
+                                <p>Role tidak dipilih</p>
+                            @endforelse
+                        </td>
                         <td>
                             <div class="dropdown max-w-[280px]">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
@@ -125,6 +147,9 @@
         $('.select-jenis-kredit').select2({
             width: 'resolve',
         });
+        $('.select-jenis').select2({
+            width: 'resolve',
+        });
     });
     $('#page_length').on('change', function() {
         $('#form').submit()
@@ -144,6 +169,7 @@
 
         var data_id = '';
         var data_jenis_kredit = '';
+        var arrayJenis = [];
         var data_jenis = '';
 
         if (typeof $(this).data('id') !== 'undefined') {
@@ -155,10 +181,19 @@
         if (typeof $(this).data('jenis') !== 'undefined') {
             data_jenis = $(this).data('jenis');
         }
+        
+        var checkArray = data_jenis.toString();
 
         $(`#${targetId} #edit-id`).val(data_id)
         $(`#${targetId} .edit-jenis-kredit`).val(data_jenis_kredit).change()
-        $(`#${targetId} #edit-jenis`).val(data_jenis)
+        if (checkArray.includes(",")) {
+            $.each(data_jenis.split(","), function(i, v) {
+                arrayJenis.push(v);
+            });
+            $(`#${targetId} .edit-jenis`).val(arrayJenis).change();
+        } else {
+            $(`#${targetId} .edit-jenis`).val(data_jenis).change();
+        }
         
         $(`#${targetId}`).removeClass("hidden");
         $(".layout-form").addClass("layout-form-collapse");
@@ -180,11 +215,14 @@
         const req_jenis_kredit = document.getElementById('add-jenis-kredit')
         const req_jenis = document.getElementById('add-jenis')
 
-        if (req_jenis_kredit == '') {
+        showError(req_jenis_kredit, '');
+        showError(req_jenis, '');
+
+        if ($('#add-jenis-kredit').find(":selected").val() == '') {
             showError(req_jenis_kredit, 'Jenis Kredit harus diisi.');
             return false;
         }
-        if (req_jenis == '') {
+        if ($('#add-jenis').find(":selected").val() == '') {
             showError(req_jenis, 'Jenis harus diisi.');
             return false;
         }
@@ -195,7 +233,7 @@
             data: {
                 _token: "{{ csrf_token() }}",
                 jenis_kredit: req_jenis_kredit.value,
-                jenis: req_jenis.value,
+                jenis: $('#add-jenis').val().toString(),
             },
             success: function(data) {
                 console.log(data.message);
@@ -246,7 +284,7 @@
                 _token: "{{ csrf_token() }}",
                 _method: 'PUT',
                 jenis_kredit: req_jenis_kredit.value,
-                jenis: req_jenis.value,
+                jenis: $('#edit-jenis').val().toString(),
             },
             success: function(data) {
                 console.log(data.message);
