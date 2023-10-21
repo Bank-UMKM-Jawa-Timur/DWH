@@ -75,7 +75,8 @@ class RegistrasiController extends Controller
         $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
         $response = json_decode($api_req->getBody(), true);
 
-        $dataPengajuan = $response['data'];
+        // return $response['total_data'];
+            $dataPengajuan = $response['data'];
 
         $dataAsuransi = DB::table('mst_jenis_asuransi')->get();
 

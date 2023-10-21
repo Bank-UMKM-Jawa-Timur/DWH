@@ -15,9 +15,11 @@
                     <label class="uppercase">Pilih Data Pengajuan</label>
                     <select name="pengajuan" id="pengajuan" class="w-full p-2 border">
                         <option selected>-- Pilih Data Pengajuan ---</option>
-                        @foreach ($dataPengajuan as $key => $item)
+                        @forelse ($dataPengajuan as $key => $item)
                             <option value="{{$item['id']}}" data-key="{{$key}}">{{$item['nama']}}, {{$item['tanggal_lahir']}} </option>
-                        @endforeach
+                        @empty
+                            <option>Data Pengajuan Belum Ada.</option>
+                        @endforelse
                     </select>
                 </div>
             </div>
