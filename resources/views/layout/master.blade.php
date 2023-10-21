@@ -122,6 +122,19 @@
       }
   }
 
+  $('.rupiah').keyup(function(event) {
+        if (event.which >= 37 && event.which <= 40) {
+            event.preventDefault();
+        }
+
+        $(this).val(function(index, value) {
+            return value
+                .replace(/\D/g, "")
+                .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ".");
+        });
+    });
+
+
   $("#btn-logout").on('click', function() {
     Swal.fire({
         title: 'Konfirmasi',

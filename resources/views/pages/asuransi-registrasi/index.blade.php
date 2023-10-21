@@ -6,6 +6,8 @@
 @section('modal')
     <!-- Modal-Filter -->
     @include('pages.asuransi-registrasi.modal.filter')
+    <!-- Modal-Canceled -->
+    @include('pages.asuransi-registrasi.modal.canceled')
 @endsection
 @section('content')
     <div class="head-pages">
@@ -17,10 +19,13 @@
     <div class="body-pages">
         <div class="table-wrapper bg-white border rounded-md w-full p-2">
             <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                <div class="title-table lg:p-3 p-2 text-center">
+                <div class="title-table lg:p-3 p-2 text-left">
                     <h2 class="font-bold text-lg text-theme-text tracking-tighter">
                         Data Registrasi Asuransi
                     </h2>
+                    @if (\Request::get('tAwal') && \Request::get('tAkhir'))
+                        <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b> dengan status <b>{{Request()->status == 'canceled' ? 'dibatalkan' : 'onprogres'}}</b>.</p>
+                    @endif
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                     <a>
@@ -94,30 +99,57 @@
                         <th>Aksi</th>
                     </tr>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>KASMAN</td>
-                            <td>K21002022000010</td>
-                            <td>3/SP-02/JSB/630/VI-2022</td>
-                            <td>23-06-2022</td>
-                            <td>08-07-2022</td>
-                            <td>
-                            <div class="dropdown">
-                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li class="">
-                                        <a class="item-dropdown" href="#">Pembatalan</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown" href="{{ route('pelaporan-pelunasan.index') }}">Pelaporan Pelunasan</a>
-                                    </li>
-                                </ul>
-                                </div>
-
-                            </td>
-                        </tr>
+                        @forelse ($data as $item)
+                            <tr>
+                                <td>{{$loop->iteration}}</td>
+                                <td>{{$item->nama_debitur}}</td>
+                                <td>{{$item->no_aplikasi}}</td>
+                                <td>{{$item->no_polis}}</td>
+                                <td>
+                                    @if ($item->tgl_polis)
+                                        {{date('d-m-Y', strtotime($item->tgl_polis))}}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($item->tgl_rekam)
+                                        {{date('d-m-Y', strtotime($item->tgl_rekam))}}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($item->status == 'canceled')
+                                        <button class="px-4 py-2 rounded text-red-500 toggle-canceled-modal"
+                                            data-canceled_at="{{date('d-m-Y', strtotime($item->canceled_at))}}" data-user_id="{{ $item->canceled_by }}" data-target-id="modalCanceled">
+                                            Dibatalkan
+                                        </button>
+                                    @else
+                                        Onprogres
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Selengkapnya
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li class="">
+                                                <a class="item-dropdown" href="#">Pembatalan</a>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown" href="#">Inquery</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9">Data tidak tersedia.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -135,6 +167,40 @@
 @endsection
 @push('extraScript')
     <script>
+        function CanceledModalSuccessMessage(message) {
+            Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
+                title: 'Berhasil',
+                icon: 'success',
+            }).then((result) => {
+                console.log('then')
+                $("#modalConfirmPenyerahanUnit").addClass("hidden");
+                //$('#preload-data').removeClass("hidden")
+
+                //refreshTable()
+                location.reload();
+            })
+        }
+
+        function CanceledModalErrorMessage(message) {
+            Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                title: 'Gagal',
+                icon: 'error',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    //$('#preload-data').removeClass("hidden")
+
+                    //refreshTable()
+                    location.reload();
+                }
+            })
+        }
+
         $('#page_length').on('change', function() {
             $('#form').submit()
         })
@@ -151,6 +217,43 @@
             console.log(tAwal)
             console.log(tAkhir)
             console.log(status)
+        })
+
+        $('.toggle-canceled-modal').on('click', function() {
+            var targetId = $(this).data("target-id");
+            var data_canceled_at = $(this).data("canceled_at");
+            var data_user_id = $(this).data("user_id");
+
+            Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "{{ url('/asuransi/registrasi/get-user') }}/"+data_user_id,
+                success: function(data) {
+                    Swal.close()
+                    const nama = data['detail'] != 'undifined' ? data['detail']['nama'] : 'undifined';
+                    
+                    $("#" + targetId).removeClass("hidden");
+                    $(`#${targetId} #canceled_at`).html(`Dibatalkan pada tanggal <b>${data_canceled_at}</b> oleh <b>${nama}</b>.`)
+                    if (targetId.slice(0, 5) !== "modal") {
+                        $(".layout-overlay-form").removeClass("hidden");
+                    }
+                },
+                error: function(e) {
+                    console.log(e)
+                    Swal.close()
+                }
+            })
         })
     </script>
 @endpush

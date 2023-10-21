@@ -89,7 +89,16 @@ Route::middleware('auth_api')->group(function () {
     });
 
     Route::prefix('asuransi')->group(function() {
-        Route::resource('/registrasi', RegistrasiController::class);
+        Route::prefix('/registrasi')
+            ->name('registrasi.')
+            ->controller(RegistrasiController::class)
+            ->group(function() {
+                Route::get('/', 'index')->name('index');
+                Route::get('/get-user/{user_id}', 'getUser')->name('get_user');
+                Route::get('/create', 'create')->name('create');
+                Route::get('jenis-asuransi/{jenis_kredit}', 'getJenisAsuransi')->name('jenis_asuransi');
+                Route::post('/', 'store')->name('store');
+            });
         Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
         Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);
         Route::resource('/pembayaran-premi', PembayaranPremiController::class);
