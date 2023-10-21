@@ -89,7 +89,7 @@ class PerusahaanAsuransiController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
-            'nama' => 'required',
+            'nama' => 'required|unique:mst_perusahaan_asuransi,nama',
             'alamat' => 'required',
             'telp' => 'required|unique:mst_perusahaan_asuransi,telp',
         ], [
@@ -176,8 +176,6 @@ class PerusahaanAsuransiController extends Controller
         $currentPerAsuransi = PerusahaanAsuransi::find($id);
         $isUniqueName = $request->nama && $request->nama != $currentPerAsuransi->nama ? '|unique:mst_perusahaan_asuransi,nama' : '';
         $isUniquePhone = $request->telp && $request->telp != $currentPerAsuransi->telp ? '|unique:mst_perusahaan_asuransi,telp' : '';
-
-        echo($isUniqueName);
 
         $validator = Validator::make($request->all(), [
             'nama' => 'required'.$isUniqueName,

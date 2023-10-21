@@ -38,9 +38,9 @@ class JenisAsuransiController extends Controller
                         orderBy('produk_kredit_id');
         if ($searchQuery && $searchBy === 'field') {
             $query->where(function ($q) use ($searchQuery) {
-                $q->where('produk_kredit_id', '=', $searchQuery)
-                    ->orWhere('jenis_kredit', '=', $searchQuery)
-                    ->orWhere('jenis', '=', $searchQuery);
+                $q->where('produk_kredit_id', 'LIKE', "%$searchQuery%")
+                    ->orWhere('jenis_kredit', 'LIKE', "%$searchQuery%")
+                    ->orWhere('jenis', 'LIKE', "%$searchQuery%");
             });
         }
         if (is_numeric($page_length)) {
