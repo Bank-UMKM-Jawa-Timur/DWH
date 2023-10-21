@@ -4,12 +4,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
 @endpush
 @section('modal')
-<!-- Modal-tambah -->
-@include('pages.perusahaan_asuransi.modal.create')
-<!-- Modal-edit -->
-@include('pages.perusahaan_asuransi.modal.edit')
-<!-- Modal-Rincian bayar -->
-@include('pages.pembayaran_premi.modal.modal-rincian-bayar');
+    <!-- Modal-tambah -->
+    @include('pages.perusahaan_asuransi.modal.create')
+    <!-- Modal-edit -->
+    @include('pages.perusahaan_asuransi.modal.edit')
+    <!-- Modal-Rincian bayar -->
+    @include('pages.pembayaran_premi.modal.modal-rincian-bayar')
 @endsection
 @section('content')
 <div class="head-pages">
