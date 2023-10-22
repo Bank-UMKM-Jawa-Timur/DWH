@@ -19,6 +19,7 @@ use App\Http\Controllers\Asuransi\RegistrasiController;
 use App\Http\Controllers\Asuransi\PengajuanKlaimController;
 use App\Http\Controllers\Asuransi\PembayaranPremiController;
 use App\Http\Controllers\Master\PerusahaanAsuransiController;
+use App\Http\Controllers\Master\PlafonController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TargetController;
@@ -86,6 +87,7 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/dictionary', DictionaryController::class);
         Route::resource('/perusahaan-asuransi', PerusahaanAsuransiController::class);
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
+        Route::resource('/plafon', PlafonController::class);
     });
 
     Route::prefix('asuransi')->group(function() {

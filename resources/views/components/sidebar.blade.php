@@ -113,7 +113,7 @@
       </div>
       @endif
       @if (\Session::get(config('global.role_id_session')) == 4)
-      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*') ? 'active-link' : '' }}">
+      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*', 'master/plafon', 'master/plafon/*') ? 'active-link' : '' }}">
         <div class="relative">
           <a
             href="#"
@@ -152,7 +152,7 @@
         </div>
       </li>
       <!-- dropdown -->
-      <div class="dropdown-menu-link  {{ request()->is('master/template-notifikasi', 'master/template-notifikasi/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*') ? 'show' : 'hidden' }}">
+      <div class="dropdown-menu-link  {{ request()->is('master/template-notifikasi', 'master/template-notifikasi/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*', 'master/plafon', 'master/plafon/*') ? 'show' : 'hidden' }}">
         <ul class="menu-dropdown">
           <!-- add rule class active-dropdown-link for active navigation -->
           <a href="{{ route('role.index') }}">
@@ -193,6 +193,11 @@
           <a href="{{ route('jenis-asuransi.index') }}">
             <li class="dropdown-item-link {{ request()->is('master/jenis-asuransi') ? 'active-dropdown-link' : '' }}">
               Jenis Asuransi
+            </li>
+          </a>
+          <a href="{{ route('plafon.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/plafon') ? 'active-dropdown-link' : '' }}">
+              Rete Premi Plafon
             </li>
           </a>
           {{--  <a href="{{ route('dictionary.index') }}">
