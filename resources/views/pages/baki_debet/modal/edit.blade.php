@@ -1,24 +1,19 @@
-<div class="layout-form hidden" id="edit-plafon">
+<div class="layout-form hidden" id="edit-baki-debet">
     <div class="head-form p-4 border-b">
-        <h2>EDIT RATE PREMI PLAFON</h2>
+        <h2>EDIT RATE PREMI BAKI DEBET</h2>
     </div>
     <form id="modal-edit-form">
         <input type="hidden" name="id" id="edit-id">
         <div class="p-4 space-y-8 mt-8">
             <div class="input-box space-y-3">
                 <label for="" class="uppercase appearance-none">Masa Asuransi(Bulan)</label>
-                <input type="text" class="p-2 w-full border" id="edit-masa-asuransi1" name="masa_asuransi1"
+                <div class="flex gap-3">
+                    <input type="text" class="p-2 w-full border" id="edit-masa-asuransi1" name="masa_asuransi1"
                     required/>
-            </div>
-            <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Sampai dengan</label>
-                <input type="text" class="p-2 w-full border" id="edit-masa-asuransi2" name="masa_asuransi2"
-                    required/>
-            </div>
-            <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Jenis</label>
-                <input type="text" class="p-2 w-full border" id="edit-jenis" name="jenis"
-                    readonly value="plafon" required/>
+                    <p class="pt-2">s/d</p>
+                    <input type="text" class="p-2 w-full border" id="edit-masa-asuransi2" name="masa_asuransi2"
+                        required/>
+                </div>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase appearance-none">Rate</label>
@@ -28,7 +23,7 @@
                 id="edit-button">
                 Simpan
             </button>
-            <button data-dismiss-id="edit-plafon" type="button"
+            <button data-dismiss-id="edit-baki-debet" type="button"
                 class="bg-white ml-2 px-8 rounded text-theme-text border py-2">
                 Batal
             </button>

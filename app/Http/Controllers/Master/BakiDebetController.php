@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Http\Controllers\LogActivitesController;
 use App\Http\Controllers\Controller;
 use App\Models\RatePremi;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class PlafonController extends Controller
+class BakiDebetController extends Controller
 {
     private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
+
 
     /**
      * Display a listing of the resource.
@@ -19,34 +27,53 @@ class PlafonController extends Controller
      */
     public function index(Request $request)
     {
-        $param['title'] = 'Plafon';
-        $param['pageTitle'] = 'Plafon';
+        $param['title'] = 'Rate Premi Baki Debet';
+        $param['pageTitle'] = 'Rate Premi Baki Debet';
         $page_length = $request->page_length ? $request->page_length : 5;
 
         $searchQuery = $request->query('query');
         $searchBy = $request->query('search_by');
 
-        $data = $this->list($page_length, $searchQuery, $searchBy);
-        $param['data'] = $data;
         $param['page_length'] = $page_length;
 
-        return view('pages.plafon.index', $param);
+        if ($request->ajax()) {
+            $data = $this->list($page_length, $searchQuery, $searchBy);
+            return response()->json(['data' => $data]);
+        } else {
+            $data = $this->list($page_length, $searchQuery, $searchBy);
+            $param['data'] = $data;
+            return view('pages.baki_debet.index', $param);
+        }
     }
 
-    public function list($page_length = 5 , $searchQuery, $searchBy)
+    public function list($page_length = 5, $searchQuery, $searchBy)
     {
-        $query = RatePremi::where('jenis', 'plafon')->orderBy('masa_asuransi1');
+        $data = RatePremi::where('jenis', 'bade')->orderBy('masa_asuransi1');
+
         if ($searchQuery && $searchBy === 'field') {
-            $query->where(function ($q) use ($searchQuery) {
-                $q->where('masa_asuransi1', 'LIKE', "%$searchQuery%")
-                    ->orWhere('rate', 'LIKE', "%$searchQuery%");
+            $data->where(function ($q) use ($searchQuery) {
+                $q->where('masa_asuransi1', '=', $searchQuery)
+                    ->orWhere('rate', '=', $searchQuery);
             });
         }
-        if (is_numeric($page_length)) {
-            $data = $query->paginate($page_length);
-        } else {
-            $data = $query->get();
-        }
+
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
+        return $data;
+    }
+
+    public function search($req, $page_length = 5)
+    {
+        $data = RatePremi::orderBy('masa_asuransi1')
+            ->where('masa_asuransi1', 'LIKE', '%' . $req . '%')
+            ->orWhere('rate', 'LIKE', '%' . $req . '%');
+
+        if (is_numeric($page_length))
+            $data = $data->paginate($page_length);
+        else
+            $data = $data->get();
 
         return $data;
     }
@@ -74,37 +101,33 @@ class PlafonController extends Controller
 
         $validator = Validator::make($request->all(), [
             'masa_asuransi1' => 'required',
-            'masa_asuransi2' => 'required',
             'jenis' => 'required',
             'rate' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
-            'unique' => ':attribute telah digunakan.',
-            'not_in' => ':attribute harus dipilih.',
         ], [
-            'masa_asuransi1' => 'Masa Asuransi(Bulan)',
-            'masa_asuransi2' => 'Sampai Dengan',
+            'masa_asuransi1' => 'Masa Asuransi Awal Bulan',
             'jenis' => 'Jenis',
             'rate' => 'Rate',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                        'error' => $validator->errors()->all()
-                    ]);
+                'error' => $validator->errors()->all()
+            ]);
         }
 
         try {
             DB::beginTransaction();
 
-            $newPlafon = new RatePremi();
-            $newPlafon->masa_asuransi1 = $request->masa_asuransi1;
-            $newPlafon->masa_asuransi2 = $request->masa_asuransi2;
-            $newPlafon->jenis = $request->jenis;
-            $newPlafon->rate = $request->rate;
-            $newPlafon->save();
+            $addDataBakiDebet = new RatePremi();
+            $addDataBakiDebet->masa_asuransi1 = $request->masa_asuransi1;
+            $addDataBakiDebet->masa_asuransi2 = $request->masa_asuransi2 ? $request->masa_asuransi2 : 0;
+            $addDataBakiDebet->jenis = $request->jenis;
+            $addDataBakiDebet->rate = $request->rate;
+            $addDataBakiDebet->save();
 
-            $this->logActivity->store("Membuat data Rate Premi Plafon $request->jenis.");
+            $this->logActivity->store("Membuat data Rate Premi Baki Debet $request->jenis.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -162,33 +185,38 @@ class PlafonController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
-            'jenis' => 'required',
+            'masa_asuransi1' => 'required',
             'rate' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
-            'unique' => ':attribute telah digunakan.',
         ], [
-            'jenis' => 'Jenis',
+            'masa_asuransi1' => 'Masa Asuransi Awal Bulan',
             'rate' => 'Rate',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                        'error' => $validator->errors()->all()
-                    ]);
+                'error' => $validator->errors()->all()
+            ]);
         }
 
         try {
             DB::beginTransaction();
+            $asuransi2 = '';
+            if ($request->masa_asuransi2 != null) {
+                $asuransi2 = $request->masa_asuransi2;
+            } else {
+                $asuransi2 = 0;
+            }
 
-            $currentPlafon = RatePremi::find($id);
-            $currentPlafon->masa_asuransi1 = $request->masa_asuransi1;
-            $currentPlafon->masa_asuransi2 = $request->masa_asuransi2;
-            $currentPlafon->jenis = $request->jenis;
-            $currentPlafon->rate = $request->rate;
-            $currentPlafon->save();
 
-            $this->logActivity->store("Memperbarui data Rate Premi Plafon.");
+            $updateDataBekiDebet = RatePremi::find($id);
+            $updateDataBekiDebet->masa_asuransi1 = $request->masa_asuransi1;
+            $updateDataBekiDebet->masa_asuransi2 = $asuransi2;
+            $updateDataBekiDebet->rate = $request->rate;
+            $updateDataBekiDebet->save();
+
+            $this->logActivity->store("Memperbarui data Rate Premi Baki Debet $request->jenis.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';
@@ -225,16 +253,15 @@ class PlafonController extends Controller
         try {
             DB::beginTransaction();
 
-            $currentPlafon = RatePremi::findOrFail($id);
-            $currentName = $currentPlafon->jenis;
-            if ($currentPlafon) {
-                $currentPlafon->delete();
-                $this->logActivity->store("Menghapus data Rate Premi Plafon '$currentName'.");
+            $premi = RatePremi::findOrFail($id);
+            $currentName = $premi->jenis;
+            if ($premi) {
+                $premi->delete();
+                $this->logActivity->store("Menghapus data Rate Premi Baki Debet '$currentName'.");
 
                 $status = 'success';
                 $message = 'Berhasil menghapus data.';
-            }
-            else {
+            } else {
                 $status = 'error';
                 $message = 'Data tidak ditemukan.';
             }
@@ -242,7 +269,6 @@ class PlafonController extends Controller
             DB::rollBack();
             $status = 'error';
             $message = 'Terjadi kesalahan.';
-
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
             $status = 'error';

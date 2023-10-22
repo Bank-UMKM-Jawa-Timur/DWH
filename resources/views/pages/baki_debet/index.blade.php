@@ -1,15 +1,15 @@
 @extends('layout.master')
 @section('modal')
 <!-- Modal-tambah -->
-@include('pages.plafon.modal.create')
+@include('pages.baki_debet.modal.create')
 <!-- Modal-edit -->
-@include('pages.plafon.modal.edit')
+@include('pages.baki_debet.modal.edit')
 @endsection
 @section('content')
 <div class="head-pages">
     <p class="text-sm">Master</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-        Rate Premi Plafon
+        Rate Baki Debet
     </h2>
 </div>
 <div class="body-pages">
@@ -17,16 +17,16 @@
         <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
             <div class="title-table lg:p-3 p-2 text-center">
                 <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                    Rate Premi Plafon
+                    Rate Baki Debet
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <button data-target-id="add-plafon"
-                    class="add-modal-plafon px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                <button data-target-id="add-baki-debet"
+                    class="add-modal-baki-debet px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                     <span class="lg:mt-0 mt-0">
                         @include('components.svg.plus')
                     </span>
-                    <span class="lg:block hidden"> Tambah Plafon </span>
+                    <span class="lg:block hidden"> Tambah Baki Debet </span>
                 </button>
             </div>
         </div>
@@ -72,8 +72,8 @@
                     @forelse ($data as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->masa_asuransi1 }}  s/d  {{ $item->masa_asuransi2 }}</td>
-                            <td>{{ $item->jenis }}</td>
+                            <td>{{ $item->masa_asuransi1 }} {{ $item->masa_asuransi2 != 0 ? 's/d '. $item->masa_asuransi2 : '' }}</td>
+                            <td>{{ $item->jenis ? 'Baki Debet' : '' }}</td>
                             <td>{{ $item->rate }}</td>
                             <td>
                                 <div class="dropdown max-w-[280px]">
@@ -82,18 +82,16 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li class="">
-                                            <a class="item-dropdown edit-modal-plafon" data-target-id="edit-plafon" href="#"
+                                            <a class="item-dropdown edit-modal-baki-debet" data-target-id="edit-baki-debet" href="#"
                                             data-id="{{ $item->id }}"
                                             data-masa-asuransi1="{{ $item->masa_asuransi1 }}"
                                             data-masa-asuransi2="{{ $item->masa_asuransi2 }}"
-                                            data-jenis="{{ $item->jenis }}"
                                             data-rate="{{ $item->rate }}">Edit</a>
                                         </li>
                                         <li class="">
-                                            <a class="item-dropdown btn-delete-plafon"
+                                            <a class="item-dropdown btn-delete-baki-debet"
                                             href="#"
-                                            data-id="{{ $item->id }}"
-                                            data-name="{{ $item->jenis }}">Hapus</a>
+                                            data-id="{{ $item->id }}">Hapus</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -127,28 +125,31 @@
         $('#form').submit()
     })
 
-    $(".add-modal-plafon").on("click", function () {
-        var targetId = 'add-plafon';
+    $(".add-modal-baki-debet").on("click", function () {
+        var targetId = 'add-baki-debet';
         $("#" + targetId).removeClass("hidden");
-        form.addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
             $(".layout-overlay-form").removeClass("hidden");
         }
     });
 
-    $(".edit-modal-plafon").on("click", function () {
-        var targetId = 'edit-plafon';
+    $(".edit-modal-baki-debet").on("click", function () {
+        // console.log('masuk coy')
+        var targetId = 'edit-baki-debet';
 
         const data_id = $(this).data('id')
         const data_masa_asuransi1 = $(this).data('masa-asuransi1')
         const data_masa_asuransi2 = $(this).data('masa-asuransi2')
-        const data_jenis = $(this).data('jenis')
         const data_rate = $(this).data('rate')
+        console.log(data_masa_asuransi2)
 
         $(`#${targetId} #edit-id`).val(data_id)
         $(`#${targetId} #edit-masa-asuransi1`).val(data_masa_asuransi1)
-        $(`#${targetId} #edit-masa-asuransi2`).val(data_masa_asuransi2)
-        $(`#${targetId} #edit-jenis`).val(data_jenis)
+        if (data_masa_asuransi2 === 0) {
+            $(`#${targetId} #edit-masa-asuransi2`).val('');
+        }else {
+            $(`#${targetId} #edit-masa-asuransi2`).val(data_masa_asuransi2)
+        }
         $(`#${targetId} #edit-rate`).val(data_rate)
 
         $("#" + targetId).removeClass("hidden");
@@ -166,19 +167,15 @@
         }
     });
 
-    $("#simpanButton").on('click', function(e) {
+    $("#add-button").on('click', function(e) {
         e.preventDefault();
-        const req_masa_asuransi1 = document.getElementById('add-masa-asuransi1')
-        const req_masa_asuransi2 = document.getElementById('add-masa-asuransi2')
-        const req_jenis = document.getElementById('add-jenis')
-        const req_rate = document.getElementById('add-rate')
+        const req_masa_asuransi1 = document.getElementById('add_masa_asuransi1')
+        const req_masa_asuransi2 = document.getElementById('add_masa_asuransi2')
+        const req_jenis = document.getElementById('add_jenis')
+        const req_rate = document.getElementById('add_rate')
 
         if (req_masa_asuransi1 == '') {
             showError(req_masa_asuransi1, 'Masa Asuransi(Bulan) harus diisi.');
-            return false;
-        }
-        if (req_masa_asuransi2 == '') {
-            showError(req_masa_asuransi2, 'Sampai Dengan harus diisi.');
             return false;
         }
         if (req_jenis == '') {
@@ -190,14 +187,10 @@
             return false;
         }
 
-        console.log(req_masa_asuransi1.value);
-        console.log(req_masa_asuransi2.value);
-        console.log(req_jenis.value);
-        console.log(req_rate.value);
 
         $.ajax({
             type: "POST",
-            url: "{{ route('plafon.store') }}",
+            url: "{{ route('baki-debet.store') }}",
             data: {
                 _token: "{{ csrf_token() }}",
                 masa_asuransi1: req_masa_asuransi1.value,
@@ -212,8 +205,6 @@
                         var message = data.error[i];
                         if (message.toLowerCase().includes('masa asuransi(bulan)'))
                             alertWarning(message)
-                        if (message.toLowerCase().includes('sampai dengan'))
-                            alertWarning(message)
                         if (message.toLowerCase().includes('rate'))
                             alertWarning(message)
                     }
@@ -224,7 +215,7 @@
                     // } else {
                     //     ErrorMessage(data.message)
                     // }
-                    $('#add-plafon').addClass('hidden')
+                    $('#add-baki-debet').addClass('hidden')
                 }
             },
             error: function(e) {
@@ -238,19 +229,10 @@
         const req_id = document.getElementById('edit-id')
         const req_masa_asuransi1 = document.getElementById('edit-masa-asuransi1')
         const req_masa_asuransi2 = document.getElementById('edit-masa-asuransi2')
-        const req_jenis = document.getElementById('edit-jenis')
         const req_rate = document.getElementById('edit-rate')
 
         if (req_masa_asuransi1 == '') {
             showError(req_masa_asuransi1, 'Masa Asuransi(Bulan) harus diisi.');
-            return false;
-        }
-        if (req_masa_asuransi2 == '') {
-            showError(req_masa_asuransi2, 'Sampai Dengan harus diisi.');
-            return false;
-        }
-        if (req_jenis == '') {
-            showError(req_jenis, 'Jenis harus diisi.');
             return false;
         }
         if (req_rate == '') {
@@ -260,13 +242,11 @@
 
         $.ajax({
             type: "POST",
-            url: "{{ url('/master/plafon') }}/" + req_id.value,
+            url: "{{ url('/master/baki-debet') }}/" + req_id.value,
             data: {
                 _token: "{{ csrf_token() }}",
                 _method: 'PUT',
                 masa_asuransi1: req_masa_asuransi1.value,
-                masa_asuransi2: req_masa_asuransi2.value,
-                jenis: req_jenis.value,
                 rate: req_rate.value,
             },
             success: function(data) {
@@ -275,8 +255,6 @@
                     for (var i = 0; i < data.error.length; i++) {
                         var message = data.error[i];
                         if (message.toLowerCase().includes('masa asuransi(bulan)'))
-                            alertWarning(message)
-                        if (message.toLowerCase().includes('sampai dengan'))
                             alertWarning(message)
                         if (message.toLowerCase().includes('rate'))
                             alertWarning(message)
@@ -296,7 +274,7 @@
         });
     })
 
-    $('.btn-delete-plafon').on('click', function(e) {
+    $('.btn-delete-baki-debet').on('click', function(e) {
         const data_id = $(this).data('id')
         Swal.fire({
             title: 'Konfirmasi',
@@ -311,7 +289,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: "{{ url('/master/plafon') }}/"+data_id,
+                    url: "{{ url('/master/baki-debet') }}/"+data_id,
                     data: {
                         _token: "{{ csrf_token() }}",
                         _method: 'DELETE',
