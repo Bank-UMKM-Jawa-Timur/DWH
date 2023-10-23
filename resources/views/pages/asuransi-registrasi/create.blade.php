@@ -430,6 +430,93 @@
         data['handling_fee'] = $("[name='handling_fee']").val()
         data['premi_disetor'] = $("[name='premi_disetor']").val()
 
+         if (data['nama_debitur'] === '') {
+        var message = 'Data Pengajuan Belum Di Pilih.'
+        alertWarning(message)
+       }
+       if (data['tanggal_pengajuan'] === 'dd/mm/yyyy') {
+        var message = 'Tanggal Pengajuan Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['jenis_pengajuan'] === '') {
+        var message = 'Jenis Pengajuan Belum Di Pilih.'
+        alertWarning(message)
+       }
+       if (data['jenis_pengajuan'] === '1') {
+           if (data['no_polis_sebelumnya'] === '') {
+            var message = 'No Polis Sebelumnya Belum Di Isi.'
+            alertWarning(message)
+           }
+           if (data['bade'] === '') {
+            var message = 'Baki Debet Belum Di Isi.'
+            alertWarning(message)
+           }
+           if (data['refund'] === '') {
+            var message = 'Refund Belum Di Isi.'
+            alertWarning(message)
+           }
+           if (data['tunggakan'] === '') {
+            var message = 'Tunggakan Belum Di Isi.'
+            alertWarning(message)
+           }
+       }
+       if (data['no_pk'] === '') {
+        var message = 'No PK Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['plafon_kredit'] === '') {
+        var message = 'Plafon Kredit Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tanggal_pk'] === 'dd/mm/yyyy') {
+        var message = 'Tanggal Pk Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tgl_awal_kredit'] === 'dd/mm/yyyy') {
+        var message = 'Tanggal Awal Kredit Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tgl_akhir_kredit'] === 'dd/mm/yyyy') {
+        var message = 'Tanggal Akhir Kredit Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['jml_bulan'] === '') {
+        var message = 'Jumlah Bulan Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['kolektibilitas'] === '') {
+        var message = 'Kolektibilitas Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['handling_fee'] === '') {
+        var message = 'Handling Fee Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['kode_ls'] === '') {
+        var message = 'Kode Is Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['premi_disetor'] === '') {
+        var message = 'Premi Disetor Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['kode_layanan_syariah'] === '') {
+        var message = 'Kode Layanan Syariah Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tarif'] === '') {
+        var message = 'Tarif Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tipe_premi'] === '') {
+        var message = 'Tipe Premi Belum Di Pilih.'
+        alertWarning(message)
+       }
+       if (data['premi'] === '') {
+        var message = 'Premi Belum Di Isi.'
+        alertWarning(message)
+       }
+
         $.ajax({
             url: urlPost + "/upload",
             type: "POST",
