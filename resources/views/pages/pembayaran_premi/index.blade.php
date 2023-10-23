@@ -4,12 +4,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
 @endpush
 @section('modal')
-<!-- Modal-tambah -->
-@include('pages.perusahaan_asuransi.modal.create')
-<!-- Modal-edit -->
-@include('pages.perusahaan_asuransi.modal.edit')
-<!-- Modal-Rincian bayar -->
-@include('pages.pembayaran_premi.modal.modal-rincian-bayar');
+    <!-- Modal-tambah -->
+    @include('pages.perusahaan_asuransi.modal.create')
+    <!-- Modal-edit -->
+    @include('pages.perusahaan_asuransi.modal.edit')
+    <!-- Modal-Rincian bayar -->
+    @include('pages.pembayaran_premi.modal.modal-rincian-bayar')
 @endsection
 @section('content')
 <div class="head-pages">
@@ -52,7 +52,7 @@
                 </form>
             </div>
             <div class="search-table lg:w-96 w-full">
-                <form action="{{ route('perusahaan-asuransi.index') }}" method="GET">
+                <form action="{{ route('pembayaran-premi.index') }}" method="GET">
                     <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
                         <span class="mt-2 ml-3">
                             @include('components.svg.search')

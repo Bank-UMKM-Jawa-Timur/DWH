@@ -192,17 +192,13 @@
                 telp: req_telp.value,
             },
             success: function(data) {
-                console.log(data.message);
                 if (Array.isArray(data.error)) {
                     for (var i = 0; i < data.error.length; i++) {
                         var message = data.error[i];
-
                         if (message.toLowerCase().includes('nama'))
-                            showError(req_nama, message)
-                        if (message.toLowerCase().includes('alamat'))
-                            showError(req_alamat, message)
-                        if (message.toLowerCase().includes('telp'))
-                            showError(req_telp, message)
+                            alertWarning(message)
+                        if (message.toLowerCase().includes('nomor hp'))
+                            alertWarning(message)
                     }
                 } else {
                   SuccessMessage(data.message);
@@ -251,17 +247,14 @@
                 telp: req_telp.value,
             },
             success: function(data) {
-                console.log(data.message);
                 if (Array.isArray(data.error)) {
                     for (var i = 0; i < data.error.length; i++) {
                         var message = data.error[i];
-
-                        if (message.toLowerCase().includes('nama'))
-                            showError(req_nama, message)
-                        if (message.toLowerCase().includes('alamat'))
-                            showError(req_alamat, message)
-                        if (message.toLowerCase().includes('telp'))
-                            showError(req_telp, message)
+                        console.log(message);
+                        // if (message.toLowerCase().includes('nama'))
+                        //     alertWarning(message)
+                        // if (message.toLowerCase().includes('nomor hp'))
+                        //     alertWarning(message)
                     }
                 } else {
                     // if (data.status == 'success') {
@@ -311,6 +304,17 @@
             }
         })
     })
+
+    function alertWarning(message) {
+        Swal.fire({
+            title: 'Warning!',
+            html: message,
+            icon: 'warning',
+            iconColor: '#DC3545',
+            confirmButtonText: 'Ya',
+            confirmButtonColor: '#DC3545'
+        })
+    }
 
     function showError(input, message) {
         console.log(message);

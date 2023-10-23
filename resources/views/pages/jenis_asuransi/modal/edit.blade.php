@@ -8,7 +8,7 @@
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Jenis Kredit</label>
                 <select name="jenis-kredit" id="edit-jenis-kredit" class="w-full p-2 border select-jenis-kredit edit-jenis-kredit">
-                    <option value="">-- Pilih Jenis Kredit ---</option>
+                    <option value="">-- Pilih Jenis Kredit --</option>
                     <option value="PKPJ">PKPJ</option>
                     <option value="KKB">KKB</option>
                     <option value="Talangan Umroh">Talangan Umroh</option>
@@ -18,9 +18,19 @@
                 <small class="form-text text-red-600 error"></small>
             </div>
             <div class="input-box space-y-3">
+                <label for="" class="uppercase">Jenis</label>
+                <select name="jenis" id="edit-jenis" multiple="multiple" class="w-full p-2 border select-jenis edit-jenis">
+                    <option value="">-- Pilih Jenis ---</option>
+                    <option value="1">Jaminan</option>
+                    <option value="2">Jiwa</option>
+                    <option value="3">Kredit(Penjaminan)</option>
+                </select>
+                <small class="form-text text-red-600 error"></small>
+            </div>
+            {{-- <div class="input-box space-y-3">
                 <label for="" class="uppercase appearance-none">Jenis</label>
                 <input type="text" class="p-2 w-full border" id="edit-jenis" name="jenis" required />
-            </div>
+            </div> --}}
             <button class="bg-theme-primary px-8 rounded text-white py-2" id="edit-button">
                 Simpan
             </button>
