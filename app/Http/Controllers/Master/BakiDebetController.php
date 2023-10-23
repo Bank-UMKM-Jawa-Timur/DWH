@@ -202,17 +202,17 @@ class BakiDebetController extends Controller
 
         try {
             DB::beginTransaction();
-            $asuransi2 = '';
-            if ($request->masa_asuransi2 != null) {
-                $asuransi2 = $request->masa_asuransi2;
-            } else {
-                $asuransi2 = 0;
-            }
+            // $asuransi2 = '';
+            // if ($request->masa_asuransi2 > 0) {
+            //     $asuransi2 = $request->masa_asuransi2;
+            // } else {
+            //     $asuransi2 = 0;
+            // }
 
 
             $updateDataBekiDebet = RatePremi::find($id);
             $updateDataBekiDebet->masa_asuransi1 = $request->masa_asuransi1;
-            $updateDataBekiDebet->masa_asuransi2 = $asuransi2;
+            $updateDataBekiDebet->masa_asuransi2 = $request->masa_asuransi2 > 0 ? $request->masa_asuransi2 : 0 ;
             $updateDataBekiDebet->rate = $request->rate;
             $updateDataBekiDebet->save();
 

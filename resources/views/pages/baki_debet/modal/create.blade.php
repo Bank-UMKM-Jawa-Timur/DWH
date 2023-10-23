@@ -26,6 +26,7 @@
     <div class="head-form p-4 border-b">
         <h2>TAMBAH BAKI DEBET</h2>
     </div>
+    <p class="p-4">NOTE! Masa Asuransi Sampai Dengan Boleh Kosong.</p>
     <form id="modal-add-form">
         <div class="p-4 space-y-8 mt-8">
             <div class="input-box space-y-3">

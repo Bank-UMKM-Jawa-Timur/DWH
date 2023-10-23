@@ -202,7 +202,7 @@
           </a>
           <a href="{{ route('baki-debet.index') }}">
             <li class="dropdown-item-link {{ request()->is('master/jenis-asuransi') ? 'active-dropdown-link' : '' }}">
-              Baki Debet
+              Rete Premi Baki Debet
             </li>
           </a>
           {{--  <a href="{{ route('dictionary.index') }}">

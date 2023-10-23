@@ -74,35 +74,31 @@ class PlafonController extends Controller
 
         $validator = Validator::make($request->all(), [
             'masa_asuransi1' => 'required',
-            'masa_asuransi2' => 'required',
             'jenis' => 'required',
             'rate' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
-            'unique' => ':attribute telah digunakan.',
-            'not_in' => ':attribute harus dipilih.',
         ], [
-            'masa_asuransi1' => 'Masa Asuransi(Bulan)',
-            'masa_asuransi2' => 'Sampai Dengan',
+            'masa_asuransi1' => 'Masa Asuransi Awal Bulan',
             'jenis' => 'Jenis',
             'rate' => 'Rate',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                        'error' => $validator->errors()->all()
-                    ]);
+                'error' => $validator->errors()->all()
+            ]);
         }
 
         try {
             DB::beginTransaction();
 
-            $newPlafon = new RatePremi();
-            $newPlafon->masa_asuransi1 = $request->masa_asuransi1;
-            $newPlafon->masa_asuransi2 = $request->masa_asuransi2;
-            $newPlafon->jenis = $request->jenis;
-            $newPlafon->rate = $request->rate;
-            $newPlafon->save();
+            $addDataPlafon = new RatePremi();
+            $addDataPlafon->masa_asuransi1 = $request->masa_asuransi1;
+            $addDataPlafon->masa_asuransi2 = $request->masa_asuransi2 ? $request->masa_asuransi2 : 0;
+            $addDataPlafon->jenis = $request->jenis;
+            $addDataPlafon->rate = $request->rate;
+            $addDataPlafon->save();
 
             $this->logActivity->store("Membuat data Rate Premi Plafon $request->jenis.");
 
@@ -162,33 +158,38 @@ class PlafonController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
-            'jenis' => 'required',
+            'masa_asuransi1' => 'required',
             'rate' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
-            'unique' => ':attribute telah digunakan.',
         ], [
-            'jenis' => 'Jenis',
+            'masa_asuransi1' => 'Masa Asuransi Awal Bulan',
             'rate' => 'Rate',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                        'error' => $validator->errors()->all()
-                    ]);
+                'error' => $validator->errors()->all()
+            ]);
         }
 
         try {
             DB::beginTransaction();
+            // $asuransi2 = '';
+            // if ($request->masa_asuransi2 > 0) {
+            //     $asuransi2 = $request->masa_asuransi2;
+            // } else {
+            //     $asuransi2 = 0;
+            // }
 
-            $currentPlafon = RatePremi::find($id);
-            $currentPlafon->masa_asuransi1 = $request->masa_asuransi1;
-            $currentPlafon->masa_asuransi2 = $request->masa_asuransi2;
-            $currentPlafon->jenis = $request->jenis;
-            $currentPlafon->rate = $request->rate;
-            $currentPlafon->save();
 
-            $this->logActivity->store("Memperbarui data Rate Premi Plafon.");
+            $updateDataPlafon = RatePremi::find($id);
+            $updateDataPlafon->masa_asuransi1 = $request->masa_asuransi1;
+            $updateDataPlafon->masa_asuransi2 = $request->masa_asuransi2 > 0 ? $request->masa_asuransi2 : 0 ;
+            $updateDataPlafon->rate = $request->rate;
+            $updateDataPlafon->save();
+
+            $this->logActivity->store("Memperbarui data Rate Premi Baki Debet $request->jenis.");
 
             $status = 'success';
             $message = 'Berhasil menyimpan perubahan';

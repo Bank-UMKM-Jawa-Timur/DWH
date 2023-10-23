@@ -7,18 +7,13 @@
         <div class="p-4 space-y-8 mt-8">
             <div class="input-box space-y-3">
                 <label for="" class="uppercase appearance-none">Masa Asuransi(Bulan)</label>
-                <input type="text" class="p-2 w-full border" id="edit-masa-asuransi1" name="masa_asuransi1"
+                <div class="flex gap-3">
+                    <input type="text" class="p-2 w-full border" id="edit-masa-asuransi1" name="masa_asuransi1"
                     required/>
-            </div>
-            <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Sampai dengan</label>
-                <input type="text" class="p-2 w-full border" id="edit-masa-asuransi2" name="masa_asuransi2"
-                    required/>
-            </div>
-            <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Jenis</label>
-                <input type="text" class="p-2 w-full border" id="edit-jenis" name="jenis"
-                    readonly value="plafon" required/>
+                    <p class="pt-2">s/d</p>
+                    <input type="text" class="p-2 w-full border" id="edit-masa-asuransi2" name="masa_asuransi2"
+                        required/>
+                </div>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase appearance-none">Rate</label>

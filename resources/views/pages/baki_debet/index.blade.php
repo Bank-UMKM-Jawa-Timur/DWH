@@ -9,7 +9,7 @@
 <div class="head-pages">
     <p class="text-sm">Master</p>
     <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-        Rate Baki Debet
+        Rate Premi Baki Debet
     </h2>
 </div>
 <div class="body-pages">
@@ -17,7 +17,7 @@
         <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
             <div class="title-table lg:p-3 p-2 text-center">
                 <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                    Rate Baki Debet
+                    Rate Premi Baki Debet
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
@@ -141,8 +141,6 @@
         const data_masa_asuransi1 = $(this).data('masa-asuransi1')
         const data_masa_asuransi2 = $(this).data('masa-asuransi2')
         const data_rate = $(this).data('rate')
-        console.log(data_masa_asuransi2)
-
         $(`#${targetId} #edit-id`).val(data_id)
         $(`#${targetId} #edit-masa-asuransi1`).val(data_masa_asuransi1)
         if (data_masa_asuransi2 === 0) {
@@ -150,6 +148,7 @@
         }else {
             $(`#${targetId} #edit-masa-asuransi2`).val(data_masa_asuransi2)
         }
+
         $(`#${targetId} #edit-rate`).val(data_rate)
 
         $("#" + targetId).removeClass("hidden");
