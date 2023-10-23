@@ -66,17 +66,17 @@
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal Awal Kredit<span class="text-theme-primary">*</span></label>
-                        <input type="text" name="tanggal_awal_kredit" id="tanggal_awal_kredit" class="disabled-input bg-disabled p-2 w-full border"/>
+                        <input type="text" name="tanggal_awal_kredit" id="tanggal_awal_kredit" class="disabled-input bg-disabled p-2 w-full border" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal Akhir Kredit<span class="text-theme-primary">*</span></label>
-                        <input type="text" name="tanggal_akhir_kredit" id="tanggal_akhir_kredit" class="disabled-input bg-disabled p-2 w-full border"/>
+                        <input type="text" name="tanggal_akhir_kredit" id="tanggal_akhir_kredit" class="disabled-input bg-disabled p-2 w-full border" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jumlah Bulan<span class="text-theme-primary">*</span></label>
-                        <input type="number" class="disabled-input bg-disabled p-2 w-full border " id="jumlah_bulan" name="jumlah_bulan"/>
+                        <input type="number" class="disabled-input bg-disabled p-2 w-full border " id="jumlah_bulan" name="jumlah_bulan" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -90,7 +90,7 @@
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal PK<span class="text-theme-primary">*</span></label>
-                        <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tanggal_pk"/>
+                        <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tanggal_pk" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -112,13 +112,13 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span> </label>
                         <select name="jenis_asuransi" class="w-full p-2 border" id="jenis_asuransi">
-                            <option selected>-- Pilih Jenis Asuransi ---</option>
+                            <option selected value="">-- Pilih Jenis Asuransi ---</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span> </label>
                         <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
-                            <option selected>-- Pilih Jenis Pengajuan ---</option>
+                            <option selected value="">-- Pilih Jenis Pengajuan ---</option>
                             <option value="0">Baru</option>
                             <option value="1">Top Up</option>
                         </select>
@@ -126,7 +126,7 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kolektibilitas<span class="text-theme-primary">*</span></label>
                         <select name="kolektibilitas" class="w-full p-2 border">
-                            <option selected>-- Kolektibilitas ---</option>
+                            <option selected value="">-- Kolektibilitas ---</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -159,8 +159,8 @@
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis PERTANGGUNGAN<span class="text-theme-primary">*</span> </label>
-                        <select name="jenis_pertanggunan" id="jenis_pertanggunan" class="w-full p-2 border">
-                            <option selected>-- Pilih Jenis Pertanggungan ---</option>
+                        <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
+                            <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
                             <option value="01">Berdasarkan Pokok</option>
                             <option value="02">Berdasarkan Sisa Kredit</option>
                         </select>
@@ -168,7 +168,7 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tipe Premi<span class="text-theme-primary">*</span> </label>
                         <select name="tipe_premi" class="w-full p-2 border">
-                            <option selected>-- Pilih Tipe Premi ---</option>
+                            <option selected value="">-- Pilih Tipe Premi ---</option>
                             <option value="0">Biasa</option>
                             <option value="1">Refund</option>
                         </select>
@@ -182,7 +182,7 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Coverage<span class="text-theme-primary">*</span> </label>
                         <select name="jenis_coverage" class="w-full p-2 border">
-                            <option selected>-- Pilih jenis ---</option>
+                            <option selected value="">-- Pilih jenis ---</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -199,7 +199,7 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kode Layanan Syariah</label>
                         <select name="kode_is" class="w-full p-2 border">
-                            <option selected>-- Kode Layanan Syariah ---</option>
+                            <option selected value="">-- Kode Layanan Syariah ---</option>
                             <option value="0">KV</option>
                             <option value="1">SY</option>
                         </select>
@@ -331,9 +331,9 @@
             url: "{{ url('/asuransi/registrasi/jenis-asuransi') }}/"+data[key]['skema_kredit'],
             success: function(data) {
                 $('#jenis_asuransi').empty()
-                $('#jenis_asuransi').append(`<option selected>-- Pilih Jenis Asuransi ---</option>`)
+                $('#jenis_asuransi').append(`<option selected value="">-- Pilih Jenis Asuransi ---</option>`)
                 $.each(data.data, function (i, item) {
-                    $('#jenis_asuransi').append(`<option>${item.jenis}</option>`);
+                    $('#jenis_asuransi').append(`<option value="${item.jenis}">${item.jenis}</option>`);
                 });
             },
             error: function(e) {
@@ -343,7 +343,7 @@
 
     })
 
-    $('#jenis_pertanggunan').on('change', function() {
+    $('#jenis_pertanggungan').on('change', function() {
         var masa_asuransi = $('#jumlah_bulan').val()
         if (masa_asuransi == '') {
             alert('Harap pilih data pengajuan terlebih dahulu')
@@ -419,7 +419,7 @@
         data['tunggakan'] = $("[name='tunggakan']").val()
         data['kolektibilitas'] = $("[name='kolektibilitas']").val()
         data['no_polis_sebelumnya'] = $("[name='no_polis_sebelumnya']").val()
-        data['jenis_pertanggunan'] = $("[name='jenis_pertanggungan']").val()
+        data['jenis_pertanggungan'] = $("[name='jenis_pertanggungan']").val()
         data['tipe_premi'] = $("[name='tipe_premi']").val()
         data['premi'] = $("[name='premi']").val()
         data['jenis_coverage'] = $("[name='jenis_coverage']").val()
@@ -430,77 +430,11 @@
         data['handling_fee'] = $("[name='handling_fee']").val()
         data['premi_disetor'] = $("[name='premi_disetor']").val()
 
-         if (data['nama_debitur'] === '') {
-        var message = 'Data Pengajuan Belum Di Pilih.'
-        alertWarning(message)
-       }
-       if (data['tanggal_pengajuan'] === 'dd/mm/yyyy') {
-        var message = 'Tanggal Pengajuan Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['jenis_pengajuan'] === '') {
-        var message = 'Jenis Pengajuan Belum Di Pilih.'
-        alertWarning(message)
-       }
-       if (data['jenis_pengajuan'] === '1') {
-           if (data['no_polis_sebelumnya'] === '') {
-            var message = 'No Polis Sebelumnya Belum Di Isi.'
-            alertWarning(message)
-           }
-           if (data['bade'] === '') {
-            var message = 'Baki Debet Belum Di Isi.'
-            alertWarning(message)
-           }
-           if (data['refund'] === '') {
-            var message = 'Refund Belum Di Isi.'
-            alertWarning(message)
-           }
-           if (data['tunggakan'] === '') {
-            var message = 'Tunggakan Belum Di Isi.'
-            alertWarning(message)
-           }
-       }
-       if (data['no_pk'] === '') {
-        var message = 'No PK Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['plafon_kredit'] === '') {
-        var message = 'Plafon Kredit Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['tanggal_pk'] === 'dd/mm/yyyy') {
-        var message = 'Tanggal Pk Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['tgl_awal_kredit'] === 'dd/mm/yyyy') {
-        var message = 'Tanggal Awal Kredit Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['tgl_akhir_kredit'] === 'dd/mm/yyyy') {
-        var message = 'Tanggal Akhir Kredit Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['jml_bulan'] === '') {
-        var message = 'Jumlah Bulan Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['kolektibilitas'] === '') {
-        var message = 'Kolektibilitas Belum Di Isi.'
-        alertWarning(message)
-       }
        if (data['handling_fee'] === '') {
         var message = 'Handling Fee Belum Di Isi.'
         alertWarning(message)
        }
        if (data['kode_ls'] === '') {
-        var message = 'Kode Is Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['premi_disetor'] === '') {
-        var message = 'Premi Disetor Belum Di Isi.'
-        alertWarning(message)
-       }
-       if (data['kode_layanan_syariah'] === '') {
         var message = 'Kode Layanan Syariah Belum Di Isi.'
         alertWarning(message)
        }
@@ -508,12 +442,53 @@
         var message = 'Tarif Belum Di Isi.'
         alertWarning(message)
        }
+       if (data['jenis_coverage'] === '') {
+        var message = 'Jenis Coverage Belum Di Pilih.'
+        alertWarning(message)
+       }
        if (data['tipe_premi'] === '') {
         var message = 'Tipe Premi Belum Di Pilih.'
         alertWarning(message)
        }
-       if (data['premi'] === '') {
-        var message = 'Premi Belum Di Isi.'
+       if (data['jenis_pertanggungan'] === '') {
+        var message = 'Jenis Pertanggungan Belum Di Pilih.'
+        alertWarning(message)
+       }
+
+       if (data['jenis_pengajuan'] === '1') {
+            if (data['refund'] === '') {
+                var message = 'Refund Belum Di Isi.'
+                alertWarning(message)
+            }
+           if (data['tunggakan'] === '') {
+               var message = 'Tunggakan Belum Di Isi.'
+               alertWarning(message)
+            }
+            if (data['bade'] === '') {
+                var message = 'Baki Debet Belum Di Isi.'
+                alertWarning(message)
+            }
+            if (data['no_polis_sebelumnya'] === '') {
+                var message = 'No Polis Sebelumnya Belum Di Isi.'
+                alertWarning(message)
+            }
+       }
+
+       if (data['kolektibilitas'] === '') {
+        var message = 'Kolektibilitas Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['jenis_pengajuan'] === '') {
+        var message = 'Jenis Pengajuan Belum Di Pilih.'
+        alertWarning(message)
+       }
+
+       if (data['jenis_asuransi'] == '') {
+        var message = 'Jenis Asurnasi Belum Di Pilih.'
+        alertWarning(message)
+       }
+       if (data['nama_debitur'] === '') {
+        var message = 'Data Pengajuan Belum Di Pilih.'
         alertWarning(message)
        }
 
