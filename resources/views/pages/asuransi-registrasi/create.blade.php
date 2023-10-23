@@ -88,7 +88,7 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span> </label>
                     <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
-                        <option selected>-- Pilih Jenis Pengajuan ---</option>
+                        <option selected value="">-- Pilih Jenis Pengajuan ---</option>
                         <option value="0">Baru</option>
                         <option value="1">Top Up</option>
                     </select>
@@ -96,7 +96,7 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tipe Premi<span class="text-theme-primary">*</span> </label>
                     <select name="tipe_premi" class="jenis-pengajuan w-full p-2 border">
-                        <option selected>-- Pilih Tipe Premi ---</option>
+                        <option selected value="">-- Pilih Tipe Premi ---</option>
                         <option value="0">Biasa</option>
                         <option value="1">Refund</option>
                     </select>
@@ -196,7 +196,7 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Kolektibilitas<span class="text-theme-primary">*</span></label>
                     <select name="kolektibilitas" class="jenis-pengajuan w-full p-2 border">
-                        <option selected>-- Kolektibilitas ---</option>
+                        <option selected value="">-- Kolektibilitas ---</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -213,7 +213,7 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Kode Is</label>
                     <select name="kode_is" class="jenis-pengajuan w-full p-2 border">
-                        <option selected>-- Kode Layanan Syariah ---</option>
+                        <option selected value="">-- Kode Layanan Syariah ---</option>
                         <option value="0">Ky</option>
                         <option value="1">Sy</option>
                     </select>
@@ -318,6 +318,7 @@
         $('[name="kode_cabang"]').val(data[key]['kode_cabang'])
         $('[name="jenis_kredit"]').val(data[key]['skema_kredit'])
         $("[name='no_aplikasi']").val(noAplikasi)
+        $('[name="jenis_coverage"]').empty();
         if (age <= 60 ) {
             $('[name="jenis_coverage"]').append(`
             <option value="01">PNS & NON PNS (PA+ND)</option>
@@ -382,8 +383,98 @@
        data['jenis_kredit'] = $("[name='jenis_kredit']").val()
        data['handling_fee'] = $("[name='handling_fee']").val()
        data['premi_disetor'] = $("[name='premi_disetor']").val()
+       data['kode_layanan_syariah'] = $("[name='kode_layanan_syariah']").val()
 
        console.log(data);
+
+       if (data['nama_debitur'] === '') {
+        var message = 'Data Pengajuan Belum Di Pilih.'
+        alertWarning(message)
+       }
+       if (data['tanggal_pengajuan'] === 'dd/mm/yyyy') {
+        var message = 'Tanggal Pengajuan Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['jenis_pengajuan'] === '') {
+        var message = 'Jenis Pengajuan Belum Di Pilih.'
+        alertWarning(message)
+       }
+       if (data['jenis_pengajuan'] === '1') {
+           if (data['no_polis_sebelumnya'] === '') {
+            var message = 'No Polis Sebelumnya Belum Di Isi.'
+            alertWarning(message)
+           }
+           if (data['bade'] === '') {
+            var message = 'Baki Debet Belum Di Isi.'
+            alertWarning(message)
+           }
+           if (data['refund'] === '') {
+            var message = 'Refund Belum Di Isi.'
+            alertWarning(message)
+           }
+           if (data['tunggakan'] === '') {
+            var message = 'Tunggakan Belum Di Isi.'
+            alertWarning(message)
+           }
+       }
+       if (data['no_pk'] === '') {
+        var message = 'No PK Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['plafon_kredit'] === '') {
+        var message = 'Plafon Kredit Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tanggal_pk'] === 'dd/mm/yyyy') {
+        var message = 'Tanggal Pk Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tgl_awal_kredit'] === 'dd/mm/yyyy') {
+        var message = 'Tanggal Awal Kredit Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tgl_akhir_kredit'] === 'dd/mm/yyyy') {
+        var message = 'Tanggal Akhir Kredit Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['jml_bulan'] === '') {
+        var message = 'Jumlah Bulan Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['kolektibilitas'] === '') {
+        var message = 'Kolektibilitas Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['handling_fee'] === '') {
+        var message = 'Handling Fee Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['kode_ls'] === '') {
+        var message = 'Kode Is Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['premi_disetor'] === '') {
+        var message = 'Premi Disetor Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['kode_layanan_syariah'] === '') {
+        var message = 'Kode Layanan Syariah Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tarif'] === '') {
+        var message = 'Tarif Belum Di Isi.'
+        alertWarning(message)
+       }
+       if (data['tipe_premi'] === '') {
+        var message = 'Tipe Premi Belum Di Pilih.'
+        alertWarning(message)
+       }
+       if (data['premi'] === '') {
+        var message = 'Premi Belum Di Isi.'
+        alertWarning(message)
+       }
+
+
        $.ajax({
             url: urlPost + "/upload",
             type: "POST",
@@ -417,5 +508,17 @@
     function validationData(){
 
     }
+
+    function alertWarning(message){
+        Swal.fire({
+            tittle : 'Warning!',
+            html : message,
+            icon : 'warning',
+            iconColor : '#DC3545',
+            confirmButtonText : 'Ya',
+            confirmButtonColor : '#DC3545'
+        })
+    }
+
 </script>
 @endpush
