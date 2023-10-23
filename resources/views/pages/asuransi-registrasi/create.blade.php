@@ -31,20 +31,20 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nama<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border" id="" name="nama_debitur" disabled/>
+                    <input type="text" class="disabled-input p-2 w-full border" id="" name="nama_debitur" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Tanggal lahir<span class="text-theme-primary">*</span></label>
                     <div class="flex border justify-center bg-disabled">
                         <div class="flex justify-center p-2 bg-disabled"><span>@include('components.svg.calendar')</span></div>
-                        <input type="text" class="disabled-input bg-disabled  p-2 w-full" value="dd/mm/yyyy" id="" name="tanggal_lahir" disabled/>
+                        <input type="text" class="disabled-input bg-disabled  p-2 w-full" value="dd/mm/yyyy" id="" name="tanggal_lahir" readonly/>
                     </div>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Alamat<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border " id="" name="alamat_debitur" disabled/>
+                    <input type="text" class="disabled-input p-2 w-full border " id="" name="alamat_debitur" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
@@ -52,17 +52,17 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">No KTP<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border " id="" name="no_ktp" disabled/>
+                    <input type="text" class="disabled-input p-2 w-full border " id="" name="no_ktp" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Aplikasi<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border " id="" name=""/>
+                    <input type="text" class="p-2 w-full border " id="" name="no_aplikasi" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Kode Cabang Bank<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border " id="" name="kode_cabang" disabled/>
+                    <input type="text" class="disabled-input p-2 w-full border " id="" name="kode_cabang" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
@@ -183,7 +183,7 @@
                 </div>
                 <div class="input-box space-y-3">
                     <label for="add-role" class="uppercase">Jenis Kredit<span class="text-theme-primary">*</span> </label>
-                    <input type="text" class="disabled-input p-2 w-full border" id="" name="jenis_kredit" disabled/>
+                    <input type="text" class="disabled-input p-2 w-full border" id="" name="jenis_kredit" readonly/>
                 </div>
             </div>
             {{-- form data register 4 --}}
@@ -245,7 +245,7 @@
             </div>
 
             <div class="flex gap-5">
-                <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit" id="simpan">
+                <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button" id="simpan">
                     <span class="lg:mt-0 mt-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
                             <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -270,6 +270,7 @@
 
 @push('extraScript')
 <script>
+    var urlPost = "http://sandbox-umkm.ekalloyd.id:8387 ";
 
     $('#pengajuan').select2();
 
@@ -305,6 +306,7 @@
         let date = new Date()
         let tahunSekarang = date.getUTCFullYear();
         var year = age_dt.getUTCFullYear();
+        var noAplikasi = randomString(10);
 
         var age = Math.abs(year - tahunSekarang);
 
@@ -315,6 +317,7 @@
         $('[name="no_ktp"]').val(data[key]['no_ktp'])
         $('[name="kode_cabang"]').val(data[key]['kode_cabang'])
         $('[name="jenis_kredit"]').val(data[key]['skema_kredit'])
+        $("[name='no_aplikasi']").val(noAplikasi)
         if (age <= 60 ) {
             $('[name="jenis_coverage"]').append(`
             <option value="01">PNS & NON PNS (PA+ND)</option>
@@ -348,5 +351,71 @@
 
     })
 
+    $("#simpan").on("click", function(){
+       var data  = {};
+       data['no_aplikasi'] = $("[name='no_aplikasi']").val()
+       data['jenis_asuransi'] = $("[name='jenis_asur']").val()
+       data['tanggal_pengajuan'] = $("[name='tanggal_pengajuan']").val()
+       data['kd_uker'] = $("[name='kode_cabang']").val()
+       data['nama_debitur'] = $("[name='nama_debitur']").val()
+       data['alamat_debitur'] = $("[name='alamat_debitur']").val()
+       data['tanggal_lahir'] = $("[name='tanggal_lahir']").val()
+       data['no_ktp'] = $("[name='no_ktp']").val()
+       data['no_pk'] = $("[name='no_pk']").val()
+       data['tanggal_pk'] = $("[name='tanggal_pk']").val()
+       data['plafon_kredit'] = $("[name='plafon_kredit']").val()
+       data['tgl_awal_kredit'] = $("[name='tanggal_awal_kredit']").val()
+       data['tgl_akhir_kredit'] = $("[name='tanggal_akhir_kredit']").val()
+       data['jml_bulan'] = $("[name='jumlah_bulan']").val()
+       data['jenis_pengajuan'] = $("[name='jenis_pengajuan']").val()
+       data['bade'] = $("[name='baki_debet']").val()
+       data['tunggakan'] = $("[name='tunggakan']").val()
+       data['kolektibilitas'] = $("[name='kolektibilitas']").val()
+       data['no_polis_sebelumnya'] = $("[name='no_polis_sebelumnya']").val()
+       data['jenis_pertanggunan'] = $("[name='jenis_pertanggungan']").val()
+       data['tipe_premi'] = $("[name='tipe_premi']").val()
+       data['premi'] = $("[name='premi']").val()
+       data['jenis_coverage'] = $("[name='jenis_coverage']").val()
+       data['tarif'] = $("[name='tarif']").val()
+       data['refund'] = $("[name='refund']").val()
+       data['kode_ls'] = $("[name='kode_is']").val()
+       data['jenis_kredit'] = $("[name='jenis_kredit']").val()
+       data['handling_fee'] = $("[name='handling_fee']").val()
+       data['premi_disetor'] = $("[name='premi_disetor']").val()
+
+       console.log(data);
+       $.ajax({
+            url: urlPost + "/upload",
+            type: "POST",
+            accept: "Application/json",
+            headers: {
+                "x-api-key": "elj-bprjatim-123",
+                "Content-Type": "Application/json",
+            },
+            data: data,
+            success: function(response){
+
+            },
+            error: function(response){
+
+            }
+       })
+    });
+
+    function randomString(length) {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+        }
+        return result;
+    }
+
+    function validationData(){
+
+    }
 </script>
 @endpush
