@@ -56,6 +56,48 @@ class RegistrasiController extends Controller
         }
     }
 
+
+    public function getRatePremi(Request $request) {
+        $status = '';
+        $message = '';
+        $data = null;
+
+        try {
+            $data = DB::table('mst_rate_premi')
+                    ->select('id', 'masa_asuransi1', 'masa_asuransi2', 'rate')
+                    ->where('jenis', $request->jenis)
+                    ->where('masa_asuransi1', '>=', $request->masa_asuransi)
+                    ->where('masa_asuransi2', '<=', $request->masa_asuransi)
+                    ->OrWhere('jenis', $request->jenis)
+                    ->where('masa_asuransi1', '<=', $request->masa_asuransi)
+                    ->where('masa_asuransi2', '>=', $request->masa_asuransi)
+                    ->first();
+
+            if ($data) {
+                $status = 'success';
+                $message = 'Successfully retrieve data';
+            }
+            else {
+                $status = 'succes';
+                $message = 'Data is empty';
+            }
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = $e->getMessage();
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = $e->getMessage();
+        } finally {
+            $res = [
+                'status' => $status,
+                'message' => $message,
+                'data' => $data,
+            ];
+            
+            return response()->json($res);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *
