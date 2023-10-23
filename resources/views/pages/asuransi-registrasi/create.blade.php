@@ -376,7 +376,7 @@
                     if (response.status == 'success') {
                         if (response.data) {
                             var rate = parseFloat(response.data.rate)
-                            premi = plafon_kredit * (rate / 100)
+                            premi = Math.round(plafon_kredit * (rate / 100))
                             premi = formatRupiah(premi.toString())
                             $('#premi').val(premi)
                             hitungPremiDisetor()
@@ -553,7 +553,7 @@
             handling_fee =  parseInt(handling_fee)
         }
 
-        var premi_disetor = premi - (refund + handling_fee)
+        var premi_disetor = Math.round(premi - (refund + handling_fee))
         var format_premi_disetor = formatRupiah(premi_disetor.toString())
         $('#premi_disetor').val(format_premi_disetor)
     }
