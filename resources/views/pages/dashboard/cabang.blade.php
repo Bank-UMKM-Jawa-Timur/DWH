@@ -135,7 +135,7 @@
                     </div>
                     <div class="head">
                         <h2 class="text-lg font-semibold">Total Registrasi</h2>
-                        <h2 class="font-semibold text-2xl">85</h2> 
+                        <h2 class="font-semibold text-2xl">{{ $total_registrasi }}</h2> 
                     </div>
                 </div>
             </div>
@@ -148,7 +148,7 @@
                     </div>
                     <div class="head">
                         <h2 class="text-lg font-semibold">Total Registrasi Dibatalkan</h2>
-                        <h2 class="font-semibold text-2xl">93</h2>
+                        <h2 class="font-semibold text-2xl">{{ $total_registrasi_dibatalkan }}</h2>
                     </div>
                 </div>
             </div>
@@ -160,8 +160,8 @@
                         </div>
                     </div>
                     <div class="head">
-                        <h2 class="text-lg font-semibold">Total Pengajuan</h2>
-                        <h2 class="font-semibold text-2xl">23</h2>
+                        <h2 class="text-lg font-semibold">Total Pengajuan Klaim</h2>
+                        <h2 class="font-semibold text-2xl">{{ $total_pengajuan_klaim }}</h2>
                     </div>
                 </div>
             </div>
@@ -173,20 +173,20 @@
                         </div>
                     </div>
                     <div class="head">
-                        <h2 class="text-lg font-semibold">Total Pengajuan Dibatalkan</h2>
-                        <h2 class="font-semibold text-2xl">63</h2>
+                        <h2 class="text-lg font-semibold">Total Pengajuan Klaim Dibatalkan</h2>
+                        <h2 class="font-semibold text-2xl">{{ $total_pengajuan_klaim_dibatalkan }}</h2>
                     </div>
                 </div>
             </div>
             <div class="card border w-full p-5">
                 <div class="body-card flex gap-5">
                     <div class="bg-theme-primary px-5 text-white py-3 rounded-md">
-                        <div class="mt-1">
+                        <div class  ="mt-1">
                             @include('components.svg.jpp-icon')
                         </div>
                     </div>
                     <div class="head">
-                        <h2 class="text-lg font-semibold">Jumlah Pelaporan Pelunsan</h2>
+                        <h2 class="text-lg font-semibold">Jumlah Pelaporan Pelunasan</h2>
                         <h2 class="font-semibold text-2xl">73</h2>
                     </div>
                 </div>

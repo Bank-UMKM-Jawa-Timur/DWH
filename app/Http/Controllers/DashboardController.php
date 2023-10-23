@@ -93,15 +93,18 @@ class DashboardController extends Controller
             $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
             $tab_type = $request->get('tab_type');
             $temp_page = $request->page;
+            
+            $this->param['total_registrasi'] = DB::table('asuransi')->where('status', 'onprogress')->count();
+            $this->param['total_registrasi_dibatalkan'] = DB::table('asuransi')->where('status', 'canceled')->count();
+            $this->param['total_pengajuan_klaim'] = DB::table('pengajuan_klaim')->where('status', 'onprogress')->count();
+            $this->param['total_pengajuan_klaim_dibatalkan'] = DB::table('pengajuan_klaim')->where('status', 'canceled')->count();
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
-
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
             if (!$token)
-                $user_id = 0; // vendor
-
+                $user_id = 0; // <vendor></vendor>
             return view('pages.home', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();

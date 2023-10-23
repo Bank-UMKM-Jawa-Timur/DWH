@@ -89,7 +89,6 @@
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
-                        <th>Cabang</th>
                         <th>Nama Debitur</th>
                         <th>No Aplikasi</th>
                         <th>No Polis</th>
