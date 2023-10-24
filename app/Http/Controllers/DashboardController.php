@@ -96,6 +96,15 @@ class DashboardController extends Controller
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
+            $role = '';
+            if ($user) {
+                if (is_array($user)) {
+                    $role = $user['role'];
+                }
+            }
+            else {
+                $role = 'vendor';
+            }
 
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
@@ -153,8 +162,11 @@ class DashboardController extends Controller
                         'po.harga',
                     ])
                     ->whereNotNull('kredits.pengajuan_id')
-                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
-                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
+                        if (strtolower($role) != 'administrator') {
+                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
+                                \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                        }
                     })
                     ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
                         return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
@@ -167,8 +179,11 @@ class DashboardController extends Controller
                         return $query->having('kredits.kode_cabang', $cbg);
                     })
                     ->orWhereNotNull('kredits.is_continue_import')
-                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
-                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
+                        if (strtolower($role) != 'administrator') {
+                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
+                                \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                        }
                     })
                     ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
                         return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
@@ -181,8 +196,11 @@ class DashboardController extends Controller
                         return $query->having('kredits.kode_cabang', $cbg);
                     })
                     ->orWhereNotNull('kkb.user_id')
-                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request) {
-                        $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                    ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
+                        if (strtolower($role) != 'administrator') {
+                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
+                                \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
+                        }
                     })
                     ->when($request->tAwal && $request->tAkhir && $request->status, function ($query) use ($request) {
                         return $query->whereBetween('kredits.created_at', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))])
