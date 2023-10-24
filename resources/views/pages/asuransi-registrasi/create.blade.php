@@ -8,7 +8,7 @@
     </div>
     <div class="body-pages">
         <div class="bg-white w-full p-5">
-            <form id="form-asuransi-registrasi" action="{{route('registrasi.store')}}" method="" class="space-y-5 " accept="">
+            <form id="form-asuransi-registrasi" action="{{route('registrasi.store')}}" method="post" class="space-y-5 " accept="">
                 @csrf
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
@@ -36,7 +36,7 @@
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal lahir<span class="text-theme-primary">*</span></label>
-                        <input type="text" class="disabled-input bg-disabled  p-2 w-full border" id="tanggal_lahir" name="tanggal_lahir" readonly/>
+                        <input type="text" class="disabled-input bg-disabled  p-2 w-full border" id="tgl_lahir" name="tgl_lahir" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -90,12 +90,12 @@
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal PK<span class="text-theme-primary">*</span></label>
-                        <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tanggal_pk" readonly/>
+                        <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pk" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tanggal Pengajuan<span class="text-theme-primary">*</span></label>
-                        <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tanggal_pengajuan" readonly/>
+                        <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pengajuan" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -110,17 +110,29 @@
                 {{-- form data register 1 --}}
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
+                        <label for="add-role" class="uppercase">No Rekening<span class="text-theme-primary">*</span> </label>
+                        <input type="text" class="p-2 w-full border " id="no_rekening" name="no_rekening"/>
+                        <small class="form-text text-red-600 error"></small>
+                    </div>
+                    <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span> </label>
                         <select name="jenis_asuransi" class="w-full p-2 border" id="jenis_asuransi">
                             <option selected value="">-- Pilih Jenis Asuransi ---</option>
+                            <option value="01">Jiwa</option>
+                            <option value="02">Kerugian</option>
                         </select>
+                    </div>
+                    <div class="input-box-calendar space-y-3">
+                        <label for="" class="uppercase">Tanggal Jatuh Tempo<span class="text-theme-primary">*</span></label>
+                        <input type="text" name="tgl_jatuhtempo" id="tgl_jatuhtempo" class="datepicker p-2 w-full border" readonly/>
+                        <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span> </label>
                         <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pengajuan ---</option>
-                            <option value="0">Baru</option>
-                            <option value="1">Top Up</option>
+                            <option value="00">Baru</option>
+                            <option value="01">Top Up</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -134,6 +146,14 @@
                             <option value="5">5</option>
                         </select>
                         <small class="form-text text-red-600 error"></small>
+                    </div>
+                    <div class="input-box space-y-3">
+                        <label for="add-role" class="uppercase">Jenis PERTANGGUNGAN<span class="text-theme-primary">*</span> </label>
+                        <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
+                            <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
+                            <option value="01">Berdasarkan Pokok</option>
+                            <option value="02">Berdasarkan Sisa Kredit</option>
+                        </select>
                     </div>
                 </div>
 
@@ -175,7 +195,8 @@
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi</label>
-                        <span class="text-theme-primary">akan terisi jika sudah memilih jenis pertanggungan</span>
+                        <span class="text-theme-primary">terisi jika sudah memilih jenis pertanggungan</span>
+                        <input type="hidden" id="rate_premi" name="rate_premi"/>
                         <input type="text" class="rupiah p-2 w-full border disabled-input bg-disabled" id="premi" name="premi" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
@@ -198,7 +219,7 @@
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kode Layanan Syariah</label>
-                        <select name="kode_is" class="w-full p-2 border">
+                        <select name="kode_ls" class="w-full p-2 border">
                             <option selected value="">-- Kode Layanan Syariah ---</option>
                             <option value="0">KV</option>
                             <option value="1">SY</option>
@@ -218,7 +239,7 @@
                 </div>
 
                 <div class="flex gap-5">
-                    <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button" id="simpan">
+                    <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit" id="simpan">
                         <span class="lg:mt-0 mt-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
                                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -242,8 +263,9 @@
 @endsection
 
 @push('extraScript')
+<script src="{{ asset('template/assets/js/axios.min.js') }}"></script>
 <script>
-    var urlPost = "http://sandbox-umkm.ekalloyd.id:8387 ";
+    var urlPost = "http://sandbox-umkm.ekalloyd.id:8387";
 
     $('#pengajuan').select2();
 
@@ -299,19 +321,19 @@
         var jumlahKredit = formatRupiah(data[key]['jumlah_kredit'])
 
         $('[name="nama_debitur"]').val(data[key]['nama'])
-        $('[name="tanggal_lahir"]').val(fullTanggalLahir)
+        $('[name="tgl_lahir"]').val(fullTanggalLahir)
         $('[name="alamat_debitur"]').val(data[key]['alamat_rumah'])
         $('[name="no_ktp"]').val(data[key]['no_ktp'])
         $('[name="kode_cabang"]').val(data[key]['kode_cabang'])
         $('[name="jenis_kredit"]').val(data[key]['skema_kredit'])
-        $("[name='tanggal_pengajuan']").val(fullTanggalAwalKredit)
+        $("[name='tgl_pengajuan']").val(fullTanggalAwalKredit)
         $("[name='tanggal_awal_kredit']").val(fullTanggalAwalKredit)
         $("[name='tanggal_akhir_kredit']").val(fullTanggalAkhirKredit)
         $("[name='jumlah_bulan']").val(tenor)
         $("[name='no_aplikasi']").val(noAplikasi)
         $("[name='plafon_kredit']").val(jumlahKredit)
         $("[name='no_pk']").val(data[key]['no_pk'])
-        $("[name='tanggal_pk']").val(fullTanggalPK)
+        $("[name='tgl_pk']").val(fullTanggalPK)
         if (age <= 60 ) {
             $('[name="jenis_coverage"]').append(`
             <option value="01">PNS & NON PNS (PA+ND)</option>
@@ -326,7 +348,7 @@
             `)
         }
 
-        $.ajax({
+        /*$.ajax({
             type: "GET",
             url: "{{ url('/asuransi/registrasi/jenis-asuransi') }}/"+data[key]['skema_kredit'],
             success: function(data) {
@@ -339,7 +361,7 @@
             error: function(e) {
                 console.log(e)
             }
-        })
+        })*/
 
     })
 
@@ -379,6 +401,7 @@
                             premi = Math.round(plafon_kredit * (rate / 100))
                             premi = formatRupiah(premi.toString())
                             $('#premi').val(premi)
+                            $('#rate_premi').val(rate)
                             hitungPremiDisetor()
                         }
                         else {
@@ -399,17 +422,61 @@
     })
 
     $("#simpan").on("click", function(){
+        /*var d = {"no_aplikasi":"SO2sBojfZN","jenis_asuransi":"Jaminan","tgl_pengajuan":"15-09-2023","kd_uker":"027","nama_debitur":"Riski Ridho","alamat_debitur":"Situbondo, mlandingan, campoan rt4","tgl_lahir":"31-05-1998","no_ktp":"3511145755975784","no_pk":"SBY/PK/001/09/2023","tgl_pk":"15-09-2023","plafon_kredit":"40.000.000","tgl_awal_kredit":"15-09-2023","tgl_akhir_kredit":"15-09-2025","jml_bulan":"24","jenis_pengajuan":"0","bade":"","tunggakan":"","kolektibilitas":"1","no_polis_sebelumnya":"","jenis_pertanggungan":"01","tipe_premi":"0","premi":"3.120.000","jenis_coverage":"01","tarif":"200.000","refund":"","kode_ls":"0","jenis_kredit":"Kusuma","handling_fee":"200.000","premi_disetor":"2.920.000"}
+
+        /*axios.post(`${urlPost}/upload`, d, {
+            mode: 'no-cors',
+            withCredentials: false,
+            headers: {
+                "Accept": "application/json",
+                "x-api-key": "elj-bprjatim-123",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": '*',
+                "Access-Control-Allow-Methods": "*",
+                //"Access-Control-Allow-Headers": "x-requested-with",
+                "Access-Control-Allow-Credentials": true,
+                "Access-Control-Allow-Headers": "*",
+            }
+        })
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+        $.ajax({
+            url: urlPost + "/upload",
+            method: "POST",
+            headers: {
+                "Access-Control-Allow-Credentials": false,
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json",
+                "x-api-key": "elj-bprjatim-123",
+            },
+            data: d,
+            crossDomain: true,
+            success: function(response){
+                console.log(response)
+            },
+            error: function(response){
+                console.log(response)
+            }
+        })*/
+        /*
         var data  = {};
         data['no_aplikasi'] = $("[name='no_aplikasi']").val()
         data['jenis_asuransi'] = $("[name='jenis_asuransi']").val()
-        data['tanggal_pengajuan'] = $("[name='tanggal_pengajuan']").val()
+        data['tgl_pengajuan'] = $("[name='tgl_pengajuan']").val()
         data['kd_uker'] = $("[name='kode_cabang']").val()
         data['nama_debitur'] = $("[name='nama_debitur']").val()
         data['alamat_debitur'] = $("[name='alamat_debitur']").val()
-        data['tanggal_lahir'] = $("[name='tanggal_lahir']").val()
+        data['tgl_lahir'] = $("[name='tgl_lahir']").val()
         data['no_ktp'] = $("[name='no_ktp']").val()
         data['no_pk'] = $("[name='no_pk']").val()
-        data['tanggal_pk'] = $("[name='tanggal_pk']").val()
+        data['tgl_pk'] = $("[name='tgl_pk']").val()
         data['plafon_kredit'] = $("[name='plafon_kredit']").val()
         data['tgl_awal_kredit'] = $("[name='tanggal_awal_kredit']").val()
         data['tgl_akhir_kredit'] = $("[name='tanggal_akhir_kredit']").val()
@@ -425,7 +492,7 @@
         data['jenis_coverage'] = $("[name='jenis_coverage']").val()
         data['tarif'] = $("[name='tarif']").val()
         data['refund'] = $("[name='refund']").val()
-        data['kode_ls'] = $("[name='kode_is']").val()
+        data['kode_ls'] = $("[name='kode_ls']").val()
         data['jenis_kredit'] = $("[name='jenis_kredit']").val()
         data['handling_fee'] = $("[name='handling_fee']").val()
         data['premi_disetor'] = $("[name='premi_disetor']").val()
@@ -492,22 +559,34 @@
         alertWarning(message)
        }
 
+       console.log(data)
+       console.log(JSON.stringify(data))
+       console.log(typeof(data))
+       console.log(typeof(JSON.stringify(data)))
+
         $.ajax({
             url: urlPost + "/upload",
-            type: "POST",
+            method: "POST",
             accept: "Application/json",
             headers: {
+                "Accept": "/",
                 "x-api-key": "elj-bprjatim-123",
-                "Content-Type": "Application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "x-requested-with",
+                "Access-Control-Allow-Credentials": false,
+                "Access-Control-Allow-Headers": "Content-Type"
             },
-            data: data,
+            data: d,
+            crossDomain: true,
             success: function(response){
                 console.log(response)
             },
             error: function(response){
                 console.log(response)
             }
-        })
+        })*/
     });
 
     function hitungPremiDisetor() {
