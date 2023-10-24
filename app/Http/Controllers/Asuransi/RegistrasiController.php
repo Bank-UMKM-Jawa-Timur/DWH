@@ -159,7 +159,7 @@ class RegistrasiController extends Controller
             "no_ktp"=> $request->get('no_ktp'),
             "no_pk"=> $request->get('no_pk'),
             "tgl_pk"=> $request->get('tgl_pk'),
-            "plafon_kredit"=> strval(UtilityController::clearCurrencyFormat($request->get('plafon_kredit'))),
+            "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
             "tgl_awal_kredit"=> $request->get('tanggal_awal_kredit'),
             "tgl_akhir_kredit"=> $request->get('tanggal_awal_kredit'),
             "jml_bulan"=> $request->get('jumlah_bulan'),
@@ -170,28 +170,30 @@ class RegistrasiController extends Controller
             "no_polis_sebelumnya"=> $request->get('no_polis_sebelumnya'),
             "jenis_pertanggungan"=> $request->get('jenis_pertanggungan'),
             "tipe_premi"=> $request->get('tipe_premi'),
-            "premi"=> strval(UtilityController::clearCurrencyFormat($request->get('premi'))),
+            "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
             "jenis_coverage"=> $request->get('jenis_coverage'),
-            "tarif"=> strval(UtilityController::clearCurrencyFormat($request->get('tarif'))),
-            "refund"=> strval(UtilityController::clearCurrencyFormat($request->get('refund'))),
+            "tarif"=> UtilityController::clearCurrencyFormat($request->get('tarif')),
+            "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
             "kode_ls"=> $request->get('kode_ls'),
             // "jenis_kredit"=> $request->get('jenis_kredit'),
             "jenis_kredit"=> "01",
-            "handling_fee"=> strval(UtilityController::clearCurrencyFormat($request->get('handling_fee'))),
-            "premi_disetor"=> strval(UtilityController::clearCurrencyFormat($request->get('premi_disetor'))),
+            "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
+            "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
         ];
         
         try {
             $headers = [
                 "Accept" => "/",
-                "x-api-key" => "elj-bprjatim-123",
+                "x-api-key" => config('global.eka_lloyd_token'),
                 "Content-Type" => "application/json",
                 "Access-Control-Allow-Origin" => "*",
                 "Access-Control-Allow-Methods" => "*"
             ];
     
-            $url = "http://sandbox-umkm.ekalloyd.id:8387/upload";
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/upload";
             $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            return $response;
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);

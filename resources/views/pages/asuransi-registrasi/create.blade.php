@@ -74,6 +74,11 @@
                         <input type="text" name="tanggal_akhir_kredit" id="tanggal_akhir_kredit" class="disabled-input bg-disabled p-2 w-full border" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
+                    <div class="input-box-calendar space-y-3">
+                        <label for="" class="uppercase">Tanggal Jatuh Tempo<span class="text-theme-primary">*</span></label>
+                        <input type="text" name="tgl_jatuhtempo" id="tgl_jatuhtempo" class="disabled-input bg-disabled  p-2 w-full border" readonly/>
+                        <small class="form-text text-red-600 error"></small>
+                    </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jumlah Bulan<span class="text-theme-primary">*</span></label>
                         <input type="number" class="disabled-input bg-disabled p-2 w-full border " id="jumlah_bulan" name="jumlah_bulan" readonly/>
@@ -122,11 +127,6 @@
                             <option value="02">Kerugian</option>
                         </select>
                     </div>
-                    <div class="input-box-calendar space-y-3">
-                        <label for="" class="uppercase">Tanggal Jatuh Tempo<span class="text-theme-primary">*</span></label>
-                        <input type="text" name="tgl_jatuhtempo" id="tgl_jatuhtempo" class="datepicker p-2 w-full border" readonly/>
-                        <small class="form-text text-red-600 error"></small>
-                    </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span> </label>
                         <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
@@ -155,6 +155,14 @@
                             <option value="02">Berdasarkan Sisa Kredit</option>
                         </select>
                     </div>
+                    <div class="input-box space-y-3">
+                        <label for="" class="uppercase">Tipe Premi<span class="text-theme-primary">*</span> </label>
+                        <select name="tipe_premi" class="w-full p-2 border">
+                            <option selected value="">-- Pilih Tipe Premi ---</option>
+                            <option value="0">Biasa</option>
+                            <option value="1">Refund</option>
+                        </select>
+                    </div>
                 </div>
 
                 {{-- form data register 6 should be hidden when choosing baru in jenis pengajuan --}}
@@ -178,24 +186,7 @@
                 {{-- form data register 5 --}}
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
-                        <label for="add-role" class="uppercase">Jenis PERTANGGUNGAN<span class="text-theme-primary">*</span> </label>
-                        <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
-                            <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
-                            <option value="01">Berdasarkan Pokok</option>
-                            <option value="02">Berdasarkan Sisa Kredit</option>
-                        </select>
-                    </div>
-                    <div class="input-box space-y-3">
-                        <label for="" class="uppercase">Tipe Premi<span class="text-theme-primary">*</span> </label>
-                        <select name="tipe_premi" class="w-full p-2 border">
-                            <option selected value="">-- Pilih Tipe Premi ---</option>
-                            <option value="0">Biasa</option>
-                            <option value="1">Refund</option>
-                        </select>
-                    </div>
-                    <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi</label>
-                        <span class="text-theme-primary">terisi jika sudah memilih jenis pertanggungan</span>
                         <input type="hidden" id="rate_premi" name="rate_premi"/>
                         <input type="text" class="rupiah p-2 w-full border disabled-input bg-disabled" id="premi" name="premi" readonly/>
                         <small class="form-text text-red-600 error"></small>
@@ -208,7 +199,7 @@
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tarif<span class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="" name="tarif"/>
+                        <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="tarif" name="tarif" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3 form-6 hidden">
@@ -329,6 +320,7 @@
         $("[name='tgl_pengajuan']").val(fullTanggalAwalKredit)
         $("[name='tanggal_awal_kredit']").val(fullTanggalAwalKredit)
         $("[name='tanggal_akhir_kredit']").val(fullTanggalAkhirKredit)
+        $("[name='tgl_jatuhtempo']").val(fullTanggalAkhirKredit)
         $("[name='jumlah_bulan']").val(tenor)
         $("[name='no_aplikasi']").val(noAplikasi)
         $("[name='plafon_kredit']").val(jumlahKredit)
@@ -398,10 +390,11 @@
                     if (response.status == 'success') {
                         if (response.data) {
                             var rate = parseFloat(response.data.rate)
-                            premi = Math.round(plafon_kredit * (rate / 100))
+                            premi = Math.round(plafon_kredit * (rate / 1000))
                             premi = formatRupiah(premi.toString())
                             $('#premi').val(premi)
                             $('#rate_premi').val(rate)
+                            $('#tarif').val(rate)
                             hitungPremiDisetor()
                         }
                         else {
