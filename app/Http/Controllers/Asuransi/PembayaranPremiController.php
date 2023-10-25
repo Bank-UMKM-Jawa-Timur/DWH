@@ -62,42 +62,30 @@ class PembayaranPremiController extends Controller
      */
     public function create()
     {
-        $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi','jenis.jenis', 'asuransi.id')
-        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+        $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi','jenis.jenis')
+        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
         ->where('status', 'onprogress')->groupBy('no_aplikasi')
         ->get();
+
         $param['jenisAsuransi'] = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
-        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
         ->where('status', 'onprogress')
         ->get();
-
-        // return $param['jenisAsuransi'];
-
 
         return view('pages.pembayaran_premi.create', $param);
     }
 
-    public function getsAsuransiByNoAplikasi($jenis){
-        // $jenisArray = explode(',', $jenis);
-        $data = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
-        ->where('jenis.jenis', $jenis)
-        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
-        ->where('status', 'onprogress')
-        ->get();
+    public function getJenisByNoAplikasi(Request $request){
+        $jenis = DB::table('asuransi')
+                ->select('asuransi.*', 'jenis.jenis', DB::raw("LEFT(UUID(), 8) AS generate_key"))
+                ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+                ->where('asuransi.status', 'onprogress')
+                ->where('asuransi.is_paid', false)
+                ->where('asuransi.no_aplikasi', $request->no_aplikasi)
+                ->get();
 
         return response()->json([
-            'data' => $data
-        ]);
-    }
-    public function getJenisByNoAplikasi($apk){
-        $jenis = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
-        ->where('jenis.jenis', $apk)
-        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
-        ->where('status', 'onprogress')
-        ->get();
-
-        return response()->json([
-            'dataJenis' => $jenis
+            'data' => $jenis
         ]);
     }
 

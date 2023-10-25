@@ -37,7 +37,7 @@
                             <span class="lg:block hidden"> Filter </span>
                         </button>
                     </a>
-                    <a href="{{ route('registrasi.create') }}">
+                    <a href="{{ route('asuransi.registrasi.create') }}">
                         <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                             <span class="lg:mt-0 mt-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
