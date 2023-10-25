@@ -320,6 +320,80 @@ class NotificationController extends Controller
         }
     }
 
+    public function sendWithExtra($action_id, $kreditId, $extra)
+    {
+        try {
+            DB::beginTransaction();
+
+            // get notification template
+            $template = NotificationTemplate::where('action_id', $action_id)->get();
+
+            // get roles
+            $roles = Role::pluck('id');
+
+            // get kredit
+            $kredit = Kredit::find($kreditId);
+
+            // get user who will be sended the notification
+            foreach ($template as $key => $value) {
+                // get kode cabang
+                if (!$value->role_id && $value->all_role) {
+                    // retrieve from api
+                    $host = config('global.los_api_host');
+                    $apiURL = $host . '/kkb/get-data-users-cabang/' . $kredit->kode_cabang;
+
+                    $headers = [
+                        'token' => config('global.los_api_token')
+                    ];
+
+                    $responseBody = null;
+
+                    try {
+                        $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                        $statusCode = $response->status();
+                        $responseBody = json_decode($response->getBody(), true);
+                        $user = $responseBody;
+
+                        if ($user) {
+                            foreach ($user as $key => $item) {
+                                $createNotification = new Notification();
+                                $createNotification->kredit_id = $kreditId;
+                                $createNotification->template_id = $value->id;
+                                $createNotification->user_id = $item['id'];
+                                $createNotification->extra = $extra;
+                                $createNotification->save();
+                            }
+                        }
+                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                        // return $e->getMessage();
+                    }
+                }
+                else {
+                    $arrRole = explode(',', $value->role_id);
+                    $user = User::where('kode_cabang', $kredit->kode_cabang)
+                                ->whereIn('role_id', $arrRole)
+                                ->orWhereIn('role_id', $arrRole)
+                                ->get();
+
+                    foreach ($user as $key => $item) {
+                        $createNotification = new Notification();
+                        $createNotification->kredit_id = $kreditId;
+                        $createNotification->template_id = $value->id;
+                        $createNotification->user_id = $item->id;
+                        $createNotification->extra = $extra;
+                        $createNotification->save();
+                    }
+                }
+            }
+            DB::commit();
+        } catch(\Exception $e) {
+            DB::rollBack();
+        } catch(\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+        }
+    }
+
     public function sendEmail($mail_to, $mail_body) {
         $status = '';
         $message = '';
