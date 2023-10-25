@@ -99,6 +99,7 @@ Route::middleware('auth_api')->group(function () {
                 Route::get('jenis-asuransi/{jenis_kredit}', 'getJenisAsuransi')->name('jenis_asuransi');
                 Route::get('rate-premi', 'getRatePremi')->name('rate_premi');
                 Route::post('/', 'store')->name('store');
+                Route::get('inquery', 'inquery')->name('inquery');
             });
         Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
         Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);

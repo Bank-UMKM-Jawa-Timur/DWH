@@ -140,7 +140,10 @@
                                                 <a class="item-dropdown" href="#">Pembatalan</a>
                                             </li>
                                             <li class="">
-                                                <a class="item-dropdown" href="#">Inquery</a>
+                                                <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                    <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
+                                                    <button class="item-dropdown w-full" type="submit">Inquery</button>
+                                                </form>
                                             </li>
                                         </ul>
                                     </div>
