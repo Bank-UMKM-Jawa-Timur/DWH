@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Controllers\Utils\UtilityController;
+use App\Models\Asuransi;
+use App\Models\Kredit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
@@ -94,7 +96,7 @@ class RegistrasiController extends Controller
                 'message' => $message,
                 'data' => $data,
             ];
-            
+
             return response()->json($res);
         }
     }
@@ -114,7 +116,7 @@ class RegistrasiController extends Controller
         $headers = [
             'token' => env('LOS_API_TOKEN')
         ];
-        
+
         $apiPengajuan = $host . '/v1/get-list-pengajuan/' . $user_id;
         $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
         $response = json_decode($api_req->getBody(), true);
@@ -180,7 +182,8 @@ class RegistrasiController extends Controller
             "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
             "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
         ];
-        
+        return $req;
+
         try {
             $headers = [
                 "Accept" => "/",
@@ -189,20 +192,57 @@ class RegistrasiController extends Controller
                 "Access-Control-Allow-Origin" => "*",
                 "Access-Control-Allow-Methods" => "*"
             ];
-    
+
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
             $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
-            return $response;
+
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
                 if ($responseBody) {
                     $status = $responseBody['status'];
+
                     $message = '';
                     switch ($status) {
                         case '01':
                             # success
+
+                            $polis = $responseBody['no_polis'];
+                            $tgl_rekam = $responseBody['tgl_rekam'];
+                            $tgl_polis = $responseBody['tgl_polis'];
+
+                            $newKredit = new Kredit();
+                            $newKredit->pengajuan_id = $request->pengajuan;
+                            $newKredit->is_asuransi = 1;
+                            $newKredit->kode_cabang = $request->kode_cabang;
+                            $newKredit->created_at = now();
+                            $newKredit->save();
+
+                            $premi = UtilityController::clearCurrencyFormat($request->get('premi'));
+                            $token = \Session::get(config('global.user_token_session'));
+                            $user = $token ? $this->getLoginSession() : Auth::user();
+
+                            $user_id = $token ? $user['id'] : $user->id;
+                            // insert asuransi
+                            $newAsuransi = new Asuransi();
+                            $newAsuransi->no_aplikasi = $request->no_aplikasi;
+                            $newAsuransi->no_pk = $request->no_pk;
+                            $newAsuransi->no_rek = $request->no_rekening;
+                            $newAsuransi->premi = $premi;
+                            $newAsuransi->kredit_id = $newKredit->id;
+                            $newAsuransi->jenis_asuransi_id = $request->jenis_asuransi;
+                            $newAsuransi->user_id = $user_id;
+                            $newAsuransi->nama_debitur = $request->nama_debitur;
+                            $newAsuransi->no_polis = $polis;
+                            $newAsuransi->tgl_polis = $tgl_polis;
+                            $newAsuransi->tgl_rekam = $tgl_rekam;
+                            // $newAsuransi->no_polis = 'asodjkaoldkasd';
+                            // $newAsuransi->tgl_polis = '2023-10-24';
+                            // $newAsuransi->tgl_rekam = '2023-10-24';
+                            $newAsuransi->status = 'onprogress';
+                            $newAsuransi->save();
+
                             $message = $responseBody['keterangan'];
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
@@ -225,7 +265,7 @@ class RegistrasiController extends Controller
                             Alert::error('Gagal', $message);
                             return back();
                             break;
-                        
+
                         default:
                             Alert::error('Gagal', 'Terjadi kesalahan');
                             return back();

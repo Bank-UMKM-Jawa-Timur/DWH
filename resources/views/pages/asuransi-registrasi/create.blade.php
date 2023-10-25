@@ -123,8 +123,8 @@
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span> </label>
                         <select name="jenis_asuransi" class="w-full p-2 border" id="jenis_asuransi">
                             <option selected value="">-- Pilih Jenis Asuransi ---</option>
-                            <option value="01">Jiwa</option>
-                            <option value="02">Kerugian</option>
+                            <option value="3">Jiwa</option>
+                            <option value="2">Jaminan</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -325,7 +325,7 @@
         $("[name='no_aplikasi']").val(noAplikasi)
         $("[name='plafon_kredit']").val(jumlahKredit)
         $("[name='no_pk']").val(data[key]['no_pk'])
-        $("[name='tgl_pk']").val(fullTanggalPK)
+        $("[name='tgl_pk']").val(data[key]['tgl_cetak_pk'])
         if (age <= 60 ) {
             $('[name="jenis_coverage"]').append(`
             <option value="01">PNS & NON PNS (PA+ND)</option>
@@ -403,7 +403,7 @@
                     }
                     else {
                         console.log(response.message)
-                        alert('Terjadi kesalahan saat mengambil rate premi')
+                        alert('Terjadi  kesalahan saat mengambil rate premi')
                     }
                 },
                 error: function(response){
