@@ -103,6 +103,8 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
         Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);
         Route::resource('/pembayaran-premi', PembayaranPremiController::class);
+        Route::get('/jenis-by-no-aplikasi/{apk}', [PembayaranPremiController::class, 'getJenisByNoAplikasi']);
+        Route::get('/by-no-aplikasi/{jenis}', [PembayaranPremiController::class, 'getsAsuransiByNoAplikasi']);
     });
 
     Route::prefix('kredit')->name('kredit.')->group(function() {

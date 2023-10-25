@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Asuransi;
 use App\Http\Controllers\Controller;
 use App\Models\PembayaranPremi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PembayaranPremiController extends Controller
 {
@@ -61,7 +62,43 @@ class PembayaranPremiController extends Controller
      */
     public function create()
     {
-        return view('pages.pembayaran_premi.create');
+        $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi','jenis.jenis', 'asuransi.id')
+        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+        ->where('status', 'onprogress')->groupBy('no_aplikasi')
+        ->get();
+        $param['jenisAsuransi'] = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
+        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+        ->where('status', 'onprogress')
+        ->get();
+
+        // return $param['jenisAsuransi'];
+
+
+        return view('pages.pembayaran_premi.create', $param);
+    }
+
+    public function getsAsuransiByNoAplikasi($jenis){
+        // $jenisArray = explode(',', $jenis);
+        $data = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
+        ->where('jenis.jenis', $jenis)
+        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+        ->where('status', 'onprogress')
+        ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+    public function getJenisByNoAplikasi($apk){
+        $jenis = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
+        ->where('jenis.jenis', $apk)
+        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+        ->where('status', 'onprogress')
+        ->get();
+
+        return response()->json([
+            'dataJenis' => $jenis
+        ]);
     }
 
     /**

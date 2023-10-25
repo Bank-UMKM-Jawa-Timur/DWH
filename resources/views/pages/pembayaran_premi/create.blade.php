@@ -103,7 +103,7 @@
                                     <td>Jaminan</td>
                                     <td>K21002022000010</td>
                                     <td>K21002022000010</td>
-                                    <td>PK/0001/CU/73/0122-0132</td>  
+                                    <td>PK/0001/CU/73/0122-0132</td>
                                     <td>3/SP-02/JSB/630/VI-2022</td>
                                     <td>
                                         <div class="input-box">
@@ -183,7 +183,7 @@
     <script>
         $("#errorNoAplikasi").hide();
         $("#errorJenisAsuransi").hide();
-        
+
         // $('#form-reset').on('click', function() {
         //     $('#form-pengajuan-klaim')[0].reset();
         //     if ($('#form-pengajuan-klaim .datepicker')[0]) {
