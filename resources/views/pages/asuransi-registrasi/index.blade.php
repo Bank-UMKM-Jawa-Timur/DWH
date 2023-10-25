@@ -100,8 +100,9 @@
                     </tr>
                     <tbody>
                         @forelse ($data as $item)
-                            <tr>
-                                <td>{{$loop->iteration}}</td>
+                            <tr class="view cursor-pointer">
+                                <td><div class="flex gap-4 justify-center"><span class="caret-icon transform">@include('components.svg.caret')</span>{{$loop->iteration}}</div></td>
+                                <td>Surabaya</td>
                                 <td>{{$item->nama_debitur}}</td>
                                 <td>{{$item->no_aplikasi}}</td>
                                 <td>{{$item->no_polis}}</td>
@@ -145,6 +146,17 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr class="collapse-table hidden bg-[#f2f2f2]">
+                                <td colspan="1"></td>
+                                <td>Surabaya</td>
+                                <td>Mohammad Sahrullah</td>
+                                <td>KB0301371037</td>
+                                <td>23141</td>
+                                <td>23-10-2023</td>
+                                <td>23-10-2023</td>
+                                <td>Onprogres</td>
+                                <td></td>
+                            </tr>
                         @empty
                             <tr>
                                 <td colspan="9">Data tidak tersedia.</td>
@@ -167,6 +179,15 @@
 @endsection
 @push('extraScript')
     <script>
+        $(".view").on("click", function(e){
+            // $(this + '.caret-icon').toggleClass("rotate-180");
+            console.log($(this));
+            $(this).next(".collapse-table").toggleClass("hidden");
+        });
+        $('.dropdown .dropdown-menu .item-dropdown').on('click', function(e){
+            e.stopPropagation();
+        })
+
         function CanceledModalSuccessMessage(message) {
             Swal.fire({
                 showConfirmButton: true,

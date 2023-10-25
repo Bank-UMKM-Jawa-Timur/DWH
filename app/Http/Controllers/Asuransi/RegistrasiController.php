@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Alert;
+use RealRashid\SweetAlert\Facades\Alert;
+use App\Http\Controllers\Utils\UtilityController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
@@ -53,6 +54,48 @@ class RegistrasiController extends Controller
             return back()->with('error', $e->getMessage());
         } catch (\Illuminate\Database\QueryException $e) {
             return back()->with('error', 'Terjadi kesalahan pada database. '.$e->getMessage());
+        }
+    }
+
+
+    public function getRatePremi(Request $request) {
+        $status = '';
+        $message = '';
+        $data = null;
+
+        try {
+            $data = DB::table('mst_rate_premi')
+                    ->select('id', 'masa_asuransi1', 'masa_asuransi2', 'rate')
+                    ->where('jenis', $request->jenis)
+                    ->where('masa_asuransi1', '>=', $request->masa_asuransi)
+                    ->where('masa_asuransi2', '<=', $request->masa_asuransi)
+                    ->OrWhere('jenis', $request->jenis)
+                    ->where('masa_asuransi1', '<=', $request->masa_asuransi)
+                    ->where('masa_asuransi2', '>=', $request->masa_asuransi)
+                    ->first();
+
+            if ($data) {
+                $status = 'success';
+                $message = 'Successfully retrieve data';
+            }
+            else {
+                $status = 'succes';
+                $message = 'Data is empty';
+            }
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = $e->getMessage();
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = $e->getMessage();
+        } finally {
+            $res = [
+                'status' => $status,
+                'message' => $message,
+                'data' => $data,
+            ];
+            
+            return response()->json($res);
         }
     }
 
@@ -103,7 +146,101 @@ class RegistrasiController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
+        $req = [
+            "no_aplikasi"=> $request->get('no_aplikasi'),
+            "no_rekening"=> $request->get('no_rekening'),
+            "jenis_asuransi"=> $request->get('jenis_asuransi'),
+            "tgl_pengajuan"=> $request->get('tgl_pengajuan'),
+            "tgl_jatuhtempo"=> $request->get('tgl_jatuhtempo'),
+            "kd_uker"=> $request->get('kode_cabang'),
+            "nama_debitur"=> $request->get('nama_debitur'),
+            "alamat_debitur"=> $request->get('alamat_debitur'),
+            "tgl_lahir"=> $request->get('tgl_lahir'),
+            "no_ktp"=> $request->get('no_ktp'),
+            "no_pk"=> $request->get('no_pk'),
+            "tgl_pk"=> $request->get('tgl_pk'),
+            "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
+            "tgl_awal_kredit"=> $request->get('tanggal_awal_kredit'),
+            "tgl_akhir_kredit"=> $request->get('tanggal_awal_kredit'),
+            "jml_bulan"=> $request->get('jumlah_bulan'),
+            "jenis_pengajuan"=> $request->get('jenis_pengajuan'),
+            "bade"=> $request->get('baki_debet'),
+            "tunggakan"=> $request->get('tunggakan'),
+            "kolektibilitas"=> $request->get('kolektibilitas'),
+            "no_polis_sebelumnya"=> $request->get('no_polis_sebelumnya'),
+            "jenis_pertanggungan"=> $request->get('jenis_pertanggungan'),
+            "tipe_premi"=> $request->get('tipe_premi'),
+            "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
+            "jenis_coverage"=> $request->get('jenis_coverage'),
+            "tarif"=> UtilityController::clearCurrencyFormat($request->get('tarif')),
+            "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
+            "kode_ls"=> $request->get('kode_ls'),
+            // "jenis_kredit"=> $request->get('jenis_kredit'),
+            "jenis_kredit"=> "01",
+            "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
+            "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
+        ];
+        
+        try {
+            $headers = [
+                "Accept" => "/",
+                "x-api-key" => config('global.eka_lloyd_token'),
+                "Content-Type" => "application/json",
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+    
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/upload";
+            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            return $response;
+            $statusCode = $response->status();
+            if ($statusCode == 200) {
+                $responseBody = json_decode($response->getBody(), true);
+                if ($responseBody) {
+                    $status = $responseBody['status'];
+                    $message = '';
+                    switch ($status) {
+                        case '01':
+                            # success
+                            $message = $responseBody['keterangan'];
+                            Alert::success('Berhasil', $message);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
+                        case '02':
+                            # gagal
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
+                            break;
+                        case '04':
+                            # duplikasi data
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
+                            break;
+                        case '08':
+                            # hasil perhitungan premi x rate tidak sesuai
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
+                            break;
+                        
+                        default:
+                            Alert::error('Gagal', 'Terjadi kesalahan');
+                            return back();
+                            break;
+                    }
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Terjadi kesalahan');
+                return back();
+            }
+        } catch (\Exception $e) {
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
     }
 
     public function getUser($user_id) {
