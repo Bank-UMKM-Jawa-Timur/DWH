@@ -80,12 +80,15 @@
                 </tr>
                 <tbody>
                     @forelse ($data as $item)
+                    @php
+                        $noAplikasi = App\Models\Asuransi::where('id', $item->pembayaranPremi->asuransi_id)->get();
+                    @endphp
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->no_aplikasi }}</td>
-                        <td>{{ $item->nobukti_pembayaran }}</td>
-                        <td>{{ $item->tgl_bayar }}</td>
-                        <td>{{ $item->total_premi }}</td>
+                        <td>{{ $noAplikasi[0]->no_aplikasi }}</td>
+                        <td>{{ $item->pembayaranPremi->nobukti_pembayaran }}</td>
+                        <td>{{ $item->pembayaranPremi->tgl_bayar }}</td>
+                        <td>{{ $item->pembayaranPremi->total_premi }}</td>
                         <td>{{ $item->no_rek }}</td>
                         <td>{{ $item->no_pk }}</td>
                         <td>{{ $item->periode_bayar }}</td>
