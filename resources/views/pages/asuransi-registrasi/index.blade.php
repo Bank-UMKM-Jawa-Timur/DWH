@@ -8,6 +8,8 @@
     @include('pages.asuransi-registrasi.modal.filter')
     <!-- Modal-Canceled -->
     @include('pages.asuransi-registrasi.modal.canceled')
+    <!-- Modal-Batal -->
+    @include('pages.asuransi-registrasi.modal.batal')
 @endsection
 @section('content')
     <div class="head-pages">
@@ -137,7 +139,7 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li class="">
-                                                <a class="item-dropdown" href="#">Pembatalan</a>
+                                                <a class="item-dropdown" href="#" data-modal-toggle="modalBatal-{{ $item->id }}" data-modal-target="modalBatal-{{ $item->id }}" onclick="showModalBatal('modalBatal-{{ $item->id }}')">Pembatalan</a>
                                             </li>
                                             <li class="">
                                                 <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
@@ -279,5 +281,9 @@
                 }
             })
         })
+
+        function showModalBatal(target){
+            $(`#${target}`).removeClass('hidden');
+        }
     </script>
 @endpush
