@@ -8,7 +8,7 @@
     </div>
     <div class="body-pages">
         <div class="bg-white w-full p-5">
-            <form id="form-asuransi-registrasi" action="{{route('registrasi.store')}}" method="post" class="space-y-5 " accept="">
+            <form id="form-asuransi-registrasi" action="{{route('asuransi.registrasi.store')}}" method="post" class="space-y-5 " accept="">
                 @csrf
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
@@ -123,8 +123,8 @@
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span> </label>
                         <select name="jenis_asuransi" class="w-full p-2 border" id="jenis_asuransi">
                             <option selected value="">-- Pilih Jenis Asuransi ---</option>
-                            <option value="01">Jiwa</option>
-                            <option value="02">Kerugian</option>
+                            <option value="3">Jiwa</option>
+                            <option value="2">Jaminan</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -325,7 +325,7 @@
         $("[name='no_aplikasi']").val(noAplikasi)
         $("[name='plafon_kredit']").val(jumlahKredit)
         $("[name='no_pk']").val(data[key]['no_pk'])
-        $("[name='tgl_pk']").val(fullTanggalPK)
+        $("[name='tgl_pk']").val(data[key]['tgl_cetak_pk'])
         if (age <= 60 ) {
             $('[name="jenis_coverage"]').append(`
             <option value="01">PNS & NON PNS (PA+ND)</option>
@@ -379,7 +379,7 @@
 
         if (jenis != '') {
             $.ajax({
-                url: "{{route('registrasi.rate_premi')}}",
+                url: "{{route('asuransi.registrasi.rate_premi')}}",
                 type: "GET",
                 accept: "Application/json",
                 data: {
@@ -403,7 +403,7 @@
                     }
                     else {
                         console.log(response.message)
-                        alert('Terjadi kesalahan saat mengambil rate premi')
+                        alert('Terjadi  kesalahan saat mengambil rate premi')
                     }
                 },
                 error: function(response){
