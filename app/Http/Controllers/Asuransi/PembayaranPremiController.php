@@ -227,6 +227,62 @@ class PembayaranPremiController extends Controller
         }
     }
 
+    public function formatCurrency($number)
+    {
+        $formattedNumber = number_format($number, 0, ',', '.');
+        $formattedNumber = 'Rp ' . $formattedNumber;
+        return $formattedNumber;
+    }
+
+    public function storeInquery(Request $request)
+    {
+        $req = [
+            "no_aplikasi" => $request->input('row_no_aplikasi'),
+            "nobukti_pembayaran" => $request->input('row_nobukti_pembayaran'),
+            "no_rekening" => $request->input('row_no_rek'),
+            "outstanding" => $request->input('row_outstanding'),
+            "periode_premi" => $request->input('row_periode_premi'),
+            "no_polis" => $request->input('row_no_polis'),
+        ];
+
+        try {
+            $headers = [
+                "Accept" => "/",
+                "x-api-key" => config('global.eka_lloyd_token'),
+                "Content-Type" => "application/json",
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/query2";
+            $response = Http::withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $statusCode = $response->status();
+            if ($statusCode == 200) {
+                $responseBody = json_decode($response->getBody(), true);
+                $status = $responseBody['status'];
+                $message = '';
+                if ($status == "00") {
+                    $message = $responseBody['keterangan'];
+                    $nilai = $responseBody['nilai_premi'];
+                    Alert::success('Berhasil', $message . ', Nilai Premi ' . $this->formatCurrency($nilai));
+                    return back();
+                }else{
+                    $message = $responseBody['keterangan'];
+                    Alert::error('Gagal', $message);
+                    return back();
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Terjadi kesalahan');
+                return back();
+            }
+        } catch (\Throwable $e) {
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
+    }
+
     /**
      * Display the specified resource.
      *
