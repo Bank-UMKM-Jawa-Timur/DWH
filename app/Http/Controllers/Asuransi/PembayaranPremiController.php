@@ -38,11 +38,11 @@ class PembayaranPremiController extends Controller
 
     public function list($page_length = 5 , $searchQuery, $searchBy)
     {
-        $query = PembayaranPremiDetail::with('pembayaranPremi');
-                        // orderBy('tgl_bayar');
+        $query = PembayaranPremiDetail::with('pembayaranPremi')
+                        ->orderBy('id');
         if ($searchQuery && $searchBy === 'field') {
-            $query->where(function ($q) use ($searchQuery) {
-                $q->where('asuransi_id', 'like', '%' . $searchQuery . '%')
+            $query->whereHas('pembayaranPremi', function ($q) use ($searchQuery) {
+                $q->where('no_rek', 'like', '%' . $searchQuery . '%')
                     ->orWhere('nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
                     ->orWhere('tgl_bayar', 'like', '%' . $searchQuery . '%')
                     ->orWhere('total_premi', 'like', '%' . $searchQuery . '%')

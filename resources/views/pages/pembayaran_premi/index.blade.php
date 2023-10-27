@@ -100,7 +100,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li class="">
-                                        <a class="item-dropdown" href="#" onclick="alertWarning()">Cek Status</a>
+                                        <a class="item-dropdown" href="#" onclick="alertWarning()">Inquery</a>
                                     </li>
                                 </ul>
                             </div>
@@ -108,7 +108,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center">
+                        <td colspan="10" class="text-center">
                             <span class="text-danger">Maaf data belum tersedia.</span>
                         </td>
                     </tr>
