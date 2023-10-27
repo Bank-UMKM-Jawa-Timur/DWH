@@ -11,8 +11,8 @@ class PengajuanKlaim extends Model
 
     protected $table = 'pengajuan_klaim';
 
-    public function pembayaranPremi()
+    public function asuransi()
     {
-        return $this->belongsTo(PembayaranPremi::class, 'pembayaran_premi_id', 'id');
+        return $this->belongsTo(Asuransi::class, 'pembayaran_premi_id', 'id');
     }
 }
