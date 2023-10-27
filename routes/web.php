@@ -101,8 +101,9 @@ Route::middleware('auth_api')->group(function () {
                 Route::post('/', 'store')->name('store');
                 Route::get('inquery', 'inquery')->name('inquery');
                 Route::get('batal', 'batal')->name('batal');
+                Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');
             });
-        Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
+        // Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
         Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);
         Route::resource('/pembayaran-premi', PembayaranPremiController::class);
         Route::post('/pembayaran-premi/inquery', [PembayaranPremiController::class, 'storeInquery'])->name('pembayaran_premi.inquery');
