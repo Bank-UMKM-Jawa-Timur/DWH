@@ -69,17 +69,19 @@
                             <p id="errorText">Nomor aplikasi harus diisi.</p>
                         </div>
                     </div>
+                </div>
+                <div class="">
                     <div class="p-2 mt-3 mb-3 space-y-4" id="inputBoxJenisAsuransi">
                         <h2 class="font-bold font-lexend jenis-asuransi-title hidden">Jenis Asuransi</h2>
-                        <div class="jenis-asuransi"></div>
+                        <div class="jenis-asuransi flex justify-start gap-5 mt-5"></div>
                         <div class="errorSpan" id="errorJenisAsuransi">
                             <p id="errorText">Jenis asuransi harus diisi.</p>
                         </div>
                     </div>
-                    <div class="p-2">
+                    <div class="p-2 hidden"  id="btnLeftForm">
                         <button
                         href="{{route('asuransi.pembayaran-premi.create')}}"
-                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white hidden" id="btnLeftForm">
+                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                             <span class="lg:mt-0 mt-0">
                                 @include('components.svg.plus')
                             </span>
@@ -196,9 +198,10 @@
                             for (var i=0; i < data.length; i++) {
                                 var item = data[i]
                                 var checked = arr_selected_key.indexOf(item.id) > -1 ? 'checked' : ''
-                                var checkbox_element = `<div class="input-checked flex gap-5">
+                                var checkbox_element = `
+                                <div class="input-checked flex gap-5">
                                     <input type="checkbox" name="jenis[]" id="${item.jenis}"
-                                        class="accent-theme-primary jenis-asuransi-check"
+                                        class="accent-theme-primary rounded h-5 w-5 jenis-asuransi-check"
                                         data-key="${item.generate_key}" data-id="${item.id}"
                                         data-jenis="${item.jenis}" data-no_aplikasi="${item.no_aplikasi}"
                                         data-premi="${item.premi}" data-no_pk="${item.no_pk}"
