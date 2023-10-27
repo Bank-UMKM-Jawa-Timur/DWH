@@ -68,7 +68,6 @@ class PengajuanKlaimController extends Controller
             $host = config('global.eka_lloyd_host');
             $url = "$host/klaim";
             $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
-            // return $response;
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
@@ -76,7 +75,7 @@ class PengajuanKlaimController extends Controller
                     $status = $responseBody['status'];
                     $message = '';
                     switch ($status) {
-                        case '01':
+                        case '00':
                             # success
                             $message = $responseBody['keterangan'];
                             $newPengajuanKlaim = new PengajuanKlaim();
@@ -86,9 +85,15 @@ class PengajuanKlaimController extends Controller
                             $newPengajuanKlaim->stat_klaim = 1;
                             $newPengajuanKlaim->status = 'onprogress';
                             $newPengajuanKlaim->save();
-                            
+
                             Alert::success('Berhasil', $message);
                             return redirect()->route('pengajuan-klaim.index');
+                            break;
+                        case '01':
+                            # no aplikasi tidak ditemukan
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
                             break;
                         case '02':
                             # gagal
@@ -98,12 +103,6 @@ class PengajuanKlaimController extends Controller
                             break;
                         case '03':
                             # no polis tidak ditemukan
-                            $message = $responseBody['keterangan'];
-                            Alert::error('Gagal', $message);
-                            return back();
-                            break;
-                        case '04':
-                            # duplikasi data
                             $message = $responseBody['keterangan'];
                             Alert::error('Gagal', $message);
                             return back();
