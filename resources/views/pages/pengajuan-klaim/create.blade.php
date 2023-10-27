@@ -13,7 +13,14 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Aplikasi<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border" id="" name="" disabled/>
+                    <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
+                        <option selected>-- Pilih No Aplikasi ---</option>
+                        @forelse ($dataNoRek as $key => $item)
+                            <option value="{{$item->no_aplikasi}}" data-key="{{$key}}">{{$item->no_aplikasi}} </option>
+                        @empty
+                            <option>Data Belum Ada.</option>
+                        @endforelse
+                    </select>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box-calendar space-y-3">
@@ -43,26 +50,21 @@
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box-calendar space-y-3">
-                    <label for="" class="uppercase">Sisa Tunggakan Pokok<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border" id="" name="" disabled/>
+                    <label for="" class="uppercase">Tunggakan Pokok<span class="text-theme-primary">*</span></label>
+                    <input type="text" class="rupiah disabled-input p-2 w-full border" id="" name=""/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
             {{-- form data 3 --}}
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
-                    <label for="" class="uppercase">Tunggakan Pokok<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" name="" />
-                    <small class="form-text text-red-600 error"></small>
-                </div>
-                <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggukan Bunga<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" name="" />
+                    <input type="text" class="rupiah p-2 w-full border" id="" name="" />
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggukan Denda<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" name="" />
+                    <input type="text" class="rupiah p-2 w-full border" id="" name="" />
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
@@ -70,24 +72,32 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Pengikatan<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" name="" />
+                    <input type="text" class="rupiah p-2 w-full border" id="" name="" />
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Tuntunan Klaim<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" name="" />
+                    <input type="text" class="rupiah p-2 w-full border" id="" name="" />
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Penyebab Klaim<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" name="" />
+                    <select name="" class="w-full p-2 border">
+                        <option selected value="">-- Penyebab Klaim ---</option>
+                        <option value="1">Meninggal Dunia</option>
+                        <option value="2">PHK</option>
+                        <option value="3">Kecelakaan</option>
+                        <option value="4">Kolek 4</option>
+                        <option value="5">Jatuh Tempo</option>
+                        <option value="6">PAW</option>
+                    </select>
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
             {{-- form data 4 --}}
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
-                    <label for="" class="uppercase">Jenis Agunan<span class="text-theme-primary">*</span></label>
+                    <label for="" class="uppercase">Jenis Agunan / Kode Jenis Anggunan<span class="text-theme-primary">*</span></label>
                     <input type="text" class="p-2 w-full border" id="" name="" />
                     <small class="form-text text-red-600 error"></small>
                 </div>
@@ -118,11 +128,19 @@
 
 @push('extraScript')
 <script>
+    $('#no_aplikasi').select2();
     $('#form-reset').on('click', function(){
         $('#form-pengajuan-klaim')[0].reset();
         if($('#form-pengajuan-klaim .datepicker')[0]){
             $('.datepicker').val('dd/mm/yyyy');
         }
+    })
+
+    $('#no_aplikasi').on('change', function(){
+        var key = $(this).children("option:selected").data('key');
+        var data = @json($dataNoRek);
+        var no_apk = data[key]['no_aplikasi'];
+        // console.log(no_apk)
     })
 </script>
 @endpush
