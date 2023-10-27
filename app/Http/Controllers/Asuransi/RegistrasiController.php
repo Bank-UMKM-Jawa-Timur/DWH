@@ -1,0 +1,279 @@
+<?php
+
+namespace App\Http\Controllers\Asuransi;
+
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use RealRashid\SweetAlert\Facades\Alert;
+use App\Http\Controllers\Utils\UtilityController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+
+class RegistrasiController extends Controller
+{
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        try {
+            $page_length = $request->page_length ? $request->page_length : 5;
+            $data = DB::table('asuransi');
+            if ($request->has('q')) {
+                $q = $request->get('q');
+                $data = $data->where('nama_debitur', 'LIKE', "%$q%")
+                            ->orWhere('no_aplikasi', 'LIKE', "%$q%")
+                            ->orWhere('no_polis', 'LIKE', "%$q%")
+                            ->orWhere('tgl_polis', 'LIKE', "%$q%")
+                            ->orWhere('tgl_rekam', 'LIKE', "%$q%");
+            }
+            if ($request->has('tAwal') && $request->has('tAkhir')) {
+                $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
+                $tAkhir = date('Y-m-d', strtotime($request->get('tAkhir')));
+                $status = $request->get('status');
+                $data = $data->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                            ->where('status', $status)
+                            ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
+                            ->where('status', $status);
+            }
+            $data = $data->orderBy('no_aplikasi')->paginate($page_length);
+
+            return view('pages.asuransi-registrasi.index', compact('data'));
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        } catch (\Illuminate\Database\QueryException $e) {
+            return back()->with('error', 'Terjadi kesalahan pada database. '.$e->getMessage());
+        }
+    }
+
+
+    public function getRatePremi(Request $request) {
+        $status = '';
+        $message = '';
+        $data = null;
+
+        try {
+            $data = DB::table('mst_rate_premi')
+                    ->select('id', 'masa_asuransi1', 'masa_asuransi2', 'rate')
+                    ->where('jenis', $request->jenis)
+                    ->where('masa_asuransi1', '>=', $request->masa_asuransi)
+                    ->where('masa_asuransi2', '<=', $request->masa_asuransi)
+                    ->OrWhere('jenis', $request->jenis)
+                    ->where('masa_asuransi1', '<=', $request->masa_asuransi)
+                    ->where('masa_asuransi2', '>=', $request->masa_asuransi)
+                    ->first();
+
+            if ($data) {
+                $status = 'success';
+                $message = 'Successfully retrieve data';
+            }
+            else {
+                $status = 'succes';
+                $message = 'Data is empty';
+            }
+        } catch (\Exception $e) {
+            $status = 'failed';
+            $message = $e->getMessage();
+        } catch (\Illuminate\Database\QueryException $e) {
+            $status = 'failed';
+            $message = $e->getMessage();
+        } finally {
+            $res = [
+                'status' => $status,
+                'message' => $message,
+                'data' => $data,
+            ];
+            
+            return response()->json($res);
+        }
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+        
+        $apiPengajuan = $host . '/v1/get-list-pengajuan/' . $user_id;
+        $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
+        $response = json_decode($api_req->getBody(), true);
+        $dataPengajuan = [];
+        if (is_array($response)) {
+            if (array_key_exists('data', $response))
+                $dataPengajuan = $response['data'];
+        }
+
+        $dataAsuransi = DB::table('mst_jenis_asuransi')->get();
+
+        return view('pages.asuransi-registrasi.create', compact('dataPengajuan', 'dataAsuransi'));
+    }
+
+
+    public function getJenisAsuransi($jenis_kredit){
+        $dataAsuransi = DB::table('mst_jenis_asuransi')->where('jenis_kredit', $jenis_kredit)->get();
+
+        return response()->json([
+            'data' => $dataAsuransi
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $req = [
+            "no_aplikasi"=> $request->get('no_aplikasi'),
+            "no_rekening"=> $request->get('no_rekening'),
+            "jenis_asuransi"=> $request->get('jenis_asuransi'),
+            "tgl_pengajuan"=> $request->get('tgl_pengajuan'),
+            "tgl_jatuhtempo"=> $request->get('tgl_jatuhtempo'),
+            "kd_uker"=> $request->get('kode_cabang'),
+            "nama_debitur"=> $request->get('nama_debitur'),
+            "alamat_debitur"=> $request->get('alamat_debitur'),
+            "tgl_lahir"=> $request->get('tgl_lahir'),
+            "no_ktp"=> $request->get('no_ktp'),
+            "no_pk"=> $request->get('no_pk'),
+            "tgl_pk"=> $request->get('tgl_pk'),
+            "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
+            "tgl_awal_kredit"=> $request->get('tanggal_awal_kredit'),
+            "tgl_akhir_kredit"=> $request->get('tanggal_awal_kredit'),
+            "jml_bulan"=> $request->get('jumlah_bulan'),
+            "jenis_pengajuan"=> $request->get('jenis_pengajuan'),
+            "bade"=> $request->get('baki_debet'),
+            "tunggakan"=> $request->get('tunggakan'),
+            "kolektibilitas"=> $request->get('kolektibilitas'),
+            "no_polis_sebelumnya"=> $request->get('no_polis_sebelumnya'),
+            "jenis_pertanggungan"=> $request->get('jenis_pertanggungan'),
+            "tipe_premi"=> $request->get('tipe_premi'),
+            "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
+            "jenis_coverage"=> $request->get('jenis_coverage'),
+            "tarif"=> UtilityController::clearCurrencyFormat($request->get('tarif')),
+            "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
+            "kode_ls"=> $request->get('kode_ls'),
+            // "jenis_kredit"=> $request->get('jenis_kredit'),
+            "jenis_kredit"=> "01",
+            "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
+            "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
+        ];
+        
+        try {
+            $headers = [
+                "Accept" => "/",
+                "x-api-key" => config('global.eka_lloyd_token'),
+                "Content-Type" => "application/json",
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+    
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/upload";
+            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            return $response;
+            $statusCode = $response->status();
+            if ($statusCode == 200) {
+                $responseBody = json_decode($response->getBody(), true);
+                if ($responseBody) {
+                    $status = $responseBody['status'];
+                    $message = '';
+                    switch ($status) {
+                        case '01':
+                            # success
+                            $message = $responseBody['keterangan'];
+                            Alert::success('Berhasil', $message);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
+                        case '02':
+                            # gagal
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
+                            break;
+                        case '04':
+                            # duplikasi data
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
+                            break;
+                        case '08':
+                            # hasil perhitungan premi x rate tidak sesuai
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
+                            break;
+                        
+                        default:
+                            Alert::error('Gagal', 'Terjadi kesalahan');
+                            return back();
+                            break;
+                    }
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Terjadi kesalahan');
+                return back();
+            }
+        } catch (\Exception $e) {
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
+    }
+
+    public function getUser($user_id) {
+        $failed_response = [
+            'status' => 'gagal',
+            'message' => 'Gagal mengambil data'
+        ];
+
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+        $apiURL = $host . "/kkb/get-data-users-by-id/$user_id";
+
+        try {
+            $response = Http::timeout(3)
+                            ->withHeaders($headers)
+                            ->withOptions(['verify' => false])
+                            ->get($apiURL);
+            $responseBody = json_decode($response->getBody(), true);
+
+            if ($responseBody) {
+                if (array_key_exists('id', $responseBody)) {
+                    return $responseBody;
+                }
+            }
+            return $failed_response;
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            $failed_response = [
+                'status' => 'gagal',
+                'message' => $e->getMessage(),
+            ];
+            return $failed_response;
+        }
+    }
+}

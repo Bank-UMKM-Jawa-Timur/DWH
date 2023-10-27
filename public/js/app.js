@@ -9,8 +9,8 @@
 
 // $(".layout-sidebar").perfectScrollbar();
 
-$('.datepicker').datepicker({
-  dateFormat: 'dd-mm-yy'
+$(".datepicker").datepicker({
+  dateFormat: "dd-mm-yy"
 }).val("dd/mm/yyyy");
 var sidebar = $(".layout-sidebar");
 var form = $(".layout-form");
@@ -46,16 +46,16 @@ $(".toggle-notification").click(function (e) {
   e.stopPropagation();
 });
 $(document).click(function (e) {
-  if (e.target.closest('.notification-list')) return;
-  $('.notification-list').addClass('hidden');
+  if (e.target.closest(".notification-list")) return;
+  $(".notification-list").addClass("hidden");
 });
 $(".dropdown-account-toggle").click(function (e) {
   $(".dropdown-account").toggleClass("hidden");
   e.stopPropagation();
 });
 $(document).click(function (e) {
-  if (e.target.closest('.dropdown-account')) return;
-  $('.dropdown-account').addClass('hidden');
+  if (e.target.closest(".dropdown-account")) return;
+  $(".dropdown-account").addClass("hidden");
 });
 $("#form-toggle").click(function () {
   form.toggleClass("layout-form-collapse");

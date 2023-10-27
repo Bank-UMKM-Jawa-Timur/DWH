@@ -1,4 +1,51 @@
-<div class="lg:flex grid grid-cols-1 gap-5">
+
+<div class="lg:flex grid grid-cols-1 gap-5 mb-5">
+    <div class="w-full grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 justify-center gap-5">
+        <div class="card bg-white w-full p-5 border">
+            <div class="flex justify-between gap-5">
+                <h2 class="mt-3">Pengajuan KKB Diprosess</h2>
+                <div class="bg-[#FCF18F] p-3 rounded-full">
+                    @include('components.svg.clock')
+                </div>
+            </div>
+            <div class="p-3">
+                <h2 class="text-5xl font-bold">23</h2>
+            </div>
+        </div>
+        <div class="card bg-white w-full p-5 border">
+            <div class="flex justify-between gap-5">
+                <h2 class="mt-3">Pengajuan KKB Bulan Ini</h2>
+                <div class="bg-[#FFCED3] p-3 text-theme-primary rounded-full">
+                    @include('components.svg.calendar')
+                </div>
+            </div>
+            <div class="p-3">
+                <h2 class="text-5xl font-bold">13</h2>
+            </div>
+        </div>
+        <div class="card bg-white w-full p-5 border">
+            <div class="flex justify-between gap-5">
+                <h2 class="mt-3">Pengajuan KKB Selesai</h2>
+                <div class="bg-[#CEF9CE] text-[#16DA12] p-3 rounded-full">
+                    @include('components.svg.check')
+                </div>
+            </div>
+            <div class="p-3">
+                <h2 class="text-5xl font-bold">43</h2>
+            </div>
+        </div>
+        <div class="card bg-white w-full p-5 border">
+            <div class="box-border">
+                <div class="bg-[#C4E6D6] text-[#169B5B] float-right -mt-2 p-3 rounded-full">
+                    @include('components.svg.google-spreadsheet')
+                </div>
+                <h2 class="mt-3 max-w-[250px]">Total import KKB Google Spreadsheet</h2>
+            </div>
+            <div class="p-3">
+                <h2 class="text-5xl font-bold">63</h2>
+            </div>
+        </div>
+    </div>
     <div class="card w-full bg-white border rounded">
         <div class="head border-b p-2 font-lexend relative text-center">
             <p class="left-3 absolute">
@@ -33,6 +80,8 @@
             </div>
         </div>
     </div>
+</div>
+<div class="lg:flex grid grid-cols-1 gap-5">
     <div class="card w-full bg-white border rounded-md">
         <div class="head border-b p-2 font-lexend relative text-center">
             <p class="left-3 absolute">
@@ -47,7 +96,7 @@
                 <span class="ml-2">Notifikasi belum dibaca</span>
             </p>
         </div>
-        <div class="card-list divide-y h-[300px] overflow-auto">
+        <div class="card-list divide-y h-full overflow-auto">
             @forelse ($notification as $item)
                 <div class="card flex p-2 bg-white w-full rounded-md">
                     <div class="overflow-auto">
@@ -63,13 +112,88 @@
                     </div>
                 </div>
             @empty
-                <div class="p-20 space-y-5 border h-full text-center">
-                    <img src="{{asset('template/assets/img/empty.svg')}}"
-                        class="w-20 m-auto" alt="empty">
+                <div class="p-20 space-y-5 h-full border text-center">
+                 <div class="mt-40">
+                    <img src="{{asset('template/assets/img/empty.svg')}}" class="w-20 m-auto" alt="empty">
                     <p class="text-gray-600">Tidak ada notifikasi yang belum dibaca.</p>
+                 </div>
                 </div>
             @endforelse
         </div>
     </div>
+    <div class="card w-full bg-white border rounded-md">
+        <div class="head border-b p-2 font-lexend relative text-center">
+            <h2 class="font-semibold tracking-tighter">Data Asuransi</h2>
+        </div>
+        <div class="p-2 space-y-2">
+            <div class="card border w-full p-5">
+                <div class="body-card flex gap-5">
+                    <div class="bg-theme-primary px-5 text-white text-lg py-3 rounded-md">
+                        <div class="mt-1">
+                            @include('components.svg.tr-icon')
+                        </div>
+                    </div>
+                    <div class="head">
+                        <h2 class="text-lg font-semibold">Total Registrasi</h2>
+                        <h2 class="font-semibold text-2xl">85</h2> 
+                    </div>
+                </div>
+            </div>
+            <div class="card border w-full p-5">
+                <div class="body-card flex gap-5">
+                    <div class="bg-theme-primary px-5 py-3 text-white rounded-md">
+                        <div class="mt-1">
+                            @include('components.svg.tr-dibatalkan')
+                        </div>
+                    </div>
+                    <div class="head">
+                        <h2 class="text-lg font-semibold">Total Registrasi Dibatalkan</h2>
+                        <h2 class="font-semibold text-2xl">93</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="card border w-full p-5">
+                <div class="body-card flex gap-5">
+                    <div class="bg-theme-primary px-5 py-3 text-white rounded-md">
+                        <div class="mt-1">
+                            @include('components.svg.tp-icon')
+                        </div>
+                    </div>
+                    <div class="head">
+                        <h2 class="text-lg font-semibold">Total Pengajuan</h2>
+                        <h2 class="font-semibold text-2xl">23</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="card border w-full p-5">
+                <div class="body-card flex gap-5">
+                    <div class="bg-theme-primary text-white px-5 py-3 rounded-md">
+                        <div class="mt-1">
+                            @include('components.svg.tp-dibatalkan')
+                        </div>
+                    </div>
+                    <div class="head">
+                        <h2 class="text-lg font-semibold">Total Pengajuan Dibatalkan</h2>
+                        <h2 class="font-semibold text-2xl">63</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="card border w-full p-5">
+                <div class="body-card flex gap-5">
+                    <div class="bg-theme-primary px-5 text-white py-3 rounded-md">
+                        <div class="mt-1">
+                            @include('components.svg.jpp-icon')
+                        </div>
+                    </div>
+                    <div class="head">
+                        <h2 class="text-lg font-semibold">Jumlah Pelaporan Pelunsan</h2>
+                        <h2 class="font-semibold text-2xl">73</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>      
 </div>
 
