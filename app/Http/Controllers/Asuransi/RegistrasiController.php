@@ -344,6 +344,12 @@ class RegistrasiController extends Controller
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
                             break;
+                        case '02':
+                            # success
+                            $message = $responseBody['keterangan'];
+                            Alert::warning('Peringatan', $message);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
                         case '03':
                             # success
                             $message = $responseBody['keterangan'];
