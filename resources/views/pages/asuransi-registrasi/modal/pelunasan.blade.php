@@ -104,9 +104,6 @@
             var date_lunas = new Date(tgl_lunas_formated)
             var date_awal = new Date(tgl_awal)
             var date_akhir = new Date(tgl_akhir)
-            console.log(date_lunas)
-            console.log(date_awal)
-            console.log(date_akhir)
 
             var date_dif_awal_akhir = monthDiff(date_awal, date_akhir)
             var date_dif_lunas_akhir = monthDiff(date_lunas, date_akhir)
