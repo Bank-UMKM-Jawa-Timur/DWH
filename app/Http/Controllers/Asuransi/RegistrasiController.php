@@ -182,7 +182,6 @@ class RegistrasiController extends Controller
             "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
             "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
         ];
-        return $req;
 
         try {
             $headers = [
@@ -207,7 +206,6 @@ class RegistrasiController extends Controller
                     switch ($status) {
                         case '01':
                             # success
-
                             $polis = $responseBody['no_polis'];
                             $tgl_rekam = $responseBody['tgl_rekam'];
                             $tgl_polis = $responseBody['tgl_polis'];
@@ -237,9 +235,6 @@ class RegistrasiController extends Controller
                             $newAsuransi->no_polis = $polis;
                             $newAsuransi->tgl_polis = $tgl_polis;
                             $newAsuransi->tgl_rekam = $tgl_rekam;
-                            // $newAsuransi->no_polis = 'asodjkaoldkasd';
-                            // $newAsuransi->tgl_polis = '2023-10-24';
-                            // $newAsuransi->tgl_rekam = '2023-10-24';
                             $newAsuransi->status = 'onprogress';
                             $newAsuransi->save();
 
