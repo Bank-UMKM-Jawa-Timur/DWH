@@ -217,6 +217,7 @@ class RegistrasiController extends Controller
                             $newKredit->save();
 
                             $premi = UtilityController::clearCurrencyFormat($request->get('premi'));
+                            $refund = UtilityController::clearCurrencyFormat($request->get('refund'));
                             $token = \Session::get(config('global.user_token_session'));
                             $user = $token ? $this->getLoginSession() : Auth::user();
 
@@ -227,6 +228,7 @@ class RegistrasiController extends Controller
                             $newAsuransi->no_pk = $request->no_pk;
                             $newAsuransi->no_rek = $request->no_rekening;
                             $newAsuransi->premi = $premi;
+                            $newAsuransi->refund = $refund;
                             $newAsuransi->kredit_id = $newKredit->id;
                             $newAsuransi->jenis_asuransi_id = $request->jenis_asuransi;
                             $newAsuransi->user_id = $user_id;
@@ -234,6 +236,8 @@ class RegistrasiController extends Controller
                             $newAsuransi->no_polis = $polis;
                             $newAsuransi->tgl_polis = $tgl_polis;
                             $newAsuransi->tgl_rekam = $tgl_rekam;
+                            $newAsuransi->tanggal_awal = $request->get('tanggal_awal_kredit');
+                            $newAsuransi->tanggal_akhir = $request->get('tanggal_akhir_kredit');
                             $newAsuransi->status = 'onprogress';
                             $newAsuransi->save();
 
