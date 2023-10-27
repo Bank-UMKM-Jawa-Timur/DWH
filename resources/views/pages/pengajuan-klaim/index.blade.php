@@ -92,63 +92,89 @@
                     </tr>
                     <tbody>
                         @forelse ($data as $item)
-                        <tr>
-                            <td>{{$loop->iteration}}</td>
-                            <td>Surabaya</td>
-                            <td>{{$item->no_aplikasi}}</td>
-                            <td>{{$item->no_rek}}</td>
-                            <td>{{$item->no_klaim}}</td>
-                            <td>326/SP-02/JSB/331/VII-2022</td>
-                            {{-- no surat --}}
-                            <td>77886655</td>
-                            {{-- tanggal surat --}}
-                            <td>18-07-2022</td>
-                            {{-- tunggakan pokok --}}
-                            <td>158210522.00</td>
-                            {{-- tunggakan bungan --}}
-                            <td>158210522.00</td>
-                            {{-- tunggakan denda --}}
-                            <td>158210522.00</td>
-                            {{-- nilai peningkatan --}}
-                            <td>00000</td>
-                            {{-- nilai tuntutan klaim --}}
-                            <td>00000</td>
-                            {{-- penyebab klaim --}}
-                            <td>meninggal dunia</td>
-                            {{-- jenis agunan --}}
-                            <td>Jenis agunan</td>
-                            <td>
-                                @if ($item->stat_klaim == 1)
-                                sedang di proses
-                                @elseif ($item->stat_klaim == 2)
-                                disetujui dan sedang menunggu pembayaran
-                                @elseif ($item->stat_klaim == 3)
-                                disetujui dan telah dibayarkan
-                                @elseif ($item->stat_klaim == 4)
-                                dokumen belum lengkap
-                                @elseif ($item->stat_klaim == 5)
-                                premi belum dibayar
-                                @elseif ($item->stat_klaim == 6)
-                                ditolak
-                                @else
-                                data tidak ditemukan
-                                @endif
-                            </td>
-                            <td>{{$item->status}}</td>
-                            <td>
-                            <div class="dropdown">
-                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selengkapnya
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li class="">
-                                        <a class="item-dropdown" href="#">Cek Status</a>
-                                    </li>
-                                </ul>
-                                </div>
-
-                            </td>
-                        </tr>
+                        <form action="{{ route('asuransi.pengajuan-klaim.cek-status') }}" method="post">
+                            @csrf
+                            <tr>
+                                <td>{{$loop->iteration}}</td>
+                                <td>Surabaya</td>
+                                <td>
+                                    <input type="hidden" name="row_no_aplikasi" value="{{ $item->asuransi->no_aplikasi }}">
+                                    {{$item->asuransi->no_aplikasi}}
+                                </td>
+                                <td>
+                                    <input type="hidden" name="row_no_rek" value="{{ $item->asuransi->no_aplikasi }}">
+                                    {{$item->no_rek}}
+                                </td>
+                                <td>
+                                    <input type="hidden" name="row_no_klaim" value="{{$item->no_klaim}}">
+                                    {{$item->no_klaim}}
+                                </td>
+                                <td>326/SP-02/JSB/331/VII-2022</td>
+                                {{-- no surat --}}
+                                <td>
+                                    <input type="hidden" name="row_no_sp" value="77886655">
+                                    77886655
+                                </td>
+                                {{-- tanggal surat --}}
+                                <td>
+                                    <input type="hidden" name="row_tgl_klaim" value="2022-07-18">
+                                    18-07-2022
+                                </td>
+                                {{-- tunggakan pokok --}}
+                                <td>158210522.00</td>
+                                {{-- tunggakan bungan --}}
+                                <td>158210522.00</td>
+                                {{-- tunggakan denda --}}
+                                <td>158210522.00</td>
+                                {{-- nilai peningkatan --}}
+                                <td>00000</td>
+                                {{-- nilai tuntutan klaim --}}
+                                <td>
+                                    <input type="hidden" name="row_nilai_persetujuan" value="00000">
+                                    00000
+                                </td>
+                                {{-- penyebab klaim --}}
+                                <td>meninggal dunia</td>
+                                {{-- jenis agunan --}}
+                                <td>Jenis agunan</td>
+                                <td>
+                                    <input type="hidden" name="row_status_klaim" value="{{ $item->stat_klaim }}">
+                                    @if ($item->stat_klaim == 1)
+                                    sedang di proses
+                                    @elseif ($item->stat_klaim == 2)
+                                    disetujui dan sedang menunggu pembayaran
+                                    @elseif ($item->stat_klaim == 3)
+                                    disetujui dan telah dibayarkan
+                                    @elseif ($item->stat_klaim == 4)
+                                    dokumen belum lengkap
+                                    @elseif ($item->stat_klaim == 5)
+                                    premi belum dibayar
+                                    @elseif ($item->stat_klaim == 6)
+                                    ditolak
+                                    @else
+                                    data tidak ditemukan
+                                    @endif
+                                </td>
+                                <td>
+                                    <input type="hidden" name="row_no_rekening_debit" value="778866550">
+                                    <input type="hidden" name="row_keterangan" value="{{$item->status}}">
+                                    {{$item->status}}
+                                </td>
+                                <td>
+                                <div class="dropdown">
+                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                        Selengkapnya
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li class="">
+                                            <button type="submit" class="item-dropdown">Cek Status</button>
+                                        </li>
+                                    </ul>
+                                    </div>
+    
+                                </td>
+                            </tr>
+                        </form>
                         @empty
                         <tr>
                             <td class="text-theme-primary text-center" colspan="18">

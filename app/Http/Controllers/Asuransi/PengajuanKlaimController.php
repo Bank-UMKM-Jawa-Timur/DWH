@@ -22,14 +22,26 @@ class PengajuanKlaimController extends Controller
     public function index(Request $request)
     {
         $page_length = $request->page_length ? $request->page_length : 5;
-        $data = DB::table('pengajuan_klaim');
+        $data = PengajuanKlaim::with('asuransi');
         if ($request->has('search')) {
             $search = $request->get('search');
-            $data = $data->where('no_rek', 'LIKE', "%$search%")
-                ->orWhere('no_aplikasi', 'LIKE', "%$search%")
-                ->orWhere('no_klaim', 'LIKE', "%$search%");
+            // $data = $data->where('no_rek', 'LIKE', "%$search%")
+            //     ->orWhere('no_aplikasi', 'LIKE', "%$search%")
+            //     ->orWhere('no_klaim', 'LIKE', "%$search%");
+            $data->whereHas('asuransi', function ($q) use ($search) {
+                $q->where('no_rek', 'like', '%' . $search . '%')
+                    ->orWhere('no_aplikasi', 'like', '%' . $search . '%')
+                    ->orWhere('no_klaim', 'like', '%' . $search . '%');
+            });
         }
-        $data = $data->orderBy('no_aplikasi')->paginate($page_length);
+
+        if (is_numeric($page_length)) {
+            $data = $data->paginate($page_length);
+        } else {
+            $data = $data->get();
+        }
+        // return $data;
+        // $data = $data->orderBy('no_aplikasi')->paginate($page_length);
         return view('pages.pengajuan-klaim.index', compact('data'));
     }
     public function create(Request $request)
@@ -122,6 +134,58 @@ class PengajuanKlaimController extends Controller
                 'Gagal',
                 $e->getMessage()
             );
+            return back();
+        }
+    }
+
+    public function cekStatus(Request $request){
+        $req = [
+            // "status" => $request->input(''),
+            "no_aplikasi" => $request->input('row_no_aplikasi'),
+            "no_rekening" => $request->input('row_no_rek'),
+            "no_sp" => $request->input('row_no_sp'),
+            "tgl_klaim" => $request->input('row_tgl_klaim'),
+            "nilai_persetujuan" => $request->input('row_nilai_persetujuan'),
+            "keterangan" => $request->input('row_keterangan'),
+            "stat_klaim" => $request->input('row_status_klaim'),
+            "no_rekening_debet" => $request->input('row_no_rekening_debit'),
+            "no_klaim" => $request->input('row_no_klaim')
+        ];
+
+        try {
+            $headers = [
+                "Accept" => "/",
+                "x-api-key" => config('global.eka_lloyd_token'),
+                "Content-Type" => "application/json",
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/query3";
+            $response = Http::withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $statusCode = $response->status();
+            if ($statusCode == 200) {
+                $responseBody = json_decode($response->getBody(), true);
+                $status = $responseBody['status'];
+                $message = '';
+                if ($status == "00") {
+                    $message = $responseBody['keterangan'];
+                    $nilai = $responseBody['nilai_premi'];
+                    Alert::success('Berhasil', $message);
+                    return back();
+                }else{
+                    $message = $responseBody['keterangan'];
+                    Alert::error('Gagal', $message);
+                    return back();
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Terjadi kesalahan');
+                return back();
+            }
+        } catch (\Throwable $e) {
+            Alert::error('Gagal', $e->getMessage());
             return back();
         }
     }

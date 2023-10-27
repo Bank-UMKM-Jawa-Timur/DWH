@@ -13,6 +13,6 @@ class PengajuanKlaim extends Model
 
     public function asuransi()
     {
-        return $this->belongsTo(Asuransi::class, 'pembayaran_premi_id', 'id');
+        return $this->belongsTo(Asuransi::class, 'asuransi_id', 'id');
     }
 }
