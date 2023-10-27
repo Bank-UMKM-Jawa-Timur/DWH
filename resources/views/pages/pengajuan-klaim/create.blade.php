@@ -40,7 +40,9 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
                     <input type="text" class="p-2 w-full border" id="" name="no_sp3" />
-                    <small class="form-text text-red-600 error"></small>
+                    @error('no_sp3')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Tanggal Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
@@ -48,12 +50,16 @@
                         <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
                         <input type="text" class="datepicker p-2 w-full" value="dd/mm/yyyy" id="" name="tgl_sp3"/>
                     </div>
-                    <small class="form-text text-red-600 error"></small>
+                    @error('tgl_sp3')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Tunggakan Pokok<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah disabled-input p-2 w-full border" id="" name="tunggakan_pokok"/>
-                    <small class="form-text text-red-600 error"></small>
+                    <input type="text" class="rupiah disabled-input p-2 w-full border" id="" name="tunggakan_pokok">
+                    @error('tunggakan_pokok')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
             </div>
             {{-- form data 3 --}}
@@ -61,12 +67,16 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggukan Bunga<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="tunggakan_bunga" />
-                    <small class="form-text text-red-600 error"></small>
+                    @error('tunggakan_bunga')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggukan Denda<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="tunggakan_denda" />
-                    <small class="form-text text-red-600 error"></small>
+                    @error('tunggakan_denda')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
             </div>
             {{-- form data 4 --}}
@@ -74,12 +84,16 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Pengikatan<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="nilai_pengikatan" />
-                    <small class="form-text text-red-600 error"></small>
+                    @error('nilai_pengikatan')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Tuntunan Klaim<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="nilai_tuntutan_klaim" />
-                    <small class="form-text text-red-600 error"></small>
+                    @error('nilai_tuntutan_klaim')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Penyebab Klaim<span class="text-theme-primary">*</span></label>
@@ -92,7 +106,9 @@
                         <option value="5">Jatuh Tempo</option>
                         <option value="6">PAW</option>
                     </select>
-                    <small class="form-text text-red-600 error"></small>
+                    @error('penyebab_klaim')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
             </div>
             {{-- form data 4 --}}
@@ -100,7 +116,9 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Jenis Agunan / Kode Jenis Anggunan<span class="text-theme-primary">*</span></label>
                     <input type="text" class="p-2 w-full border" id="" name="jenis_agunan" />
-                    <small class="form-text text-red-600 error"></small>
+                    @error('jenis_agunan')
+                        <small class="form-text text-red-600 error">{{ $message }}</small>
+                    @enderror
                 </div>
             </div>
             <div class="flex gap-5">
@@ -144,5 +162,7 @@
         $('[name="no_rekening"]').val(data[key]['no_rek'])
         $('[name="no_sp"]').val(data[key]['no_polis'])
     })
+
+
 </script>
 @endpush
