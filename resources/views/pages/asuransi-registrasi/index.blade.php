@@ -97,6 +97,7 @@
                         <th>No Polis</th>
                         <th>Tanggal Polis</th>
                         <th>Tanggal Rekam</th>
+                        <th>Status Bayar</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -107,6 +108,7 @@
                                 <td>Surabaya</td>
                                 <td>{{$item->nama_debitur}}</td>
                                 <td>{{$item->no_aplikasi}}</td>
+                                @if($item->is_paid == 1)
                                 <td>{{$item->no_polis}}</td>
                                 <td>
                                     @if ($item->tgl_polis)
@@ -115,11 +117,22 @@
                                         -
                                     @endif
                                 </td>
+                                @else
+                                <td>-</td>
+                                <td>-</td>
+                                @endif 
                                 <td>
                                     @if ($item->tgl_rekam)
                                         {{date('d-m-Y', strtotime($item->tgl_rekam))}}
                                     @else
                                         -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($item->is_paid == 1)
+                                        Sudah
+                                    @else
+                                        Belum
                                     @endif
                                 </td>
                                 <td>
