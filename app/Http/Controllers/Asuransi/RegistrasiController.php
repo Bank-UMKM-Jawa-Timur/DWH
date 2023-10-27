@@ -94,7 +94,7 @@ class RegistrasiController extends Controller
                 'message' => $message,
                 'data' => $data,
             ];
-            
+
             return response()->json($res);
         }
     }
@@ -114,7 +114,7 @@ class RegistrasiController extends Controller
         $headers = [
             'token' => env('LOS_API_TOKEN')
         ];
-        
+
         $apiPengajuan = $host . '/v1/get-list-pengajuan/' . $user_id;
         $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
         $response = json_decode($api_req->getBody(), true);
@@ -180,7 +180,8 @@ class RegistrasiController extends Controller
             "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
             "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
         ];
-        
+
+
         try {
             $headers = [
                 "Accept" => "/",
@@ -189,11 +190,11 @@ class RegistrasiController extends Controller
                 "Access-Control-Allow-Origin" => "*",
                 "Access-Control-Allow-Methods" => "*"
             ];
-    
+
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
             $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
-            return $response;
+            // return $response;
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
@@ -225,7 +226,7 @@ class RegistrasiController extends Controller
                             Alert::error('Gagal', $message);
                             return back();
                             break;
-                        
+
                         default:
                             Alert::error('Gagal', 'Terjadi kesalahan');
                             return back();
