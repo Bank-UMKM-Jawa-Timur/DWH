@@ -35,108 +35,145 @@
                 <span class="form-button-text"> Sembunyikan form </span>
             </button>
         </div>
-        {{-- form pembayaran --}}
-        <div class="bg-white form-selection w-full flex-none p-5 border">
-            <h2 class="font-bold text-lg text-theme-text tracking-tighter mb-3">
-                Pembayaran Premi
-            </h2>
-            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
-                <div class="input-box space-y-3">
-                    <label for="" class="uppercase">Nomor Bukti Pembayaran<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="no_bukti_pembayaran" name="no_bukti_pembayaran"/>
-                    <small class="form-text text-red-600 error"></small>
-                </div>
-                <div class="input-box-calendar space-y-3">
-                    <label for="" class="uppercase">Tanggal Bayar<span class="text-theme-primary">*</span></label>
-                    <div class="flex border justify-center ">
-                        <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
-                    <input type="text" class="datepicker p-2 w-full" id="tgl_bayar" name="tgl_bayar" />
+        <form id="FormId" action="{{ route('asuransi.pembayaran-premi.store') }}" method="post">
+            @csrf
+            {{-- form pembayaran --}}
+            <div class="bg-white form-selection w-full flex-none p-5 border">
+                <h2 class="font-bold text-lg text-theme-text tracking-tighter mb-3">
+                    Pembayaran Premi
+                </h2>
+                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                    <div class="input-box-calendar space-y-3">
+                        <label for="" class="uppercase">Tanggal Bayar<span class="text-theme-primary">*</span></label>
+                        <div class="flex border justify-center ">
+                            <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
+                        <input type="text" class="datepicker p-2 w-full" id="tgl_bayar" name="tgl_bayar" />
+                        </div>
+                        <small class="form-text text-red-600 error"></small>
                     </div>
-                    <small class="form-text text-red-600 error"></small>
-                </div>
-                <div class="input-box space-y-3">
-                    <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
-                    <input type="hidden" id="total_premi" name="total_premi"/>
-                    <input type="text" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
-                    <small class="form-text text-red-600 error"></small>
-                </div>
-            </div>
-        </div>
-
-        <div class="lg:flex grid md:grid-cols-1 grid-cols-1 w-full gap-5 mt-3">
-            {{-- form pilih no_apk --}}
-            <div class="bg-white form-selection lg:w-[20rem] w-full flex-none p-5 border" id="leftForm">
-                <div class="input-box space-y-3" id="inputBoxNoAplikasi">
-                    <label for="add-role" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span> </label>
-                    <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
-                        <option value="" selected>-- Pilih No Aplikasi ---</option>
-                        @foreach ($noAplikasi as $item)
-                            <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}}</option>
-                        @endforeach
-                    </select>
-                    <div class="errorSpan" id="errorNoAplikasi">
-                        <p id="errorText">Nomor aplikasi harus diisi.</p>
+                    <div class="input-box space-y-3">
+                        <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
+                        <input type="hidden" id="total_premi" name="total_premi"/>
+                        <input type="text" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
+                        <small class="form-text text-red-600 error"></small>
                     </div>
-                </div>
-                <div class="p-2 mt-3 mb-3 space-y-4" id="inputBoxJenisAsuransi">
-                    <h2 class="font-bold font-lexend jenis-asuransi-title hidden">Jenis Asuransi</h2>
-                    <div class="jenis-asuransi"></div>
-                    <div class="errorSpan" id="errorJenisAsuransi">
-                        <p id="errorText">Jenis asuransi harus diisi.</p>
-                    </div>
-                </div>
-                <div class="p-2">
-                    <button href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white hidden" id="btnLeftForm">
-                        <span class="lg:mt-0 mt-0">
-                            @include('components.svg.plus')
-                        </span>
-                        <span class="lg:block hidden"> Pilih</span>
-                    </button>
-                </div>
-            </div>
-            <div class="flex-auto lg:w-[40rem] w-full">
-                <div class="table-wrapper bg-white border rounded-md w-full p-2">
-                    <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                        <div class="title-table lg:p-3 p-2 text-center">
-                            <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                                Pembayaran Premi
-                            </h2>
+                    <div class="input-box space-y-3" id="inputBoxNoAplikasi">
+                        <label for="add-role" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span> </label>
+                        <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
+                            <option value="" selected>-- Pilih No Aplikasi ---</option>
+                            @foreach ($noAplikasi as $item)
+                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}}</option>
+                            @endforeach
+                        </select>
+                        <div class="errorSpan" id="errorNoAplikasi">
+                            <p id="errorText">Nomor aplikasi harus diisi.</p>
                         </div>
                     </div>
-
-                    <div class="tables mt-2">
-                        <table class="table-auto w-full">
-                            <tr>
-                                <th>No.</th>
-                                <th>Jenis</th>
-                                <th>No Aplikasi.</th>
-                                <th>Premi</th>
-                                <th>No PK</th>
-                                <th>No Polis</th>
-                                <th>No Rekening.</th>
-                                <th>Periode Bayar</th>
-                                <th>Total Periode Bayar</th>
-                                <th>Aksi</th>
-                            </tr>
-                            <tbody id="rightForm"></tbody>
-                        </table>
+                    <div class="p-2 mt-3 mb-3 space-y-4" id="inputBoxJenisAsuransi">
+                        <h2 class="font-bold font-lexend jenis-asuransi-title hidden">Jenis Asuransi</h2>
+                        <div class="jenis-asuransi"></div>
+                        <div class="errorSpan" id="errorJenisAsuransi">
+                            <p id="errorText">Jenis asuransi harus diisi.</p>
+                        </div>
                     </div>
-                    <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-end">
-                        <button href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" id="btnRightForm">
+                    <div class="p-2">
+                        <button
+                        href="{{route('asuransi.pembayaran-premi.create')}}"
+                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white hidden" id="btnLeftForm">
                             <span class="lg:mt-0 mt-0">
                                 @include('components.svg.plus')
                             </span>
-                            <span class=""> Simpan</span>
+                            <span class="lg:block hidden"> Pilih</span>
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="lg:flex grid md:grid-cols-1 grid-cols-1 w-full gap-5 mt-3">
+                {{-- form pilih no_apk --}}
+                {{--  <div class="bg-white form-selection lg:w-[20rem] w-full flex-none p-5 border" id="leftForm">
+                    <div class="input-box space-y-3" id="inputBoxNoAplikasi">
+                        <label for="add-role" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span> </label>
+                        <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
+                            <option value="" selected>-- Pilih No Aplikasi ---</option>
+                            @foreach ($noAplikasi as $item)
+                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}}</option>
+                            @endforeach
+                        </select>
+                        <div class="errorSpan" id="errorNoAplikasi">
+                            <p id="errorText">Nomor aplikasi harus diisi.</p>
+                        </div>
+                    </div>
+                    <div class="p-2 mt-3 mb-3 space-y-4" id="inputBoxJenisAsuransi">
+                        <h2 class="font-bold font-lexend jenis-asuransi-title hidden">Jenis Asuransi</h2>
+                        <div class="jenis-asuransi"></div>
+                        <div class="errorSpan" id="errorJenisAsuransi">
+                            <p id="errorText">Jenis asuransi harus diisi.</p>
+                        </div>
+                    </div>
+                    <div class="p-2">
+                        <button
+                        href="{{route('asuransi.pembayaran-premi.create')}}"
+                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white hidden" id="btnLeftForm">
+                            <span class="lg:mt-0 mt-0">
+                                @include('components.svg.plus')
+                            </span>
+                            <span class="lg:block hidden"> Pilih</span>
+                        </button>
+                    </div>
+                </div>  --}}
+                <div class="flex-auto lg:w-[40rem] w-full">
+                    <div class="table-wrapper bg-white border rounded-md w-full p-2">
+                        {{-- <form action="{{ route('asuransi.pembayaran-premi.store') }}" method="post">
+                            @csrf --}}
+                            <div class="tables mt-2">
+                                <table class="table-auto w-full">
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>No Bukti Pembayaran</th>
+                                        <th>Jenis</th>
+                                        <th>No Aplikasi.</th>
+                                        <th>Premi</th>
+                                        <th>No PK</th>
+                                        <th>No Polis</th>
+                                        <th>No Rekening.</th>
+                                        <th>Periode Bayar</th>
+                                        <th>Total Periode Bayar</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                    <tbody id="rightForm"></tbody>
+                                </table>
+                            </div>
+                            <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-end">
+                                <button type="submit"
+                                {{-- href="{{route('asuransi.pembayaran-premi.create')}}"  --}}
+                                class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" id="btnRightForm">
+                                    <span class="lg:mt-0 mt-0">
+                                        @include('components.svg.plus')
+                                    </span>
+                                    <span class=""> Simpan</span>
+                                </button>
+                            </div>
+                        {{-- </form> --}}
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 @endsection
 
 @push('extraScript')
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('FormId');
+            var btnLeft = document.getElementById('btnLeftForm');
+
+            btnLeft.addEventListener('click', function(event) {
+                event.preventDefault();
+            });
+        });
+
         $('#no_aplikasi').select2()
 
         $('#no_aplikasi').on('change', function() {
@@ -243,6 +280,7 @@
                         var generate_key = $(this).data('id');
                         var jenis = $(this).data('jenis');
                         var no_aplikasi = $(this).data('no_aplikasi');
+                        var id = $(this).data('id');
                         if (arr_selected_key.includes(generate_key)) {
                             console.log('data sudah dipilih')
                             /*Swal.fire({
@@ -266,8 +304,17 @@
                             var row_element = `<tr>
                                 <input type="hidden" name="row_key[]" class="row-key" value="${generate_key}">
                                 <td>${temp_no}</td>
+                                <td>
+                                    <div class="input-box">
+                                        <input type="number" placeholder="Input nilai disini.." class="bg-white border px-5 py-2" name="row_nobukti_pembayaran[]">
+                                        <div class="errorSpan hidden" id="errorNobuktiPembayaran">
+                                            <p id="errorText">No Bukti bayar harus diisi.</p>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td>${jenis}</td>
                                 <td>
+                                    <input type="hidden" name="row_id_no_aplikasi[]" value="${id}">
                                     <input type="hidden" name="row_no_aplikasi[]" value="${no_aplikasi}">
                                     ${no_aplikasi}
                                 </td>
@@ -362,6 +409,13 @@
                 } else {
                     $(this).find("#errorNoRekening").hide();
                 }
+                if($(this).find('input[name="row_nobukti_pembayaran[]"]').val() == ''){
+                    e.preventDefault();
+                    $(this).find("#errorNobuktiPembayaran").show();
+                    $(this).find('input[name="row_nobukti_pembayaran[]"]').css({"border": "2px solid red"});
+                } else {
+                    $(this).find("#errorPeriodeBayar").hide();
+                }
                 if($(this).find('input[name="row_periode_bayar[]"]').val() == ''){
                     e.preventDefault();
                     $(this).find("#errorPeriodeBayar").show();
@@ -378,5 +432,51 @@
                 }
             })
         })
+        
+            // var data = {
+            //     "nobukti_pembayaran": "0002",
+            //     "tgl_bayar": "2017-08-07",
+            //     "total_premi": 472500,
+            //     "rincian_bayar": [
+            //         {
+            //             "premi": 472500,
+            //             "no_rek": "10060572000001",
+            //             "no_aplikasi": "BWj5FFUZfG",
+            //             "no_pk": "PK\/0085\/73\/SH\/0817-0820",
+            //             "no_polis": "045912120817012100",
+            //             "periode_bayar": "1",
+            //             "total_periode": "10"
+            //         }
+            //     ]
+            // }
+        $('#btn-simpan').on('click', function(){
+            // $.ajax({
+            //     url: 'http://sandbox-umkm.ekalloyd.id:8387/bayar',
+            //     type: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-API-Key': 'elj-bprjatim-123',
+            //         'Accept': 'application/json'
+            //     },
+            //     data: JSON.stringify(data),
+            //     success: function(response) {
+            //         console.log('Berhasil', response);
+            //     },
+            //     error: function(error) {
+            //         console.error('Gagal', error);
+            //     }
+            // });
+        });
+
+        function alertError(message) {
+            Swal.fire({
+                title: 'Error',
+                html: message,
+                icon: 'error',
+                iconColor: '#DC3545',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#DC3545'
+            })
+        }
     </script>
 @endpush
