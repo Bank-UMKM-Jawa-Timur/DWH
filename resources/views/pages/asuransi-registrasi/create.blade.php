@@ -8,7 +8,7 @@
     </div>
     <div class="body-pages">
         <div class="bg-white w-full p-5">
-            <form id="form-asuransi-registrasi" action="{{route('registrasi.store')}}" method="post" class="space-y-5 " accept="">
+            <form id="form-asuransi-registrasi" action="{{route('asuransi.registrasi.store')}}" method="post" class="space-y-5 " accept="">
                 @csrf
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
@@ -379,7 +379,7 @@
 
         if (jenis != '') {
             $.ajax({
-                url: "{{route('registrasi.rate_premi')}}",
+                url: "{{route('asuransi.registrasi.rate_premi')}}",
                 type: "GET",
                 accept: "Application/json",
                 data: {

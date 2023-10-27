@@ -314,4 +314,116 @@ class RegistrasiController extends Controller
             return $failed_response;
         }
     }
+
+    public function inquery(Request $request) {
+        try {
+            $headers = [
+                "Accept" => "/",
+                "x-api-key" => config('global.eka_lloyd_token'),
+                "Content-Type" => "application/json",
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+            $req = [
+                "no_aplikasi" => $request->no_aplikasi
+            ];
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/query1";
+            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            // return $response;
+            $statusCode = $response->status();
+            if ($statusCode == 200) {
+                $responseBody = json_decode($response->getBody(), true);
+                if ($responseBody) {
+                    $status = $responseBody['status'];
+                    $message = '';
+                    switch ($status) {
+                        case '01':
+                            # success
+                            $message = $responseBody['keterangan'];
+                            Alert::success('Berhasil', $message);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
+                        case '02':
+                            # success
+                            $message = $responseBody['keterangan'];
+                            Alert::warning('Peringatan', $message);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
+                        case '03':
+                            # success
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
+                        
+                        default:
+                            Alert::error('Gagal', 'Terjadi kesalahan');
+                            return back();
+                            break;
+                    }
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Terjadi kesalahan');
+                return back();
+            }
+        } catch (\Exception $e) {
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
+    }
+
+    public function batal(Request $request){
+        try{
+            $headers = [
+                "Accept" => "/",
+                "x-api-key" => config('global.eka_lloyd_token'),
+                "Content-Type" => "application/json",
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+            $body = [
+                "no_aplikasi" => $request->no_aplikasi,
+                "no_sp" => $request->no_sp
+            ];
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/batal";
+    
+            $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
+            $statusCode = $response->status();
+    
+            if($statusCode == 200){
+                $responseBody = json_decode($response->getBody(), true);
+                if($responseBody){
+                    $code = $responseBody['code'];
+                    $keterangan = '';
+
+                    switch($code){
+                        case '04':
+                            $keterangan = $responseBody['keterangan'];
+                            Alert::success('Berhasil', $keterangan);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
+                        case '44':
+                            $keterangan = $responseBody['keterangan'];
+                            Alert::error('Gagal', $keterangan);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
+                        case '39':
+                            $keterangan = $responseBody['keterangan'];
+                            Alert::error('Gagal', $keterangan);
+                            return redirect()->route('asuransi.registrasi.index');
+                            break;
+                        default:
+                            Alert::error('Gagal', 'Terjadi kesalahan.');
+                            return back();
+                    }
+                }
+            }
+        } catch(\Exception $e){
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
+    }
 }

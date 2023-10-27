@@ -8,6 +8,8 @@
     @include('pages.asuransi-registrasi.modal.filter')
     <!-- Modal-Canceled -->
     @include('pages.asuransi-registrasi.modal.canceled')
+    <!-- Modal-Batal -->
+    @include('pages.asuransi-registrasi.modal.batal')
 @endsection
 @section('content')
     <div class="head-pages">
@@ -37,7 +39,7 @@
                             <span class="lg:block hidden"> Filter </span>
                         </button>
                     </a>
-                    <a href="{{ route('registrasi.create') }}">
+                    <a href="{{ route('asuransi.registrasi.create') }}">
                         <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                             <span class="lg:mt-0 mt-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
@@ -150,10 +152,13 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li class="">
-                                                <a class="item-dropdown" href="#">Pembatalan</a>
+                                                <a class="item-dropdown" href="#" data-modal-toggle="modalBatal-{{ $item->id }}" data-modal-target="modalBatal-{{ $item->id }}" onclick="showModalBatal('modalBatal-{{ $item->id }}')">Pembatalan</a>
                                             </li>
                                             <li class="">
-                                                <a class="item-dropdown" href="#">Inquery</a>
+                                                <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                    <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
+                                                    <button class="item-dropdown w-full" type="submit">Inquery</button>
+                                                </form>
                                             </li>
                                         </ul>
                                     </div>
@@ -289,5 +294,9 @@
                 }
             })
         })
+
+        function showModalBatal(target){
+            $(`#${target}`).removeClass('hidden');
+        }
     </script>
 @endpush

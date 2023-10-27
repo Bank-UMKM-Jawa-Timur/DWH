@@ -27,7 +27,7 @@
                 </h2>
             </div>
             <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <a href="{{route('pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                <a href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                     <span class="lg:mt-0 mt-0">
                         @include('components.svg.plus')
                     </span>
@@ -52,7 +52,7 @@
                 </form>
             </div>
             <div class="search-table lg:w-96 w-full">
-                <form action="{{ route('pembayaran-premi.index') }}" method="GET">
+                <form action="{{ route('asuransi.pembayaran-premi.index') }}" method="GET">
                     <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
                         <span class="mt-2 ml-3">
                             @include('components.svg.search')
