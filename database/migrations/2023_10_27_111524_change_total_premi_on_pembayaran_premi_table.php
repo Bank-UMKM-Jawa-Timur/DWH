@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('asuransi', function (Blueprint $table) {
-            $table->decimal('refund', 10, 2, true)->after('premi');
+        Schema::table('pembayaran_premi', function(Blueprint $table) {
+            $table->decimal('total_premi', 10, 2, true)->change();
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('asuransi', function (Blueprint $table) {
-            $table->dropColumn('refund');
+        Schema::table('pembayaran_premi', function(Blueprint $table) {
+            $table->decimal('total_premi', 8, 2, true)->change();
         });
     }
 };
