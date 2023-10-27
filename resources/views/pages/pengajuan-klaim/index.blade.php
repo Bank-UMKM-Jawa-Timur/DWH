@@ -33,31 +33,41 @@
                     </a>
                 </div>
             </div>
-            <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
-                <div class="sorty pl-1 w-full">
-                    <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                    <select name="" class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-                        id="">
-                        <option value="">5</option>
-                        <option value="">10</option>
-                        <option value="">15</option>
-                        <option value="">20</option>
-                    </select>
-                    <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
-                </div>
-                <div class="search-table lg:w-96 w-full">
-                    <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                        <span class="mt-2 ml-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                    d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
-                            </svg>
-                        </span>
-                        <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                            autocomplete="off" />
+            <form id="form" method="get">
+                <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    <div class="sorty pl-1 w-full">
+                        <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select name="page_length" id="page_length"
+                            class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center">
+                            <option value="5"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 5 ? 'selected' : '' }} @endisset>
+                                5</option>
+                            <option value="10"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 10 ? 'selected' : '' }} @endisset>
+                                10</option>
+                            <option value="15"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 15 ? 'selected' : '' }} @endisset>
+                                15</option>
+                            <option value="20"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 20 ? 'selected' : '' }} @endisset>
+                                20</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+                    </div>
+                    <div class="search-table lg:w-96 w-full">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
+                                </svg>
+                            </span>
+                            <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                autocomplete="off" name="search" value="{{Request()->search}}" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
             <div class="tables mt-2">
                 <table class="table-auto w-full">
                     <tr>
@@ -65,26 +75,66 @@
                         <th>Cabang</th>
                         <th>No Aplikasi</th>
                         <th>No Rekening</th>
-                        <th>No Klaim</th>
-                        <th>Tanggal Klaim</th>
-                        <th>Refund</th>
-                        <th>Nilai Persetujuan</th>
-                        <th>No Rekening Debet</th>
+                        <th>No klaim</th>
+                        <th>No Polis</th>
+                        <th>No Surat Peringatan ke 3</th>
+                        <th>Tanggal Surat Peringatan ke 3</th>
+                        <th>Tunggakan Pokok</th>
+                        <th>Tunggakan Bunga</th>
+                        <th>Tunggakan Denda</th>
+                        <th>Nilai Peningkatan</th>
+                        <th>Nilai Tuntutan Klaim</th>
+                        <th>Penyebab Klaim</th>
+                        <th>Jenis Agunan</th>
+                        <th>Status Klaim</th>
                         <th>Keterangan</th>
                         <th>Aksi</th>
                     </tr>
                     <tbody>
+                        @forelse ($data as $item)
                         <tr>
-                            <td>1</td>
+                            <td>{{$loop->iteration}}</td>
                             <td>Surabaya</td>
-                            <td>K21002022000010</td>
-                            <td>21000572548826</td>
-                            <td>2225</td>
+                            <td>{{$item->no_aplikasi}}</td>
+                            <td>{{$item->no_rek}}</td>
+                            <td>{{$item->no_klaim}}</td>
                             <td>326/SP-02/JSB/331/VII-2022</td>
+                            {{-- no surat --}}
+                            <td>77886655</td>
+                            {{-- tanggal surat --}}
                             <td>18-07-2022</td>
+                            {{-- tunggakan pokok --}}
                             <td>158210522.00</td>
-                            <td>0000</td>
-                            <td>Sedang  diprosess</td>
+                            {{-- tunggakan bungan --}}
+                            <td>158210522.00</td>
+                            {{-- tunggakan denda --}}
+                            <td>158210522.00</td>
+                            {{-- nilai peningkatan --}}
+                            <td>00000</td>
+                            {{-- nilai tuntutan klaim --}}
+                            <td>00000</td>
+                            {{-- penyebab klaim --}}
+                            <td>meninggal dunia</td>
+                            {{-- jenis agunan --}}
+                            <td>Jenis agunan</td>
+                            <td>
+                                @if ($item->stat_klaim == 1)
+                                sedang di proses
+                                @elseif ($item->stat_klaim == 2)
+                                disetujui dan sedang menunggu pembayaran
+                                @elseif ($item->stat_klaim == 3)
+                                disetujui dan telah dibayarkan
+                                @elseif ($item->stat_klaim == 4)
+                                dokumen belum lengkap
+                                @elseif ($item->stat_klaim == 5)
+                                premi belum dibayar
+                                @elseif ($item->stat_klaim == 6)
+                                ditolak
+                                @else
+                                data tidak ditemukan
+                                @endif
+                            </td>
+                            <td>{{$item->status}}</td>
                             <td>
                             <div class="dropdown">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
@@ -99,27 +149,32 @@
 
                             </td>
                         </tr>
+                        @empty
+                        <tr>
+                            <td class="text-theme-primary text-center" colspan="18">
+                                Data tidak tersedia.
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
             <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                <div>
-                    <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-                </div>
-                <div>
-                    <div class="pagination">
-                        <button class="btn-pagination">Previous</button>
-                        <button class="btn-pagination is-active">1</button>
-                        <button class="btn-pagination">2</button>
-                        <button class="btn-pagination">3</button>
-                        <button class="btn-pagination">4</button>
-                        <button class="btn-pagination">5</button>
-                        <button class="btn-pagination">...</button>
-                        <button class="btn-pagination">100</button>
-                        <button class="btn-pagination">Next</button>
+                <div class="w-full">
+                    <div class="pagination kkb-pagination">
+                        @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                            {{ $data->links('pagination::tailwind') }}
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+@push('extraScript')
+<script>
+    $('#page_length').on('change', function() {
+        $('#form').submit()
+    })
+</script>
+@endpush

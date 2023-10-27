@@ -96,6 +96,15 @@ class DashboardController extends Controller
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
+            $role = '';
+            if ($user) {
+                if (is_array($user)) {
+                    $role = $user['role'];
+                }
+            }
+            else {
+                $role = 'vendor';
+            }
 
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
