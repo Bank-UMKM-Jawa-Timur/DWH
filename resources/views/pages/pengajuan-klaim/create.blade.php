@@ -26,12 +26,12 @@
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Nomor Rekening<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border" value="" id="" name="no_rekening" readonly/>
+                    <input type="text" class="disabled-input bg-disabled p-2 w-full border" value="" id="" name="no_rekening" readonly disabled/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">No Polis<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border" id="" name="no_sp" readonly/>
+                    <input type="text" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_sp" readonly disabled/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
