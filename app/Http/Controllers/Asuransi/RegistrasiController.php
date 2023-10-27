@@ -183,6 +183,7 @@ class RegistrasiController extends Controller
             "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
         ];
 
+        DB::beginTransaction();
         try {
             $headers = [
                 "Accept" => "/",
@@ -239,6 +240,7 @@ class RegistrasiController extends Controller
                             $newAsuransi->save();
 
                             $message = $responseBody['keterangan'];
+                            DB::commit();
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
                             break;
@@ -273,6 +275,7 @@ class RegistrasiController extends Controller
                 return back();
             }
         } catch (\Exception $e) {
+            DB::rollBack();
             Alert::error('Gagal', $e->getMessage());
             return back();
         }
