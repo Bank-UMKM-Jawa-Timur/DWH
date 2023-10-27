@@ -64,16 +64,6 @@
         }
         */
 
-        function generateCsrfToken() {
-            var token = "{{csrf_token()}}"
-            if (token == '') {
-                generateCsrfToken();
-            }
-            else {
-                return token;
-            }
-        }
-
         function showModal(identifier) {
             const targetId = $(identifier).data("target-id");
             const user_role_id = "{{ \Session::get(config('global.role_id_session')) }}";

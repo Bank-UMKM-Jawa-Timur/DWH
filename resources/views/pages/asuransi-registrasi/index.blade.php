@@ -164,9 +164,10 @@
                                             </li>
                                             <li class="">
                                                 <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                    data-modal-target="modalPelunasan" data-no_aplikasi="{$item->no_aplikasi}"
-                                                    data-no_rek="{{$item->no_rek}}" data-no_polis="{{$item->no_polis}}"
-                                                    data-refund="{{$item->refund}}" data->Pelunasan</a>
+                                                    data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
+                                                    data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
+                                                    data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
+                                                    data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
                                             </li>
                                         </ul>
                                     </div>

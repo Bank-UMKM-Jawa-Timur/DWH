@@ -75,6 +75,24 @@
   <script src="{{ asset('js/app.js') }}"></script>
 
 <script>
+  function generateCsrfToken() {
+      var token = "{{csrf_token()}}"
+      if (token == '') {
+          generateCsrfToken();
+      }
+      else {
+          return token;
+      }
+  }
+
+  function monthDiff(d1, d2) {
+    var months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+    return months <= 0 ? 0 : months;
+}
+
   function SuccessMessage(message) {
     Swal.fire({
       title: 'Berhasil',
