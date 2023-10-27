@@ -26,12 +26,12 @@
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Nomor Rekening<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border" value="" id="" name="no_rekening" />
+                    <input type="text" class="disabled-input p-2 w-full border" value="" id="" name="no_rekening" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">No Polis<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input p-2 w-full border" id="" name="no_sp" />
+                    <input type="text" class="disabled-input p-2 w-full border" id="" name="no_sp" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
@@ -137,12 +137,12 @@
         }
     })
 
-    // $('#no_aplikasi').on('change', function(){
-    //     var key = $(this).children("option:selected").data('key');
-    //     var data = @json($dataNoRek);
+    $('#no_aplikasi').on('change', function(){
+        var key = $(this).children("option:selected").data('key');
+        var data = @json($dataNoRek);
 
-    //     $('[name="no_rekening"]').val(data[key]['no_rek'])
-    //     $('[name="no_sp"]').val(data[key]['no_polis'])
-    // })
+        $('[name="no_rekening"]').val(data[key]['no_rek'])
+        $('[name="no_sp"]').val(data[key]['no_polis'])
+    })
 </script>
 @endpush
