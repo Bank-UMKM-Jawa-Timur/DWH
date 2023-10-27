@@ -8,7 +8,7 @@
     </div>
 <div class="body-pages">
     <div class="bg-white w-full p-5">
-        <form id="form-pengajuan-klaim" action="{{route('pengajuan-klaim.store')}}" method="POST" class="space-y-5 " accept="">
+        <form id="form-pengajuan-klaim" action="{{route('asuransi.pengajuan-klaim.store')}}" method="POST" class="space-y-5 " accept="">
             @csrf
             {{-- form data 1 --}}
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">

@@ -8,6 +8,10 @@
     @include('pages.asuransi-registrasi.modal.filter')
     <!-- Modal-Canceled -->
     @include('pages.asuransi-registrasi.modal.canceled')
+    <!-- Modal-Batal -->
+    @include('pages.asuransi-registrasi.modal.batal')
+    <!-- Modal-Pelunasan -->
+    @include('pages.asuransi-registrasi.modal.pelunasan')
 @endsection
 @section('content')
     <div class="head-pages">
@@ -37,7 +41,7 @@
                             <span class="lg:block hidden"> Filter </span>
                         </button>
                     </a>
-                    <a href="{{ route('registrasi.create') }}">
+                    <a href="{{ route('asuransi.registrasi.create') }}">
                         <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                             <span class="lg:mt-0 mt-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
@@ -95,6 +99,7 @@
                         <th>No Polis</th>
                         <th>Tanggal Polis</th>
                         <th>Tanggal Rekam</th>
+                        <th>Status Bayar</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -105,6 +110,7 @@
                                 <td>Surabaya</td>
                                 <td>{{$item->nama_debitur}}</td>
                                 <td>{{$item->no_aplikasi}}</td>
+                                @if($item->is_paid == 1)
                                 <td>{{$item->no_polis}}</td>
                                 <td>
                                     @if ($item->tgl_polis)
@@ -113,11 +119,22 @@
                                         -
                                     @endif
                                 </td>
+                                @else
+                                <td>-</td>
+                                <td>-</td>
+                                @endif 
                                 <td>
                                     @if ($item->tgl_rekam)
                                         {{date('d-m-Y', strtotime($item->tgl_rekam))}}
                                     @else
                                         -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($item->is_paid == 1)
+                                        Sudah
+                                    @else
+                                        Belum
                                     @endif
                                 </td>
                                 <td>
@@ -137,10 +154,20 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li class="">
-                                                <a class="item-dropdown" href="#">Pembatalan</a>
+                                                <a class="item-dropdown" href="#" data-modal-toggle="modalBatal-{{ $item->id }}" data-modal-target="modalBatal-{{ $item->id }}" onclick="showModalBatal('modalBatal-{{ $item->id }}')">Pembatalan</a>
                                             </li>
                                             <li class="">
-                                                <a class="item-dropdown" href="#">Inquery</a>
+                                                <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                    <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
+                                                    <button class="item-dropdown w-full" type="submit">Inquery</button>
+                                                </form>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                    data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
+                                                    data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
+                                                    data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
+                                                    data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -276,5 +303,9 @@
                 }
             })
         })
+
+        function showModalBatal(target){
+            $(`#${target}`).removeClass('hidden');
+        }
     </script>
 @endpush

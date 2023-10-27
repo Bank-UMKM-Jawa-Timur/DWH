@@ -25,7 +25,7 @@ class KreditController extends Controller
     public function store(Request $request)
     {
         $status = '';
-        $req_status = 0;
+        $req_status = HttpFoundationResponse::HTTP_OK;
         $message = '';
         $isUnique = '';
 
