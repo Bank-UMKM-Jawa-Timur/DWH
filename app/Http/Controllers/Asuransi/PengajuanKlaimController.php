@@ -9,6 +9,8 @@ use App\Http\Controllers\Utils\UtilityController;
 use App\Models\PengajuanKlaim;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
+
 
 
 
@@ -52,6 +54,31 @@ class PengajuanKlaimController extends Controller
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'no_sp' => 'required',
+            'no_sp3' => 'required',
+            'tgl_sp3' => 'required',
+            'tunggakan_pokok' => 'required',
+            'tunggakan_bunga' => 'required',
+            'tunggakan_denda' => 'required',
+            'nilai_pengikatan' => 'required',
+            'nilai_tuntutan_klaim' => 'required',
+            'penyebab_klaim' => 'not_in:0',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'not_in' => ':attribute harus dipilih.',
+        ], [
+            'no_sp' => 'No Polis',
+            'no_sp3' => 'No Surat Peringatan Ke 3',
+            'tgl_sp3' => 'Tanggal Surat Peringatan ke 3',
+            'tunggakan_pokok' => 'Tunggakan Pokok',
+            'tunggakan_bunga' => 'Tunggakan Bunga',
+            'tunggakan_denda' => 'Tunggakan Denda',
+            'nilai_pengikatan' => 'Nilai Pengingkatan',
+            'nilai_tuntutan_klaim' => 'Nilai Tuntutan Klaim',
+            'penyebab_klaim' => 'Penyebab Klaim',
+        ]);
+
         $req = [
             'no_aplikasi' => $request->get('no_aplikasi'),
             'no_rekening' => $request->get('no_rekening'),
@@ -114,7 +141,7 @@ class PengajuanKlaimController extends Controller
                             return back();
                             break;
                         case '03':
-                            # no polis tidak ditemukan
+                            # data Kurang lengkap
                             $message = $responseBody['keterangan'];
                             Alert::error('Gagal', $message);
                             return back();
