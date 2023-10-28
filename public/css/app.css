@@ -568,6 +568,9 @@ video {
 .right-0 {
   right: 0px;
 }
+.right-16 {
+  right: 4rem;
+}
 .right-2 {
   right: 0.5rem;
 }
@@ -778,9 +781,6 @@ video {
 }
 .h-9 {
   height: 2.25rem;
-}
-.h-\[300px\] {
-  height: 300px;
 }
 .h-\[528px\] {
   height: 528px;
@@ -1153,6 +1153,10 @@ video {
 .bg-\[\#f2f2f2\] {
   --tw-bg-opacity: 1;
   background-color: rgb(242 242 242 / var(--tw-bg-opacity));
+}
+.bg-disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(250 250 250 / var(--tw-bg-opacity));
 }
 .bg-gray-100 {
   --tw-bg-opacity: 1;
@@ -1922,7 +1926,6 @@ video {
   }
 }
 .tables {
-  overflow: visible;
   overflow-x: auto;
   padding: 0.5rem;
 }
@@ -2014,8 +2017,9 @@ table td {
   margin-right: auto;
 }
 .dropdown-menu {
-  position: absolute;
-  bottom: 0px;
+  position: fixed;
+  right: 4rem;
+  bottom: auto;
   z-index: 30;
   display: none;
 }
@@ -2031,6 +2035,12 @@ table td {
   text-align: left;
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+@media (min-width: 1024px) {
+
+  .dropdown-menu {
+    right: auto;
+  }
 }
 .item-dropdown {
   display: block;
@@ -2904,10 +2914,6 @@ input:checked ~ .line {
     display: block;
   }
 
-  .lg\:inline {
-    display: inline;
-  }
-
   .lg\:flex {
     display: flex;
   }
@@ -2942,10 +2948,6 @@ input:checked ~ .line {
 
   .lg\:justify-normal {
     justify-content: normal;
-  }
-
-  .lg\:justify-between {
-    justify-content: space-between;
   }
 
   .lg\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
