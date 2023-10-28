@@ -150,7 +150,7 @@
                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                             Selengkapnya
                                         </button>
-                                        <ul class="dropdown-menu">
+                                        <ul class="dropdown-menu right-16">
                                             <li class="">
                                                 <a class="item-dropdown" href="#" data-modal-toggle="modalBatal-{{ $item->id }}" data-modal-target="modalBatal-{{ $item->id }}" onclick="showModalBatal('modalBatal-{{ $item->id }}')">Pembatalan</a>
                                             </li>
@@ -172,9 +172,11 @@
                                 <td>23141</td>
                                 <td>23-10-2023</td>
                                 <td>23-10-2023</td>
+                                <td>Dibatalkan</td>
                                 <td>Onprogres</td>
                                 <td></td>
                             </tr>
+                    
                         @empty
                             <tr>
                                 <td colspan="9">Data tidak tersedia.</td>
@@ -199,7 +201,6 @@
     <script>
         $(".view").on("click", function(e){
             // $(this + '.caret-icon').toggleClass("rotate-180");
-            console.log($(this));
             $(this).next(".collapse-table").toggleClass("hidden");
         });
         $('.dropdown .dropdown-menu .item-dropdown').on('click', function(e){
@@ -222,7 +223,6 @@
                 location.reload();
             })
         }
-
         function CanceledModalErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,

@@ -50,7 +50,6 @@ class RegistrasiController extends Controller
                             ->where('status', $status);
             }
             $data = $data->orderBy('no_aplikasi')->paginate($page_length);
-
             return view('pages.asuransi-registrasi.index', compact('data'));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
