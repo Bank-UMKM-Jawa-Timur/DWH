@@ -189,4 +189,75 @@ class PengajuanKlaimController extends Controller
             return back();
         }
     }
+
+    public function pembatalanKlaim(Request $request){
+        $req = [
+            'no_aplikasi' => $request->no_aplikasi,
+            'no_rekening' => $request->no_rekening,
+            'no_sp' => $request->no_polis,
+            'no_klaim' => $request->no_klaim
+        ];
+
+        try{
+            $headers = [
+                "Accept" => "/",
+                "x-api-key" => config('global.eka_lloyd_token'),
+                "Content-Type" => "application/json",
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/batal";
+            $response = Http::withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $statusCode = $response->status();
+            if ($statusCode == 200) {
+                $responseBody = json_decode($response->getBody(), true);
+                $code = $responseBody['code'];
+                $message = '';
+                switch($code){
+                    case '01':
+                        $message = $responseBody['keterangan'];
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('pengajuan-klaim.index');
+                        break;
+                    case '02':
+                        $message = $responseBody['keterangan'];
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('pengajuan-klaim.index');
+                        break;
+                    case '03':
+                        $message = $responseBody['keterangan'];
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('pengajuan-klaim.index');
+                        break;
+                    case '05':
+                        $message = $responseBody['keterangan'];
+                        Alert::success('Berhasil', $message);
+                        return redirect()->route('pengajuan-klaim.index');
+                        break;
+                    case '06':
+                        $message = $responseBody['keterangan'];
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('pengajuan-klaim.index');
+                        break;
+                    case '48':
+                        $message = $responseBody['keterangan'];
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('pengajuan-klaim.index');
+                        break;
+                    default :
+                        Alert::error('Gagal', 'Terjadi kesalahan.');
+                        return back();
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Terjadi kesalahan');
+                return back();
+            }
+        } catch(\Exception $e){
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
+    }
 }
