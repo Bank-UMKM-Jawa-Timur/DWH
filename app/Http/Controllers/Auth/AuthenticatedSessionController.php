@@ -73,7 +73,7 @@ class AuthenticatedSessionController extends Controller
                                 // else if ($responseBody['role'] == 'Kredit Umum') {
                                 //     $role_id = 1;
                                 // }
-                                else if ($responseBody['role'] == 'Pemasaran') {
+                                else if ($responseBody['role'] == 'Pemasaran' || $responseBody['role'] == 'Kredit Umum') {
                                     $role_id = 1;
                                 }
                                 else {
