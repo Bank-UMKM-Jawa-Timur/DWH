@@ -164,7 +164,7 @@ class DashboardController extends Controller
                     ->whereNotNull('kredits.pengajuan_id')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
                         if (strtolower($role) != 'administrator') {
-                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
+                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ?
                                 \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
                         }
                     })
@@ -181,7 +181,7 @@ class DashboardController extends Controller
                     ->orWhereNotNull('kredits.is_continue_import')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
                         if (strtolower($role) != 'administrator') {
-                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
+                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ?
                                 \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
                         }
                     })
@@ -198,7 +198,7 @@ class DashboardController extends Controller
                     ->orWhereNotNull('kkb.user_id')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
                         if (strtolower($role) != 'administrator') {
-                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
+                            $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ?
                                 \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
                         }
                     })
@@ -1120,10 +1120,11 @@ class DashboardController extends Controller
                         'po.harga',
                     ])
                     ->count();
+
                 $dataCabang = [
                     'kode_cabang' => $kode_cabang,
                     'cabang' => $cabang,
-                    'total' => intval($dataKredits) + intval($dataImported),
+                    'total' => intval($dataKredits),
                 ];
 
                 array_push($dataCharts, $dataCabang);
