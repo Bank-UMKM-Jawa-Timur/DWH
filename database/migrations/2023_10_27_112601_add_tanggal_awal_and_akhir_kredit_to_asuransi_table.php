@@ -28,7 +28,8 @@ return new class extends Migration
     {
         Schema::table('asuransi', function (Blueprint $table) {
             $table->dropColumn('tanggal_awal');
-            $table->dropColumn('tanggal_kredit');
+            $table->dropColumn('tanggal_akhir');
+            // $table->dropColumn('tanggal_kredit');
         });
     }
 };

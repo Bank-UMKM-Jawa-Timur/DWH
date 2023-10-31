@@ -31,7 +31,9 @@ class RegistrasiController extends Controller
     {
         try {
             $page_length = $request->page_length ? $request->page_length : 5;
-            $data = DB::table('asuransi');
+            $data = DB::table('asuransi')
+                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                ->select('asuransi.*', 'mst_jenis_asuransi.jenis');
             if ($request->has('q')) {
                 $q = $request->get('q');
                 $data = $data->where('nama_debitur', 'LIKE', "%$q%")
@@ -49,12 +51,55 @@ class RegistrasiController extends Controller
                             ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
                             ->where('status', $status);
             }
-            $data = $data->orderBy('no_aplikasi')->paginate($page_length);
+            $data = $data->groupBy('no_aplikasi')
+                ->orderBy('no_aplikasi')
+                ->paginate($page_length);
+
+            $dataDetail = [];
+            foreach($data as $i => $item){
+                $dataDetail[$i] = [];
+                $detailAsuransi = DB::table('asuransi')
+                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                    ->select('asuransi.*', 'mst_jenis_asuransi.jenis');
+                if ($request->has('q')) {
+                    $q = $request->get('q');
+                    $detailAsuransi = $detailAsuransi->where('nama_debitur', 'LIKE', "%$q%")
+                                ->orWhere('no_aplikasi', 'LIKE', "%$q%")
+                                ->orWhere('no_polis', 'LIKE', "%$q%")
+                                ->orWhere('tgl_polis', 'LIKE', "%$q%")
+                                ->orWhere('tgl_rekam', 'LIKE', "%$q%");
+                }
+                if ($request->has('tAwal') && $request->has('tAkhir')) {
+                    $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
+                    $tAkhir = date('Y-m-d', strtotime($request->get('tAkhir')));
+                    $status = $request->get('status');
+                    $detailAsuransi = $detailAsuransi->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                                ->where('status', $status)
+                                ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
+                                ->where('status', $status);
+                }
+                $detailAsuransi = $detailAsuransi
+                    ->where('no_aplikasi', $item->no_aplikasi)
+                    ->where('asuransi.id', '!=', $item->id)
+                    ->get();
+
+                if(count($detailAsuransi) > 0){
+                    foreach($detailAsuransi as $j => $itemDetail){
+                        array_push($dataDetail[$i], $itemDetail);
+                    }
+                } else{
+                    $dataDetail[$i] = [];
+                }
+
+                $item->detail = $dataDetail[$i];
+            }
 
             return view('pages.asuransi-registrasi.index', compact('data'));
         } catch (\Exception $e) {
+            dd($e);
             return back()->with('error', $e->getMessage());
         } catch (\Illuminate\Database\QueryException $e) {
+            dd($e);
             return back()->with('error', 'Terjadi kesalahan pada database. '.$e->getMessage());
         }
     }
@@ -150,18 +195,18 @@ class RegistrasiController extends Controller
             "no_aplikasi"=> $request->get('no_aplikasi'),
             "no_rekening"=> $request->get('no_rekening'),
             "jenis_asuransi"=> $request->get('jenis_asuransi'),
-            "tgl_pengajuan"=> $request->get('tgl_pengajuan'),
-            "tgl_jatuhtempo"=> $request->get('tgl_jatuhtempo'),
+            "tgl_pengajuan"=> date("Y-m-d", strtotime($request->get('tgl_pengajuan'))) ,
+            "tgl_jatuhtempo"=> date("Y-m-d", strtotime($request->get('tgl_jatuhtempo'))) ,
             "kd_uker"=> $request->get('kode_cabang'),
             "nama_debitur"=> $request->get('nama_debitur'),
             "alamat_debitur"=> $request->get('alamat_debitur'),
-            "tgl_lahir"=> $request->get('tgl_lahir'),
+            "tgl_lahir"=> date("Y-m-d", strtotime($request->get('tgl_lahir'))),
             "no_ktp"=> $request->get('no_ktp'),
             "no_pk"=> $request->get('no_pk'),
             "tgl_pk"=> $request->get('tgl_pk'),
             "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
-            "tgl_awal_kredit"=> $request->get('tanggal_awal_kredit'),
-            "tgl_akhir_kredit"=> $request->get('tanggal_awal_kredit'),
+            "tgl_awal_kredit"=> date("Y-m-d",strtotime($request->get('tanggal_awal_kredit'))),
+            "tgl_akhir_kredit"=> date("Y-m-d", strtotime($request->get('tanggal_akhir_kredit'))),
             "jml_bulan"=> $request->get('jumlah_bulan'),
             "jenis_pengajuan"=> $request->get('jenis_pengajuan'),
             "bade"=> $request->get('baki_debet'),
@@ -172,7 +217,7 @@ class RegistrasiController extends Controller
             "tipe_premi"=> $request->get('tipe_premi'),
             "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
             "jenis_coverage"=> $request->get('jenis_coverage'),
-            "tarif"=> UtilityController::clearCurrencyFormat($request->get('tarif')),
+            "tarif"=> $request->get('tarif'),
             "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
             "kode_ls"=> $request->get('kode_ls'),
             // "jenis_kredit"=> $request->get('jenis_kredit'),
@@ -193,7 +238,7 @@ class RegistrasiController extends Controller
 
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
-            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
@@ -357,7 +402,7 @@ class RegistrasiController extends Controller
                             Alert::error('Gagal', $message);
                             return redirect()->route('asuransi.registrasi.index');
                             break;
-                        
+
                         default:
                             Alert::error('Gagal', 'Terjadi kesalahan');
                             return back();
@@ -381,7 +426,6 @@ class RegistrasiController extends Controller
             $user = $token ? $this->getLoginSession() : Auth::user();
             $user_id = $token ? $user['id'] : $user->id;
             $asuransi = Asuransi::find($request->id);
-
             if ($asuransi) {
                 if ($asuransi->status == 'onprogress') {
                     $headers = [
@@ -392,15 +436,16 @@ class RegistrasiController extends Controller
                         "Access-Control-Allow-Methods" => "*"
                     ];
                     $body = [
-                        "no_aplikasi" => $request->no_aplikasi,
-                        "no_sp" => $request->no_sp
+                        "no_aplikasi" => $asuransi->no_aplikasi,
+                        "no_sp" => $asuransi->no_sp
                     ];
                     $host = config('global.eka_lloyd_host');
                     $url = "$host/batal";
-            
-                    $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
+                    
+                    $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
+
                     $statusCode = $response->status();
-            
+
                     if($statusCode == 200){
                         $responseBody = json_decode($response->getBody(), true);
                         if($responseBody){
@@ -418,50 +463,45 @@ class RegistrasiController extends Controller
                                         $asuransi->save();
 
                                         Alert::success('Berhasil', $keterangan);
-                                        return redirect()->route('asuransi.registrasi.index');
                                         break;
                                     case '44':
                                         $keterangan = $responseBody['keterangan'];
                                         Alert::error('Gagal', $keterangan);
-                                        return redirect()->route('asuransi.registrasi.index');
                                         break;
                                     case '39':
                                         $keterangan = $responseBody['keterangan'];
                                         Alert::error('Gagal', $keterangan);
-                                        return redirect()->route('asuransi.registrasi.index');
                                         break;
                                     default:
                                         Alert::error('Gagal', 'Terjadi kesalahan.');
-                                        return back();
                                 }
                             }
                             elseif (array_key_exists('message', $responseBody)) {
                                 Alert::error('Gagal', $responseBody['message']);
-                                return back();
                             }
                             else {
                                 Alert::error('Gagal', 'Response tidak diketahui');
-                                return back();
                             }
                         }
+                    }
+                    else {
+                        Alert::warning('Peringatan', 'Server tidak ditemukan');
                     }
                 }
                 elseif ($asuransi->status == 'canceled') {
                     Alert::warning('Peringatan', 'Data ini sudah dibatalkan');
-                    return back();
                 }
                 else {
                     Alert::warning('Peringatan', 'Data ini sudah terlunasi');
-                    return back();
                 }
             }
             else {
                 Alert::warning('Peringatan', 'Data tidak ditemukan');
-                return back();
             }
         } catch(\Exception $e){
             Alert::error('Gagal', $e->getMessage());
-            return back();
+        } finally {
+            return redirect()->route('asuransi.registrasi.index');
         }
     }
 
@@ -494,26 +534,26 @@ class RegistrasiController extends Controller
                     ];
                     $host = config('global.eka_lloyd_host');
                     $url = "$host/lunas";
-            
+
                     $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
                     $statusCode = $response->status();
-            
+
                     if($statusCode == 200){
                         $responseBody = json_decode($response->getBody(), true);
                         if($responseBody){
                             if (array_key_exists('status', $responseBody)) {
                                 $status = $responseBody['status'];
                                 $keterangan = '';
-            
+
                                 switch($status){
                                     case '00':
                                         $keterangan = $responseBody['keterangan'];
-            
+
                                         $asuransi->status = 'done';
                                         $asuransi->done_at = date('Y-m-d');
                                         $asuransi->done_by = $user_id;
                                         $asuransi->save();
-            
+
                                         Alert::success('Berhasil', $keterangan);
                                         return redirect()->route('asuransi.registrasi.index');
                                         break;
