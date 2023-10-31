@@ -776,7 +776,7 @@
         </h2>
     </div>
     <div class="body-pages">
-        @if(\Session::get(config('global.role_id_session')) == 1)
+        @if(\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
         @include('pages.dashboard.pemasaran')
         @endif
 
