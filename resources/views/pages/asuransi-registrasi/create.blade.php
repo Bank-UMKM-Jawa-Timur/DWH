@@ -1,4 +1,7 @@
 @extends('layout.master')
+@section('modal')
+    @include('pages.asuransi-registrasi.modal.loading')
+@endsection
 @section('content')
     <div class="head-pages">
         <p class="text-sm">Asuransi</p>
@@ -415,6 +418,7 @@
     })
 
     $("#simpan").on("click", function(){
+        $("#preload-data").removeClass("hidden");
         /*var d = {"no_aplikasi":"SO2sBojfZN","jenis_asuransi":"Jaminan","tgl_pengajuan":"15-09-2023","kd_uker":"027","nama_debitur":"Riski Ridho","alamat_debitur":"Situbondo, mlandingan, campoan rt4","tgl_lahir":"31-05-1998","no_ktp":"3511145755975784","no_pk":"SBY/PK/001/09/2023","tgl_pk":"15-09-2023","plafon_kredit":"40.000.000","tgl_awal_kredit":"15-09-2023","tgl_akhir_kredit":"15-09-2025","jml_bulan":"24","jenis_pengajuan":"0","bade":"","tunggakan":"","kolektibilitas":"1","no_polis_sebelumnya":"","jenis_pertanggungan":"01","tipe_premi":"0","premi":"3.120.000","jenis_coverage":"01","tarif":"200.000","refund":"","kode_ls":"0","jenis_kredit":"Kusuma","handling_fee":"200.000","premi_disetor":"2.920.000"}
 
         /*axios.post(`${urlPost}/upload`, d, {
