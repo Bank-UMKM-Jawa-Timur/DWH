@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Asuransi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use App\Models\Asuransi;
 use App\Models\PembayaranPremi;
 use App\Models\PembayaranPremiDetail;
@@ -14,7 +15,15 @@ use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PembayaranPremiController extends Controller
-{
+{   
+
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -197,7 +206,9 @@ class PembayaranPremiController extends Controller
                                         $createPremiDetail->periode_bayar = $periodeBayarArray[$key];
                                         $createPremiDetail->total_periode = $totalPeriodeArray[$key];
                                         $createPremiDetail->save();
+
                                     }
+                                    $this->logActivity->store('Pengguna ' . $request->name . ' menambahkan '. $key+1 .' pembayaran premi.');
             
                                     $message = $responseBody['keterangan'];
                                     Alert::success('Berhasil', $message);
@@ -265,6 +276,7 @@ class PembayaranPremiController extends Controller
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
                     $nilai = $responseBody['nilai_premi'];
+                    $this->logActivity->store('Pengguna ' . $request->name . ' melakukan inquery pembayaran premi.');
                     Alert::success('Berhasil', $message . ', Nilai Premi ' . $this->formatCurrency($nilai));
                     return back();
                 }else{

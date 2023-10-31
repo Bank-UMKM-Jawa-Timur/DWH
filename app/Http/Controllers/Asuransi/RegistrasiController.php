@@ -285,6 +285,8 @@ class RegistrasiController extends Controller
                             $newAsuransi->status = 'onprogress';
                             $newAsuransi->save();
 
+                            $this->logActivity->store('Pengguna ' . $request->name . ' tambah registrasi asuransi.');
+
                             $message = $responseBody['keterangan'];
                             DB::commit();
                             Alert::success('Berhasil', $message);
@@ -387,6 +389,9 @@ class RegistrasiController extends Controller
                         case '01':
                             # success
                             $message = $responseBody['keterangan'];
+
+                            $this->logActivity->store('Pengguna ' . $request->name . ' melakukan inquery registrasi asuransi.');
+
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
                             break;
@@ -461,6 +466,8 @@ class RegistrasiController extends Controller
                                         $asuransi->canceled_at = date('Y-m-d');
                                         $asuransi->canceled_by = $user_id;
                                         $asuransi->save();
+
+                                        $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan registrasi asuransi.');
 
                                         Alert::success('Berhasil', $keterangan);
                                         break;
@@ -553,6 +560,8 @@ class RegistrasiController extends Controller
                                         $asuransi->done_at = date('Y-m-d');
                                         $asuransi->done_by = $user_id;
                                         $asuransi->save();
+
+                                        $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pelunasan registrasi asuransi.');
 
                                         Alert::success('Berhasil', $keterangan);
                                         return redirect()->route('asuransi.registrasi.index');

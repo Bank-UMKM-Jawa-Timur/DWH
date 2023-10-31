@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Asuransi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Utils\UtilityController;
@@ -15,7 +16,14 @@ use Illuminate\Support\Facades\Validator;
 
 
 class PengajuanKlaimController extends Controller
-{
+{   
+
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -125,6 +133,8 @@ class PengajuanKlaimController extends Controller
                             $newPengajuanKlaim->status = 'onprogress';
                             $newPengajuanKlaim->save();
 
+                            $this->logActivity->store('Pengguna ' . $request->name . ' menambahkan pengajuan klaim');
+
                             Alert::success('Berhasil', $message);
                             return redirect()->route('pengajuan-klaim.index');
                             break;
@@ -199,6 +209,9 @@ class PengajuanKlaimController extends Controller
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
                     $nilai = $responseBody['nilai_premi'];
+
+                    $this->logActivity->store('Pengguna ' . $request->name . ' cek status pengajuan klaim');
+
                     Alert::success('Berhasil', $message);
                     return back();
                 }else{
@@ -260,6 +273,9 @@ class PengajuanKlaimController extends Controller
                         break;
                     case '05':
                         $message = $responseBody['keterangan'];
+
+                        $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan pengajuan klaim.');
+
                         Alert::success('Berhasil', $message);
                         return redirect()->route('pengajuan-klaim.index');
                         break;
