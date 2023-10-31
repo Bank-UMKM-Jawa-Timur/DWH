@@ -72,20 +72,9 @@
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
-                        <th>Cabang</th>
-                        <th>No Aplikasi</th>
-                        <th>No Rekening</th>
                         <th>No klaim</th>
-                        <th>No Polis</th>
-                        <th>No Surat Peringatan ke 3</th>
-                        <th>Tanggal Surat Peringatan ke 3</th>
-                        <th>Tunggakan Pokok</th>
-                        <th>Tunggakan Bunga</th>
-                        <th>Tunggakan Denda</th>
-                        <th>Nilai Peningkatan</th>
-                        <th>Nilai Tuntutan Klaim</th>
-                        <th>Penyebab Klaim</th>
-                        <th>Jenis Agunan</th>
+                        <th>No Rekening</th>
+                        <th>No Aplikasi</th>
                         <th>Status Klaim</th>
                         <th>Keterangan</th>
                         <th>Aksi</th>
@@ -96,47 +85,18 @@
                             @csrf
                             <tr>
                                 <td>{{$loop->iteration}}</td>
-                                <td>Surabaya</td>
                                 <td>
                                     <input type="hidden" name="row_no_aplikasi" value="{{ $item->asuransi->no_aplikasi }}">
                                     {{$item->asuransi->no_aplikasi}}
                                 </td>
                                 <td>
-                                    <input type="hidden" name="row_no_rek" value="{{ $item->asuransi->no_aplikasi }}">
+                                    <input type="hidden" name="row_no_rek" value="{{ $item->asuransi->no_rek }}">
                                     {{$item->no_rek}}
                                 </td>
                                 <td>
                                     <input type="hidden" name="row_no_klaim" value="{{$item->no_klaim}}">
                                     {{$item->no_klaim}}
                                 </td>
-                                <td>326/SP-02/JSB/331/VII-2022</td>
-                                {{-- no surat --}}
-                                <td>
-                                    <input type="hidden" name="row_no_sp" value="77886655">
-                                    77886655
-                                </td>
-                                {{-- tanggal surat --}}
-                                <td>
-                                    <input type="hidden" name="row_tgl_klaim" value="2022-07-18">
-                                    18-07-2022
-                                </td>
-                                {{-- tunggakan pokok --}}
-                                <td>158210522.00</td>
-                                {{-- tunggakan bungan --}}
-                                <td>158210522.00</td>
-                                {{-- tunggakan denda --}}
-                                <td>158210522.00</td>
-                                {{-- nilai peningkatan --}}
-                                <td>00000</td>
-                                {{-- nilai tuntutan klaim --}}
-                                <td>
-                                    <input type="hidden" name="row_nilai_persetujuan" value="00000">
-                                    00000
-                                </td>
-                                {{-- penyebab klaim --}}
-                                <td>meninggal dunia</td>
-                                {{-- jenis agunan --}}
-                                <td>Jenis agunan</td>
                                 <td>
                                     <input type="hidden" name="row_status_klaim" value="{{ $item->stat_klaim }}">
                                     @if ($item->stat_klaim == 1)
@@ -181,13 +141,13 @@
                                         </li>
                                     </ul>
                                     </div>
-    
+
                                 </td>
                             </tr>
                         </form>
                         @empty
                         <tr>
-                            <td class="text-theme-primary text-center" colspan="18">
+                            <td class="text-theme-primary text-center" colspan="7">
                                 Data tidak tersedia.
                             </td>
                         </tr>

@@ -84,7 +84,7 @@ class PengajuanKlaimController extends Controller
             'no_rekening' => $request->get('no_rekening'),
             'no_sp' => $request->get('no_sp'),
             'no_sp3' => $request->get('no_sp3'),
-            'tgl_sp3' => $request->get('tgl_sp3'),
+            'tgl_sp3' => date("Y-m-d", strtotime($request->get('tgl_sp3'))),
             'tunggakan_pokok' => UtilityController::clearCurrencyFormat($request->get('tunggakan_pokok')),
             'tunggakan_bunga' => UtilityController::clearCurrencyFormat($request->get('tunggakan_bunga')),
             'tunggakan_denda' => UtilityController::clearCurrencyFormat($request->get('tunggakan_denda')),
@@ -93,7 +93,6 @@ class PengajuanKlaimController extends Controller
             'jenis_agunan' => $request->get('jenis_agunan'),
             'penyebab_klaim' => $request->get('penyebab_klaim'),
         ];
-        // return $req;
 
         try {
             $headers = [
@@ -117,6 +116,7 @@ class PengajuanKlaimController extends Controller
                         case '00':
                             # success
                             $message = $responseBody['keterangan'];
+
                             $newPengajuanKlaim = new PengajuanKlaim();
                             $newPengajuanKlaim->no_klaim = $responseBody['no_klaim'];
                             $newPengajuanKlaim->no_aplikasi = $request->no_aplikasi;

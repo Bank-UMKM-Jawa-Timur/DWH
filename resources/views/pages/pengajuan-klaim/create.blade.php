@@ -1,4 +1,7 @@
 @extends('layout.master')
+@section('modal')
+@include('pages.pengajuan-klaim.modal.loading')
+@endsection
 @section('content')
     <div class="head-pages">
         <p class="text-sm">Asuransi</p>
@@ -22,16 +25,18 @@
                             <option>Data Belum Ada.</option>
                         @endforelse
                     </select>
-                    <small class="form-text text-red-600 error"></small>
+                    <div class="errorSpan hidden" id="errorNoAplikasi">
+                        <p id="errorText">No Aplikasi Belum Di Pilih.</p>
+                    </div>
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Nomor Rekening<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input bg-disabled p-2 w-full border" value="" id="" name="no_rekening" readonly disabled/>
+                    <input type="text" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_rekening" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">No Polis<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_sp" readonly disabled/>
+                    <input type="text" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_sp" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
@@ -40,9 +45,9 @@
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
                     <input type="text" class="p-2 w-full border" id="" name="no_sp3" />
-                    @error('no_sp3')
-                        <small class="form-text text-red-600 error">{{ $message }}</small>
-                    @enderror
+                    <div class="errorSpan hidden" id="errorNoSurat">
+                        <p id="errorText">No Surat Peringatan Ke 3 Belum Di Isi.</p>
+                    </div>
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Tanggal Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
@@ -50,37 +55,34 @@
                         <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
                         <input type="text" class="datepicker p-2 w-full" value="dd/mm/yyyy" id="" name="tgl_sp3"/>
                     </div>
-                    @error('tgl_sp3')
-                        <small class="form-text text-red-600 error">{{ $message }}</small>
-                    @enderror
+                    <div class="errorSpan hidden" id="errorTglSurat">
+                        <p id="errorText">Tanggal Surat Peringatan Ke 3 Belum Di Isi.</p>
+                    </div>
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Tunggakan Pokok<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah disabled-input p-2 w-full border" id="" name="tunggakan_pokok">
-                    @error('tunggakan_pokok')
-                        <small class="form-text text-red-600 error">{{ $message }}</small>
-                    @enderror
+                    <div class="errorSpan hidden" id="errorTnggakanPokok">
+                        <p id="errorText">Tunggakan Pokok Belum Di Isi.</p>
+                    </div>
                 </div>
             </div>
             {{-- form data 3 --}}
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
-                    <label for="" class="uppercase">Tunggukan Bunga<span class="text-theme-primary">*</span></label>
+                    <label for="" class="uppercase">Tunggakan Bunga<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="tunggakan_bunga" />
                     @error('tunggakan_bunga')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
-                    <label for="" class="uppercase">Tunggukan Denda<span class="text-theme-primary">*</span></label>
+                    <label for="" class="uppercase">Tunggakan Denda<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="tunggakan_denda" />
                     @error('tunggakan_denda')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
-            </div>
-            {{-- form data 4 --}}
-            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Pengikatan<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="nilai_pengikatan" />
@@ -88,6 +90,10 @@
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
+            </div>
+            {{-- form data 4 --}}
+            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Tuntunan Klaim<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="nilai_tuntutan_klaim" />
@@ -110,9 +116,6 @@
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
-            </div>
-            {{-- form data 4 --}}
-            <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Jenis Agunan / Kode Jenis Anggunan<span class="text-theme-primary">*</span></label>
                     <input type="text" class="p-2 w-full border" id="" name="jenis_agunan" />
@@ -161,6 +164,34 @@
 
         $('[name="no_rekening"]').val(data[key]['no_rek'])
         $('[name="no_sp"]').val(data[key]['no_polis'])
+    })
+
+    $('#simpan').on('click', function(){
+       $("#preload-data").removeClass("hidden");
+        // no surat ke 3
+        // if($(this).find('input[name="no_sp3"]').val() == ''){
+        //     e.preventDefault();
+        //     $(this).find("#errorNoSurat").show();
+        //     $(this).find('input[name="no_sp3"]').css({"border": "2px solid red"});
+        // } else {
+        //     $(this).find("#errorNoSurat").hide();
+        // }
+        // // tanggal surat ke 3
+        // if($(this).find('input[name="tgl_sp3"]').val() == 'dd/mm/yyyy'){
+        //     e.preventDefault();
+        //     $(this).find("#errorTglSurat").show();
+        //     $(this).find('input[name="tgl_sp3"]').css({"border": "2px solid red"});
+        // } else {
+        //     $(this).find("#errorTglSurat").hide();
+        // }
+        // // Tunggakan Pokok
+        // if($(this).find('input[name="tunggakan_pokok"]').val() == 'dd/mm/yyyy'){
+        //     e.preventDefault();
+        //     $(this).find("#errorTnggakanPokok").show();
+        //     $(this).find('input[name="tunggakan_pokok"]').css({"border": "2px solid red"});
+        // } else {
+        //     $(this).find("#errorTnggakanPokok").hide();
+        // }
     })
 
 
