@@ -217,7 +217,7 @@ class RegistrasiController extends Controller
             "tipe_premi"=> $request->get('tipe_premi'),
             "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
             "jenis_coverage"=> $request->get('jenis_coverage'),
-            "tarif"=> UtilityController::clearCurrencyFormat($request->get('tarif')),
+            "tarif"=> $request->get('tarif'),
             "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
             "kode_ls"=> $request->get('kode_ls'),
             // "jenis_kredit"=> $request->get('jenis_kredit'),
@@ -225,8 +225,6 @@ class RegistrasiController extends Controller
             "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
             "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
         ];
-
-        return $req;
 
         DB::beginTransaction();
         try {
@@ -240,7 +238,7 @@ class RegistrasiController extends Controller
 
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
-            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
