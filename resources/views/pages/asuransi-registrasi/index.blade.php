@@ -156,7 +156,10 @@
                                         </button>
                                         <ul class="dropdown-menu right-16">
                                             <li class="">
-                                                <a class="item-dropdown" href="#" data-modal-toggle="modalBatal-{{ $item->id }}" data-modal-target="modalBatal-{{ $item->id }}" onclick="showModalBatal('modalBatal-{{ $item->id }}')">Pembatalan</a>
+                                                <a class="item-dropdown modal-batal" href="#"
+                                                    data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                    data-id="{{$item->id}}" data-no_aplikasi="{{$item->no_aplikasi}}"
+                                                    data-no_polis="{{$item->no_polis}}">Pembatalan</a>
                                             </li>
                                             <li class="">
                                                 <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
@@ -355,9 +358,5 @@
                 }
             })
         })
-
-        function showModalBatal(target){
-            $(`#${target}`).removeClass('hidden');
-        }
     </script>
 @endpush

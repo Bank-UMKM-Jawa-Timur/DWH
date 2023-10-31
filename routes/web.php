@@ -100,7 +100,7 @@ Route::middleware('auth_api')->group(function () {
                 Route::get('rate-premi', 'getRatePremi')->name('rate_premi');
                 Route::post('/', 'store')->name('store');
                 Route::get('inquery', 'inquery')->name('inquery');
-                Route::get('batal', 'batal')->name('batal');
+                Route::post('batal', 'batal')->name('batal');
                 Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');
             });
         // Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
