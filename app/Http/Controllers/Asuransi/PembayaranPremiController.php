@@ -141,7 +141,7 @@ class PembayaranPremiController extends Controller
             "Access-Control-Allow-Origin" => "*",
             "Access-Control-Allow-Methods" => "*"
         ];
-        
+
         if ($tglBayar != "dd/mm/yyyy") {
             if ($idNoAplikasiArray != null) {
                 $objekTanggal = Carbon::createFromFormat('d-m-Y', $tglBayar);
@@ -153,7 +153,7 @@ class PembayaranPremiController extends Controller
                 }else{
                     try {
                         foreach ($premiArray as $key => $premi) {
-                            $response = Http::withHeaders($header)->withOptions(['verify' => false])->post($url, 
+                            $response = Http::withHeaders($header)->withOptions(['verify' => false])->post($url,
                             [
                                 "nobukti_pembayaran" => $noBuktiPembayaranArray[$key],
                                 "tgl_bayar" => $objekTanggal->format('Y-m-d'),
@@ -171,7 +171,7 @@ class PembayaranPremiController extends Controller
                                 ]
                             ]);
                         }
-            
+
                         $statusCode = $response->status();
                         if ($statusCode == 200) {
                             $responseBody = json_decode($response->getBody(), true);
@@ -187,8 +187,8 @@ class PembayaranPremiController extends Controller
                                         $createPremi->tgl_bayar = $objekTanggal->format('Y-m-d');
                                         $createPremi->total_premi = $premi;
                                         $createPremi->save();
-            
-                                        
+
+
                                         // db pembayaran premi detail
                                         $createPremiDetail = new PembayaranPremiDetail();
                                         $createPremiDetail->pembayaran_premi_id = $createPremi->id;
@@ -198,10 +198,10 @@ class PembayaranPremiController extends Controller
                                         $createPremiDetail->total_periode = $totalPeriodeArray[$key];
                                         $createPremiDetail->save();
                                     }
-            
+
                                     $message = $responseBody['keterangan'];
                                     Alert::success('Berhasil', $message);
-                                    return back();
+                                    return redirect()->route('asuransi.pembayaran-premi.index');
                                 }else{
                                     $message = $responseBody['keterangan'];
                                     Alert::error('Gagal', $message);

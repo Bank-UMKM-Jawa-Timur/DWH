@@ -2,6 +2,7 @@
 
 @section('modal')
     @include('pages.pembayaran_premi.modal.modal-calculator')
+    @include('pages.pembayaran_premi.modal.loading')
 @endsection
 
 @section('content')
@@ -298,12 +299,12 @@
                             var no_pk = $(this).data('no_pk');
                             var no_polis = $(this).data('no_polis');
                             var no_rek = $(this).data('no_rek');
-    
+
                             if (premi != '') {
                                 premiRupiah = premi.toString().replaceAll('.', ',')
                                 premiRupiah = formatRupiah(premiRupiah.toString())
                             }
-    
+
                             var row_element = `<tr>
                                 <input type="hidden" name="row_key[]" class="row-key" value="${generate_key}">
                                 <td>${temp_no}</td>
@@ -361,9 +362,9 @@
                                     </button>
                                 </td>
                             </tr>`;
-    
+
                             $('#rightForm').append(row_element)
-    
+
                             arr_selected_key.push(generate_key)
                             temp_no++;
                             total_premi += premi
@@ -379,7 +380,7 @@
             var premi = $(this).parent().parent().find('.row-premi').val()
             var key = $(this).parent().parent().find('.row-key').val()
             const index = arr_selected_key.indexOf(parseInt(key));
-            if (index > -1) { 
+            if (index > -1) {
                 // only splice array when item is found
                 arr_selected_key.splice(index, 1);
                 temp_no--;
@@ -434,8 +435,9 @@
                     $(this).find("#errorTotalPeriodeBayar").hide();
                 }
             })
+            $("#preload-data").removeClass("hidden");
         })
-        
+
             // var data = {
             //     "nobukti_pembayaran": "0002",
             //     "tgl_bayar": "2017-08-07",
