@@ -1,6 +1,6 @@
 // $(".layout-sidebar").perfectScrollbar();
 
-$('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' }).val("dd/mm/yyyy");
+$(".datepicker").datepicker({ dateFormat: "dd-mm-yy" }).val("dd/mm/yyyy");
 var sidebar = $(".layout-sidebar");
 var form = $(".layout-form");
 
@@ -41,23 +41,23 @@ $(".dropdown-toggle").click(function () {
 // notification toggle
 $(".toggle-notification").click(function (e) {
     $(".notification-list").toggleClass("hidden");
-    e.stopPropagation()
+    e.stopPropagation();
 });
 
 $(document).click(function (e) {
-    if(e.target.closest('.notification-list')) return 
-    $('.notification-list').addClass('hidden')
-})
+    if (e.target.closest(".notification-list")) return;
+    $(".notification-list").addClass("hidden");
+});
 
 $(".dropdown-account-toggle").click(function (e) {
     $(".dropdown-account").toggleClass("hidden");
-    e.stopPropagation()
+    e.stopPropagation();
 });
 
 $(document).click(function (e) {
-    if(e.target.closest('.dropdown-account')) return 
-    $('.dropdown-account').addClass('hidden')
-})
+    if (e.target.closest(".dropdown-account")) return;
+    $(".dropdown-account").addClass("hidden");
+});
 
 $("#form-toggle").click(function () {
     form.toggleClass("layout-form-collapse");
