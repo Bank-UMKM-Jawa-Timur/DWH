@@ -90,7 +90,7 @@
         return months <= 0 ? 0 : months;
     }
 
-    window.onbeforeunload = function(e) {
+    /*window.onbeforeunload = function(e) {
         $.ajax({
             type: "POST",
             url: "{{ route('logout') }}",
@@ -111,7 +111,7 @@
                 ErrorMessage('Terjadi kesalahan. Harap muat ulang halaman terlebih dahulu.')
             }
         });
-    }
+    }*/
 
     function SuccessMessage(message) {
         Swal.fire({
