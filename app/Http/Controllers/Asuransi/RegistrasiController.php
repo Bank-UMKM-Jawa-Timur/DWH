@@ -195,18 +195,18 @@ class RegistrasiController extends Controller
             "no_aplikasi"=> $request->get('no_aplikasi'),
             "no_rekening"=> $request->get('no_rekening'),
             "jenis_asuransi"=> $request->get('jenis_asuransi'),
-            "tgl_pengajuan"=> $request->get('tgl_pengajuan'),
-            "tgl_jatuhtempo"=> $request->get('tgl_jatuhtempo'),
+            "tgl_pengajuan"=> date("Y-m-d", strtotime($request->get('tgl_pengajuan'))) ,
+            "tgl_jatuhtempo"=> date("Y-m-d", strtotime($request->get('tgl_jatuhtempo'))) ,
             "kd_uker"=> $request->get('kode_cabang'),
             "nama_debitur"=> $request->get('nama_debitur'),
             "alamat_debitur"=> $request->get('alamat_debitur'),
-            "tgl_lahir"=> $request->get('tgl_lahir'),
+            "tgl_lahir"=> date("Y-m-d", strtotime($request->get('tgl_lahir'))),
             "no_ktp"=> $request->get('no_ktp'),
             "no_pk"=> $request->get('no_pk'),
             "tgl_pk"=> $request->get('tgl_pk'),
             "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
-            "tgl_awal_kredit"=> $request->get('tanggal_awal_kredit'),
-            "tgl_akhir_kredit"=> $request->get('tanggal_awal_kredit'),
+            "tgl_awal_kredit"=> date("Y-m-d",strtotime($request->get('tanggal_awal_kredit'))),
+            "tgl_akhir_kredit"=> date("Y-m-d", strtotime($request->get('tanggal_akhir_kredit'))),
             "jml_bulan"=> $request->get('jumlah_bulan'),
             "jenis_pengajuan"=> $request->get('jenis_pengajuan'),
             "bade"=> $request->get('baki_debet'),
@@ -225,6 +225,8 @@ class RegistrasiController extends Controller
             "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
             "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
         ];
+
+        return $req;
 
         DB::beginTransaction();
         try {
@@ -402,7 +404,7 @@ class RegistrasiController extends Controller
                             Alert::error('Gagal', $message);
                             return redirect()->route('asuransi.registrasi.index');
                             break;
-                        
+
                         default:
                             Alert::error('Gagal', 'Terjadi kesalahan');
                             return back();
@@ -442,10 +444,10 @@ class RegistrasiController extends Controller
                     ];
                     $host = config('global.eka_lloyd_host');
                     $url = "$host/batal";
-            
+
                     $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
                     $statusCode = $response->status();
-            
+
                     if($statusCode == 200){
                         $responseBody = json_decode($response->getBody(), true);
                         if($responseBody){
@@ -539,26 +541,26 @@ class RegistrasiController extends Controller
                     ];
                     $host = config('global.eka_lloyd_host');
                     $url = "$host/lunas";
-            
+
                     $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
                     $statusCode = $response->status();
-            
+
                     if($statusCode == 200){
                         $responseBody = json_decode($response->getBody(), true);
                         if($responseBody){
                             if (array_key_exists('status', $responseBody)) {
                                 $status = $responseBody['status'];
                                 $keterangan = '';
-            
+
                                 switch($status){
                                     case '00':
                                         $keterangan = $responseBody['keterangan'];
-            
+
                                         $asuransi->status = 'done';
                                         $asuransi->done_at = date('Y-m-d');
                                         $asuransi->done_by = $user_id;
                                         $asuransi->save();
-            
+
                                         Alert::success('Berhasil', $keterangan);
                                         return redirect()->route('asuransi.registrasi.index');
                                         break;
