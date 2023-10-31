@@ -163,7 +163,7 @@ class DashboardController extends Controller
                     ])
                     ->whereNotNull('kredits.pengajuan_id')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
-                        if (strtolower($role) != 'administrator') {
+                        if (strtolower($role) != 'administrator' && strtolower($role) != 'kredit umum' && strtolower($role) != 'pemasaran' && strtolower($role) != 'spi') {
                             $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
                                 \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
                         }
@@ -180,7 +180,7 @@ class DashboardController extends Controller
                     })
                     ->orWhereNotNull('kredits.is_continue_import')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
-                        if (strtolower($role) != 'administrator') {
+                        if (strtolower($role) != 'administrator' && strtolower($role) != 'kredit umum' && strtolower($role) != 'pemasaran' && strtolower($role) != 'spi') {
                             $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
                                 \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
                         }
@@ -197,7 +197,7 @@ class DashboardController extends Controller
                     })
                     ->orWhereNotNull('kkb.user_id')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
-                        if (strtolower($role) != 'administrator') {
+                        if (strtolower($role) != 'administrator' && strtolower($role) != 'kredit umum' && strtolower($role) != 'pemasaran' && strtolower($role) != 'spi') {
                             $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
                                 \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
                         }
