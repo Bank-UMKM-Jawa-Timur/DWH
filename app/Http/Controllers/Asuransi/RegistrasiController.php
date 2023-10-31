@@ -31,7 +31,9 @@ class RegistrasiController extends Controller
     {
         try {
             $page_length = $request->page_length ? $request->page_length : 5;
-            $data = DB::table('asuransi');
+            $data = DB::table('asuransi')
+                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                ->select('asuransi.*', 'mst_jenis_asuransi.jenis');
             if ($request->has('q')) {
                 $q = $request->get('q');
                 $data = $data->where('nama_debitur', 'LIKE', "%$q%")
@@ -49,12 +51,55 @@ class RegistrasiController extends Controller
                             ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
                             ->where('status', $status);
             }
-            $data = $data->orderBy('no_aplikasi')->paginate($page_length);
+            $data = $data->groupBy('no_aplikasi')
+                ->orderBy('no_aplikasi')
+                ->paginate($page_length);
+
+            $dataDetail = [];
+            foreach($data as $i => $item){
+                $dataDetail[$i] = [];
+                $detailAsuransi = DB::table('asuransi')
+                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                    ->select('asuransi.*', 'mst_jenis_asuransi.jenis');
+                if ($request->has('q')) {
+                    $q = $request->get('q');
+                    $detailAsuransi = $detailAsuransi->where('nama_debitur', 'LIKE', "%$q%")
+                                ->orWhere('no_aplikasi', 'LIKE', "%$q%")
+                                ->orWhere('no_polis', 'LIKE', "%$q%")
+                                ->orWhere('tgl_polis', 'LIKE', "%$q%")
+                                ->orWhere('tgl_rekam', 'LIKE', "%$q%");
+                }
+                if ($request->has('tAwal') && $request->has('tAkhir')) {
+                    $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
+                    $tAkhir = date('Y-m-d', strtotime($request->get('tAkhir')));
+                    $status = $request->get('status');
+                    $detailAsuransi = $detailAsuransi->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                                ->where('status', $status)
+                                ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
+                                ->where('status', $status);
+                }
+                $detailAsuransi = $detailAsuransi
+                    ->where('no_aplikasi', $item->no_aplikasi)
+                    ->where('asuransi.id', '!=', $item->id)
+                    ->get();
+
+                if(count($detailAsuransi) > 0){
+                    foreach($detailAsuransi as $j => $itemDetail){
+                        array_push($dataDetail[$i], $itemDetail);
+                    }
+                } else{
+                    $dataDetail[$i] = [];
+                }
+
+                $item->detail = $dataDetail[$i];
+            }
 
             return view('pages.asuransi-registrasi.index', compact('data'));
         } catch (\Exception $e) {
+            dd($e);
             return back()->with('error', $e->getMessage());
         } catch (\Illuminate\Database\QueryException $e) {
+            dd($e);
             return back()->with('error', 'Terjadi kesalahan pada database. '.$e->getMessage());
         }
     }

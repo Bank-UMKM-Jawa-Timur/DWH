@@ -95,6 +95,7 @@
                         <th>No.</th>
                         <th>Cabang</th>
                         <th>Nama Debitur</th>
+                        <th>Jenis Asuransi</th>
                         <th>No Aplikasi</th>
                         <th>No Polis</th>
                         <th>Tanggal Polis</th>
@@ -106,9 +107,10 @@
                     <tbody>
                         @forelse ($data as $item)
                             <tr class="view cursor-pointer">
-                                <td><div class="flex gap-4 justify-center"><span class="caret-icon transform">@include('components.svg.caret')</span>{{$loop->iteration}}</div></td>
+                                <td><div class="flex gap-4 justify-center">@if(count($item->detail) > 0)<span class="caret-icon transform">@include('components.svg.caret')</span>@else <span class="caret-icon transform"></span>@endif{{$loop->iteration}}</div></td>
                                 <td>Surabaya</td>
                                 <td>{{$item->nama_debitur}}</td>
+                                <td>{{$item->jenis}}</td>
                                 <td>{{$item->no_aplikasi}}</td>
                                 @if($item->is_paid == 1)
                                 <td>{{$item->no_polis}}</td>
@@ -152,7 +154,7 @@
                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                             Selengkapnya
                                         </button>
-                                        <ul class="dropdown-menu">
+                                        <ul class="dropdown-menu right-16">
                                             <li class="">
                                                 <a class="item-dropdown" href="#" data-modal-toggle="modalBatal-{{ $item->id }}" data-modal-target="modalBatal-{{ $item->id }}" onclick="showModalBatal('modalBatal-{{ $item->id }}')">Pembatalan</a>
                                             </li>
@@ -173,7 +175,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr class="collapse-table hidden bg-[#f2f2f2]">
+                            {{-- <tr class="collapse-table hidden bg-[#f2f2f2]">
                                 <td colspan="1"></td>
                                 <td>Surabaya</td>
                                 <td>Mohammad Sahrullah</td>
@@ -181,9 +183,61 @@
                                 <td>23141</td>
                                 <td>23-10-2023</td>
                                 <td>23-10-2023</td>
+                                <td>Dibatalkan</td>
                                 <td>Onprogres</td>
                                 <td></td>
-                            </tr>
+                            </tr> --}}
+                            @if (count($item->detail) > 0)
+                                @foreach ($item->detail as $itemDetail)
+                                    <tr class="collapse-table hidden bg-[#f2f2f2]">
+                                        <td colspan="1"></td>
+                                        <td>Surabaya</td>
+                                        <td>{{ $itemDetail->nama_debitur }}</td>
+                                        <td>{{$itemDetail->jenis}}</td>
+                                        <td>{{ $itemDetail->no_aplikasi }}</td>
+                                        @if($itemDetail->is_paid == 1)
+                                            <td>{{$itemDetail->no_polis}}</td>
+                                            <td>
+                                                @if ($itemDetail->tgl_polis)
+                                                    {{date('d-m-Y', strtotime($itemDetail->tgl_polis))}}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                        @else
+                                            <td>-</td>
+                                            <td>-</td>
+                                        @endif 
+                                        <td>
+                                            @if ($itemDetail->tgl_rekam)
+                                                {{date('d-m-Y', strtotime($itemDetail->tgl_rekam))}}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($itemDetail->is_paid == 1)
+                                                Sudah
+                                            @else
+                                                Belum
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($itemDetail->status == 'canceled')
+                                                <button class="px-4 py-2 rounded text-red-500 toggle-canceled-modal"
+                                                    data-canceled_at="{{date('d-m-Y', strtotime($itemDetail->canceled_at))}}" data-user_id="{{ $itemDetail->canceled_by }}" data-target-id="modalCanceled">
+                                                    Dibatalkan
+                                                </button>
+                                            @else
+                                                Onprogres
+                                            @endif
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                
+                            @endif
                         @empty
                             <tr>
                                 <td colspan="9">Data tidak tersedia.</td>
@@ -208,7 +262,6 @@
     <script>
         $(".view").on("click", function(e){
             // $(this + '.caret-icon').toggleClass("rotate-180");
-            console.log($(this));
             $(this).next(".collapse-table").toggleClass("hidden");
         });
         $('.dropdown .dropdown-menu .item-dropdown').on('click', function(e){
@@ -231,7 +284,6 @@
                 location.reload();
             })
         }
-
         function CanceledModalErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
