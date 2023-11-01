@@ -99,14 +99,14 @@
               Registrasi
             </li>
           </a>
-          <a href="{{ route('asuransi.pengajuan-klaim.index') }}">
-            <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
-            Pengajuan Klaim
-            </li>
-          </a>
           <a href="{{ route('asuransi.pembayaran-premi.index') }}">
             <li class="dropdown-item-link {{ request()->is('asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*') ? 'active-dropdown-link' : '' }}">
               Pembayaran Premi
+            </li>
+          </a>
+          <a href="{{ route('asuransi.pengajuan-klaim.index') }}">
+            <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+            Pengajuan Klaim
             </li>
           </a>
         </ul>

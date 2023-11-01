@@ -2,6 +2,7 @@
 
 @section('modal')
     @include('pages.pembayaran_premi.modal.modal-calculator')
+    @include('pages.pembayaran_premi.modal.loading')
 @endsection
 
 @section('content')
@@ -49,7 +50,12 @@
                             <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
                         <input type="text" class="datepicker p-2 w-full" id="tgl_bayar" name="tgl_bayar" />
                         </div>
-                        <small class="form-text text-red-600 error"></small>
+                        <small class="form-text text-red-600 error tgl-bayar-error"></small>
+                    </div>
+                    <div class="input-box space-y-3">
+                        <label for="" class="uppercase">No Bukti Pembayaran<span class="text-theme-primary">*</span></label>
+                        <input type="text" class="p-2 w-full border " id="no_bukti_pembayaran" name="no_bukti_pembayaran"/>
+                        <small class="form-text text-red-600 error no-bukti-pembayaran-error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
@@ -92,38 +98,6 @@
             </div>
 
             <div class="lg:flex grid md:grid-cols-1 grid-cols-1 w-full gap-5 mt-3">
-                {{-- form pilih no_apk --}}
-                {{--  <div class="bg-white form-selection lg:w-[20rem] w-full flex-none p-5 border" id="leftForm">
-                    <div class="input-box space-y-3" id="inputBoxNoAplikasi">
-                        <label for="add-role" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span> </label>
-                        <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
-                            <option value="" selected>-- Pilih No Aplikasi ---</option>
-                            @foreach ($noAplikasi as $item)
-                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}}</option>
-                            @endforeach
-                        </select>
-                        <div class="errorSpan" id="errorNoAplikasi">
-                            <p id="errorText">Nomor aplikasi harus diisi.</p>
-                        </div>
-                    </div>
-                    <div class="p-2 mt-3 mb-3 space-y-4" id="inputBoxJenisAsuransi">
-                        <h2 class="font-bold font-lexend jenis-asuransi-title hidden">Jenis Asuransi</h2>
-                        <div class="jenis-asuransi"></div>
-                        <div class="errorSpan" id="errorJenisAsuransi">
-                            <p id="errorText">Jenis asuransi harus diisi.</p>
-                        </div>
-                    </div>
-                    <div class="p-2">
-                        <button
-                        href="{{route('asuransi.pembayaran-premi.create')}}"
-                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white hidden" id="btnLeftForm">
-                            <span class="lg:mt-0 mt-0">
-                                @include('components.svg.plus')
-                            </span>
-                            <span class="lg:block hidden"> Pilih</span>
-                        </button>
-                    </div>
-                </div>  --}}
                 <div class="flex-auto lg:w-[40rem] w-full">
                     <div class="table-wrapper bg-white border rounded-md w-full p-2">
                         {{-- <form action="{{ route('asuransi.pembayaran-premi.store') }}" method="post">
@@ -132,7 +106,6 @@
                                 <table class="table-auto w-full">
                                     <tr>
                                         <th>No.</th>
-                                        <th>No Bukti Pembayaran</th>
                                         <th>Jenis</th>
                                         <th>No Aplikasi.</th>
                                         <th>Premi</th>
@@ -298,23 +271,15 @@
                             var no_pk = $(this).data('no_pk');
                             var no_polis = $(this).data('no_polis');
                             var no_rek = $(this).data('no_rek');
-    
+
                             if (premi != '') {
                                 premiRupiah = premi.toString().replaceAll('.', ',')
                                 premiRupiah = formatRupiah(premiRupiah.toString())
                             }
-    
+
                             var row_element = `<tr>
                                 <input type="hidden" name="row_key[]" class="row-key" value="${generate_key}">
                                 <td>${temp_no}</td>
-                                <td>
-                                    <div class="input-box">
-                                        <input type="number" placeholder="Input nilai disini.." class="bg-white border px-5 py-2" name="row_nobukti_pembayaran[]">
-                                        <div class="errorSpan hidden" id="errorNobuktiPembayaran">
-                                            <p id="errorText">No Bukti bayar harus diisi.</p>
-                                        </div>
-                                    </div>
-                                </td>
                                 <td>${jenis}</td>
                                 <td>
                                     <input type="hidden" name="row_id_no_aplikasi[]" value="${id}">
@@ -361,9 +326,9 @@
                                     </button>
                                 </td>
                             </tr>`;
-    
+
                             $('#rightForm').append(row_element)
-    
+
                             arr_selected_key.push(generate_key)
                             temp_no++;
                             total_premi += premi
@@ -379,7 +344,7 @@
             var premi = $(this).parent().parent().find('.row-premi').val()
             var key = $(this).parent().parent().find('.row-key').val()
             const index = arr_selected_key.indexOf(parseInt(key));
-            if (index > -1) { 
+            if (index > -1) {
                 // only splice array when item is found
                 arr_selected_key.splice(index, 1);
                 temp_no--;
@@ -404,8 +369,32 @@
         }
 
         $("#btnRightForm").on("click", function(e){
+            var total_input_null = 0;
+            var no_bukti_pembayaran = $('#no_bukti_pembayaran').val()
+            if(no_bukti_pembayaran == ''){
+                e.preventDefault();
+                total_input_null++;
+                $(`#no_bukti_pembayaran`).addClass('border-2 border-rose-600')
+                $(`.no-bukti-pembayaran-error`).html('Nomor aplikasi tidak boleh kosong')
+            } else {
+                $(`#no_bukti_pembayaran`).removeClass('border-2 border-rose-600')
+                $(`.no-bukti-pembayaran-error`).html('')
+            }
+
+            var tgl_bayar = $('#tgl_bayar').val()
+            if (tgl_bayar != 'dd/mm/yyyy') {
+                $(`#tgl_bayar`).removeClass('border-2 border-rose-600')
+                $(`.tgl-bayar-error`).html('')
+            }
+            else {
+                total_input_null++;
+                $(`#tgl_bayar`).addClass('border-2 border-rose-600')
+                $(`.tgl-bayar-error`).html('Harap pilih tanggal bayar')
+            }
+
             $("#rightForm tr").each(function(){
                 if($(this).find('input[name="no_rekening[]"]').val() == ''){
+                    total_input_null++;
                     e.preventDefault();
                     $(this).find("#errorNoRekening").show();
                     $(this).find('input[name="no_rekening[]"]').css({"border": "2px solid red"});
@@ -413,6 +402,7 @@
                     $(this).find("#errorNoRekening").hide();
                 }
                 if($(this).find('input[name="row_nobukti_pembayaran[]"]').val() == ''){
+                    total_input_null++;
                     e.preventDefault();
                     $(this).find("#errorNobuktiPembayaran").show();
                     $(this).find('input[name="row_nobukti_pembayaran[]"]').css({"border": "2px solid red"});
@@ -420,6 +410,7 @@
                     $(this).find("#errorPeriodeBayar").hide();
                 }
                 if($(this).find('input[name="row_periode_bayar[]"]').val() == ''){
+                    total_input_null++;
                     e.preventDefault();
                     $(this).find("#errorPeriodeBayar").show();
                     $(this).find('input[name="row_periode_bayar[]"]').css({"border": "2px solid red"});
@@ -427,6 +418,7 @@
                     $(this).find("#errorPeriodeBayar").hide();
                 }
                 if($(this).find('input[name="row_total_periode_bayar[]"]').val() == ''){
+                    total_input_null++;
                     e.preventDefault();
                     $(this).find('input[name="row_total_periode_bayar[]"]').css({"border": "2px solid red"});
                     $(this).find("#errorTotalPeriodeBayar").show();
@@ -434,8 +426,12 @@
                     $(this).find("#errorTotalPeriodeBayar").hide();
                 }
             })
+
+            if (total_input_null == 0) {
+                $("#preload-data").removeClass("hidden");
+            }
         })
-        
+
             // var data = {
             //     "nobukti_pembayaran": "0002",
             //     "tgl_bayar": "2017-08-07",

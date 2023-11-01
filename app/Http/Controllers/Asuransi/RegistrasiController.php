@@ -426,7 +426,6 @@ class RegistrasiController extends Controller
             $user = $token ? $this->getLoginSession() : Auth::user();
             $user_id = $token ? $user['id'] : $user->id;
             $asuransi = Asuransi::find($request->id);
-
             if ($asuransi) {
                 if ($asuransi->status == 'onprogress') {
                     $headers = [
@@ -437,13 +436,14 @@ class RegistrasiController extends Controller
                         "Access-Control-Allow-Methods" => "*"
                     ];
                     $body = [
-                        "no_aplikasi" => $request->no_aplikasi,
-                        "no_sp" => $request->no_sp
+                        "no_aplikasi" => $asuransi->no_aplikasi,
+                        "no_sp" => $asuransi->no_sp
                     ];
                     $host = config('global.eka_lloyd_host');
                     $url = "$host/batal";
+                    
+                    $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
 
-                    $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
                     $statusCode = $response->status();
 
                     if($statusCode == 200){
@@ -463,50 +463,45 @@ class RegistrasiController extends Controller
                                         $asuransi->save();
 
                                         Alert::success('Berhasil', $keterangan);
-                                        return redirect()->route('asuransi.registrasi.index');
                                         break;
                                     case '44':
                                         $keterangan = $responseBody['keterangan'];
                                         Alert::error('Gagal', $keterangan);
-                                        return redirect()->route('asuransi.registrasi.index');
                                         break;
                                     case '39':
                                         $keterangan = $responseBody['keterangan'];
                                         Alert::error('Gagal', $keterangan);
-                                        return redirect()->route('asuransi.registrasi.index');
                                         break;
                                     default:
                                         Alert::error('Gagal', 'Terjadi kesalahan.');
-                                        return back();
                                 }
                             }
                             elseif (array_key_exists('message', $responseBody)) {
                                 Alert::error('Gagal', $responseBody['message']);
-                                return back();
                             }
                             else {
                                 Alert::error('Gagal', 'Response tidak diketahui');
-                                return back();
                             }
                         }
+                    }
+                    else {
+                        Alert::warning('Peringatan', 'Server tidak ditemukan');
                     }
                 }
                 elseif ($asuransi->status == 'canceled') {
                     Alert::warning('Peringatan', 'Data ini sudah dibatalkan');
-                    return back();
                 }
                 else {
                     Alert::warning('Peringatan', 'Data ini sudah terlunasi');
-                    return back();
                 }
             }
             else {
                 Alert::warning('Peringatan', 'Data tidak ditemukan');
-                return back();
             }
         } catch(\Exception $e){
             Alert::error('Gagal', $e->getMessage());
-            return back();
+        } finally {
+            return redirect()->route('asuransi.registrasi.index');
         }
     }
 
