@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Asuransi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use App\Models\Asuransi;
 use App\Models\PembayaranPremi;
 use App\Models\PembayaranPremiDetail;
@@ -14,7 +15,15 @@ use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PembayaranPremiController extends Controller
-{
+{   
+
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -196,6 +205,7 @@ class PembayaranPremiController extends Controller
                                     $createPremi->tgl_bayar = date('Y-m-d', strtotime($tglBayar));
                                     $createPremi->total_premi = $totalPremi;
                                     $createPremi->save();
+                                    $noPolisDibayar = '';
                                     foreach ($premiArray as $key => $premi) {
                                         // db pembayaran premi detail
                                         $createPremiDetail = new PembayaranPremiDetail();
@@ -211,7 +221,11 @@ class PembayaranPremiController extends Controller
                                         $asuransi = Asuransi::find($idNoAplikasiArray[$key]);
                                         $asuransi->is_paid = true;
                                         $asuransi->save();
+
+                                        $comma = ($key + 1) < count($premiArray) ? ',' : '';
+                                        $noPolisDibayar .= $asuransi->no_polis." $comma";
                                     }
+                                    $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembayaran premi pada nomor polis '. $noPolisDibayar);
 
                                     $message = $responseBody['keterangan'];
                                     DB::commit();
@@ -283,6 +297,7 @@ class PembayaranPremiController extends Controller
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
                     $nilai = $responseBody['nilai_premi'];
+                    $this->logActivity->store('Pengguna ' . $request->name . ' melakukan inquery pembayaran premi.');
                     Alert::success('Berhasil', $message . ', Nilai Premi ' . $this->formatCurrency($nilai));
                     return back();
                 }else{

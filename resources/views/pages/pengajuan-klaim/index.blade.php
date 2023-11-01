@@ -170,7 +170,7 @@
                                             <button type="submit" class="item-dropdown">Cek Status</button>
                                         </li>
                                         <li class="item-dropdown">
-                                            <form action="{{ route('pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
+                                            <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
                                                 @csrf
                                                 <input type="hidden" name="no_aplikasi" value="{{ $item->asuransi->no_aplikasi }}">
                                                 <input type="hidden" name="no_rekening" value="{{ $item->asuransi->no_rek }}">
