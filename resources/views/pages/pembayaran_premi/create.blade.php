@@ -49,7 +49,7 @@
                         <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
                             <option value="" selected>-- Pilih No Aplikasi ---</option>
                             @foreach ($noAplikasi as $item)
-                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}}</option>
+                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}} - {{$item->nama_debitur}}</option>
                             @endforeach
                         </select>
                         <div class="errorSpan" id="errorNoAplikasi">

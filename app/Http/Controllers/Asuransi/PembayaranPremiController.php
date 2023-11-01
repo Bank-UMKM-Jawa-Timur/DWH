@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PembayaranPremiController extends Controller
-{   
+{
 
     private $logActivity;
 
@@ -23,7 +23,7 @@ class PembayaranPremiController extends Controller
     {
         $this->logActivity = new LogActivitesController;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -91,7 +91,7 @@ class PembayaranPremiController extends Controller
      */
     public function create()
     {
-        $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi','jenis.jenis')
+        $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi', 'asuransi.nama_debitur','jenis.jenis')
         ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
         ->where('status', 'onprogress')->groupBy('no_aplikasi')
         ->get();
@@ -160,7 +160,7 @@ class PembayaranPremiController extends Controller
             ];
 
             $arr_detail = [];
-            for ($i=0; $i < count($premiArray); $i++) { 
+            for ($i=0; $i < count($premiArray); $i++) {
                 $d = [
                     "premi" => $premiArray[$i],
                     "no_rek" => $noRekArray[$i],
@@ -179,7 +179,7 @@ class PembayaranPremiController extends Controller
                 "total_premi" => $totalPremi,
                 "rincian_bayar" => $arr_detail
             ];
-            
+
             if ($tglBayar != "dd/mm/yyyy") {
                 if ($idNoAplikasiArray != null) {
                     $objekTanggal = Carbon::createFromFormat('d-m-Y', $tglBayar);
@@ -216,7 +216,7 @@ class PembayaranPremiController extends Controller
                                         $createPremiDetail->periode_bayar = $periodeBayarArray[$key];
                                         $createPremiDetail->total_periode = $totalPeriodeArray[$key];
                                         $createPremiDetail->save();
-                                        
+
                                         // db update asuransi
                                         $asuransi = Asuransi::find($idNoAplikasiArray[$key]);
                                         $asuransi->is_paid = true;
