@@ -3,11 +3,27 @@
 namespace App\Http\Controllers\Asuransi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
+use App\Models\Asuransi;
 use App\Models\PembayaranPremi;
+use App\Models\PembayaranPremiDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class PembayaranPremiController extends Controller
-{
+{   
+
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -31,19 +47,33 @@ class PembayaranPremiController extends Controller
 
     public function list($page_length = 5 , $searchQuery, $searchBy)
     {
-        $query = PembayaranPremi::
-                        orderBy('no_aplikasi');
-        if ($searchQuery && $searchBy === 'field') {
-            $query->where(function ($q) use ($searchQuery) {
-                $q->where('no_aplikasi', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('tgl_bayar', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('total_premi', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('no_rek', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('no_pk', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('periode_bayar', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('total_periode', 'like', '%' . $searchQuery . '%');
-            });
+        $query = DB::table('pembayaran_premi_detail AS d')
+                    ->select(
+                        'a.id AS asuransi_id',
+                        'p.id AS pembayaran_premi_id',
+                        'd.id AS detail_id',
+                        'a.no_aplikasi',
+                        'a.no_polis',
+                        'p.nobukti_pembayaran',
+                        'p.tgl_bayar',
+                        'p.total_premi',
+                        'd.no_rek',
+                        'd.no_pk',
+                        'd.periode_bayar',
+                        'd.total_periode'
+                    )
+                    ->join('pembayaran_premi AS p', 'p.id', 'd.pembayaran_premi_id')
+                    ->join('asuransi AS a', 'a.id', 'd.asuransi_id');
+        if ($searchQuery && $searchBy == 'field') {
+            $query->where('a.no_aplikasi', 'like', '%' . $searchQuery . '%')
+                ->orWhere('a.no_polis', 'like', '%' . $searchQuery . '%')
+                ->orWhere('p.nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
+                ->orWhere('p.tgl_bayar', 'like', '%' . $searchQuery . '%')
+                ->orWhere('p.total_premi', 'like', '%' . $searchQuery . '%')
+                ->orWhere('d.no_rek', 'like', '%' . $searchQuery . '%')
+                ->orWhere('d.no_pk', 'like', '%' . $searchQuery . '%')
+                ->orWhere('d.periode_bayar', 'like', '%' . $searchQuery . '%')
+                ->orWhere('d.total_periode', 'like', '%' . $searchQuery . '%');
         }
         if (is_numeric($page_length)) {
             $data = $query->paginate($page_length);
@@ -61,7 +91,31 @@ class PembayaranPremiController extends Controller
      */
     public function create()
     {
-        return view('pages.pembayaran_premi.create');
+        $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi','jenis.jenis')
+        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
+        ->where('status', 'onprogress')->groupBy('no_aplikasi')
+        ->get();
+
+        $param['jenisAsuransi'] = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
+        ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
+        ->where('status', 'onprogress')
+        ->get();
+
+        return view('pages.pembayaran_premi.create', $param);
+    }
+
+    public function getJenisByNoAplikasi(Request $request){
+        $jenis = DB::table('asuransi')
+                ->select('asuransi.*', 'jenis.jenis', DB::raw("LEFT(UUID(), 8) AS generate_key"))
+                ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+                ->where('asuransi.status', 'onprogress')
+                ->where('asuransi.is_paid', false)
+                ->where('asuransi.no_aplikasi', $request->no_aplikasi)
+                ->get();
+
+        return response()->json([
+            'data' => $jenis
+        ]);
     }
 
     /**
@@ -72,7 +126,194 @@ class PembayaranPremiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $req = $request->all();
+
+        $fields = Validator::make($req, [
+            "row_periode_bayar" => "required",
+            "row_total_periode_bayar" => "required",
+        ], [
+            'required' => 'Atribut :attribute harus diisi.',
+        ]);
+
+        $noBuktiPembayaran =  $request->input('no_bukti_pembayaran');
+        $tglBayar =  $request->input('tgl_bayar');
+        $noPolisArray =  $request->input('row_no_polis');
+        $premiArray = $request->input('row_premi');
+        $totalPremi = $request->input('total_premi');
+        $idNoAplikasiArray = $request->input('row_id_no_aplikasi');
+        $noAplikasiArray = $request->input('row_no_aplikasi');
+        $noRekArray = $request->input('row_no_rek');
+        $noPkArray = $request->input('row_no_pk');
+        $periodeBayarArray = $request->input('row_periode_bayar');
+        $totalPeriodeArray = $request->input('row_total_periode_bayar');
+
+        DB::beginTransaction();
+        try {
+            $url = 'http://sandbox-umkm.ekalloyd.id:8387/bayar';
+
+            $header = [
+                'Content-Type' => 'application/json',
+                'X-API-Key' => 'elj-bprjatim-123',
+                'Accept' => 'application/json',
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+
+            $arr_detail = [];
+            for ($i=0; $i < count($premiArray); $i++) { 
+                $d = [
+                    "premi" => $premiArray[$i],
+                    "no_rek" => $noRekArray[$i],
+                    "no_aplikasi" => $noAplikasiArray[$i],
+                    "no_pk" => $noPkArray[$i],
+                    "no_polis" => $noPolisArray[$i],
+                    "periode_bayar" => $periodeBayarArray[$i],
+                    "total_periode" => $totalPeriodeArray[$i]
+                ];
+
+                array_push($arr_detail, $d);
+            }
+            $body = [
+                "nobukti_pembayaran" => $noBuktiPembayaran,
+                "tgl_bayar" => date('Y-m-d', strtotime($tglBayar)),
+                "total_premi" => $totalPremi,
+                "rincian_bayar" => $arr_detail
+            ];
+            
+            if ($tglBayar != "dd/mm/yyyy") {
+                if ($idNoAplikasiArray != null) {
+                    $objekTanggal = Carbon::createFromFormat('d-m-Y', $tglBayar);
+                    if ($fields->fails()) {
+                        $errors = $fields->errors()->all();
+                        $errorMessage = implode('<br>', $errors);
+                        Alert::error('Gagal', $errorMessage);
+                        return back()->withInput();
+                    }else{
+                        try {
+                            $response = Http::withHeaders($header)->withOptions(['verify' => false])->post($url, $body);
+
+                            $statusCode = $response->status();
+                            if ($statusCode == 200) {
+                                $responseBody = json_decode($response->getBody(), true);
+                                $status = $responseBody['status'];
+                                $message = '';
+                                if ($status == "00") {
+                                    // simpan ke db
+                                    // db pembayaran premi
+                                    $createPremi = new PembayaranPremi();
+                                    $createPremi->nobukti_pembayaran = $noBuktiPembayaran;
+                                    $createPremi->tgl_bayar = date('Y-m-d', strtotime($tglBayar));
+                                    $createPremi->total_premi = $totalPremi;
+                                    $createPremi->save();
+                                    $noPolisDibayar = '';
+                                    foreach ($premiArray as $key => $premi) {
+                                        // db pembayaran premi detail
+                                        $createPremiDetail = new PembayaranPremiDetail();
+                                        $createPremiDetail->pembayaran_premi_id = $createPremi->id;
+                                        $createPremiDetail->asuransi_id = $idNoAplikasiArray[$key];
+                                        $createPremiDetail->no_rek = $noRekArray[$key];
+                                        $createPremiDetail->no_pk = $noPkArray[$key];
+                                        $createPremiDetail->periode_bayar = $periodeBayarArray[$key];
+                                        $createPremiDetail->total_periode = $totalPeriodeArray[$key];
+                                        $createPremiDetail->save();
+                                        
+                                        // db update asuransi
+                                        $asuransi = Asuransi::find($idNoAplikasiArray[$key]);
+                                        $asuransi->is_paid = true;
+                                        $asuransi->save();
+
+                                        $comma = ($key + 1) < count($premiArray) ? ',' : '';
+                                        $noPolisDibayar .= $asuransi->no_polis." $comma";
+                                    }
+                                    $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembayaran premi pada nomor polis '. $noPolisDibayar);
+
+                                    $message = $responseBody['keterangan'];
+                                    DB::commit();
+                                    Alert::success('Berhasil', $message);
+                                    return redirect()->route('asuransi.pembayaran-premi.index');
+                                }else{
+                                    $message = $responseBody['keterangan'];
+                                    Alert::error('Gagal', $message);
+                                    return back();
+                                }
+                            }
+                            else {
+                                Alert::error('Gagal', 'Terjadi kesalahan');
+                                return back();
+                            }
+                        } catch (\Throwable $e) {
+                            Alert::error('Gagal', $e->getMessage());
+                            return back();
+                        }
+                    }
+                }else{
+                    Alert::warning('Warning!', 'Silahkan pilih no aplikasi terlebih dahulu');
+                    return back();
+                }
+            }else{
+                Alert::warning('Warning!', 'Tanggal Bayar harus di pilih.');
+                return back();
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+        }
+    }
+
+    public function formatCurrency($number)
+    {
+        $formattedNumber = number_format($number, 0, ',', '.');
+        $formattedNumber = 'Rp ' . $formattedNumber;
+        return $formattedNumber;
+    }
+
+    public function storeInquery(Request $request)
+    {
+        $req = [
+            "no_aplikasi" => $request->input('row_no_aplikasi'),
+            "nobukti_pembayaran" => $request->input('row_nobukti_pembayaran'),
+            "no_rekening" => $request->input('row_no_rek'),
+            "outstanding" => $request->input('row_outstanding'),
+            "periode_premi" => $request->input('row_periode_premi'),
+            "no_polis" => $request->input('row_no_polis'),
+        ];
+
+        try {
+            $headers = [
+                "Accept" => "/",
+                "x-api-key" => config('global.eka_lloyd_token'),
+                "Content-Type" => "application/json",
+                "Access-Control-Allow-Origin" => "*",
+                "Access-Control-Allow-Methods" => "*"
+            ];
+
+            $host = config('global.eka_lloyd_host');
+            $url = "$host/query2";
+            $response = Http::withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $statusCode = $response->status();
+            if ($statusCode == 200) {
+                $responseBody = json_decode($response->getBody(), true);
+                $status = $responseBody['status'];
+                $message = '';
+                if ($status == "00") {
+                    $message = $responseBody['keterangan'];
+                    $nilai = $responseBody['nilai_premi'];
+                    $this->logActivity->store('Pengguna ' . $request->name . ' melakukan inquery pembayaran premi.');
+                    Alert::success('Berhasil', $message . ', Nilai Premi ' . $this->formatCurrency($nilai));
+                    return back();
+                }else{
+                    $message = $responseBody['keterangan'];
+                    Alert::error('Gagal', $message);
+                    return back();
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Terjadi kesalahan');
+                return back();
+            }
+        } catch (\Throwable $e) {
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
     }
 
     /**

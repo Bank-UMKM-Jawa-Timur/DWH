@@ -88,7 +88,7 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
     });
 
-    Route::prefix('asuransi')->group(function() {
+    Route::prefix('asuransi')->name('asuransi.')->group(function() {
         Route::prefix('/registrasi')
             ->name('registrasi.')
             ->controller(RegistrasiController::class)
@@ -97,11 +97,19 @@ Route::middleware('auth_api')->group(function () {
                 Route::get('/get-user/{user_id}', 'getUser')->name('get_user');
                 Route::get('/create', 'create')->name('create');
                 Route::get('jenis-asuransi/{jenis_kredit}', 'getJenisAsuransi')->name('jenis_asuransi');
+                Route::get('rate-premi', 'getRatePremi')->name('rate_premi');
                 Route::post('/', 'store')->name('store');
+                Route::get('inquery', 'inquery')->name('inquery');
+                Route::post('batal', 'batal')->name('batal');
+                Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');
             });
-        Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
+        // Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
         Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);
+        Route::post('/pengajuan-klaim/cek-status', [PengajuanKlaimController::class, 'cekStatus'])->name('pengajuan-klaim.cek-status');
+        Route::post('/pengajuan-klaim/pembatalan-klaim', [PengajuanKlaimController::class, 'pembatalanKlaim'])->name('pengajuan-klaim.pembatalan-klaim');
         Route::resource('/pembayaran-premi', PembayaranPremiController::class);
+        Route::post('/pembayaran-premi/inquery', [PembayaranPremiController::class, 'storeInquery'])->name('pembayaran_premi.inquery');
+        Route::get('/jenis-by-no-aplikasi', [PembayaranPremiController::class, 'getJenisByNoAplikasi'])->name('jenis_by_no_aplikasi');
     });
 
     Route::prefix('kredit')->name('kredit.')->group(function() {

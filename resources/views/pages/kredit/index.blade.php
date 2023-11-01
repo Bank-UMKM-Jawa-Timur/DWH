@@ -64,16 +64,6 @@
         }
         */
 
-        function generateCsrfToken() {
-            var token = "{{csrf_token()}}"
-            if (token == '') {
-                generateCsrfToken();
-            }
-            else {
-                return token;
-            }
-        }
-
         function showModal(identifier) {
             const targetId = $(identifier).data("target-id");
             const user_role_id = "{{ \Session::get(config('global.role_id_session')) }}";
@@ -857,7 +847,7 @@
                 </div>
             </div>
         </div>
-    </div>
+
     @if (\Session::get(config('global.role_id_session')) != 3)
         <div id="tab-import-kkb" class="tab-content-table">
             <div class="table-wrapper bg-white border rounded-md w-full p-2">
@@ -946,6 +936,7 @@
             </div>
         </div>
     @endif
+</div>
 </div>
 @endsection
 

@@ -101,6 +101,16 @@ class DashboardController extends Controller
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
+            $role = '';
+            if ($user) {
+                if (is_array($user)) {
+                    $role = $user['role'];
+                }
+            }
+            else {
+                $role = 'vendor';
+            }
+
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
             if (!$token)
@@ -116,7 +126,6 @@ class DashboardController extends Controller
 
     public function loadKreditById($pengajuan_id)
     {
-
         $data = Kredit::select(
             'kredits.id',
             \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
@@ -329,10 +338,11 @@ class DashboardController extends Controller
                         'po.harga',
                     ])
                     ->count();
+
                 $dataCabang = [
                     'kode_cabang' => $kode_cabang,
                     'cabang' => $cabang,
-                    'total' => intval($dataKredits) + intval($dataImported),
+                    'total' => intval($dataKredits),
                 ];
 
                 array_push($dataCharts, $dataCabang);
