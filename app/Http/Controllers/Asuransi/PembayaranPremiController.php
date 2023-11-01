@@ -247,15 +247,17 @@ class PembayaranPremiController extends Controller
                         }
                     }
                 }else{
-                    Alert::warning('Warning!', 'Silahkan pilih no aplikasi terlebih dahulu');
+                    Alert::warning('Peringatan!', 'Silahkan pilih no aplikasi terlebih dahulu');
                     return back();
                 }
             }else{
-                Alert::warning('Warning!', 'Tanggal Bayar harus di pilih.');
+                Alert::warning('Peringatan!', 'Tanggal Bayar harus di pilih.');
                 return back();
             }
         } catch (\Exception $e) {
             DB::rollBack();
+            Alert::error('Gagal', $e->getMessage());
+            return back();
         }
     }
 
