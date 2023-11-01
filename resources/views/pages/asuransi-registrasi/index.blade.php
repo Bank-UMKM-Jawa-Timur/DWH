@@ -124,7 +124,7 @@
                                 @else
                                 <td>-</td>
                                 <td>-</td>
-                                @endif 
+                                @endif
                                 <td>
                                     @if ($item->tgl_rekam)
                                         {{date('d-m-Y', strtotime($item->tgl_rekam))}}
@@ -133,8 +133,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($item->is_paid == 1)
-                                        Sudah
+                                    @if($item->is_paid == true)
+                                        Sudah Dibayar
                                     @else
                                         Belum
                                     @endif
@@ -210,7 +210,7 @@
                                         @else
                                             <td>-</td>
                                             <td>-</td>
-                                        @endif 
+                                        @endif
                                         <td>
                                             @if ($itemDetail->tgl_rekam)
                                                 {{date('d-m-Y', strtotime($itemDetail->tgl_rekam))}}
@@ -219,8 +219,8 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($itemDetail->is_paid == 1)
-                                                Sudah
+                                            @if($itemDetail->is_paid == true)
+                                                Sudah Dibayar
                                             @else
                                                 Belum
                                             @endif
@@ -239,7 +239,7 @@
                                     </tr>
                                 @endforeach
                             @else
-                                
+
                             @endif
                         @empty
                             <tr>
@@ -345,7 +345,7 @@
                 success: function(data) {
                     Swal.close()
                     const nama = data['detail'] != 'undifined' ? data['detail']['nama'] : 'undifined';
-                    
+
                     $("#" + targetId).removeClass("hidden");
                     $(`#${targetId} #canceled_at`).html(`Dibatalkan pada tanggal <b>${data_canceled_at}</b> oleh <b>${nama}</b>.`)
                     if (targetId.slice(0, 5) !== "modal") {
