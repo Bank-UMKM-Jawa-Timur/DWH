@@ -776,10 +776,16 @@
         </h2>
     </div>
     <div class="body-pages">
-        @if(\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
-        @include('pages.dashboard.pemasaran')
+        @if(\Session::get(config('global.role_id_session')) == 1 
+            || \Session::get(config('global.role_id_session')) == 4 
+            || \Session::get(config('global.role_id_session')) == 2
+        )
+            @include('pages.dashboard.pemasaran')
+            <div class="mt-5">
+                @include('pages.dashboard.cabang')
+            </div>
         @else
-        @include('pages.dashboard.cabang')
+            @include('pages.dashboard.cabang')
         @endif
     </div>
 @push('extraScript')
