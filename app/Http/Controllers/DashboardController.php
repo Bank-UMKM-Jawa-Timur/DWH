@@ -122,7 +122,6 @@ class DashboardController extends Controller
 
     public function loadKreditById($pengajuan_id)
     {
-
         $data = Kredit::select(
             'kredits.id',
             \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
