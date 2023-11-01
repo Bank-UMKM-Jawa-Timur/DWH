@@ -76,7 +76,7 @@
                     <th>No Rekening</th>
                     <th>No PK</th>
                     <th>Periode Bayar</th>
-                    <th>Total Periode Dalam Tahun</th>
+                    <th>Total Periode(dalam tahun)</th>
                     <th>Aksi</th>
                 </tr>
                 <tbody>

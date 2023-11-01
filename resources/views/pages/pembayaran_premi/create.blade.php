@@ -114,7 +114,7 @@
                                         <th>No Polis</th>
                                         <th>No Rekening.</th>
                                         <th>Periode Bayar</th>
-                                        <th>Total Periode Bayar</th>
+                                        <th>Total Periode Bayar (dalam tahun)</th>
                                         <th>Aksi</th>
                                     </tr>
                                     <tbody id="rightForm"></tbody>
