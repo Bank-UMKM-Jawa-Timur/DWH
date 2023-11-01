@@ -192,43 +192,43 @@ class RegistrasiController extends Controller
      */
     public function store(Request $request)
     {
-        $req = [
-            "no_aplikasi"=> $request->get('no_aplikasi'),
-            "no_rekening"=> $request->get('no_rekening'),
-            "jenis_asuransi"=> $request->get('jenis_asuransi'),
-            "tgl_pengajuan"=> date("Y-m-d", strtotime($request->get('tgl_pengajuan'))) ,
-            "tgl_jatuhtempo"=> date("Y-m-d", strtotime($request->get('tgl_jatuhtempo'))) ,
-            "kd_uker"=> $request->get('kode_cabang'),
-            "nama_debitur"=> $request->get('nama_debitur'),
-            "alamat_debitur"=> $request->get('alamat_debitur'),
-            "tgl_lahir"=> date("Y-m-d", strtotime($request->get('tgl_lahir'))),
-            "no_ktp"=> $request->get('no_ktp'),
-            "no_pk"=> $request->get('no_pk'),
-            "tgl_pk"=> $request->get('tgl_pk'),
-            "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
-            "tgl_awal_kredit"=> date("Y-m-d",strtotime($request->get('tanggal_awal_kredit'))),
-            "tgl_akhir_kredit"=> date("Y-m-d", strtotime($request->get('tanggal_akhir_kredit'))),
-            "jml_bulan"=> $request->get('jumlah_bulan'),
-            "jenis_pengajuan"=> $request->get('jenis_pengajuan'),
-            "bade"=> $request->get('baki_debet'),
-            "tunggakan"=> $request->get('tunggakan'),
-            "kolektibilitas"=> $request->get('kolektibilitas'),
-            "no_polis_sebelumnya"=> $request->get('no_polis_sebelumnya'),
-            "jenis_pertanggungan"=> $request->get('jenis_pertanggungan'),
-            "tipe_premi"=> $request->get('tipe_premi'),
-            "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
-            "jenis_coverage"=> $request->get('jenis_coverage'),
-            "tarif"=> $request->get('tarif'),
-            "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
-            "kode_ls"=> $request->get('kode_ls'),
-            // "jenis_kredit"=> $request->get('jenis_kredit'),
-            "jenis_kredit"=> "01",
-            "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
-            "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
-        ];
-
         DB::beginTransaction();
         try {
+            $req = [
+                "no_aplikasi"=> $request->get('no_aplikasi'),
+                "no_rekening"=> $request->get('no_rekening'),
+                "jenis_asuransi"=> $request->get('jenis_asuransi'),
+                "tgl_pengajuan"=> date("Y-m-d", strtotime($request->get('tgl_pengajuan'))) ,
+                "tgl_jatuhtempo"=> date("Y-m-d", strtotime($request->get('tgl_jatuhtempo'))) ,
+                "kd_uker"=> $request->get('kode_cabang'),
+                "nama_debitur"=> $request->get('nama_debitur'),
+                "alamat_debitur"=> $request->get('alamat_debitur'),
+                "tgl_lahir"=> date("Y-m-d", strtotime($request->get('tgl_lahir'))),
+                "no_ktp"=> $request->get('no_ktp'),
+                "no_pk"=> $request->get('no_pk'),
+                "tgl_pk"=> $request->get('tgl_pk'),
+                "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
+                "tgl_awal_kredit"=> date("Y-m-d",strtotime($request->get('tanggal_awal_kredit'))),
+                "tgl_akhir_kredit"=> date("Y-m-d", strtotime($request->get('tanggal_akhir_kredit'))),
+                "jml_bulan"=> $request->get('jumlah_bulan'),
+                "jenis_pengajuan"=> $request->get('jenis_pengajuan'),
+                "bade"=> $request->get('baki_debet'),
+                "tunggakan"=> $request->get('tunggakan'),
+                "kolektibilitas"=> $request->get('kolektibilitas'),
+                "no_polis_sebelumnya"=> $request->get('no_polis_sebelumnya'),
+                "jenis_pertanggungan"=> $request->get('jenis_pertanggungan'),
+                "tipe_premi"=> $request->get('tipe_premi'),
+                "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
+                "jenis_coverage"=> $request->get('jenis_coverage'),
+                "tarif"=> $request->get('tarif'),
+                "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
+                "kode_ls"=> $request->get('kode_ls'),
+                // "jenis_kredit"=> $request->get('jenis_kredit'),
+                "jenis_kredit"=> "01",
+                "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
+                "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
+            ];
+
             $headers = [
                 "Accept" => "/",
                 "x-api-key" => config('global.eka_lloyd_token'),
@@ -239,7 +239,7 @@ class RegistrasiController extends Controller
 
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
-            $response = Http::withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::timeout(30)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
@@ -331,7 +331,7 @@ class RegistrasiController extends Controller
                             break;
 
                         default:
-                            Alert::error('Gagal', "Terjadi kesalahan. Kode status : $statusCode");
+                            Alert::error('Gagal', "Terjadi kesalahan. Kode status : $status");
                             return back();
                             break;
                     }
@@ -339,12 +339,16 @@ class RegistrasiController extends Controller
             }
             else {
                 Alert::error('Gagal', "Terjadi kesalahan. Kode status : $statusCode");
-                return back();
+                return back()->withInput();
             }
         } catch (\Exception $e) {
             DB::rollBack();
             Alert::error('Gagal', $e->getMessage());
-            return back();
+            return back()->withInput();
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            DB::rollBack();
+            Alert::error('Gagal timeout', $e->getMessage());
+            return back()->withInput();
         }
     }
 

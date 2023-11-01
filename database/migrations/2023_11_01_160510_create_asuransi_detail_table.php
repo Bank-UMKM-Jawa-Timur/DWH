@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('asuransi_detail', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('asuransi_id', false, true);
-            $table->enum('kolektibilitas', [1, 2, 3, 4, 5]);
+            $table->enum('jenis_pengajuan', ['00', '01'])->comment('00 = baru | 01 = topup');
+            $table->enum('kolektibilitas', ['1', '2', '3', '4', '5']);
             $table->enum('jenis_pertanggungan', ['01', '02'])->comment('01 = pokok | 02 = sisa kredit');
-            $table->enum('tipe_premi', [1, 2])->comment('1 = biasa | 02 = refund');
+            $table->enum('tipe_premi', ['1', '2'])->comment('1 = biasa | 02 = refund');
             $table->enum('jenis_coverage', ['01', '02', '03', '04', '05', '06'])
                 ->comment('01 = PNS & NON PNS (PA+ND) | 02 = NON PNS (PA+ND+PHK) | 03 = PNS (PA+ND+PHK+MACET) | 04 = DPRD (PA+ND+PAW) | 05 = PNS & PENSIUN (PA+ND) | 06 = DPRD (PA+ND+PAW)');
             $table->string('no_polis_sebelumnya', 50)->nullable();
