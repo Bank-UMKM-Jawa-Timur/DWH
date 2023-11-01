@@ -89,30 +89,6 @@
         months += d2.getMonth();
         return months <= 0 ? 0 : months;
     }
-
-    window.onbeforeunload = function(e) {
-        $.ajax({
-            type: "POST",
-            url: "{{ route('logout') }}",
-            data: {
-                _token: "{{ csrf_token() }}",
-            },
-            success: function(data) {
-                console.log(data);
-                if (data.status == 'success') {
-                    const url = "{{ route('login') }}"
-                    window.location.href = url;
-                } else {
-                    ErrorMessage(data.message)
-                }
-            },
-            error: function(e) {
-                console.log(e)
-                ErrorMessage('Terjadi kesalahan. Harap muat ulang halaman terlebih dahulu.')
-            }
-        });
-    }
-
     function SuccessMessage(message) {
         Swal.fire({
             title: 'Berhasil',

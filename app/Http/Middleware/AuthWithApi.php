@@ -3,10 +3,13 @@
 namespace App\Http\Middleware;
 
 use App\Http\Controllers\Controller;
+use App\Repository\UserTokenRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+
+use function PHPUnit\Framework\matches;
 
 class AuthWithApi
 {
@@ -19,15 +22,51 @@ class AuthWithApi
      */
     public function handle(Request $request, Closure $next)
     {
+    
         // Check session in laravel application
         if (!Session::has(config('global.auth_session'))) {
             // api token null
+            
             $token = isset($_COOKIE[config('global.user_token_session')]) ? $_COOKIE[config('global.user_token_session')] : '';
-            if ($token) {
+            // dd($token);
+
+            
+            if (!$token) {
                 // logout from LOS sistem when session lifetime already expired
                 $this->logout($token);
             }
 
+            $userToken = UserTokenRepository::userByToken($token);
+
+            $user = array_merge(collect($userToken)->toArray(), ['status' => 'berhasil']); 
+
+            $user['data']['nip'] = $userToken->nip;
+            $user['kode_cabang'] = $userToken->id_cabang;
+            $user['data']['nama'] = $userToken->name;
+        
+            if($userToken){
+                $role_id = match($userToken->role){
+                    "Administrator" => 4,
+                    "Kredit Umum" => 1,
+                    default => 2,
+                }; 
+                Session::put(config('global.user_token_session'), $token);
+                Session::put(config('global.auth_session'), $user);
+                Session::put(config('global.role_id_session'), $role_id);
+                Session::put(config('global.user_id_session'), $userToken->id);
+                Session::put(config('global.user_nip_session'), $userToken->nip);
+                Session::put(config('global.user_name_session'), $userToken->name);
+                Session::put(config('global.user_role_session'), $userToken->role);
+                Session::put(config('global.user_kode_cabang_session'),  $user['kode_cabang']);
+                
+                // dd(Session::get(config('global.user_role_session')));
+
+            }
+            if(!$userToken){
+                $this->logout($token);
+            }
+            
+            
             if (!Session::has('user_id_session')) {
                 return redirect()->route('login');
             }

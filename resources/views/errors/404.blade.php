@@ -1,149 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>404 Not Found</title>
-
-    <!-- Google font -->
-    <link href="https://fonts.googleapis.com/css?family=Cabin:400,700" rel="stylesheet">
-
-    <!-- Custom stlylesheet -->
-    <style>
-        * {
-            -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-        }
-
-        body {
-            padding: 0;
-            margin: 0;
-        }
-
-        #notfound {
-            position: relative;
-            height: 100vh;
-        }
-
-        #notfound .notfound {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            -webkit-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-        }
-
-        .notfound {
-            max-width: 460px;
-            width: 100%;
-            text-align: center;
-            line-height: 1.4;
-        }
-
-        .notfound .notfound-404 {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            margin: 0px auto 50px;
-        }
-
-        .notfound .notfound-404>div:first-child {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            background: #ffa200;
-            -webkit-transform: rotate(45deg);
-            -ms-transform: rotate(45deg);
-            transform: rotate(45deg);
-            border: 5px dashed #000;
-            border-radius: 5px;
-        }
-
-        .notfound .notfound-404>div:first-child:before {
-            content: '';
-            position: absolute;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            top: -5px;
-            -webkit-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.1) inset;
-            box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.1) inset;
-            border-radius: 5px;
-        }
-
-        .notfound .notfound-404 h1 {
-            font-family: 'Cabin', sans-serif;
-            color: #000;
-            font-weight: 700;
-            margin: 0;
-            font-size: 90px;
-            position: absolute;
-            top: 50%;
-            -webkit-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-            left: 50%;
-            text-align: center;
-            height: 40px;
-            line-height: 40px;
-        }
-
-        .notfound h2 {
-            font-family: 'Cabin', sans-serif;
-            font-size: 33px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 7px;
-        }
-
-        .notfound p {
-            font-family: 'Cabin', sans-serif;
-            font-size: 16px;
-            color: #000;
-            font-weight: 400;
-        }
-
-        .notfound a {
-            font-family: 'Cabin', sans-serif;
-            display: inline-block;
-            padding: 10px 25px;
-            background-color: #8f8f8f;
-            border: none;
-            border-radius: 40px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-decoration: none;
-            -webkit-transition: 0.2s all;
-            transition: 0.2s all;
-        }
-
-        .notfound a:hover {
-            background-color: #2c2c2c;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div id="notfound">
-        <div class="notfound">
-            <div class="notfound-404">
-                <div></div>
-                <h1>404</h1>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
+  </head>
+  <body class="">
+    <div class="flex justify-center font-lexend">
+        <div class="mt-[8vh] p-5">
+            <img src="{{ asset('template') }}/assets/img/news/404-notfound.svg" alt="not-found-page">
+            <div class="content mt-2 text-center space-y-8">
+                <h1 class="text-center font-bold lg:text-5xl text-4xl text-[#FF4F5B] tracking-tighter">HALAMAN TIDAK DITEMUKAN</h1>
+                <p class="max-w-lg mx-auto text-gray-400">Upps sepertinya anda menemukan halaman yang belum ada atau dipindahkan.</p>
+                <div>
+                    <a href="{{ url()->previous() }}">
+                        <button class="bg-[#ee424d] text-white px-10 rounded-md py-3 shadow-md">Kembali</button>
+                    </a>
+                </div>
             </div>
-            <h2>Halaman Tidak Ditemukan</h2>
-            <p>Halaman yang Anda cari mungkin telah dihapus jika namanya diubah atau untuk sementara tidak tersedia.</p>
-            <a href="{{ URL::previous() }}">Kembali</a>
         </div>
     </div>
-
-</body>
+  </body>
+  <style>
+    .text-shadow{
+        text-shadow: 2px 4px #A32B34;
+    }
+  </style>
 
 </html>

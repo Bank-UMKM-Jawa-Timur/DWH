@@ -27,7 +27,11 @@ class DashboardController extends Controller
 
     function __construct()
     {
-        $this->role_id = Session::get(config('global.role_id_session'));
+        // dd(Session::get(config('global.user_kode_cabang_session')));
+        $this->middleware(function ($request, $next) {
+            $this->role_id = Session::get(config('global.role_id_session'));
+            return $next($request);
+        });
     }
 
     public function index(Request $request)
@@ -100,14 +104,16 @@ class DashboardController extends Controller
             if ($user) {
                 if (is_array($user)) {
                     $role = $user['role'];
+
                 }
             }
             else {
                 $role = 'vendor';
             }
-
+            // dd($user);
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
+    
             if (!$token)
                 $user_id = 0; // vendor
 

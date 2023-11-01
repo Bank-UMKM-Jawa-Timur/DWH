@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -37,6 +38,8 @@ class AuthenticatedSessionController extends Controller
         return view('auth.login');
     }
 
+
+
     /**
      * Handle an incoming authentication request.
      */
@@ -45,12 +48,11 @@ class AuthenticatedSessionController extends Controller
         $host = env('LOS_API_HOST');
         if ($host) {
             $apiURL = $host . '/login';
-
             $headers = [
                 'token' => env('LOS_API_TOKEN')
             ];
-
             try {
+                // get cookies
                 $response = Http::withHeaders($headers)
                                 ->withOptions(['verify' => false])
                                 ->post($apiURL, [
@@ -59,13 +61,16 @@ class AuthenticatedSessionController extends Controller
                                     'project' => 'dashboard_kkb'
                                 ]);
                 $responseBody = json_decode($response->getBody(), true);
-                // return $responseBody;
+                // PersonalAccessToken::where('ip_address', $request->ip())->delete();
                 if ($responseBody) {
                     if (array_key_exists('status', $responseBody)) {
                         if (strtolower($responseBody['status']) == 'berhasil') {
                             Session::put(config('global.user_token_session'), $responseBody['access_token']);
-                            setcookie(config('global.user_token_session'),  $responseBody['access_token']);
+                            setcookie(config('global.user_token_session'), $responseBody['access_token']);
+                            // $getCookies = $request->cookie(config('global.user_token_session'));
+                            // dd($request->cookie(config('global.user_token_session')));
 
+                            
                             if ($responseBody['data'] != 'undifined') {
                                 if ($responseBody['role'] == 'Administrator') {
                                     $role_id = 4;
@@ -87,7 +92,7 @@ class AuthenticatedSessionController extends Controller
                                 return redirect()->route('dashboard');
                             }
                             else {
-                                $token = \Session::get(config('global.user_token_session'));
+                                $token = Session::get(config('global.user_token_session'));
 
                                 $host = env('LOS_API_HOST');
                                 if ($host) {
@@ -151,7 +156,7 @@ class AuthenticatedSessionController extends Controller
                             return back()->withError($responseBody['message']);
                     }
                     else 
-                        return back()->withError('Terjadi kesalahan 1');
+                        return back()->withError('Terjadi kesalahan');
                 }
                 else {
                     // login vendor
@@ -275,6 +280,29 @@ class AuthenticatedSessionController extends Controller
                 ]);
             }
         }
+    }
+
+    public function checkTokenResponse(Request $request)
+    {
+        $host = env('LOS_API_HOST');
+        if ($host) {
+            $apiURL = $host . '/login';
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+            try {
+                $response = Http::withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->post($apiURL, [
+                                    'email' => $request->input_type,
+                                    'password' => $request->password,
+                                    'project' => 'dashboard_kkb'
+                                ]);
+                $responseBody = json_decode($response->getBody(), true);
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                    return back()->withError('Terjadi kesalahan. '.$e->getMessage());
+                }
+            }
     }
 
     public function firstLogin()
