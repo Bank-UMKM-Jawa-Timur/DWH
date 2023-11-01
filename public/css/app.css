@@ -2933,10 +2933,6 @@ input:checked ~ .line {
     width: 24rem;
   }
 
-  .lg\:w-\[20rem\] {
-    width: 20rem;
-  }
-
   .lg\:w-\[40rem\] {
     width: 40rem;
   }

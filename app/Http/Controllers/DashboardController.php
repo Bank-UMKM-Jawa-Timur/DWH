@@ -334,10 +334,11 @@ class DashboardController extends Controller
                         'po.harga',
                     ])
                     ->count();
+
                 $dataCabang = [
                     'kode_cabang' => $kode_cabang,
                     'cabang' => $cabang,
-                    'total' => intval($dataKredits) + intval($dataImported),
+                    'total' => intval($dataKredits),
                 ];
 
                 array_push($dataCharts, $dataCabang);
