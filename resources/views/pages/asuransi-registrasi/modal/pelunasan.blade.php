@@ -93,23 +93,34 @@
             $(`#${identifier} #modal_tgl_awal`).val(tgl_awal)
             $(`#${identifier} #modal_tgl_akhir`).val(tgl_akhir)
         })
+        
+        function monthDiff(date1, date2) {
+            var months;
+            months = (date2.getFullYear() - date1.getFullYear()) * 12;
+            if (date2.getMonth() >= date1.getMonth()) {
+                months += date2.getMonth() - date1.getMonth();
+            } else {
+                months += 12 - (date1.getMonth() - date2.getMonth());
+            }
+            return months;
+        }
 
         $('#modal_tgl_lunas').on('change', function() {
-            var tgl_lunas = $(this).val()
-            var date = tgl_lunas.split('-')
-            const tgl_lunas_formated = `${date[2]}-${date[1]}-${date[0]}`
-            const tgl_awal = $('#modal_tgl_awal').val()
-            const tgl_akhir = $('#modal_tgl_akhir').val()
-            
-            var date_lunas = new Date(tgl_lunas_formated)
-            var date_awal = new Date(tgl_awal)
-            var date_akhir = new Date(tgl_akhir)
+            var tgl_lunas = $(this).val();
+            var date = tgl_lunas.split('-');
+            const tgl_lunas_formatted = `${date[2]}-${date[1]}-${date[0]}`;
+            const tgl_awal = $('#modal_tgl_awal').val();
+            const tgl_akhir = $('#modal_tgl_akhir').val();
 
-            var date_dif_awal_akhir = monthDiff(date_awal, date_akhir)
-            var date_dif_lunas_akhir = monthDiff(date_lunas, date_akhir)
+            var date_lunas = new Date(tgl_lunas_formatted);
+            var date_awal = new Date(tgl_awal);
+            var date_akhir = new Date(tgl_akhir);
 
-            $(`#modalPelunasan #modal_sisa_jangka_waktu`).val(`${date_dif_lunas_akhir} bulan`)
-        })
+            var date_dif_awal_akhir = monthDiff(date_awal, date_akhir);
+            var date_dif_lunas_akhir = monthDiff(date_awal, date_lunas);
+
+            $(`#modalPelunasan #modal_sisa_jangka_waktu`).val(`${date_dif_lunas_akhir} bulan`);
+        });
 
         $('#btn-submit').on('click', function(e) {
             e.preventDefault()
