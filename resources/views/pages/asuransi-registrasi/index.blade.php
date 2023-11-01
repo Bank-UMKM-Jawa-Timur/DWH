@@ -133,8 +133,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($item->is_paid == 1)
-                                        Sudah
+                                    @if($item->is_paid == true)
+                                        Sudah Dibayar
                                     @else
                                         Belum
                                     @endif
