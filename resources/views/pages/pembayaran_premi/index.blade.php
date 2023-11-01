@@ -76,7 +76,7 @@
                     <th>No Rekening</th>
                     <th>No PK</th>
                     <th>Periode Bayar</th>
-                    <th>Total Periode</th>
+                    <th>Total Periode Dalam Tahun</th>
                     <th>Aksi</th>
                 </tr>
                 <tbody>
@@ -112,7 +112,7 @@
                                     {{ $item->periode_bayar }}
                                 </td>
                                 <td>{{ $item->total_periode }}</td>
-        
+
                                 <td>
                                     <div class="dropdown">
                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
@@ -179,7 +179,7 @@
         $(`#${targetId} #edit-nama`).val(data_nama)
         $(`#${targetId} #edit-telp`).val(data_telp)
         $(`#${targetId} #edit-alamat`).val(data_alamat)
-        
+
         $("#" + targetId).removeClass("hidden");
         $(".layout-form").addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
@@ -194,7 +194,7 @@
             $(".layout-overlay-form").addClass("hidden");
         }
     });
-    
+
     $("#simpanButton").on('click', function(e) {
         e.preventDefault();
         const req_nama = document.getElementById('add-nama')
@@ -344,7 +344,7 @@
         })
     })
 
-    //$('.add-modal-pembayaran-premi').on('click', function (e) { 
+    //$('.add-modal-pembayaran-premi').on('click', function (e) {
     //  alertWarning()
     //});
 
