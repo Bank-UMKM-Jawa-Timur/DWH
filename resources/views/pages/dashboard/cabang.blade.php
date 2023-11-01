@@ -35,11 +35,11 @@
             </div>
         </div>
         <div class="card bg-white w-full p-5 border">
-            <div class="flex justify-between gap-5">
-                <h2 class="mt-3">Total import KKB Google Spreadsheet</h2>
-                <div class="bg-[#C4E6D6] text-[#169B5B] p-3 rounded-full">
+            <div class="box-border">
+                <div class="bg-[#C4E6D6] text-[#169B5B] float-right -mt-2 p-3 rounded-full">
                     @include('components.svg.google-spreadsheet')
                 </div>
+                <h2 class="mt-3 max-w-[250px]">Total import KKB Google Spreadsheet</h2>
             </div>
             <div class="p-3">
                 <h2 class="text-5xl font-bold">63</h2>

@@ -19,7 +19,7 @@
                     </h2>
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                    <a href="{{ route('pelaporan_pelunasan.create') }}">
+                    <a href="{{ route('pelaporan-pelunasan.create') }}">
                         <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                             <span class="lg:mt-0 mt-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
@@ -81,7 +81,7 @@
                             <td>
                             <div class="dropdown">
                                 <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
+                                    Selengkapnya
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li class="">

@@ -6,6 +6,12 @@
 @section('modal')
     <!-- Modal-Filter -->
     @include('pages.asuransi-registrasi.modal.filter')
+    <!-- Modal-Canceled -->
+    @include('pages.asuransi-registrasi.modal.canceled')
+    <!-- Modal-Batal -->
+    @include('pages.asuransi-registrasi.modal.batal')
+    <!-- Modal-Pelunasan -->
+    @include('pages.asuransi-registrasi.modal.pelunasan')
 @endsection
 @section('content')
     <div class="head-pages">
@@ -17,10 +23,13 @@
     <div class="body-pages">
         <div class="table-wrapper bg-white border rounded-md w-full p-2">
             <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                <div class="title-table lg:p-3 p-2 text-center">
+                <div class="title-table lg:p-3 p-2 text-left">
                     <h2 class="font-bold text-lg text-theme-text tracking-tighter">
                         Data Registrasi Asuransi
                     </h2>
+                    @if (\Request::get('tAwal') && \Request::get('tAkhir'))
+                        <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b> dengan status <b>{{Request()->status == 'canceled' ? 'dibatalkan' : 'onprogres'}}</b>.</p>
+                    @endif
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                     <a>
@@ -32,7 +41,7 @@
                             <span class="lg:block hidden"> Filter </span>
                         </button>
                     </a>
-                    <a href="{{ route('registrasi.create') }}">
+                    <a href="{{ route('asuransi.registrasi.create') }}">
                         <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                             <span class="lg:mt-0 mt-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
@@ -86,38 +95,157 @@
                         <th>No.</th>
                         <th>Cabang</th>
                         <th>Nama Debitur</th>
+                        <th>Jenis Asuransi</th>
                         <th>No Aplikasi</th>
                         <th>No Polis</th>
                         <th>Tanggal Polis</th>
                         <th>Tanggal Rekam</th>
+                        <th>Status Bayar</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>KASMAN</td>
-                            <td>K21002022000010</td>
-                            <td>3/SP-02/JSB/630/VI-2022</td>
-                            <td>23-06-2022</td>
-                            <td>08-07-2022</td>
-                            <td>
-                            <div class="dropdown">
-                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                    Selangkapnya
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li class="">
-                                        <a class="item-dropdown" href="#">Pembatalan</a>
-                                    </li>
-                                    <li class="">
-                                        <a class="item-dropdown" href="{{ route('pelaporan-pelunasan.index') }}">Pelaporan Pelunasan</a>
-                                    </li>
-                                </ul>
-                                </div>
-
-                            </td>
-                        </tr>
+                        @forelse ($data as $item)
+                            <tr class="view cursor-pointer">
+                                <td><div class="flex gap-4 justify-center">@if(count($item->detail) > 0)<span class="caret-icon transform">@include('components.svg.caret')</span>@else <span class="caret-icon transform"></span>@endif{{$loop->iteration}}</div></td>
+                                <td>Surabaya</td>
+                                <td>{{$item->nama_debitur}}</td>
+                                <td>{{$item->jenis}}</td>
+                                <td>{{$item->no_aplikasi}}</td>
+                                @if($item->is_paid == 1)
+                                <td>{{$item->no_polis}}</td>
+                                <td>
+                                    @if ($item->tgl_polis)
+                                        {{date('d-m-Y', strtotime($item->tgl_polis))}}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                @else
+                                <td>-</td>
+                                <td>-</td>
+                                @endif 
+                                <td>
+                                    @if ($item->tgl_rekam)
+                                        {{date('d-m-Y', strtotime($item->tgl_rekam))}}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($item->is_paid == 1)
+                                        Sudah
+                                    @else
+                                        Belum
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($item->status == 'canceled')
+                                        <button class="px-4 py-2 rounded text-red-500 toggle-canceled-modal"
+                                            data-canceled_at="{{date('d-m-Y', strtotime($item->canceled_at))}}" data-user_id="{{ $item->canceled_by }}" data-target-id="modalCanceled">
+                                            Dibatalkan
+                                        </button>
+                                    @else
+                                        Onprogres
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Selengkapnya
+                                        </button>
+                                        <ul class="dropdown-menu right-16">
+                                            <li class="">
+                                                <a class="item-dropdown modal-batal" href="#"
+                                                    data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                    data-id="{{$item->id}}" data-no_aplikasi="{{$item->no_aplikasi}}"
+                                                    data-no_polis="{{$item->no_polis}}">Pembatalan</a>
+                                            </li>
+                                            <li class="">
+                                                <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                    <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
+                                                    <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
+                                                </form>
+                                            </li>
+                                            <li class="">
+                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                    data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
+                                                    data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
+                                                    data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
+                                                    data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{-- <tr class="collapse-table hidden bg-[#f2f2f2]">
+                                <td colspan="1"></td>
+                                <td>Surabaya</td>
+                                <td>Mohammad Sahrullah</td>
+                                <td>KB0301371037</td>
+                                <td>23141</td>
+                                <td>23-10-2023</td>
+                                <td>23-10-2023</td>
+                                <td>Dibatalkan</td>
+                                <td>Onprogres</td>
+                                <td></td>
+                            </tr> --}}
+                            @if (count($item->detail) > 0)
+                                @foreach ($item->detail as $itemDetail)
+                                    <tr class="collapse-table hidden bg-[#f2f2f2]">
+                                        <td colspan="1"></td>
+                                        <td>Surabaya</td>
+                                        <td>{{ $itemDetail->nama_debitur }}</td>
+                                        <td>{{$itemDetail->jenis}}</td>
+                                        <td>{{ $itemDetail->no_aplikasi }}</td>
+                                        @if($itemDetail->is_paid == 1)
+                                            <td>{{$itemDetail->no_polis}}</td>
+                                            <td>
+                                                @if ($itemDetail->tgl_polis)
+                                                    {{date('d-m-Y', strtotime($itemDetail->tgl_polis))}}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                        @else
+                                            <td>-</td>
+                                            <td>-</td>
+                                        @endif 
+                                        <td>
+                                            @if ($itemDetail->tgl_rekam)
+                                                {{date('d-m-Y', strtotime($itemDetail->tgl_rekam))}}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($itemDetail->is_paid == 1)
+                                                Sudah
+                                            @else
+                                                Belum
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($itemDetail->status == 'canceled')
+                                                <button class="px-4 py-2 rounded text-red-500 toggle-canceled-modal"
+                                                    data-canceled_at="{{date('d-m-Y', strtotime($itemDetail->canceled_at))}}" data-user_id="{{ $itemDetail->canceled_by }}" data-target-id="modalCanceled">
+                                                    Dibatalkan
+                                                </button>
+                                            @else
+                                                Onprogres
+                                            @endif
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                
+                            @endif
+                        @empty
+                            <tr>
+                                <td colspan="9">Data tidak tersedia.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -135,6 +263,47 @@
 @endsection
 @push('extraScript')
     <script>
+        $(".view").on("click", function(e){
+            // $(this + '.caret-icon').toggleClass("rotate-180");
+            $(this).next(".collapse-table").toggleClass("hidden");
+        });
+        $('.dropdown .dropdown-menu .item-dropdown').on('click', function(e){
+            e.stopPropagation();
+        })
+
+        function CanceledModalSuccessMessage(message) {
+            Swal.fire({
+                showConfirmButton: true,
+                timer: 3000,
+                closeOnClickOutside: true,
+                title: 'Berhasil',
+                icon: 'success',
+            }).then((result) => {
+                console.log('then')
+                $("#modalConfirmPenyerahanUnit").addClass("hidden");
+                //$('#preload-data').removeClass("hidden")
+
+                //refreshTable()
+                location.reload();
+            })
+        }
+        function CanceledModalErrorMessage(message) {
+            Swal.fire({
+                showConfirmButton: false,
+                timer: 3000,
+                closeOnClickOutside: true,
+                title: 'Gagal',
+                icon: 'error',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    //$('#preload-data').removeClass("hidden")
+
+                    //refreshTable()
+                    location.reload();
+                }
+            })
+        }
+
         $('#page_length').on('change', function() {
             $('#form').submit()
         })
@@ -151,6 +320,43 @@
             console.log(tAwal)
             console.log(tAkhir)
             console.log(status)
+        })
+
+        $('.toggle-canceled-modal').on('click', function() {
+            var targetId = $(this).data("target-id");
+            var data_canceled_at = $(this).data("canceled_at");
+            var data_user_id = $(this).data("user_id");
+
+            Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "{{ url('/asuransi/registrasi/get-user') }}/"+data_user_id,
+                success: function(data) {
+                    Swal.close()
+                    const nama = data['detail'] != 'undifined' ? data['detail']['nama'] : 'undifined';
+                    
+                    $("#" + targetId).removeClass("hidden");
+                    $(`#${targetId} #canceled_at`).html(`Dibatalkan pada tanggal <b>${data_canceled_at}</b> oleh <b>${nama}</b>.`)
+                    if (targetId.slice(0, 5) !== "modal") {
+                        $(".layout-overlay-form").removeClass("hidden");
+                    }
+                },
+                error: function(e) {
+                    console.log(e)
+                    Swal.close()
+                }
+            })
         })
     </script>
 @endpush
