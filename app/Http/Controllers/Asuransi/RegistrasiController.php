@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Controllers\Utils\UtilityController;
 use App\Models\Asuransi;
+use App\Models\DetailAsuransi;
 use App\Models\Kredit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -175,8 +176,8 @@ class RegistrasiController extends Controller
         return view('pages.asuransi-registrasi.create', compact('dataPengajuan', 'dataAsuransi'));
     }
 
-    public function getJenisAsuransi($jenis_kredit){
-        $dataAsuransi = DB::table('mst_jenis_asuransi')->where('jenis_kredit', $jenis_kredit)->get();
+    public function getJenisAsuransi(Request $request){
+        $dataAsuransi = DB::table('mst_jenis_asuransi')->where('jenis_kredit', $request->jenis_kredit)->get();
 
         return response()->json([
             'data' => $dataAsuransi
@@ -238,7 +239,7 @@ class RegistrasiController extends Controller
 
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
-            $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
@@ -285,9 +286,27 @@ class RegistrasiController extends Controller
                             $newAsuransi->status = 'onprogress';
                             $newAsuransi->save();
 
+                            // insert detail asuransi
+                            $newDetail = new DetailAsuransi();
+                            $newDetail->asuransi_id = $newAsuransi->id;
+                            $newDetail->jenis_pengajuan = $request->jenis_pengajuan;
+                            $newDetail->kolektibilitas = $request->kolektibilitas;
+                            $newDetail->jenis_pertanggungan = $request->jenis_pertanggungan;
+                            $newDetail->tipe_premi = $request->tipe_premi;
+                            $newDetail->jenis_coverage = $request->jenis_coverage;
+                            $newDetail->no_polis_sebelumnya = $request->no_polis_sebelumnya;
+                            $newDetail->baki_debet = UtilityController::clearCurrencyFormat($request->baki_debet);
+                            $newDetail->tunggakan = UtilityController::clearCurrencyFormat($request->tunggakan);
+                            $newDetail->tarif = $request->tarif;
+                            $newDetail->kode_layanan_syariah = $request->kode_ls;
+                            $newDetail->handling_fee = UtilityController::clearCurrencyFormat($request->handling_fee);
+                            $newDetail->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
+                            $newDetail->save();
+
                             $this->logActivity->store('Pengguna ' . $request->name . ' tambah registrasi asuransi.');
 
                             $message = $responseBody['keterangan'];
+
                             DB::commit();
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
@@ -312,14 +331,14 @@ class RegistrasiController extends Controller
                             break;
 
                         default:
-                            Alert::error('Gagal', 'Terjadi kesalahan');
+                            Alert::error('Gagal', "Terjadi kesalahan. Kode status : $statusCode");
                             return back();
                             break;
                     }
                 }
             }
             else {
-                Alert::error('Gagal', 'Terjadi kesalahan');
+                Alert::error('Gagal', "Terjadi kesalahan. Kode status : $statusCode");
                 return back();
             }
         } catch (\Exception $e) {
