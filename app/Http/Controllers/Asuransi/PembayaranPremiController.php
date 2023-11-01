@@ -54,7 +54,7 @@ class PembayaranPremiController extends Controller
                         'd.total_periode'
                     )
                     ->join('pembayaran_premi AS p', 'p.id', 'd.pembayaran_premi_id')
-                    ->join('asuransi AS a', 'a.id', 'p.asuransi_id');
+                    ->join('asuransi AS a', 'a.id', 'd.asuransi_id');
         if ($searchQuery && $searchBy == 'field') {
             $query->where('a.no_aplikasi', 'like', '%' . $searchQuery . '%')
                 ->orWhere('a.no_polis', 'like', '%' . $searchQuery . '%')
@@ -138,7 +138,6 @@ class PembayaranPremiController extends Controller
         $periodeBayarArray = $request->input('row_periode_bayar');
         $totalPeriodeArray = $request->input('row_total_periode_bayar');
 
-        return $req;
         DB::beginTransaction();
         try {
             $url = 'http://sandbox-umkm.ekalloyd.id:8387/bayar';
@@ -167,11 +166,11 @@ class PembayaranPremiController extends Controller
             }
             $body = [
                 "nobukti_pembayaran" => $noBuktiPembayaran,
-                "tgl_bayar" => date('Y-m-d', $tglBayar),
+                "tgl_bayar" => date('Y-m-d', strtotime($tglBayar)),
                 "total_premi" => $totalPremi,
                 "rincian_bayar" => $arr_detail
             ];
-return $body;
+            
             if ($tglBayar != "dd/mm/yyyy") {
                 if ($idNoAplikasiArray != null) {
                     $objekTanggal = Carbon::createFromFormat('d-m-Y', $tglBayar);
@@ -182,67 +181,47 @@ return $body;
                         return back()->withInput();
                     }else{
                         try {
-                            foreach ($premiArray as $key => $premi) {
-                                $response = Http::withHeaders($header)->withOptions(['verify' => false])->post($url,
-                                [
-                                    "nobukti_pembayaran" => $noBuktiPembayaran,
-                                    "tgl_bayar" => $objekTanggal->format('Y-m-d'),
-                                    "total_premi" => $premi,
-                                    "rincian_bayar" => [
-                                        [
-                                            "premi" => $premi,
-                                            "no_rek" => $noRekArray[$key],
-                                            "no_aplikasi" => $noAplikasiArray[$key],
-                                            "no_pk" => $noPkArray[$key],
-                                            "no_polis" => $noPolisArray[$key],
-                                            "periode_bayar" => $periodeBayarArray[$key],
-                                            "total_periode" => $totalPeriodeArray[$key]
-                                        ]
-                                    ]
-                                ]);
-                            }
+                            $response = Http::withHeaders($header)->withOptions(['verify' => false])->post($url, $body);
 
                             $statusCode = $response->status();
                             if ($statusCode == 200) {
                                 $responseBody = json_decode($response->getBody(), true);
-                                    $status = $responseBody['status'];
-                                    $message = '';
-                                    if ($status == "00") {
-                                        // simpan ke db
-                                        foreach ($premiArray as $key => $premi) {
-                                            // db pembayaran premi
-                                            $createPremi = new PembayaranPremi();
-                                            $createPremi->asuransi_id = $idNoAplikasiArray[$key];
-                                            $createPremi->nobukti_pembayaran = $noBuktiPembayaran;
-                                            $createPremi->tgl_bayar = $objekTanggal->format('Y-m-d');
-                                            $createPremi->total_premi = $premi;
-                                            $createPremi->save();
-
-
-                                            // db pembayaran premi detail
-                                            $createPremiDetail = new PembayaranPremiDetail();
-                                            $createPremiDetail->pembayaran_premi_id = $createPremi->id;
-                                            $createPremiDetail->no_rek = $noRekArray[$key];
-                                            $createPremiDetail->no_pk = $noPkArray[$key];
-                                            $createPremiDetail->periode_bayar = $periodeBayarArray[$key];
-                                            $createPremiDetail->total_periode = $totalPeriodeArray[$key];
-                                            $createPremiDetail->save();
-
-                                            // db update asuransi
-                                            $asuransi = Asuransi::find($idNoAplikasiArray[$key]);
-                                            $asuransi->is_paid = true;
-                                            $asuransi->save();
-                                        }
-
-                                        $message = $responseBody['keterangan'];
-                                        DB::commit();
-                                        Alert::success('Berhasil', $message);
-                                        return redirect()->route('asuransi.pembayaran-premi.index');
-                                    }else{
-                                        $message = $responseBody['keterangan'];
-                                        Alert::error('Gagal', $message);
-                                        return back();
+                                $status = $responseBody['status'];
+                                $message = '';
+                                if ($status == "00") {
+                                    // simpan ke db
+                                    // db pembayaran premi
+                                    $createPremi = new PembayaranPremi();
+                                    $createPremi->nobukti_pembayaran = $noBuktiPembayaran;
+                                    $createPremi->tgl_bayar = date('Y-m-d', strtotime($tglBayar));
+                                    $createPremi->total_premi = $totalPremi;
+                                    $createPremi->save();
+                                    foreach ($premiArray as $key => $premi) {
+                                        // db pembayaran premi detail
+                                        $createPremiDetail = new PembayaranPremiDetail();
+                                        $createPremiDetail->pembayaran_premi_id = $createPremi->id;
+                                        $createPremiDetail->asuransi_id = $idNoAplikasiArray[$key];
+                                        $createPremiDetail->no_rek = $noRekArray[$key];
+                                        $createPremiDetail->no_pk = $noPkArray[$key];
+                                        $createPremiDetail->periode_bayar = $periodeBayarArray[$key];
+                                        $createPremiDetail->total_periode = $totalPeriodeArray[$key];
+                                        $createPremiDetail->save();
+                                        
+                                        // db update asuransi
+                                        $asuransi = Asuransi::find($idNoAplikasiArray[$key]);
+                                        $asuransi->is_paid = true;
+                                        $asuransi->save();
                                     }
+
+                                    $message = $responseBody['keterangan'];
+                                    DB::commit();
+                                    Alert::success('Berhasil', $message);
+                                    return redirect()->route('asuransi.pembayaran-premi.index');
+                                }else{
+                                    $message = $responseBody['keterangan'];
+                                    Alert::error('Gagal', $message);
+                                    return back();
+                                }
                             }
                             else {
                                 Alert::error('Gagal', 'Terjadi kesalahan');
