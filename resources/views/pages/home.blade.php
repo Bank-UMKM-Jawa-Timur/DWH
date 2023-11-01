@@ -777,9 +777,9 @@
     </div>
     <div class="body-pages">
         @if(\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
-        @include('pages.dashboard.pemasaran')
+            @include('pages.dashboard.pemasaran')
         @else
-        @include('pages.dashboard.cabang')
+            @include('pages.dashboard.cabang')
         @endif
     </div>
 @push('extraScript')
