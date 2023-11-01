@@ -31,6 +31,9 @@ class PembayaranPremiController extends Controller
      */
     public function index(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        $param['role_id'] = $role_id;
+        
         $param['title'] = 'Pembayaran Premi';
         $param['pageTitle'] = 'Pembayaran Premi';
         $page_length = $request->page_length ? $request->page_length : 5;
@@ -91,6 +94,12 @@ class PembayaranPremiController extends Controller
      */
     public function create()
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi', 'asuransi.nama_debitur','jenis.jenis')
         ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
         ->where('status', 'onprogress')->groupBy('no_aplikasi')
@@ -126,6 +135,12 @@ class PembayaranPremiController extends Controller
      */
     public function store(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         $req = $request->all();
 
         $fields = Validator::make($req, [

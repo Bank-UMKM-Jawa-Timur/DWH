@@ -26,14 +26,16 @@
                     Pembayaran Premi
                 </h2>
             </div>
-            <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <a href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                    <span class="lg:mt-0 mt-0">
-                        @include('components.svg.plus')
-                    </span>
-                    <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
-                </a>
-            </div>
+            @if ($role_id == 2)
+                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                    <a href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                        <span class="lg:mt-0 mt-0">
+                            @include('components.svg.plus')
+                        </span>
+                        <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
+                    </a>
+                </div>
+            @endif
         </div>
         <div
             class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
@@ -114,19 +116,25 @@
                                 <td>{{ $item->total_periode }}</td>
 
                                 <td>
-                                    <div class="dropdown">
-                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                            Selangkapnya
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <button type="submit" class="item-dropdown">
-                                                Inquery
+                                    @if ($role_id == 2)
+                                        <div class="dropdown">
+                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                Selengkapnya
                                             </button>
-                                            {{-- <li class="">
-                                                <a class="item-dropdown" href="#" onclick="alertWarning()">Inquery</a>
-                                            </li> --}}
-                                        </ul>
-                                    </div>
+                                            <ul class="dropdown-menu">
+                                                <button type="submit" class="item-dropdown">
+                                                    Inquery
+                                                </button>
+                                                {{-- <li class="">
+                                                    <a class="item-dropdown" href="#" onclick="alertWarning()">Inquery</a>
+                                                </li> --}}
+                                            </ul>
+                                        </div>
+                                    @else
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Detail
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         </form>

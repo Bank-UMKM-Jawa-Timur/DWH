@@ -88,7 +88,7 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
     });
 
-    Route::prefix('asuransi')->name('asuransi.')->group(function() {
+    Route::middleware('asuransi_permission')->prefix('asuransi')->name('asuransi.')->group(function() {
         Route::prefix('/registrasi')
             ->name('registrasi.')
             ->controller(RegistrasiController::class)
