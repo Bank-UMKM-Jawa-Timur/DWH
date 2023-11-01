@@ -52,7 +52,7 @@ class RegistrasiController extends Controller
                             ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
                             ->where('status', $status);
             }
-            $data = $data->groupBy('no_aplikasi')
+            $data = $data->groupBy('no_pk')
                 ->orderBy('no_aplikasi')
                 ->paginate($page_length);
 
@@ -80,7 +80,7 @@ class RegistrasiController extends Controller
                                 ->where('status', $status);
                 }
                 $detailAsuransi = $detailAsuransi
-                    ->where('no_aplikasi', $item->no_aplikasi)
+                    ->where('no_pk', $item->no_pk)
                     ->where('asuransi.id', '!=', $item->id)
                     ->get();
 
