@@ -478,8 +478,9 @@ class RegistrasiController extends Controller
                     ];
                     $body = [
                         "no_aplikasi" => $asuransi->no_aplikasi,
-                        "no_sp" => $asuransi->no_sp
+                        "no_sp" => $asuransi->no_polis
                     ];
+                    
                     $host = config('global.eka_lloyd_host');
                     $url = "$host/batal";
                     
@@ -575,6 +576,7 @@ class RegistrasiController extends Controller
                         "refund" => $refund,
                         "sisa_jkw" => $jkw
                     ];
+                    
                     $host = config('global.eka_lloyd_host');
                     $url = "$host/lunas";
 
@@ -607,13 +609,18 @@ class RegistrasiController extends Controller
                                         Alert::error('Gagal', $keterangan);
                                         return redirect()->route('asuransi.registrasi.index');
                                         break;
+                                    case '02':
+                                        $keterangan = $responseBody['keterangan'];
+                                        Alert::error('Gagal', $keterangan);
+                                        return redirect()->route('asuransi.registrasi.index');
+                                        break;
                                     case '04':
                                         $keterangan = $responseBody['keterangan'];
                                         Alert::error('Gagal', $keterangan);
                                         return redirect()->route('asuransi.registrasi.index');
                                         break;
                                     default:
-                                        Alert::error('Gagal', 'Terjadi kesalahan.');
+                                        Alert::error('Gagal', 'Terjadi kesalahan.'.$status);
                                         return back();
                                 }
                             }

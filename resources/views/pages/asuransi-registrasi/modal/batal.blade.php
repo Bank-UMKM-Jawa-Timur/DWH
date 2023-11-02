@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button data-dismiss-id="modalBatal" class="border px-7 py-3 text-black rounded">
+                <button type="button" data-dismiss-id="modalBatal" class="border px-7 py-3 text-black rounded">
                     Tutup
                 </button>
                 <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded" id="btn-cancel">
