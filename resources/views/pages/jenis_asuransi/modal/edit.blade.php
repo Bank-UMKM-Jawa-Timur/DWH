@@ -6,6 +6,12 @@
         <input type="hidden" name="id" id="edit-id">
         <div class="p-4 space-y-8 mt-8">
             <div class="input-box space-y-3">
+                <label for="" class="uppercase appearance-none">Kode</label>
+                <input type="text" class="p-2 w-full border" id="edit-kode" name="kode" 
+                    required readonly/>
+                    <small class="form-text text-red-600 error"></small>
+            </div>
+            <div class="input-box space-y-3">
                 <label for="" class="uppercase">Jenis Kredit</label>
                 <select name="jenis-kredit" id="edit-jenis-kredit" class="w-full p-2 border select-jenis-kredit edit-jenis-kredit">
                     <option value="">-- Pilih Jenis Kredit --</option>
@@ -19,11 +25,11 @@
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Jenis</label>
-                <select name="jenis" id="edit-jenis" multiple="multiple" class="w-full p-2 border select-jenis edit-jenis">
-                    <option value="">-- Pilih Jenis ---</option>
-                    <option value="1">Jaminan</option>
-                    <option value="2">Jiwa</option>
-                    <option value="3">Kredit(Penjaminan)</option>
+                <select name="jenis" id="edit-jenis" class="w-full p-2 border select-jenis edit-jenis">
+                    <option value="">---Pilih Jenis---</option>
+                    <option value="Jaminan">Jaminan</option>
+                    <option value="Jiwa">Jiwa</option>
+                    <option value="Kredit(Penjaminan)">Kredit(Penjaminan)</option>
                 </select>
                 <small class="form-text text-red-600 error"></small>
             </div>

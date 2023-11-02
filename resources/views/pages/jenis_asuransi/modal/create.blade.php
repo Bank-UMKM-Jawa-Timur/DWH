@@ -4,11 +4,12 @@
     </div>
     <form id="modal-add-form">
         <div class="p-4 space-y-8 mt-8">
-            {{-- <div class="input-box space-y-3">
-                <label for="" class="uppercase appearance-none">Nama</label>
-                <input type="text" class="p-2 w-full border" id="add-nama" name="nama" 
+            <div class="input-box space-y-3">
+                <label for="" class="uppercase appearance-none">Kode</label>
+                <input type="text" class="p-2 w-full border" id="add-kode" name="kode" 
                     required/>
-            </div> --}}
+                    <small class="form-text text-red-600 error"></small>
+            </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Jenis Kredit</label>
                 <select name="jenis-kredit" id="add-jenis-kredit" class="w-full p-2 border select-action add-action">
@@ -24,12 +25,12 @@
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Jenis</label>
                 <div>
-                    <select name="jenis" id="add-jenis" multiple="multiple"
+                    <select name="jenis[]" id="add-jenis" multiple="multiple"
                         class="w-full p-2 border select-jenis block add-jenis">
                         <option value="">---Pilih Jenis---</option>
-                        <option value="1">Jaminan</option>
-                        <option value="2">Jiwa</option>
-                        <option value="3">Kredit(Penjaminan)</option>
+                        <option value="Jaminan">Jaminan</option>
+                        <option value="Jiwa">Jiwa</option>
+                        <option value="Kredit(Penjaminan)">Kredit(Penjaminan)</option>
                     </select>
                     <small class="form-text text-red-600 error"></small>
                 </div>

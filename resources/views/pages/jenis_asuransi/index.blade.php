@@ -63,6 +63,7 @@
             <table class="table-auto w-full">
                 <tr>
                     <th>No.</th>
+                    <th>Kode</th>
                     <th>Produk Kredit Id</th>
                     <th>Jenis Kredit</th>
                     <th>Jenis</th>
@@ -75,10 +76,13 @@
                     @forelse ($data as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+                        <td>{{ $item->kode  }}</td>
                         <td>{{ $item->produk_kredit_id != NULL ? $item->produk_kredit_id : "-" }}</td>
                         <td>{{ $item->jenis_kredit }}</td>
                         <td>
-                            @php
+                            <input type="hidden" name="row_data_jenis" id="row_data_jenis" value="{{ $item->jenis }}">
+                            {{ $item->jenis }}
+                            {{-- @php
                                 $exJenis = explode(',', $item->jenis);
                             @endphp
                             @forelse ($exJenis as $jenis_key => $v)
@@ -95,7 +99,7 @@
                                 {{ $dataJenis . $splitter }}
                             @empty
                                 <p>Role tidak dipilih</p>
-                            @endforelse
+                            @endforelse --}}
                         </td>
                         <td>
                             <div class="dropdown max-w-[280px]">
@@ -106,6 +110,7 @@
                                     <li class="">
                                         <a class="item-dropdown edit-modal-jenis-asuransi" data-target-id="edit-jenis-asuransi" href="#"
                                         data-id="{{ $item->id }}"
+                                        data-kode="{{ $item->kode }}"
                                         data-jenis-kredit="{{ $item->jenis_kredit }}"
                                         data-jenis="{{ $item->jenis }}">Edit</a>
                                     </li>
@@ -141,6 +146,7 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @push('extraScript')
 <script>
     $(document).ready(function() {
@@ -151,6 +157,7 @@
             width: 'resolve',
         });
     });
+    
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
@@ -169,11 +176,14 @@
 
         var data_id = '';
         var data_jenis_kredit = '';
-        var arrayJenis = [];
         var data_jenis = '';
+        var data_kode = '';
 
         if (typeof $(this).data('id') !== 'undefined') {
             data_id = $(this).data('id');
+        }
+        if (typeof $(this).data('kode') !== 'undefined') {
+            data_kode = $(this).data('kode');
         }
         if (typeof $(this).data('jenis-kredit') !== 'undefined') {
             data_jenis_kredit = $(this).data('jenis-kredit');
@@ -182,18 +192,11 @@
             data_jenis = $(this).data('jenis');
         }
         
-        var checkArray = data_jenis.toString();
-
+        console.log(data_kode);
         $(`#${targetId} #edit-id`).val(data_id)
+        $(`#${targetId} #edit-kode`).val(data_kode)
         $(`#${targetId} .edit-jenis-kredit`).val(data_jenis_kredit).change()
-        if (checkArray.includes(",")) {
-            $.each(data_jenis.split(","), function(i, v) {
-                arrayJenis.push(v);
-            });
-            $(`#${targetId} .edit-jenis`).val(arrayJenis).change();
-        } else {
-            $(`#${targetId} .edit-jenis`).val(data_jenis).change();
-        }
+        $(`#${targetId} .edit-jenis`).val(data_jenis).change()
         
         $(`#${targetId}`).removeClass("hidden");
         $(".layout-form").addClass("layout-form-collapse");
@@ -209,107 +212,120 @@
             $(".layout-overlay-form").addClass("hidden");
         }
     });
-    
-    $("#simpanButton").on('click', function(e) {
-        e.preventDefault();
-        const req_jenis_kredit = document.getElementById('add-jenis-kredit')
-        const req_jenis = document.getElementById('add-jenis')
 
-        showError(req_jenis_kredit, '');
-        showError(req_jenis, '');
+    // document.addEventListener('DOMContentLoaded', function() {
+        $("#simpanButton").on('click', function(e) {
+            e.preventDefault();
+            const req_kode = document.getElementById('add-kode');
+            const req_jenis_kredit = document.getElementById('add-jenis-kredit');
+            const req_jenis = Array.from(document.getElementById('add-jenis').selectedOptions).map(option => option.value);
+            
+            if (req_kode.value == '') {
+                alertWarning();
+            }else if (req_jenis_kredit.value == '') {
+                alertWarning();
+            }else if (req_jenis.length === 0) {
+                alertWarning();
+            }else{
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('jenis-asuransi.store') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        kode: req_kode.value,
+                        jenis_kredit: req_jenis_kredit.value,
+                        jenis: req_jenis,
+                    },
+                    success: function(data) {
+                        console.log(data.message);
+                        if (Array.isArray(data.error)) {
+                            for (var i = 0; i < data.error.length; i++) {
+                                var message = data.error[i];
 
-        if ($('#add-jenis-kredit').find(":selected").val() == '') {
-            showError(req_jenis_kredit, 'Jenis Kredit harus diisi.');
-            return false;
-        }
-        if ($('#add-jenis').find(":selected").val() == '') {
-            showError(req_jenis, 'Jenis harus diisi.');
-            return false;
-        }
-
-        $.ajax({
-            type: "POST",
-            url: "{{ route('jenis-asuransi.store') }}",
-            data: {
-                _token: "{{ csrf_token() }}",
-                jenis_kredit: req_jenis_kredit.value,
-                jenis: $('#add-jenis').val().toString(),
-            },
-            success: function(data) {
-                console.log(data.message);
-                if (Array.isArray(data.error)) {
-                    for (var i = 0; i < data.error.length; i++) {
-                        var message = data.error[i];
-
-                        if (message.toLowerCase().includes('jenis_kredit'))
-                            showError(req_jenis_kredit, message)
-                        if (message.toLowerCase().includes('jenis'))
-                            showError(req_jenis, message)
+                                if (message.toLowerCase().includes('kode'))
+                                    showError(req_kode, message)
+                                if (message.toLowerCase().includes('jenis_kredit'))
+                                    showError(req_jenis_kredit, message)
+                                if (message.toLowerCase().includes('jenis'))
+                                    showError(req_jenis, message)
+                            }
+                        } else {
+                            // if (data.status == 'success') {
+                            //     SuccessMessage(data.message);
+                            // } else {
+                            //     ErrorMessage(data.message)
+                            // }
+                            SuccessMessage(data.message);
+                        }
+                    },
+                    error: function(e) {
+                        console.log(e);
                     }
-                } else {
-                  SuccessMessage(data.message);
-                    // if (data.status == 'success') {
-                    //     SuccessMessage(data.message);
-                    // } else {
-                    //     ErrorMessage(data.message)
-                    // }
-                    $('#add-jenis-asuransi').addClass('hidden')
-                }
-            },
-            error: function(e) {
-                console.log(e)
+                });
             }
+    
         });
-    });
+    // });
 
     $('#edit-button').click(function(e) {
         e.preventDefault()
         const req_id = document.getElementById('edit-id')
+        const req_kode = document.getElementById('edit-kode');
         const req_jenis_kredit = document.getElementById('edit-jenis-kredit')
         const req_jenis = document.getElementById('edit-jenis')
 
-        if (req_jenis_kredit == '') {
-            showError(req_jenis_kredit, 'Jenis Kredit harus diisi.');
-            return false;
-        }
-        if (req_jenis == '') {
-            showError(req_jenis, 'Jenis harus diisi.');
-            return false;
-        }
+        // if (req_jenis_kredit == '') {
+        //     showError(req_jenis_kredit, 'Jenis Kredit harus diisi.');
+        //     return false;
+        // }
+        // if (req_jenis == '') {
+        //     showError(req_jenis, 'Jenis harus diisi.');
+        //     return false;
+        // }
 
-        $.ajax({
-            type: "POST",
-            url: "{{ url('/master/jenis-asuransi') }}/" + req_id.value,
-            data: {
-                _token: "{{ csrf_token() }}",
-                _method: 'PUT',
-                jenis_kredit: req_jenis_kredit.value,
-                jenis: $('#edit-jenis').val().toString(),
-            },
-            success: function(data) {
-                console.log(data.message);
-                if (Array.isArray(data.error)) {
-                    for (var i = 0; i < data.error.length; i++) {
-                        var message = data.error[i];
+        console.log(req_kode.value);
+        if (req_jenis_kredit.value == '') {
+            alertWarning();
+        }else if (req_jenis.value == '') {
+            alertWarning();
+        }else{
+            $.ajax({
+                type: "POST",
+                url: "{{ url('/master/jenis-asuransi') }}/" + req_id.value,
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    _method: 'PUT',
+                    kode: req_kode.value,
+                    jenis_kredit: req_jenis_kredit.value,
+                    jenis: req_jenis.value,
+                },
+                success: function(data) {
+                    console.log(data.message);
+                    if (Array.isArray(data.error)) {
+                        for (var i = 0; i < data.error.length; i++) {
+                            var message = data.error[i];
 
-                        if (message.toLowerCase().includes('jenis_kredit'))
-                            showError(req_jenis_kredit, message)
-                        if (message.toLowerCase().includes('jenis'))
-                            showError(req_jenis, message)
+                            if (message.toLowerCase().includes('kode'))
+                                showError(req_kode, message)
+                            if (message.toLowerCase().includes('jenis_kredit'))
+                                showError(req_jenis_kredit, message)
+                            if (message.toLowerCase().includes('jenis'))
+                                showError(req_jenis, message)
+                        }
+                    } else {
+                        // if (data.status == 'success') {
+                        //     SuccessMessage(data.message);
+                        // } else {
+                        //     ErrorMessage(data.message)
+                        // }
+                        SuccessMessage(data.message);
                     }
-                } else {
-                    // if (data.status == 'success') {
-                    //     SuccessMessage(data.message);
-                    // } else {
-                    //     ErrorMessage(data.message)
-                    // }
-                    SuccessMessage(data.message);
+                },
+                error: function(e) {
+                    console.log(e)
                 }
-            },
-            error: function(e) {
-                console.log(e)
-            }
-        });
+            });
+        }
     })
 
     $('.btn-delete-jenis-asuransi').on('click', function(e) {
@@ -346,6 +362,17 @@
         })
     })
 
+    function alertWarning() {
+        Swal.fire({
+            title: 'Warning',
+            html: 'Data Masih Belum Dilengkapi!',
+            icon: 'warning',
+            iconColor: '#DC3545',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#DC3545'
+        })
+    }
+
     function showError(input, message) {
         console.log(message);
         const formGroup = input.parentElement;
@@ -355,6 +382,22 @@
         errorSpan.innerText = message;
         input.focus();
     }
+    // function showError(input, message) {
+    //     console.log(message);
+    //     const formGroup = input.parentElement;
+    //     const errorSpan = formGroup.querySelector('.error');
+
+    //     // Clear previous errors
+    //     formGroup.classList.remove('has-error');
+    //     errorSpan.innerText = '';
+
+    //     // Display new error
+    //     if (message) {
+    //         formGroup.classList.add('has-error');
+    //         errorSpan.innerText = message;
+    //     }
+    // }
+
 </script>
 @endpush
 @endsection

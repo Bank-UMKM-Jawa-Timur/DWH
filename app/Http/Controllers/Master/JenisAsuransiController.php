@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use App\Models\JenisAsuransi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\Validator;
 class JenisAsuransiController extends Controller
 {
     private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -74,12 +80,14 @@ class JenisAsuransiController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
+            'kode' => 'unique:mst_jenis_asuransi',
             'jenis_kredit' => 'required',
             'jenis' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
         ], [
+            'kode' => 'Kode',
             'jenis_kredit' => 'Jenis Kredit',
             'jenis' => 'Jenis',
         ]);
@@ -89,36 +97,44 @@ class JenisAsuransiController extends Controller
                         'error' => $validator->errors()->all()
                     ]);
         }
-
+        
         try {
             DB::beginTransaction();
-
-            $newJenisAsuransi = new JenisAsuransi();
-            $newJenisAsuransi->jenis_kredit = $request->jenis_kredit;
-            $newJenisAsuransi->jenis = $request->jenis;
-            $newJenisAsuransi->save();
-
-            $this->logActivity->store("Membuat data Perusahaan Asuransi $request->nama.");
-
+    
+            $jenisKredit = $request->jenis_kredit;
+            $jenisAsuransi = $request->input('jenis');
+    
+            foreach ($jenisAsuransi as $jenis) {
+                $newJenisAsuransi = new JenisAsuransi();
+                $newJenisAsuransi->kode = $request->kode;
+                $newJenisAsuransi->jenis_kredit = $jenisKredit;
+                $newJenisAsuransi->jenis = $jenis;
+                $newJenisAsuransi->save();
+            }
+    
+            DB::commit();
+    
             $status = 'success';
             $message = 'Berhasil menyimpan data';
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $status = 'failed';
-            $message = 'Terjadi kesalahan';
-        } catch (\Illuminate\Database\QueryException $e) {
-            DB::rollBack();
-            $status = 'failed';
-            $message = 'Terjadi kesalahan pada database';
-        } finally {
-            DB::commit();
+    
             $response = [
                 'status' => $status,
                 'message' => $message,
             ];
-
+    
             return response()->json($response);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $status = 'failed';
+            $message = 'Terjadi kesalahan: ' . $e->getMessage();
+            $response = [
+                'status' => $status,
+                'error' => $message,
+            ];
+            return response()->json($response, 422); // Menggunakan status HTTP 422 untuk validasi gagal
         }
+    
+        
     }
 
     /**
@@ -156,12 +172,14 @@ class JenisAsuransiController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
+            // 'kode' => 'unique:mst_jenis_asuransi',
             'jenis_kredit' => 'required',
             'jenis' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
         ], [
+            // 'kode' => 'Kode',
             'jenis_kredit' => 'Jenis Kredit',
             'jenis' => 'Jenis',
         ]);
@@ -176,6 +194,7 @@ class JenisAsuransiController extends Controller
             DB::beginTransaction();
 
             $newJenisAsuransi = JenisAsuransi::find($id);
+            // $newJenisAsuransi->kode = $request->kode;
             $newJenisAsuransi->jenis_kredit = $request->jenis_kredit;
             $newJenisAsuransi->jenis = $request->jenis;
             $newJenisAsuransi->save();
