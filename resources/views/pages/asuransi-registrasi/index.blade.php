@@ -115,17 +115,17 @@
                                 <td>{{$item->jenis}}</td>
                                 <td>{{$item->no_aplikasi}}</td>
                                 @if($item->is_paid == 1)
-                                <td>{{$item->no_polis}}</td>
-                                <td>
-                                    @if ($item->tgl_polis)
-                                        {{date('d-m-Y', strtotime($item->tgl_polis))}}
-                                    @else
-                                        -
-                                    @endif
-                                </td>
+                                    <td>{{$item->no_polis}}</td>
+                                    <td>
+                                        @if ($item->tgl_polis)
+                                            {{date('d-m-Y', strtotime($item->tgl_polis))}}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                 @else
-                                <td>-</td>
-                                <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
                                 @endif
                                 <td>
                                     @if ($item->tgl_rekam)
@@ -186,18 +186,6 @@
                                     @endif
                                 </td>
                             </tr>
-                            {{-- <tr class="collapse-table hidden bg-[#f2f2f2]">
-                                <td colspan="1"></td>
-                                <td>Surabaya</td>
-                                <td>Mohammad Sahrullah</td>
-                                <td>KB0301371037</td>
-                                <td>23141</td>
-                                <td>23-10-2023</td>
-                                <td>23-10-2023</td>
-                                <td>Dibatalkan</td>
-                                <td>Onprogres</td>
-                                <td></td>
-                            </tr> --}}
                             @if (count($item->detail) > 0)
                                 @foreach ($item->detail as $itemDetail)
                                     <tr class="collapse-table hidden bg-[#f2f2f2]">
@@ -206,7 +194,7 @@
                                         <td>{{ $itemDetail->nama_debitur }}</td>
                                         <td>{{$itemDetail->jenis}}</td>
                                         <td>{{ $itemDetail->no_aplikasi }}</td>
-                                        @if($itemDetail->is_paid == 1)
+                                        @if($itemDetail->is_paid)
                                             <td>{{$itemDetail->no_polis}}</td>
                                             <td>
                                                 @if ($itemDetail->tgl_polis)
@@ -227,7 +215,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($itemDetail->is_paid == true)
+                                            @if($itemDetail->is_paid)
                                                 Sudah Dibayar
                                             @else
                                                 Belum

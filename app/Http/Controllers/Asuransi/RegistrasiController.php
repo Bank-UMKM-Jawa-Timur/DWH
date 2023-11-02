@@ -95,6 +95,7 @@ class RegistrasiController extends Controller
 
                 $item->detail = $dataDetail[$i];
             }
+            // return $data;
 
             return view('pages.asuransi-registrasi.index', compact('data', 'role_id'));
         } catch (\Exception $e) {
@@ -208,10 +209,11 @@ class RegistrasiController extends Controller
 
         DB::beginTransaction();
         try {
+            $jenis_asuransi_option = explode('-', $request->jenis_asuransi);
             $req = [
                 "no_aplikasi"=> $request->get('no_aplikasi'),
                 "no_rekening"=> $request->get('no_rekening'),
-                "jenis_asuransi"=> $request->get('jenis_asuransi'),
+                "jenis_asuransi"=> $jenis_asuransi_option[1],
                 "tgl_pengajuan"=> date("Y-m-d", strtotime($request->get('tgl_pengajuan'))) ,
                 "tgl_jatuhtempo"=> date("Y-m-d", strtotime($request->get('tgl_jatuhtempo'))) ,
                 "kd_uker"=> $request->get('kode_cabang'),
@@ -283,6 +285,7 @@ class RegistrasiController extends Controller
                             $user = $token ? $this->getLoginSession() : Auth::user();
 
                             $user_id = $token ? $user['id'] : $user->id;
+                            $jenis_asuransi_id = $jenis_asuransi_option[0];
                             // insert asuransi
                             $newAsuransi = new Asuransi();
                             $newAsuransi->no_aplikasi = $request->no_aplikasi;
@@ -291,7 +294,7 @@ class RegistrasiController extends Controller
                             $newAsuransi->premi = $premi;
                             $newAsuransi->refund = $refund;
                             $newAsuransi->kredit_id = $newKredit->id;
-                            $newAsuransi->jenis_asuransi_id = $request->jenis_asuransi;
+                            $newAsuransi->jenis_asuransi_id = $jenis_asuransi_id;
                             $newAsuransi->user_id = $user_id;
                             $newAsuransi->nama_debitur = $request->nama_debitur;
                             $newAsuransi->no_polis = $polis;

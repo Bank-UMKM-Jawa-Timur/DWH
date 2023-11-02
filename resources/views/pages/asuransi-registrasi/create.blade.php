@@ -406,7 +406,7 @@
                     if (response.data) {
                         var data = response.data
                         for (var i = 0; i < data.length; i++) {
-                            $('#jenis_asuransi').append(`<option value="${data[i].kode}">${data[i].jenis}</option>`)
+                            $('#jenis_asuransi').append(`<option value="${data[i].id}-${data[i].kode}">${data[i].jenis}</option>`)
                         }
                     } else {
                         console.log('Data jenis asuransi tidak ada.');
