@@ -734,6 +734,7 @@
 @section('modal')
     <!-- Modal-Filter -->
     @include('pages.kredit.modal.filter-modal')
+    @include('pages.dashboard.modal.filter')
     <!-- Modal PO -->
     @include('pages.kredit.modal.detail-po')
     <!-- Modal Atur Ketersediaan Unit -->
@@ -774,12 +775,38 @@
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
             {{ $display_role }}
         </h2>
+        <div class="table-action flex justify-end w-full gap-2">
+        @if (\Request::has('tAwal') || \Request::has('tAkhir'))
+                <a href="{{route('dashboard')}}"
+                    class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                    <span class="lg:mt-1.5 mt-0">
+                        @include('components.svg.reset')
+                    </span>
+                    <span class="lg:block hidden"> Reset </span>
+                </a>
+        @endif
+        <a>
+            <button data-target-id="filter-dashboard"
+                class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                <span class="lg:mt-1 mt-0">
+                    @include('components.svg.filter')
+                </span>
+                <span class="lg:block hidden"> Filter </span>
+            </button>
+        </a>
+    </div>
     </div>
     <div class="body-pages">
-        @if(\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
-        @include('pages.dashboard.pemasaran')
+        @if(\Session::get(config('global.role_id_session')) == 1
+            || \Session::get(config('global.role_id_session')) == 4
+            || \Session::get(config('global.role_id_session')) == 2
+        )
+            @include('pages.dashboard.pemasaran')
+            <div class="mt-5">
+                @include('pages.dashboard.cabang')
+            </div>
         @else
-        @include('pages.dashboard.cabang')
+            @include('pages.dashboard.cabang')
         @endif
     </div>
 @push('extraScript')

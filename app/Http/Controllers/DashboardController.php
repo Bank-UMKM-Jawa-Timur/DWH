@@ -40,8 +40,13 @@ class DashboardController extends Controller
          * upload/{id_pengajuan}/pk/{filename}
          */
         try {
+            $tanggalAwal = date('Y') . '-' . date('m') . '-01';
+            $hari_ini = now();
+            $tAwal = date("Y-m-d", strtotime($request->tAwal));
+            $tAkhir = date("Y-m-d", strtotime($request->tAkhir));
             $total_target = 0;
-            $target = Target::select('id', 'nominal', 'total_unit')->where('is_active', 1)->first();
+            $target = Target::select('id', 'nominal', 'total_unit')->where('is_active', 1)
+           ->first();
             $this->param['target'] = $target;
 
             $data_realisasi = [];
@@ -78,6 +83,10 @@ class DashboardController extends Controller
                 ->join('notification_templates AS temp', 'temp.id', 'notifications.template_id')
                 ->where('u.id', \Session::get(config('global.user_id_session')))
                 ->where('notifications.read', 0)
+                ->whereBetween('notifications.created_at', [$tanggalAwal, $hari_ini])
+                ->when($tAwal && $tAkhir, function ($query) use ($tAwal, $tAkhir) {
+                    return $query->whereBetween('notifications.created_at', [$tAwal, $tAkhir]);
+                })
                 ->orderBy('notifications.created_at', 'DESC')
                 ->get();
             $this->param['notification'] = $notification;
@@ -94,6 +103,55 @@ class DashboardController extends Controller
             $tab_type = $request->get('tab_type');
             $temp_page = $request->page;
 
+            $this->param['total_registrasi'] = DB::table('asuransi')->where('tanggal_awal', $tanggalAwal)->where('tanggal_akhir', $hari_ini)
+            ->where('status', 'onprogress')
+            ->when($request->tAwal, function ($query) use ($tAwal) {
+                return $query->where('tanggal_awal', [$tAwal]);
+            })
+            ->when($request->tAkhir, function ($query) use ($tAkhir) {
+                return $query->where('tanggal_akhir', $tAkhir);
+            }, function ($query) use ($hari_ini) {
+                return $query->where('tanggal_akhir', $hari_ini);
+            })
+            ->count();
+
+            $this->param['total_registrasi_dibatalkan'] = DB::table('asuransi')
+            ->where('status', 'canceled')
+            ->where('tanggal_awal', $tanggalAwal)->where('tanggal_akhir', $hari_ini)
+            ->when($request->tAwal, function ($query) use ($tAwal) {
+                return $query->where('tanggal_awal', [$tAwal]);
+            })
+            ->when($request->tAkhir, function ($query) use ($tAkhir) {
+                return $query->where('tanggal_akhir', $tAkhir);
+            }, function ($query) use ($hari_ini) {
+                return $query->where('tanggal_akhir', $hari_ini);
+            })
+            ->count();
+
+            $this->param['total_pengajuan_klaim'] = DB::table('pengajuan_klaim')->join('asuransi', 'pengajuan_klaim.asuransi_id', '=', 'asuransi.id')
+            ->where('asuransi.tanggal_awal', $tanggalAwal)->where('asuransi.tanggal_akhir', $hari_ini)
+            ->when($request->tAwal, function ($query) use ($tAwal) {
+                return $query->where('asuransi.tanggal_awal', [$tAwal]);
+            })
+            ->when($request->tAkhir, function ($query) use ($tAkhir) {
+                return $query->where('asuransi.tanggal_akhir', $tAkhir);
+            }, function ($query) use ($hari_ini) {
+                return $query->where('asuransi.tanggal_akhir', $hari_ini);
+            })
+            ->where('pengajuan_klaim.status', 'onprogress')
+            ->count();
+
+            $this->param['total_pengajuan_klaim_dibatalkan'] = DB::table('pengajuan_klaim')->join('asuransi', 'pengajuan_klaim.asuransi_id', '=', 'asuransi.id')
+            ->where('asuransi.tanggal_awal', $tanggalAwal)->where('asuransi.tanggal_akhir', $hari_ini)
+            ->when($request->tAwal, function ($query) use ($tAwal) {
+                return $query->where('asuransi.tanggal_awal', [$tAwal]);
+            })
+            ->when($request->tAkhir, function ($query) use ($tAkhir) {
+                return $query->where('asuransi.tanggal_akhir', $tAkhir);
+            }, function ($query) use ($hari_ini) {
+                return $query->where('asuransi.tanggal_akhir', $hari_ini);
+            })->where('pengajuan_klaim.status', 'canceled')->count();
+
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
             $role = '';
@@ -109,8 +167,7 @@ class DashboardController extends Controller
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
             if (!$token)
-                $user_id = 0; // vendor
-
+                $user_id = 0; // <vendor></vendor>
             return view('pages.home', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -241,6 +298,10 @@ class DashboardController extends Controller
 
     public function getChartData()
     {
+        $tanggalAwal = date('Y') . '-' . date('m') . '-01';
+        $hari_ini = now();
+        $tAwal = date("Y-m-d", strtotime(Request()->tAwal));
+        $tAkhir = date("Y-m-d", strtotime(Request()->tAkhir));
         $host = env('LOS_API_HOST');
         $headers = [
             'token' => env('LOS_API_TOKEN')
@@ -279,6 +340,10 @@ class DashboardController extends Controller
                         'kkb.tgl_ketersediaan_unit',
                     ])
                     ->whereNotNull('kredits.pengajuan_id')
+                    ->whereBetween('kkb.updated_at', [$tanggalAwal, $hari_ini])
+                    ->when($tAwal && $tAkhir, function ($query) use ($tAwal, $tAkhir) {
+                        return $query->whereBetween('kkb.updated_at', [$tAwal, $tAkhir]);
+                    })
                     ->whereNull('kredits.imported_data_id')
                     ->having("status", 'done')
                     ->where('kode_cabang', $kode_cabang)

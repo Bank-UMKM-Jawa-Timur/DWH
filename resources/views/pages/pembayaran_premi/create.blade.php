@@ -43,7 +43,19 @@
                 <h2 class="font-bold text-lg text-theme-text tracking-tighter mb-3">
                     Pembayaran Premi
                 </h2>
-                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                <div class="lg:grid-cols-2 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                    <div class="input-box space-y-3" id="inputBoxNoAplikasi">
+                        <label for="add-role" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span> </label>
+                        <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
+                            <option value="" selected>-- Pilih No Aplikasi ---</option>
+                            @foreach ($noAplikasi as $item)
+                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}} - {{$item->nama_debitur}}</option>
+                            @endforeach
+                        </select>
+                        <div class="errorSpan" id="errorNoAplikasi">
+                            <p id="errorText">Nomor aplikasi harus diisi.</p>
+                        </div>
+                    </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal Bayar<span class="text-theme-primary">*</span></label>
                         <div class="flex border justify-center ">
@@ -63,18 +75,7 @@
                         <input type="text" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
-                    <div class="input-box space-y-3" id="inputBoxNoAplikasi">
-                        <label for="add-role" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span> </label>
-                        <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
-                            <option value="" selected>-- Pilih No Aplikasi ---</option>
-                            @foreach ($noAplikasi as $item)
-                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}}</option>
-                            @endforeach
-                        </select>
-                        <div class="errorSpan" id="errorNoAplikasi">
-                            <p id="errorText">Nomor aplikasi harus diisi.</p>
-                        </div>
-                    </div>
+
                 </div>
                 <div class="">
                     <div class="p-2 mt-3 mb-3 space-y-4" id="inputBoxJenisAsuransi">
@@ -113,7 +114,7 @@
                                         <th>No Polis</th>
                                         <th>No Rekening.</th>
                                         <th>Periode Bayar</th>
-                                        <th>Total Periode Bayar</th>
+                                        <th>Total Periode Bayar (dalam tahun)</th>
                                         <th>Aksi</th>
                                     </tr>
                                     <tbody id="rightForm"></tbody>

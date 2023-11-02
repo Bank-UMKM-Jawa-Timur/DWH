@@ -31,6 +31,7 @@ class RegistrasiController extends Controller
     public function index(Request $request)
     {
         try {
+            $role_id = \Session::get(config('global.role_id_session'));
             $page_length = $request->page_length ? $request->page_length : 5;
             $data = DB::table('asuransi')
                 ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
@@ -95,7 +96,7 @@ class RegistrasiController extends Controller
                 $item->detail = $dataDetail[$i];
             }
 
-            return view('pages.asuransi-registrasi.index', compact('data'));
+            return view('pages.asuransi-registrasi.index', compact('data', 'role_id'));
         } catch (\Exception $e) {
             dd($e);
             return back()->with('error', $e->getMessage());
@@ -153,6 +154,12 @@ class RegistrasiController extends Controller
      */
     public function create()
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         $token = \Session::get(config('global.user_token_session'));
         $user = $token ? $this->getLoginSession() : Auth::user();
 
@@ -192,6 +199,12 @@ class RegistrasiController extends Controller
      */
     public function store(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         DB::beginTransaction();
         try {
             $req = [

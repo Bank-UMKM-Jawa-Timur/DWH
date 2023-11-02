@@ -26,14 +26,16 @@
                     Pembayaran Premi
                 </h2>
             </div>
-            <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <a href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                    <span class="lg:mt-0 mt-0">
-                        @include('components.svg.plus')
-                    </span>
-                    <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
-                </a>
-            </div>
+            @if ($role_id == 2)
+                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                    <a href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                        <span class="lg:mt-0 mt-0">
+                            @include('components.svg.plus')
+                        </span>
+                        <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
+                    </a>
+                </div>
+            @endif
         </div>
         <div
             class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
@@ -76,7 +78,7 @@
                     <th>No Rekening</th>
                     <th>No PK</th>
                     <th>Periode Bayar</th>
-                    <th>Total Periode</th>
+                    <th>Total Periode(dalam tahun)</th>
                     <th>Aksi</th>
                 </tr>
                 <tbody>
@@ -112,21 +114,27 @@
                                     {{ $item->periode_bayar }}
                                 </td>
                                 <td>{{ $item->total_periode }}</td>
-        
+
                                 <td>
-                                    <div class="dropdown">
-                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                            Selangkapnya
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <button type="submit" class="item-dropdown">
-                                                Inquery
+                                    @if ($role_id == 2)
+                                        <div class="dropdown">
+                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                Selengkapnya
                                             </button>
-                                            {{-- <li class="">
-                                                <a class="item-dropdown" href="#" onclick="alertWarning()">Inquery</a>
-                                            </li> --}}
-                                        </ul>
-                                    </div>
+                                            <ul class="dropdown-menu">
+                                                <button type="submit" class="item-dropdown">
+                                                    Inquery
+                                                </button>
+                                                {{-- <li class="">
+                                                    <a class="item-dropdown" href="#" onclick="alertWarning()">Inquery</a>
+                                                </li> --}}
+                                            </ul>
+                                        </div>
+                                    @else
+                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                            Detail
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         </form>
@@ -179,7 +187,7 @@
         $(`#${targetId} #edit-nama`).val(data_nama)
         $(`#${targetId} #edit-telp`).val(data_telp)
         $(`#${targetId} #edit-alamat`).val(data_alamat)
-        
+
         $("#" + targetId).removeClass("hidden");
         $(".layout-form").addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
@@ -194,7 +202,7 @@
             $(".layout-overlay-form").addClass("hidden");
         }
     });
-    
+
     $("#simpanButton").on('click', function(e) {
         e.preventDefault();
         const req_nama = document.getElementById('add-nama')
@@ -344,7 +352,7 @@
         })
     })
 
-    //$('.add-modal-pembayaran-premi').on('click', function (e) { 
+    //$('.add-modal-pembayaran-premi').on('click', function (e) {
     //  alertWarning()
     //});
 
