@@ -165,7 +165,7 @@ class PengajuanKlaimController extends Controller
 
                             DB::commit();
                             Alert::success('Berhasil', $message);
-                            return redirect()->route('pengajuan-klaim.index');
+                            return redirect()->route('asuransi.pengajuan-klaim.index');
                             break;
                         case '01':
                             # no aplikasi tidak ditemukan
@@ -296,17 +296,17 @@ class PengajuanKlaimController extends Controller
                     case '01':
                         $message = $responseBody['keterangan'];
                         Alert::error('Gagal', $message);
-                        return redirect()->route('pengajuan-klaim.index');
+                        return redirect()->route('asuransi.pengajuan-klaim.index');
                         break;
                     case '02':
                         $message = $responseBody['keterangan'];
                         Alert::error('Gagal', $message);
-                        return redirect()->route('pengajuan-klaim.index');
+                        return redirect()->route('asuransi.pengajuan-klaim.index');
                         break;
                     case '03':
                         $message = $responseBody['keterangan'];
                         Alert::error('Gagal', $message);
-                        return redirect()->route('pengajuan-klaim.index');
+                        return redirect()->route('asuransi.pengajuan-klaim.index');
                         break;
                     case '05':
                         $message = $responseBody['keterangan'];
@@ -320,17 +320,17 @@ class PengajuanKlaimController extends Controller
 
                         DB::commit();
                         Alert::success('Berhasil', $message);
-                        return redirect()->route('pengajuan-klaim.index');
+                        return redirect()->route('asuransi.pengajuan-klaim.index');
                         break;
                     case '06':
                         $message = $responseBody['keterangan'];
                         Alert::error('Gagal', $message);
-                        return redirect()->route('pengajuan-klaim.index');
+                        return redirect()->route('asuransi.pengajuan-klaim.index');
                         break;
                     case '48':
                         $message = $responseBody['keterangan'];
                         Alert::error('Gagal', $message);
-                        return redirect()->route('pengajuan-klaim.index');
+                        return redirect()->route('asuransi.pengajuan-klaim.index');
                         break;
                     default :
                         Alert::error('Gagal', 'Terjadi kesalahan.');
