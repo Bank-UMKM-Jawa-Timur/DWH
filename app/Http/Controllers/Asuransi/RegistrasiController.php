@@ -323,7 +323,7 @@ class RegistrasiController extends Controller
 
                             $message = $responseBody['keterangan'];
 
-                            // DB::commit();
+                            DB::commit();
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
                             break;
