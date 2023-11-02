@@ -135,6 +135,7 @@ class PembayaranPremiController extends Controller
      */
     public function store(Request $request)
     {
+        ini_set('max_execution_time', 120);
         $role_id = \Session::get(config('global.role_id_session'));
         if ($role_id != 2) {
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
@@ -205,7 +206,7 @@ class PembayaranPremiController extends Controller
                         return back()->withInput();
                     }else{
                         try {
-                            $response = Http::withHeaders($header)->withOptions(['verify' => false])->post($url, $body);
+                            $response = Http::timeout(60)->withHeaders($header)->withOptions(['verify' => false])->post($url, $body);
 
                             $statusCode = $response->status();
                             if ($statusCode == 200) {
