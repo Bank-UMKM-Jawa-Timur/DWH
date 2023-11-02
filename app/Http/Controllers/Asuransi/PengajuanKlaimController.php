@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Utils\UtilityController;
 use App\Models\PengajuanKlaim;
+use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -33,14 +34,24 @@ class PengajuanKlaimController extends Controller
     {
         $role_id = \Session::get(config('global.role_id_session'));
         $page_length = $request->page_length ? $request->page_length : 5;
-        $data = PengajuanKlaim::with('asuransi');
+        $data = DB::table('pengajuan_klaim AS p')->select(
+                                    'p.id',
+                                    'p.stat_klaim',
+                                    'p.status',
+                                    'a.no_aplikasi',
+                                    'a.no_rek',
+                                )
+                                ->join('asuransi AS a', 'a.id', 'p.asuransi_id');
         if ($request->has('search')) {
             $search = $request->get('search');
-            $data->whereHas('asuransi', function ($q) use ($search) {
-                $q->where('no_rek', 'like', '%' . $search . '%')
-                    ->orWhere('no_aplikasi', 'like', '%' . $search . '%')
-                    ->orWhere('no_klaim', 'like', '%' . $search . '%');
-            });
+            $data->where('a.no_rek', 'like', '%' . $search . '%')
+                ->orWhere('p.status', 'like', '%' . $search . '%')
+                ->orWhere('a.no_aplikasi', 'like', '%' . $search . '%');
+            // $data->whereHas('asuransi', function ($q) use ($search) {
+            //     $q->where('no_rek', 'like', '%' . $search . '%')
+            //         ->orWhere('no_aplikasi', 'like', '%' . $search . '%')
+            //         ->orWhere('no_klaim', 'like', '%' . $search . '%');
+            // });
         }
 
         if (is_numeric($page_length)) {
@@ -48,6 +59,8 @@ class PengajuanKlaimController extends Controller
         } else {
             $data = $data->get();
         }
+
+        // return $data;
 
         return view('pages.pengajuan-klaim.index', compact('data', 'role_id'));
     }
@@ -65,6 +78,8 @@ class PengajuanKlaimController extends Controller
 
     public function store(Request $request)
     {
+        ini_set('max_execution_time', 120);
+
         $role_id = \Session::get(config('global.role_id_session'));
         if ($role_id != 2) {
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
@@ -124,7 +139,7 @@ class PengajuanKlaimController extends Controller
 
             $host = config('global.eka_lloyd_host');
             $url = "$host/klaim";
-            $response = Http::timeout(40)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
@@ -135,12 +150,14 @@ class PengajuanKlaimController extends Controller
                         case '00':
                             # success
                             $message = $responseBody['keterangan'];
+                            $asuransi = DB::table('asuransi')
+                                            ->select('id')
+                                            ->where('no_aplikasi', $request->no_aplikasi)
+                                            ->first();
 
                             $newPengajuanKlaim = new PengajuanKlaim();
-                            $newPengajuanKlaim->no_klaim = $responseBody['no_klaim'];
-                            $newPengajuanKlaim->no_aplikasi = $request->no_aplikasi;
-                            $newPengajuanKlaim->no_rek = $request->no_rekening;
-                            $newPengajuanKlaim->stat_klaim = 1;
+                            $newPengajuanKlaim->asuransi_id = $asuransi->id;
+                            $newPengajuanKlaim->stat_klaim = 1; // sedang diproses
                             $newPengajuanKlaim->status = 'onprogress';
                             $newPengajuanKlaim->save();
 
@@ -192,16 +209,16 @@ class PengajuanKlaimController extends Controller
         $req = [
             // "status" => $request->input(''),
             "no_aplikasi" => $request->input('row_no_aplikasi'),
-            "no_rekening" => $request->input('row_no_rek'),
-            "no_sp" => $request->input('row_no_sp'),
-            "tgl_klaim" => $request->input('row_tgl_klaim'),
-            "nilai_persetujuan" => $request->input('row_nilai_persetujuan'),
-            "keterangan" => $request->input('row_keterangan'),
-            "stat_klaim" => $request->input('row_status_klaim'),
-            "no_rekening_debet" => $request->input('row_no_rekening_debit'),
-            "no_klaim" => $request->input('row_no_klaim')
+            // "no_rekening" => $request->input('row_no_rek'),
+            // "no_sp" => $request->input('row_no_sp'),
+            // "tgl_klaim" => $request->input('row_tgl_klaim'),
+            // "nilai_persetujuan" => $request->input('row_nilai_persetujuan'),
+            // "keterangan" => $request->input('row_keterangan'),
+            // "stat_klaim" => $request->input('row_status_klaim'),
+            // "no_rekening_debet" => $request->input('row_no_rekening_debit'),
+            // "no_klaim" => $request->input('row_no_klaim')
         ];
-
+        
         DB::beginTransaction();
         try {
             $headers = [
@@ -256,6 +273,8 @@ class PengajuanKlaimController extends Controller
 
         DB::beginTransaction();
         try{
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
             $user_id = $token ? $user['id'] : $user->id;
             $headers = [
                 "Accept" => "/",
