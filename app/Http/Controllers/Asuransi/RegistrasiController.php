@@ -199,6 +199,7 @@ class RegistrasiController extends Controller
      */
     public function store(Request $request)
     {
+        ini_set('max_execution_time', 120);
         $role_id = \Session::get(config('global.role_id_session'));
         if ($role_id != 2) {
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
@@ -243,17 +244,19 @@ class RegistrasiController extends Controller
             ];
 
             $headers = [
-                "Accept" => "/",
+                "Accept" => "application/json",
                 "x-api-key" => config('global.eka_lloyd_token'),
                 "Content-Type" => "application/json",
-                "Access-Control-Allow-Origin" => "*",
-                "Access-Control-Allow-Methods" => "*"
+                "Connection" => "Keep-Alive"
             ];
-
+            
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
-            $response = Http::timeout(30)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::timeout(60)->withHeaders($headers)
+                            ->withOptions(['verify' => false])
+                            ->post($url, $req);
             $statusCode = $response->status();
+
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
                 if ($responseBody) {
@@ -320,7 +323,7 @@ class RegistrasiController extends Controller
 
                             $message = $responseBody['keterangan'];
 
-                            DB::commit();
+                            // DB::commit();
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
                             break;
@@ -332,6 +335,12 @@ class RegistrasiController extends Controller
                             break;
                         case '04':
                             # duplikasi data
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
+                            break;
+                        case '05':
+                            # data kurang lengkap
                             $message = $responseBody['keterangan'];
                             Alert::error('Gagal', $message);
                             return back();
@@ -349,6 +358,10 @@ class RegistrasiController extends Controller
                             break;
                     }
                 }
+            }
+            else if ($statusCode == 504) {
+                Alert::error('Gagal', "Terjadi kesalahan. Gateway time out");
+                return back()->withInput();
             }
             else {
                 Alert::error('Gagal', "Terjadi kesalahan. Kode status : $statusCode");
