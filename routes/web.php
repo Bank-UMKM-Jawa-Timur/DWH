@@ -88,7 +88,7 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
     });
 
-    Route::prefix('asuransi')->name('asuransi.')->group(function() {
+    Route::middleware('asuransi_permission')->prefix('asuransi')->name('asuransi.')->group(function() {
         Route::prefix('/registrasi')
             ->name('registrasi.')
             ->controller(RegistrasiController::class)
@@ -96,11 +96,11 @@ Route::middleware('auth_api')->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/get-user/{user_id}', 'getUser')->name('get_user');
                 Route::get('/create', 'create')->name('create');
-                Route::get('jenis-asuransi/{jenis_kredit}', 'getJenisAsuransi')->name('jenis_asuransi');
+                Route::get('jenis-asuransi', 'getJenisAsuransi')->name('jenis_asuransi');
                 Route::get('rate-premi', 'getRatePremi')->name('rate_premi');
                 Route::post('/', 'store')->name('store');
                 Route::get('inquery', 'inquery')->name('inquery');
-                Route::get('batal', 'batal')->name('batal');
+                Route::post('batal', 'batal')->name('batal');
                 Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');
             });
         // Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);

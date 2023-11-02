@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Asuransi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Utils\UtilityController;
@@ -15,7 +16,14 @@ use Illuminate\Support\Facades\Validator;
 
 
 class PengajuanKlaimController extends Controller
-{
+{   
+
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -23,6 +31,7 @@ class PengajuanKlaimController extends Controller
      */
     public function index(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
         $page_length = $request->page_length ? $request->page_length : 5;
         $data = PengajuanKlaim::with('asuransi');
         if ($request->has('search')) {
@@ -44,16 +53,28 @@ class PengajuanKlaimController extends Controller
         }
         // return $data;
         // $data = $data->orderBy('no_aplikasi')->paginate($page_length);
-        return view('pages.pengajuan-klaim.index', compact('data'));
+        return view('pages.pengajuan-klaim.index', compact('data', 'role_id'));
     }
     public function create(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         $dataNoRek = DB::table('asuransi')->orderBy('no_aplikasi')->get();
         return view('pages.pengajuan-klaim.create', compact('dataNoRek'));
     }
 
     public function store(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+        
         $validator = Validator::make($request->all(), [
             'no_sp' => 'required',
             'no_sp3' => 'required',
@@ -124,6 +145,8 @@ class PengajuanKlaimController extends Controller
                             $newPengajuanKlaim->stat_klaim = 1;
                             $newPengajuanKlaim->status = 'onprogress';
                             $newPengajuanKlaim->save();
+
+                            $this->logActivity->store('Pengguna ' . $request->name . ' menambahkan pengajuan klaim');
 
                             Alert::success('Berhasil', $message);
                             return redirect()->route('pengajuan-klaim.index');
@@ -199,6 +222,9 @@ class PengajuanKlaimController extends Controller
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
                     $nilai = $responseBody['nilai_premi'];
+
+                    $this->logActivity->store('Pengguna ' . $request->name . ' cek status pengajuan klaim');
+
                     Alert::success('Berhasil', $message);
                     return back();
                 }else{
@@ -260,6 +286,9 @@ class PengajuanKlaimController extends Controller
                         break;
                     case '05':
                         $message = $responseBody['keterangan'];
+
+                        $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan pengajuan klaim.');
+
                         Alert::success('Berhasil', $message);
                         return redirect()->route('pengajuan-klaim.index');
                         break;

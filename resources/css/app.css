@@ -44,7 +44,7 @@
         @apply w-full box-border h-screen bg-theme-pages drop-shadow-md overflow-auto;
     }
     .head-pages {
-        @apply p-5;
+        @apply p-5 w-full;
     }
     .body-pages {
         @apply p-5;
@@ -101,7 +101,7 @@
     }
 
     .tables {
-        @apply overflow-visible overflow-x-auto p-2;
+        @apply overflow-x-auto p-2;
     }
     body {
         @apply overflow-hidden;
@@ -175,7 +175,7 @@
         @apply relative mx-auto;
     }
     .dropdown-menu {
-        @apply hidden border bg-white divide-y absolute text-left text-gray-700 z-30 bottom-0;
+        @apply hidden border bg-white divide-y text-left text-gray-700 z-30 lg:right-auto right-16 bottom-auto fixed;
     }
     .item-dropdown {
         @apply bg-white hover:bg-gray-200 py-2 px-8 block;

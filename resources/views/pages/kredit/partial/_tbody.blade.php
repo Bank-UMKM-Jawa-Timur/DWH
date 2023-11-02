@@ -15,7 +15,7 @@
             @endif
         </td>
         {{--  Cabang  --}}
-        @if ($role_id == 3)
+        @if ($role_id != 2)
             <td>
                 @if ($item->detail)
                     {{ array_key_exists('cabang', $item->detail) ? $item->detail['cabang'] : '-' }}

@@ -568,6 +568,9 @@ video {
 .right-0 {
   right: 0px;
 }
+.right-16 {
+  right: 4rem;
+}
 .right-2 {
   right: 0.5rem;
 }
@@ -1930,7 +1933,6 @@ video {
   }
 }
 .tables {
-  overflow: visible;
   overflow-x: auto;
   padding: 0.5rem;
 }
@@ -2022,8 +2024,9 @@ table td {
   margin-right: auto;
 }
 .dropdown-menu {
-  position: absolute;
-  bottom: 0px;
+  position: fixed;
+  right: 4rem;
+  bottom: auto;
   z-index: 30;
   display: none;
 }
@@ -2039,6 +2042,12 @@ table td {
   text-align: left;
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+@media (min-width: 1024px) {
+
+  .dropdown-menu {
+    right: auto;
+  }
 }
 .item-dropdown {
   display: block;
@@ -2912,10 +2921,6 @@ input:checked ~ .line {
     display: block;
   }
 
-  .lg\:inline {
-    display: inline;
-  }
-
   .lg\:flex {
     display: flex;
   }
@@ -2926,10 +2931,6 @@ input:checked ~ .line {
 
   .lg\:w-96 {
     width: 24rem;
-  }
-
-  .lg\:w-\[20rem\] {
-    width: 20rem;
   }
 
   .lg\:w-\[40rem\] {
@@ -2950,10 +2951,6 @@ input:checked ~ .line {
 
   .lg\:justify-normal {
     justify-content: normal;
-  }
-
-  .lg\:justify-between {
-    justify-content: space-between;
   }
 
   .lg\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
