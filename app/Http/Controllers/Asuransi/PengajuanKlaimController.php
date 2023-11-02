@@ -239,7 +239,6 @@ class PengajuanKlaimController extends Controller
                 $message = '';
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
-                    $nilai = $responseBody['nilai_premi'];
 
                     $this->logActivity->store('Pengguna ' . $request->name . ' cek status pengajuan klaim');
 
