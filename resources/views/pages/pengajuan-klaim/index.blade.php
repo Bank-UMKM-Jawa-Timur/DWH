@@ -135,6 +135,7 @@
                                                 <li class="item-dropdown">
                                                     <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
                                                         @csrf
+                                                        <input type="hidden" name="id" value="{{ $item->id }}">
                                                         <input type="hidden" name="no_aplikasi" value="{{ $item->asuransi->no_aplikasi }}">
                                                         <input type="hidden" name="no_rekening" value="{{ $item->asuransi->no_rek }}">
                                                         <input type="hidden" name="no_polis" value="{{ $item->asuransi->no_polis }}">

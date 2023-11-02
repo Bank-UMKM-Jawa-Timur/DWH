@@ -36,9 +36,6 @@ class PengajuanKlaimController extends Controller
         $data = PengajuanKlaim::with('asuransi');
         if ($request->has('search')) {
             $search = $request->get('search');
-            // $data = $data->where('no_rek', 'LIKE', "%$search%")
-            //     ->orWhere('no_aplikasi', 'LIKE', "%$search%")
-            //     ->orWhere('no_klaim', 'LIKE', "%$search%");
             $data->whereHas('asuransi', function ($q) use ($search) {
                 $q->where('no_rek', 'like', '%' . $search . '%')
                     ->orWhere('no_aplikasi', 'like', '%' . $search . '%')
@@ -51,8 +48,7 @@ class PengajuanKlaimController extends Controller
         } else {
             $data = $data->get();
         }
-        // return $data;
-        // $data = $data->orderBy('no_aplikasi')->paginate($page_length);
+
         return view('pages.pengajuan-klaim.index', compact('data', 'role_id'));
     }
     public function create(Request $request)
@@ -100,6 +96,8 @@ class PengajuanKlaimController extends Controller
             'penyebab_klaim' => 'Penyebab Klaim',
         ]);
 
+        // return $request;
+
         $req = [
             'no_aplikasi' => $request->get('no_aplikasi'),
             'no_rekening' => $request->get('no_rekening'),
@@ -114,7 +112,7 @@ class PengajuanKlaimController extends Controller
             'jenis_agunan' => $request->get('jenis_agunan'),
             'penyebab_klaim' => $request->get('penyebab_klaim'),
         ];
-
+        DB::beginTransaction();
         try {
             $headers = [
                 "Accept" => "/",
@@ -126,7 +124,7 @@ class PengajuanKlaimController extends Controller
 
             $host = config('global.eka_lloyd_host');
             $url = "$host/klaim";
-            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::timeout(40)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
@@ -148,6 +146,7 @@ class PengajuanKlaimController extends Controller
 
                             $this->logActivity->store('Pengguna ' . $request->name . ' menambahkan pengajuan klaim');
 
+                            DB::commit();
                             Alert::success('Berhasil', $message);
                             return redirect()->route('pengajuan-klaim.index');
                             break;
@@ -180,6 +179,7 @@ class PengajuanKlaimController extends Controller
                 return back();
             }
         } catch (\Exception $e) {
+            DB::rollBack();
             Alert::error(
                 'Gagal',
                 $e->getMessage()
@@ -202,6 +202,7 @@ class PengajuanKlaimController extends Controller
             "no_klaim" => $request->input('row_no_klaim')
         ];
 
+        DB::beginTransaction();
         try {
             $headers = [
                 "Accept" => "/",
@@ -225,6 +226,7 @@ class PengajuanKlaimController extends Controller
 
                     $this->logActivity->store('Pengguna ' . $request->name . ' cek status pengajuan klaim');
 
+                    DB::commit();
                     Alert::success('Berhasil', $message);
                     return back();
                 }else{
@@ -238,6 +240,7 @@ class PengajuanKlaimController extends Controller
                 return back();
             }
         } catch (\Throwable $e) {
+            DB::rollBack();
             Alert::error('Gagal', $e->getMessage());
             return back();
         }
@@ -251,7 +254,9 @@ class PengajuanKlaimController extends Controller
             'no_klaim' => $request->no_klaim
         ];
 
+        DB::beginTransaction();
         try{
+            $user_id = $token ? $user['id'] : $user->id;
             $headers = [
                 "Accept" => "/",
                 "x-api-key" => config('global.eka_lloyd_token'),
@@ -287,8 +292,14 @@ class PengajuanKlaimController extends Controller
                     case '05':
                         $message = $responseBody['keterangan'];
 
+                        $pengajuanKlaim = PengajuanKlaim::find($request->id);
+                        $pengajuanKlaim->canceled_at = date('Y-m-d');
+                        $pengajuanKlaim->canceled_by = $user_id;
+                        $pengajuanKlaim->save();
+
                         $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan pengajuan klaim.');
 
+                        DB::commit();
                         Alert::success('Berhasil', $message);
                         return redirect()->route('pengajuan-klaim.index');
                         break;
@@ -312,6 +323,7 @@ class PengajuanKlaimController extends Controller
                 return back();
             }
         } catch(\Exception $e){
+            DB::rollBack();
             Alert::error('Gagal', $e->getMessage());
             return back();
         }
