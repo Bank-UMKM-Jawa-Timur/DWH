@@ -41,17 +41,19 @@
                             <span class="lg:block hidden"> Filter </span>
                         </button>
                     </a>
-                    <a href="{{ route('asuransi.registrasi.create') }}">
-                        <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                            <span class="lg:mt-0 mt-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="M5 12h14m-7-7v14" />
-                                </svg>
-                            </span>
-                            <span class="lg:block hidden"> Tambah  </span>
-                        </button>
-                    </a>
+                    @if ($role_id == 2)
+                        <a href="{{ route('asuransi.registrasi.create') }}">
+                            <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                                <span class="lg:mt-0 mt-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="M5 12h14m-7-7v14" />
+                                    </svg>
+                                </span>
+                                <span class="lg:block hidden"> Tambah  </span>
+                            </button>
+                        </a>
+                    @endif
                 </div>
             </div>
             <form id="form" method="get">
@@ -123,7 +125,7 @@
                                 @else
                                 <td>-</td>
                                 <td>-</td>
-                                @endif 
+                                @endif
                                 <td>
                                     @if ($item->tgl_rekam)
                                         {{date('d-m-Y', strtotime($item->tgl_rekam))}}
@@ -132,8 +134,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($item->is_paid == 1)
-                                        Sudah
+                                    @if($item->is_paid == true)
+                                        Sudah Dibayar
                                     @else
                                         Belum
                                     @endif
@@ -149,32 +151,38 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="dropdown">
+                                    @if ($role_id == 2)
+                                        <div class="dropdown">
+                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                Selengkapnya
+                                            </button>
+                                            <ul class="dropdown-menu right-16">
+                                                <li class="">
+                                                    <a class="item-dropdown modal-batal" href="#"
+                                                        data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                        data-id="{{$item->id}}" data-no_aplikasi="{{$item->no_aplikasi}}"
+                                                        data-no_polis="{{$item->no_polis}}">Pembatalan</a>
+                                                </li>
+                                                <li class="">
+                                                    <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                        <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
+                                                        <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
+                                                    </form>
+                                                </li>
+                                                <li class="">
+                                                    <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                        data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
+                                                        data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
+                                                        data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
+                                                        data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    @else
                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                            Selengkapnya
+                                            Detail
                                         </button>
-                                        <ul class="dropdown-menu right-16">
-                                            <li class="">
-                                                <a class="item-dropdown modal-batal" href="#"
-                                                    data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                    data-id="{{$item->id}}" data-no_aplikasi="{{$item->no_aplikasi}}"
-                                                    data-no_polis="{{$item->no_polis}}">Pembatalan</a>
-                                            </li>
-                                            <li class="">
-                                                <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                    <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
-                                                    <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
-                                                </form>
-                                            </li>
-                                            <li class="">
-                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                    data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
-                                                    data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
-                                                    data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
-                                                    data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                             {{-- <tr class="collapse-table hidden bg-[#f2f2f2]">
@@ -209,7 +217,7 @@
                                         @else
                                             <td>-</td>
                                             <td>-</td>
-                                        @endif 
+                                        @endif
                                         <td>
                                             @if ($itemDetail->tgl_rekam)
                                                 {{date('d-m-Y', strtotime($itemDetail->tgl_rekam))}}
@@ -218,8 +226,8 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($itemDetail->is_paid == 1)
-                                                Sudah
+                                            @if($itemDetail->is_paid == true)
+                                                Sudah Dibayar
                                             @else
                                                 Belum
                                             @endif
@@ -238,7 +246,7 @@
                                     </tr>
                                 @endforeach
                             @else
-                                
+
                             @endif
                         @empty
                             <tr>
@@ -344,7 +352,7 @@
                 success: function(data) {
                     Swal.close()
                     const nama = data['detail'] != 'undifined' ? data['detail']['nama'] : 'undifined';
-                    
+
                     $("#" + targetId).removeClass("hidden");
                     $(`#${targetId} #canceled_at`).html(`Dibatalkan pada tanggal <b>${data_canceled_at}</b> oleh <b>${nama}</b>.`)
                     if (targetId.slice(0, 5) !== "modal") {

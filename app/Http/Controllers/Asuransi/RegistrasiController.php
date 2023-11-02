@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Controllers\Utils\UtilityController;
 use App\Models\Asuransi;
+use App\Models\DetailAsuransi;
 use App\Models\Kredit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -30,6 +31,7 @@ class RegistrasiController extends Controller
     public function index(Request $request)
     {
         try {
+            $role_id = \Session::get(config('global.role_id_session'));
             $page_length = $request->page_length ? $request->page_length : 5;
             $data = DB::table('asuransi')
                 ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
@@ -94,7 +96,7 @@ class RegistrasiController extends Controller
                 $item->detail = $dataDetail[$i];
             }
 
-            return view('pages.asuransi-registrasi.index', compact('data'));
+            return view('pages.asuransi-registrasi.index', compact('data', 'role_id'));
         } catch (\Exception $e) {
             dd($e);
             return back()->with('error', $e->getMessage());
@@ -152,6 +154,12 @@ class RegistrasiController extends Controller
      */
     public function create()
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         $token = \Session::get(config('global.user_token_session'));
         $user = $token ? $this->getLoginSession() : Auth::user();
 
@@ -175,8 +183,8 @@ class RegistrasiController extends Controller
         return view('pages.asuransi-registrasi.create', compact('dataPengajuan', 'dataAsuransi'));
     }
 
-    public function getJenisAsuransi($jenis_kredit){
-        $dataAsuransi = DB::table('mst_jenis_asuransi')->where('jenis_kredit', $jenis_kredit)->get();
+    public function getJenisAsuransi(Request $request){
+        $dataAsuransi = DB::table('mst_jenis_asuransi')->where('jenis_kredit', $request->jenis_kredit)->get();
 
         return response()->json([
             'data' => $dataAsuransi
@@ -191,43 +199,49 @@ class RegistrasiController extends Controller
      */
     public function store(Request $request)
     {
-        $req = [
-            "no_aplikasi"=> $request->get('no_aplikasi'),
-            "no_rekening"=> $request->get('no_rekening'),
-            "jenis_asuransi"=> $request->get('jenis_asuransi'),
-            "tgl_pengajuan"=> date("Y-m-d", strtotime($request->get('tgl_pengajuan'))) ,
-            "tgl_jatuhtempo"=> date("Y-m-d", strtotime($request->get('tgl_jatuhtempo'))) ,
-            "kd_uker"=> $request->get('kode_cabang'),
-            "nama_debitur"=> $request->get('nama_debitur'),
-            "alamat_debitur"=> $request->get('alamat_debitur'),
-            "tgl_lahir"=> date("Y-m-d", strtotime($request->get('tgl_lahir'))),
-            "no_ktp"=> $request->get('no_ktp'),
-            "no_pk"=> $request->get('no_pk'),
-            "tgl_pk"=> $request->get('tgl_pk'),
-            "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
-            "tgl_awal_kredit"=> date("Y-m-d",strtotime($request->get('tanggal_awal_kredit'))),
-            "tgl_akhir_kredit"=> date("Y-m-d", strtotime($request->get('tanggal_akhir_kredit'))),
-            "jml_bulan"=> $request->get('jumlah_bulan'),
-            "jenis_pengajuan"=> $request->get('jenis_pengajuan'),
-            "bade"=> $request->get('baki_debet'),
-            "tunggakan"=> $request->get('tunggakan'),
-            "kolektibilitas"=> $request->get('kolektibilitas'),
-            "no_polis_sebelumnya"=> $request->get('no_polis_sebelumnya'),
-            "jenis_pertanggungan"=> $request->get('jenis_pertanggungan'),
-            "tipe_premi"=> $request->get('tipe_premi'),
-            "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
-            "jenis_coverage"=> $request->get('jenis_coverage'),
-            "tarif"=> $request->get('tarif'),
-            "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
-            "kode_ls"=> $request->get('kode_ls'),
-            // "jenis_kredit"=> $request->get('jenis_kredit'),
-            "jenis_kredit"=> "01",
-            "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
-            "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
-        ];
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
 
         DB::beginTransaction();
         try {
+            $req = [
+                "no_aplikasi"=> $request->get('no_aplikasi'),
+                "no_rekening"=> $request->get('no_rekening'),
+                "jenis_asuransi"=> $request->get('jenis_asuransi'),
+                "tgl_pengajuan"=> date("Y-m-d", strtotime($request->get('tgl_pengajuan'))) ,
+                "tgl_jatuhtempo"=> date("Y-m-d", strtotime($request->get('tgl_jatuhtempo'))) ,
+                "kd_uker"=> $request->get('kode_cabang'),
+                "nama_debitur"=> $request->get('nama_debitur'),
+                "alamat_debitur"=> $request->get('alamat_debitur'),
+                "tgl_lahir"=> date("Y-m-d", strtotime($request->get('tgl_lahir'))),
+                "no_ktp"=> $request->get('no_ktp'),
+                "no_pk"=> $request->get('no_pk'),
+                "tgl_pk"=> $request->get('tgl_pk'),
+                "plafon_kredit"=> UtilityController::clearCurrencyFormat($request->get('plafon_kredit')),
+                "tgl_awal_kredit"=> date("Y-m-d",strtotime($request->get('tanggal_awal_kredit'))),
+                "tgl_akhir_kredit"=> date("Y-m-d", strtotime($request->get('tanggal_akhir_kredit'))),
+                "jml_bulan"=> $request->get('jumlah_bulan'),
+                "jenis_pengajuan"=> $request->get('jenis_pengajuan'),
+                "bade"=> $request->get('baki_debet'),
+                "tunggakan"=> $request->get('tunggakan'),
+                "kolektibilitas"=> $request->get('kolektibilitas'),
+                "no_polis_sebelumnya"=> $request->get('no_polis_sebelumnya'),
+                "jenis_pertanggungan"=> $request->get('jenis_pertanggungan'),
+                "tipe_premi"=> $request->get('tipe_premi'),
+                "premi"=> UtilityController::clearCurrencyFormat($request->get('premi')),
+                "jenis_coverage"=> $request->get('jenis_coverage'),
+                "tarif"=> $request->get('tarif'),
+                "refund"=> UtilityController::clearCurrencyFormat($request->get('refund')),
+                "kode_ls"=> $request->get('kode_ls'),
+                // "jenis_kredit"=> $request->get('jenis_kredit'),
+                "jenis_kredit"=> "01",
+                "handling_fee"=> UtilityController::clearCurrencyFormat($request->get('handling_fee')),
+                "premi_disetor"=> UtilityController::clearCurrencyFormat($request->get('premi_disetor')),
+            ];
+
             $headers = [
                 "Accept" => "/",
                 "x-api-key" => config('global.eka_lloyd_token'),
@@ -238,7 +252,7 @@ class RegistrasiController extends Controller
 
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
-            $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::timeout(30)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
@@ -285,9 +299,27 @@ class RegistrasiController extends Controller
                             $newAsuransi->status = 'onprogress';
                             $newAsuransi->save();
 
+                            // insert detail asuransi
+                            $newDetail = new DetailAsuransi();
+                            $newDetail->asuransi_id = $newAsuransi->id;
+                            $newDetail->jenis_pengajuan = $request->jenis_pengajuan;
+                            $newDetail->kolektibilitas = $request->kolektibilitas;
+                            $newDetail->jenis_pertanggungan = $request->jenis_pertanggungan;
+                            $newDetail->tipe_premi = $request->tipe_premi;
+                            $newDetail->jenis_coverage = $request->jenis_coverage;
+                            $newDetail->no_polis_sebelumnya = $request->no_polis_sebelumnya;
+                            $newDetail->baki_debet = UtilityController::clearCurrencyFormat($request->baki_debet);
+                            $newDetail->tunggakan = UtilityController::clearCurrencyFormat($request->tunggakan);
+                            $newDetail->tarif = $request->tarif;
+                            $newDetail->kode_layanan_syariah = $request->kode_ls;
+                            $newDetail->handling_fee = UtilityController::clearCurrencyFormat($request->handling_fee);
+                            $newDetail->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
+                            $newDetail->save();
+
                             $this->logActivity->store('Pengguna ' . $request->name . ' tambah registrasi asuransi.');
 
                             $message = $responseBody['keterangan'];
+
                             DB::commit();
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
@@ -312,20 +344,24 @@ class RegistrasiController extends Controller
                             break;
 
                         default:
-                            Alert::error('Gagal', 'Terjadi kesalahan');
+                            Alert::error('Gagal', "Terjadi kesalahan. Kode status : $status");
                             return back();
                             break;
                     }
                 }
             }
             else {
-                Alert::error('Gagal', 'Terjadi kesalahan');
-                return back();
+                Alert::error('Gagal', "Terjadi kesalahan. Kode status : $statusCode");
+                return back()->withInput();
             }
         } catch (\Exception $e) {
             DB::rollBack();
             Alert::error('Gagal', $e->getMessage());
-            return back();
+            return back()->withInput();
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            DB::rollBack();
+            Alert::error('Gagal timeout', $e->getMessage());
+            return back()->withInput();
         }
     }
 

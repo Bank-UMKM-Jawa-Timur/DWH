@@ -31,6 +31,7 @@ class PengajuanKlaimController extends Controller
      */
     public function index(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
         $page_length = $request->page_length ? $request->page_length : 5;
         $data = PengajuanKlaim::with('asuransi');
         if ($request->has('search')) {
@@ -52,16 +53,28 @@ class PengajuanKlaimController extends Controller
         }
         // return $data;
         // $data = $data->orderBy('no_aplikasi')->paginate($page_length);
-        return view('pages.pengajuan-klaim.index', compact('data'));
+        return view('pages.pengajuan-klaim.index', compact('data', 'role_id'));
     }
     public function create(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         $dataNoRek = DB::table('asuransi')->orderBy('no_aplikasi')->get();
         return view('pages.pengajuan-klaim.create', compact('dataNoRek'));
     }
 
     public function store(Request $request)
     {
+        $role_id = \Session::get(config('global.role_id_session'));
+        if ($role_id != 2) {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+        
         $validator = Validator::make($request->all(), [
             'no_sp' => 'required',
             'no_sp3' => 'required',

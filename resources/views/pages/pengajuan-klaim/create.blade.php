@@ -65,14 +65,14 @@
             {{-- form data 3 --}}
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
-                    <label for="" class="uppercase">Tunggukan Bunga<span class="text-theme-primary">*</span></label>
+                    <label for="" class="uppercase">Tunggakan Bunga<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="tunggakan_bunga" />
                     @error('tunggakan_bunga')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
-                    <label for="" class="uppercase">Tunggukan Denda<span class="text-theme-primary">*</span></label>
+                    <label for="" class="uppercase">Tunggakan Denda<span class="text-theme-primary">*</span></label>
                     <input type="text" class="rupiah p-2 w-full border" id="" name="tunggakan_denda" />
                     @error('tunggakan_denda')
                         <small class="form-text text-red-600 error">{{ $message }}</small>

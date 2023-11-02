@@ -19,19 +19,21 @@
                         Status data klaim
                     </h2>
                 </div>
-                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                    <a href="{{ route('asuransi.pengajuan-klaim.create') }}">
-                        <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                            <span class="lg:mt-0 mt-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="M5 12h14m-7-7v14" />
-                                </svg>
-                            </span>
-                            <span class="lg:block hidden"> Tambah  </span>
-                        </button>
-                    </a>
-                </div>
+                @if ($role_id == 2)
+                    <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                        <a href="{{ route('asuransi.pengajuan-klaim.create') }}">
+                            <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                                <span class="lg:mt-0 mt-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="M5 12h14m-7-7v14" />
+                                    </svg>
+                                </span>
+                                <span class="lg:block hidden"> Tambah  </span>
+                            </button>
+                        </a>
+                    </div>
+                @endif
             </div>
             <form id="form" method="get">
                 <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
@@ -161,27 +163,28 @@
                                     {{$item->status}}
                                 </td>
                                 <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selengkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li class="">
-                                            <button type="submit" class="item-dropdown">Cek Status</button>
-                                        </li>
-                                        <li class="item-dropdown">
-                                            <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
-                                                @csrf
-                                                <input type="hidden" name="no_aplikasi" value="{{ $item->asuransi->no_aplikasi }}">
-                                                <input type="hidden" name="no_rekening" value="{{ $item->asuransi->no_rek }}">
-                                                <input type="hidden" name="no_polis" value="{{ $item->asuransi->no_polis }}">
-                                                <input type="hidden" name="no_klaim" value="{{ $item->no_klaim }}">
-                                                <button type="submit">Batal</button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                    </div>
-    
+                                    @if ($role_id == 2)
+                                        <div class="dropdown">
+                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                Selengkapnya
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li class="">
+                                                    <button type="submit" class="item-dropdown">Cek Status</button>
+                                                </li>
+                                                <li class="item-dropdown">
+                                                    <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
+                                                        @csrf
+                                                        <input type="hidden" name="no_aplikasi" value="{{ $item->asuransi->no_aplikasi }}">
+                                                        <input type="hidden" name="no_rekening" value="{{ $item->asuransi->no_rek }}">
+                                                        <input type="hidden" name="no_polis" value="{{ $item->asuransi->no_polis }}">
+                                                        <input type="hidden" name="no_klaim" value="{{ $item->no_klaim }}">
+                                                        <button type="submit">Batal</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         </form>
