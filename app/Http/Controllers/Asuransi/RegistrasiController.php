@@ -192,6 +192,40 @@ class RegistrasiController extends Controller
         ]);
     }
 
+    public function checkAsuransi(Request $request) {
+        // Check asuransi already registered or not
+        $status = '';
+        $message = '';
+        $jenis = null;
+        try {
+            $no_pk = $request->no_pk;
+            $jenis_asuransi_option = explode('-', $request->jenis_asuransi);
+            $jenis_asuransi_id = $jenis_asuransi_option[0];
+
+            $asuransi = DB::table('asuransi AS a')
+                            ->select('a.id', 'm.jenis')
+                            ->join('mst_jenis_asuransi AS m', 'm.id', 'a.jenis_asuransi_id')
+                            ->where('a.no_pk', $no_pk)
+                            ->where('a.jenis_asuransi_id', $jenis_asuransi_id)
+                            ->first();
+
+            $status = "success";
+            $message = $asuransi ? "Data ini telah terdaftar" : "Belum terdaftar";
+            if ($asuransi)
+                $jenis = $asuransi->jenis;
+        } catch (\Exception $e) {
+            $status = "failed";
+            $message = $e->getMessage();
+        } finally {
+            $res = [
+                'status' => $status,
+                'message' => $message,
+                'jenis' => $jenis,
+            ];
+            return response()->json($res);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -343,6 +377,12 @@ class RegistrasiController extends Controller
                             return back();
                             break;
                         case '05':
+                            # data kurang lengkap
+                            $message = $responseBody['keterangan'];
+                            Alert::error('Gagal', $message);
+                            return back();
+                            break;
+                        case '06':
                             # data kurang lengkap
                             $message = $responseBody['keterangan'];
                             Alert::error('Gagal', $message);

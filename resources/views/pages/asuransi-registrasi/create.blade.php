@@ -298,7 +298,6 @@
 @endsection
 
 @push('extraScript')
-    <script src="{{ asset('template/assets/js/axios.min.js') }}"></script>
     <script>
         var urlPost = "http://sandbox-umkm.ekalloyd.id:8387";
 
@@ -600,7 +599,31 @@
 
             if (total_empty_field == 0) {
                 $("#preload-data").removeClass("hidden");
-                $('#form-asuransi-registrasi').submit()
+
+                $.ajax({
+                    url: "{{ route('asuransi.registrasi.check_asuransi') }}",
+                    type: "GET",
+                    accept: "Application/json",
+                    data: {
+                        'no_pk': data['no_pk'],
+                        'jenis_asuransi': data['jenis_asuransi'],
+                    },
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            if (response.message == 'Data ini telah terdaftar') {
+                                $("#preload-data").addClass("hidden");
+                                alertWarning(`Data ini telah terdaftar pada asuransi ${response.jenis}. Harap pilih jenis asuransi yang lain.`)
+                            }
+                            else {
+                                $('#form-asuransi-registrasi').submit()
+                            }
+                        }
+                    },
+                    error: function(response) {
+                        $("#preload-data").addClass("hidden");
+                        alertWarning('Terjadi kesalahan saat melakukan cek asuransi')
+                    }
+                })
             }
         });
 
