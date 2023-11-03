@@ -123,12 +123,16 @@ class RegistrasiController extends Controller
                                 ->where('status', $status)
                                 ->where('asuransi.user_id', $user_id)
                                 ->where('no_pk', $item->no_pk)
+                                ->where('asuransi.id', '!=', $item->id)
                                 ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
                                 ->where('status', $status)
                                 ->where('asuransi.user_id', $user_id)
-                                ->where('no_pk', $item->no_pk);
+                                ->where('no_pk', $item->no_pk)
+                                ->where('asuransi.id', '!=', $item->id);
                 }
-                $detailAsuransi = $detailAsuransi->get();
+                $detailAsuransi = $detailAsuransi->where('asuransi.no_pk', $item->no_pk)
+                                                ->where('asuransi.id', '!=', $item->id)
+                                                ->get();
 
                 if(count($detailAsuransi) > 0){
                     foreach($detailAsuransi as $j => $itemDetail){
@@ -363,6 +367,8 @@ class RegistrasiController extends Controller
                             $polis = $responseBody['no_polis'];
                             $tgl_rekam = $responseBody['tgl_rekam'];
                             $tgl_polis = $responseBody['tgl_polis'];
+                            $tgl_awal = date('Y-m-d', strtotime($request->get('tanggal_awal_kredit')));
+                            $tgl_akhir = date('Y-m-d', strtotime($request->get('tanggal_akhir_kredit')));
 
                             $newKredit = new Kredit();
                             $newKredit->pengajuan_id = $request->pengajuan;
@@ -392,8 +398,8 @@ class RegistrasiController extends Controller
                             $newAsuransi->no_polis = $polis;
                             $newAsuransi->tgl_polis = $tgl_polis;
                             $newAsuransi->tgl_rekam = $tgl_rekam;
-                            $newAsuransi->tanggal_awal = $request->get('tanggal_awal_kredit');
-                            $newAsuransi->tanggal_akhir = $request->get('tanggal_akhir_kredit');
+                            $newAsuransi->tanggal_awal = $tgl_awal;
+                            $newAsuransi->tanggal_akhir = $tgl_akhir;
                             $newAsuransi->status = 'onprogress';
                             $newAsuransi->save();
 
@@ -622,75 +628,80 @@ class RegistrasiController extends Controller
             $user_id = $token ? $user['id'] : $user->id;
             $asuransi = Asuransi::find($request->id);
             if ($asuransi) {
-                if ($asuransi->status == 'onprogress') {
-                    $headers = [
-                        "Accept" => "/",
-                        "x-api-key" => config('global.eka_lloyd_token'),
-                        "Content-Type" => "application/json",
-                        "Access-Control-Allow-Origin" => "*",
-                        "Access-Control-Allow-Methods" => "*"
-                    ];
-                    $body = [
-                        "no_aplikasi" => $asuransi->no_aplikasi,
-                        "no_sp" => $asuransi->no_polis
-                    ];
-                    
-                    $host = config('global.eka_lloyd_host');
-                    $url = "$host/batal";
-                    
-                    $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
-
-                    $statusCode = $response->status();
-
-                    if($statusCode == 200){
-                        $responseBody = json_decode($response->getBody(), true);
-                        if($responseBody){
-                            if (array_key_exists('status', $responseBody)) {
-                                $status = $responseBody['status'];
-                                $keterangan = '';
-
-                                switch($status){
-                                    case '00':
-                                        $keterangan = $responseBody['keterangan'];
-
-                                        $asuransi->status = 'canceled';
-                                        $asuransi->canceled_at = date('Y-m-d');
-                                        $asuransi->canceled_by = $user_id;
-                                        $asuransi->save();
-
-                                        $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan registrasi asuransi.');
-
-                                        Alert::success('Berhasil', $keterangan);
-                                        break;
-                                    case '44':
-                                        $keterangan = $responseBody['keterangan'];
-                                        Alert::error('Gagal', $keterangan);
-                                        break;
-                                    case '39':
-                                        $keterangan = $responseBody['keterangan'];
-                                        Alert::error('Gagal', $keterangan);
-                                        break;
-                                    default:
-                                        Alert::error('Gagal', 'Terjadi kesalahan.');
+                if (!$asuransi->is_paid) {
+                    if ($asuransi->status == 'onprogress') {
+                        $headers = [
+                            "Accept" => "/",
+                            "x-api-key" => config('global.eka_lloyd_token'),
+                            "Content-Type" => "application/json",
+                            "Access-Control-Allow-Origin" => "*",
+                            "Access-Control-Allow-Methods" => "*"
+                        ];
+                        $body = [
+                            "no_aplikasi" => $asuransi->no_aplikasi,
+                            "no_sp" => $asuransi->no_polis
+                        ];
+                        
+                        $host = config('global.eka_lloyd_host');
+                        $url = "$host/batal";
+                        
+                        $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
+    
+                        $statusCode = $response->status();
+    
+                        if($statusCode == 200){
+                            $responseBody = json_decode($response->getBody(), true);
+                            if($responseBody){
+                                if (array_key_exists('status', $responseBody)) {
+                                    $status = $responseBody['status'];
+                                    $keterangan = '';
+    
+                                    switch($status){
+                                        case '00':
+                                            $keterangan = $responseBody['keterangan'];
+    
+                                            $asuransi->status = 'canceled';
+                                            $asuransi->canceled_at = date('Y-m-d');
+                                            $asuransi->canceled_by = $user_id;
+                                            $asuransi->save();
+    
+                                            $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan registrasi asuransi.');
+    
+                                            Alert::success('Berhasil', $keterangan);
+                                            break;
+                                        case '44':
+                                            $keterangan = $responseBody['keterangan'];
+                                            Alert::error('Gagal', $keterangan);
+                                            break;
+                                        case '39':
+                                            $keterangan = $responseBody['keterangan'];
+                                            Alert::error('Gagal', $keterangan);
+                                            break;
+                                        default:
+                                            Alert::error('Gagal', 'Terjadi kesalahan.');
+                                    }
+                                }
+                                elseif (array_key_exists('message', $responseBody)) {
+                                    Alert::error('Gagal', $responseBody['message']);
+                                }
+                                else {
+                                    Alert::error('Gagal', 'Response tidak diketahui');
                                 }
                             }
-                            elseif (array_key_exists('message', $responseBody)) {
-                                Alert::error('Gagal', $responseBody['message']);
-                            }
-                            else {
-                                Alert::error('Gagal', 'Response tidak diketahui');
-                            }
+                        }
+                        else {
+                            Alert::warning('Peringatan', 'Server tidak ditemukan');
                         }
                     }
+                    elseif ($asuransi->status == 'canceled') {
+                        Alert::warning('Peringatan', 'Data ini sudah dibatalkan');
+                    }
                     else {
-                        Alert::warning('Peringatan', 'Server tidak ditemukan');
+                        Alert::warning('Peringatan', 'Data ini sudah terlunasi');
                     }
                 }
-                elseif ($asuransi->status == 'canceled') {
-                    Alert::warning('Peringatan', 'Data ini sudah dibatalkan');
-                }
                 else {
-                    Alert::warning('Peringatan', 'Data ini sudah terlunasi');
+                    Alert::warning('Peringatan', 'Proses tidak dapat dilakukan karena premi telah dibayarkan pada asuransi ini');
                 }
             }
             else {
@@ -723,7 +734,7 @@ class RegistrasiController extends Controller
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
             return back();
         }
-        
+
         try{
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
