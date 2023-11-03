@@ -242,7 +242,7 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tarif<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="tarif"
-                            name="tarif" value="old('tarif')" readonly />
+                            name="tarif" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3 form-6 hidden">
