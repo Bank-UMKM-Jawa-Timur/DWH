@@ -144,6 +144,10 @@
                                         @foreach ($item['jenis_asuransi'] as $jenis)
                                             @php
                                                 $alpha = strtolower(chr(64+$loop->iteration));
+                                                $id_pengajuan = $item['id'];
+                                                $no_pk = $item['no_pk'];
+                                                $perusahaan = $jenis->asuransi ? $jenis->asuransi->perusahaan : '-';
+                                                $no_aplikasi = $jenis->asuransi ? $jenis->asuransi->no_aplikasi : '-';
                                                 $no_aplikasi = $jenis->asuransi ? $jenis->asuransi->no_aplikasi : '-';
                                                 $tarif = $jenis->asuransi ? $jenis->asuransi->tarif : '-';
                                                 $premi = $jenis->asuransi ? $jenis->asuransi->premi : '-';
@@ -160,6 +164,7 @@
                                                 <div class="mt-2 p-3">
                                                     <table class="table-collapse">
                                                         <thead>
+                                                            <th>Perusahaan</th>
                                                             <th>Nomor Aplikasi</th>
                                                             <th>Tarif</th>
                                                             <th>Premi </th>
@@ -171,6 +176,7 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr>
+                                                                <td>{{$perusahaan}}</td>
                                                                 <td>{{$no_aplikasi}}</td>
                                                                 <td>{{$tarif}}</td>
                                                                 <td>{{$premi != '-' ? 'Rp '.number_format($premi, 0, ',', '.') : '-'}}</td>
@@ -185,9 +191,11 @@
                                                                                 <button class="px-4 py-2  bg-theme-primary/20 rounded text-theme-primary">
                                                                                     Tidak Registrasi
                                                                                 </button>
-                                                                                <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
-                                                                                    Registrasi
-                                                                                </button>
+                                                                                <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
+                                                                                    <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
+                                                                                        Registrasi
+                                                                                    </button>
+                                                                                </a>
                                                                             @elseif(strtolower($status) == 'approved')
                                                                                 <button class="px-4 py-2  bg-green-400/20 rounded text-green-500">
                                                                                     Kirim
@@ -236,9 +244,11 @@
                                                                             <button class="px-4 py-2  bg-theme-primary/20 rounded text-theme-primary">
                                                                                 Tidak Registrasi
                                                                             </button>
-                                                                            <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
-                                                                                Registrasi
-                                                                            </button>
+                                                                            <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
+                                                                                <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
+                                                                                    Registrasi
+                                                                                </button>
+                                                                            </a>
                                                                         @endif
                                                                     </div>
                                                                 </td>
