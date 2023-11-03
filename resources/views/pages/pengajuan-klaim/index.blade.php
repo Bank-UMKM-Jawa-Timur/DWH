@@ -125,7 +125,7 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li class="">
-                                                    <button type="submit" class="item-dropdown">Cek Status</button>
+                                                    <button type="submit" class="item-dropdown">Cek Data Pengajuan Klaim</button>
                                                 </li>
                                                 <li class="item-dropdown">
                                                     <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
