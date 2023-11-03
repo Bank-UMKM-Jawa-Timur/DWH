@@ -54,7 +54,7 @@ class RegistrasiController extends Controller
                 ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role, $user_id) {
                     if (strtolower($role) == 'administrator' || strtolower($role) == 'kredit umum' || strtolower($role) == 'pemasaran' || strtolower($role) == 'spi' || strtolower($role) == 'penyelia kredit') {
                         // non staf
-                        $kode_cabang = \Session::get(config('global.user_token_session')) ? 
+                        $kode_cabang = \Session::get(config('global.user_token_session')) ?
                         \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang;
                         $query->where('k.kode_cabang', $kode_cabang);
                     }
@@ -304,7 +304,7 @@ class RegistrasiController extends Controller
         }
 
         DB::beginTransaction();
-        
+
         try {
             $jenis_asuransi_option = explode('-', $request->jenis_asuransi);
             $req = [
@@ -348,7 +348,7 @@ class RegistrasiController extends Controller
                 "Content-Type" => "application/json",
                 "Connection" => "Keep-Alive"
             ];
-            
+
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
             $response = Http::timeout(60)->withHeaders($headers)
@@ -642,32 +642,32 @@ class RegistrasiController extends Controller
                             "no_aplikasi" => $asuransi->no_aplikasi,
                             "no_sp" => $asuransi->no_polis
                         ];
-                        
+
                         $host = config('global.eka_lloyd_host');
                         $url = "$host/batal";
-                        
+
                         $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
-    
+
                         $statusCode = $response->status();
-    
+
                         if($statusCode == 200){
                             $responseBody = json_decode($response->getBody(), true);
                             if($responseBody){
                                 if (array_key_exists('status', $responseBody)) {
                                     $status = $responseBody['status'];
                                     $keterangan = '';
-    
+
                                     switch($status){
                                         case '00':
                                             $keterangan = $responseBody['keterangan'];
-    
+
                                             $asuransi->status = 'canceled';
                                             $asuransi->canceled_at = date('Y-m-d');
                                             $asuransi->canceled_by = $user_id;
                                             $asuransi->save();
-    
+
                                             $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan registrasi asuransi.');
-    
+
                                             Alert::success('Berhasil', $keterangan);
                                             break;
                                         case '44':
@@ -763,31 +763,31 @@ class RegistrasiController extends Controller
                             "refund" => $refund,
                             "sisa_jkw" => $jkw
                         ];
-                        
+
                         $host = config('global.eka_lloyd_host');
                         $url = "$host/lunas";
-    
+
                         $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
                         $statusCode = $response->status();
-    
+
                         if($statusCode == 200){
                             $responseBody = json_decode($response->getBody(), true);
                             if($responseBody){
                                 if (array_key_exists('status', $responseBody)) {
                                     $status = $responseBody['status'];
                                     $keterangan = '';
-    
+
                                     switch($status){
                                         case '00':
                                             $keterangan = $responseBody['keterangan'];
-    
+
                                             $asuransi->status = 'done';
                                             $asuransi->done_at = date('Y-m-d');
                                             $asuransi->done_by = $user_id;
                                             $asuransi->save();
-    
+
                                             $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pelunasan registrasi asuransi.');
-    
+
                                             Alert::success('Berhasil', $keterangan);
                                             return redirect()->route('asuransi.registrasi.index');
                                             break;
@@ -844,5 +844,12 @@ class RegistrasiController extends Controller
             Alert::error('Gagal', $e->getMessage());
             return back();
         }
+    }
+
+    public function detail($id){
+        $dataDebitur = DB::table('asuransi')->where('id', $id)->first();
+        $dataRegister = DB::table('asuransi_detail')->where('asuransi_id', $id)->first();
+
+        return view('pages.asuransi-registrasi.detail', compact('dataDebitur', 'dataRegister'));
     }
 }
