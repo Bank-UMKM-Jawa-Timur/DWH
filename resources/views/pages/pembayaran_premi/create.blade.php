@@ -70,11 +70,19 @@
                         <input type="text" value="{{old('no_bukti_pembayaran')}}" class="p-2 w-full border " id="no_bukti_pembayaran" name="no_bukti_pembayaran"/>
                         <small class="form-text text-red-600 error no-bukti-pembayaran-error"></small>
                     </div>
-                    <div class="input-box space-y-3">
-                        <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
-                        <input type="hidden" id="total_premi" name="total_premi"/>
-                        <input type="text" value="{{old('display_total_premi')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
-                        <small class="form-text text-red-600 error"></small>
+                    <div class="flex gap-5">
+                        <div class="w-full input-box space-y-3">
+                            <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
+                            <input type="hidden" id="total_premi" name="total_premi"/>
+                            <input type="text" value="{{old('display_total_premi')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
+                        <div class="w-full input-box space-y-3">
+                            <label for="" class="uppercase">Total Premi Disetor<span class="text-theme-primary">*</span></label>
+                            <input type="hidden" id="total_premi_disetor" name="total_premi_disetor"/>
+                            <input type="text" value="{{old('display_total_premi_disetor')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi_disetor" name="display_total_premi_disetor" readonly/>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
                     </div>
 
                 </div>
@@ -219,12 +227,16 @@
         var arr_selected_key = [];
         var temp_no = 1;
         var total_premi = 0;
+        var total_premi_disetor = 0;
         hitungTotalPremi()
 
         function hitungTotalPremi() {
             var format_total_premi = formatRupiah(total_premi.toString())
+            var format_total_premi_distor = formatRupiah(total_premi.toString())
             $('#total_premi').val(total_premi)
             $('#display_total_premi').val(format_total_premi)
+            $('#total_premi_disetor').val(total_premi_disetor)
+            $('#display_total_premi_disetor').val(format_total_premi_disetor)
         }
 
         $("#btnLeftForm").on("click", function(e){
