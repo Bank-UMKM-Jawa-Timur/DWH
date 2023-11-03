@@ -32,6 +32,15 @@
                     @endif
                 </div>
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                    @if (\Request::get('tAwal') && \Request::get('tAkhir'))
+                    <a href="{{route('asuransi.registrasi.index')}}"
+                        class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                        <span class="lg:mt-1.5 mt-0">
+                            @include('components.svg.reset')
+                        </span>
+                        <span class="lg:block hidden"> Reset </span>
+                    </a>
+                    @endif
                     <a>
                         <button data-target-id="filter" type="button"
                             class="toggle-modal px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
