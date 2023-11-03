@@ -185,6 +185,10 @@
                                 jenis_asuransi_div.append(checkbox_element)
                             }
                         }
+                        else{
+                            var message = 'Tidak ada premi yang harus dibayar pada no aplikasi ini'
+                            alertWarning(message)
+                        }
                     },
                     error: function(e) {
                         console.log(e)
@@ -475,6 +479,17 @@
                 icon: 'error',
                 iconColor: '#DC3545',
                 confirmButtonText: 'OK',
+                confirmButtonColor: '#DC3545'
+            })
+        }
+
+        function alertWarning(message) {
+            Swal.fire({
+                tittle: 'Warning!',
+                html: message,
+                icon: 'warning',
+                iconColor: '#DC3545',
+                confirmButtonText: 'Ya',
                 confirmButtonColor: '#DC3545'
             })
         }

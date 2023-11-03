@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -33,7 +34,7 @@ class PembayaranPremiController extends Controller
     {
         $role_id = \Session::get(config('global.role_id_session'));
         $param['role_id'] = $role_id;
-        
+
         $param['title'] = 'Pembayaran Premi';
         $param['pageTitle'] = 'Pembayaran Premi';
         $page_length = $request->page_length ? $request->page_length : 5;
@@ -118,7 +119,7 @@ class PembayaranPremiController extends Controller
                 ->select('asuransi.*', 'jenis.jenis', DB::raw("LEFT(UUID(), 8) AS generate_key"))
                 ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
                 ->where('asuransi.status', 'onprogress')
-                ->where('asuransi.is_paid', false)
+                ->where('asuransi.is_paid', 0)
                 ->where('asuransi.no_aplikasi', $request->no_aplikasi)
                 ->get();
 
@@ -247,7 +248,8 @@ class PembayaranPremiController extends Controller
                                     DB::commit();
                                     Alert::success('Berhasil', $message);
                                     return redirect()->route('asuransi.pembayaran-premi.index');
-                                }else{
+                                }
+                                else{
                                     $message = $responseBody['keterangan'];
                                     Alert::error('Gagal', $message);
                                     return back();
