@@ -125,7 +125,7 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li class="">
-                                                    <button type="submit" class="item-dropdown">Cek Data Pengajuan Klaim</button>
+                                                    <button type="button" id="btnCekStatus" class="item-dropdown">Cek Data Pengajuan Klaim</button>
                                                 </li>
                                                 <li class="item-dropdown">
                                                     <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
@@ -166,8 +166,68 @@
 @endsection
 @push('extraScript')
 <script>
+    var statKlaim = ["Sedang diproses", "Disetujui dan sedang menunggu pembayaran", "Disetujui dan telah dibayarkan", "Dokumen belum lengkap", "Premi belum dibayar", "Ditolak", "Data tidak ditemukan"]
     $('#page_length').on('change', function() {
         $('#form').submit()
+    })
+
+    $("#btnCekStatus").on("click", function(){
+        var noAplikasi = $(this).parents('tr').find("[name=row_no_aplikasi]").val();
+        console.log(noAplikasi);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('asuransi.pengajuan-klaim.cek-status') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                no_aplikasi: noAplikasi
+            },
+            success: function(res){
+                if(res.status == "Berhasil"){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        html: `
+                            <table style="text-align: left !important;" class="w-full">
+                                <tr>
+                                    <td><strong>No. Rekening</strong></td>
+                                    <td>${res.response.no_rekening}</td>
+                                </tr>    
+                                <tr>
+                                    <td><strong>No. Aplikasi</strong></td>
+                                    <td>${res.response.no_aplikasi}</td>
+                                </tr>    
+                                <tr>
+                                    <td><strong>Status Klaim</strong></td>
+                                    <td>${statKlaim[parseInt(res.response.stat_klaim) + 1]}</td>
+                                </tr>    
+                                <tr>
+                                    <td><strong>Keterangan</strong></td>
+                                    <td>${res.response.keterangan}</td>
+                                </tr>    
+                                <tr>
+                                    <td><strong>Nilai Persetujuan</strong></td>
+                                    <td>${res.response.nilai_persetujuan}</td>
+                                </tr>    
+                                <tr>
+                                    <td><strong>Tanggal klaim</strong></td>
+                                    <td>${res.response.tgl_klaim}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No. Polis</strong></td>
+                                    <td>${res.response.no_sp}</td>
+                                </tr>    
+                            </table>
+                        `
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: res.message,
+                    })
+                }
+            }
+        })
     })
 </script>
 @endpush
