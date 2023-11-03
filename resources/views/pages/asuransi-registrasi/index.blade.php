@@ -176,13 +176,15 @@
                                                         <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
                                                     </form>
                                                 </li>
-                                                <li class="">
-                                                    <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                        data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
-                                                        data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
-                                                        data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
-                                                        data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
-                                                </li>
+                                                @if ($item->is_paid)
+                                                    <li class="">
+                                                        <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                            data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
+                                                            data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
+                                                            data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
+                                                            data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
+                                                    </li>
+                                                @endif
                                             </ul>
                                         </div>
                                     @else
@@ -262,13 +264,15 @@
                                                                 <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
                                                             </form>
                                                         </li>
-                                                        <li class="">
-                                                            <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                                data-modal-target="modalPelunasan"  data-id="{{$itemDetail->id}}"
-                                                                data-no_aplikasi="{{$itemDetail->no_aplikasi}}" data-no_rek="{{$itemDetail->no_rek}}"
-                                                                data-no_polis="{{$itemDetail->no_polis}}" data-refund="{{$itemDetail->refund}}"
-                                                                data-tgl_awal="{{$itemDetail->tanggal_awal}}" data-tgl_akhir="{{$itemDetail->tanggal_akhir}}">Pelunasan</a>
-                                                        </li>
+                                                        @if ($itemDetail->is_paid)
+                                                            <li class="">
+                                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                                    data-modal-target="modalPelunasan"  data-id="{{$itemDetail->id}}"
+                                                                    data-no_aplikasi="{{$itemDetail->no_aplikasi}}" data-no_rek="{{$itemDetail->no_rek}}"
+                                                                    data-no_polis="{{$itemDetail->no_polis}}" data-refund="{{$itemDetail->refund}}"
+                                                                    data-tgl_awal="{{$itemDetail->tanggal_awal}}" data-tgl_akhir="{{$itemDetail->tanggal_akhir}}">Pelunasan</a>
+                                                            </li>
+                                                        @endif
                                                     </ul>
                                                 </div>
                                             @else
