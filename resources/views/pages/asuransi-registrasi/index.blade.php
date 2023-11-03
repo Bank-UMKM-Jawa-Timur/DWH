@@ -41,7 +41,7 @@
                             <span class="lg:block hidden"> Filter </span>
                         </button>
                     </a>
-                    @if ($role_id == 2)
+                    @if ($role == 'Staf Analis Kredit')
                         <a href="{{ route('asuransi.registrasi.create') }}">
                             <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                                 <span class="lg:mt-0 mt-0">
@@ -132,8 +132,8 @@
                                     @endif
                                 </td>
                                 @else
-                                <td>-</td>
-                                <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
                                 @endif
                                 <td>
                                     @if ($item->tgl_rekam)
@@ -143,8 +143,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($item->is_paid == true)
-                                        Sudah Dibayar
+                                    @if($item->is_paid)
+                                        Sudah dibayar
                                     @else
                                         Belum
                                     @endif
@@ -156,7 +156,11 @@
                                             Dibatalkan
                                         </button>
                                     @else
-                                        Onprogres
+                                        @if ($item->is_paid)
+                                            Sudah dibayar
+                                        @else
+                                            Onprogres
+                                        @endif
                                     @endif
                                 </td> --}}
                             </tr>
@@ -319,7 +323,7 @@
                                         <td>{{ $itemDetail->nama_debitur }}</td>
                                         <td>{{$itemDetail->jenis}}</td>
                                         <td>{{ $itemDetail->no_aplikasi }}</td>
-                                        @if($itemDetail->is_paid == 1)
+                                        @if($itemDetail->is_paid)
                                             <td>{{$itemDetail->no_polis}}</td>
                                             <td>
                                                 @if ($itemDetail->tgl_polis)
@@ -340,8 +344,8 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($itemDetail->is_paid == true)
-                                                Sudah Dibayar
+                                            @if($itemDetail->is_paid)
+                                                Sudah dibayar
                                             @else
                                                 Belum
                                             @endif
@@ -353,10 +357,51 @@
                                                     Dibatalkan
                                                 </button>
                                             @else
-                                                Onprogres
+                                                @if ($itemDetail->is_paid)
+                                                    Sudah dibayar
+                                                @else
+                                                    Onprogres
+                                                @endif
                                             @endif
                                         </td>
-                                        <td></td>
+                                        <td>
+                                            @if ($role == 'Staf Analis Kredit')
+                                                <div class="dropdown">
+                                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                        Selengkapnya
+                                                    </button>
+                                                    <ul class="dropdown-menu right-16">
+                                                        @if (!$itemDetail->is_paid)
+                                                            <li class="">
+                                                                <a class="item-dropdown modal-batal" href="#"
+                                                                    data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                                    data-id="{{$itemDetail->id}}" data-no_aplikasi="{{$itemDetail->no_aplikasi}}"
+                                                                    data-no_polis="{{$itemDetail->no_polis}}">Pembatalan</a>
+                                                            </li>
+                                                        @endif
+                                                        <li class="">
+                                                            <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                                <input type="hidden" name="no_aplikasi" value="{{$itemDetail->no_aplikasi}}">
+                                                                <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
+                                                            </form>
+                                                        </li>
+                                                        @if ($itemDetail->is_paid)
+                                                            <li class="">
+                                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                                    data-modal-target="modalPelunasan"  data-id="{{$itemDetail->id}}"
+                                                                    data-no_aplikasi="{{$itemDetail->no_aplikasi}}" data-no_rek="{{$itemDetail->no_rek}}"
+                                                                    data-no_polis="{{$itemDetail->no_polis}}" data-refund="{{$itemDetail->refund}}"
+                                                                    data-tgl_awal="{{$itemDetail->tanggal_awal}}" data-tgl_akhir="{{$itemDetail->tanggal_akhir}}">Pelunasan</a>
+                                                            </li>
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            @else
+                                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                    Detail
+                                                </button>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             @else

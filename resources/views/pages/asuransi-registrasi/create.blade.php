@@ -20,8 +20,9 @@
                         <select name="pengajuan" id="pengajuan" class="w-full p-2 border">
                             <option selected>-- Pilih Data Pengajuan ---</option>
                             @forelse ($dataPengajuan as $key => $item)
-                                <option value="{{ $item['id'] }}" data-key="{{ $key }}">{{ $item['no_pk'] }} -
-                                    {{ $item['nama'] }} </option>
+                                <option value="{{ $item['id'] }}" data-key="{{ $key }}"
+                                    @if (old('pengajuan') == $item['id']) selected @endif>
+                                    {{ $item['no_pk'] }} - {{ $item['nama'] }} </option>
                             @empty
                                 <option>Data Pengajuan Belum Ada.</option>
                             @endforelse
@@ -146,7 +147,8 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Rekening<span class="text-theme-primary">*</span>
                         </label>
-                        <input type="text" class="p-2 w-full border " id="no_rekening" name="no_rekening" />
+                        <input type="text" class="p-2 w-full border "
+                        id="no_rekening" name="no_rekening" value="{{old('no_rekening')}}"/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -163,8 +165,8 @@
                         </label>
                         <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pengajuan ---</option>
-                            <option value="00">Baru</option>
-                            <option value="01">Top Up</option>
+                            <option @if (old('jenis_pengajuan') == '00') selected @endif value="00">Baru</option>
+                            <option @if (old('jenis_pengajuan') == '01')selected @endif value="01">Top Up</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -172,11 +174,11 @@
                                 class="text-theme-primary">*</span></label>
                         <select name="kolektibilitas" class="w-full p-2 border">
                             <option selected value="">-- Kolektibilitas ---</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option @if (old('kolektibilitas') == '1')selected @endif value="1">1</option>
+                            <option @if (old('kolektibilitas') == '2')selected @endif value="2">2</option>
+                            <option @if (old('kolektibilitas') == '3')selected @endif value="3">3</option>
+                            <option @if (old('kolektibilitas') == '4')selected @endif value="4">4</option>
+                            <option @if (old('kolektibilitas') == '5')selected @endif value="5">5</option>
                         </select>
                         <small class="form-text text-red-600 error"></small>
                     </div>
@@ -185,8 +187,8 @@
                                 class="text-theme-primary">*</span> </label>
                         <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
-                            <option value="01">Pokok</option>
-                            <option value="02">Sisa Kredit</option>
+                            <option @if (old('jeniss_pertanggungan') == '01') selected @endif value="01">Pokok</option>
+                            <option @if (old('jeniss_pertanggungan') == '02') selected @endif value="02">Sisa Kredit</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -194,8 +196,8 @@
                         </label>
                         <select name="tipe_premi" class="w-full p-2 border">
                             <option selected value="">-- Pilih Tipe Premi ---</option>
-                            <option value="0">Biasa</option>
-                            <option value="1">Refund</option>
+                            <option @if (old('tipe_premi') == '0') selected @endif value="0">Biasa</option>
+                            <option @if (old('tipe_premi') == '1') selected @endif value="1">Refund</option>
                         </select>
                     </div>
                 </div>
@@ -205,19 +207,19 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Polis Sebelumya<span
                                 class="text-theme-primary">*</span> </label>
-                        <input type="text" class="p-2 w-full border " id="" name="no_polis_sebelumnya" />
+                        <input type="text" value="old('no_polis_sebelumnya')" class="p-2 w-full border " id="" name="no_polis_sebelumnya" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Baki Debet<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="" name="baki_debet" />
+                        <input type="text" class="rupiah p-2 w-full border " id="" value="old('baki_debet')" name="baki_debet" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tunggakan<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="tunggakan" name="tunggakan" />
+                        <input type="text" class="rupiah p-2 w-full border " id="tunggakan" value="old('tunggakan')" name="tunggakan" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -227,7 +229,7 @@
                         <label for="" class="uppercase">Premi</label>
                         <input type="hidden" id="rate_premi" name="rate_premi" />
                         <input type="text" class="rupiah p-2 w-full border disabled-input bg-disabled" id="premi"
-                            name="premi" readonly />
+                            name="premi" value="old('rate_premi')" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -240,35 +242,35 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tarif<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="tarif"
-                            name="tarif" readonly />
+                            name="tarif" value="old('tarif')" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3 form-6 hidden">
                         <label for="" class="uppercase">Refund<span class="text-theme-primary">*</span></label>
                         <input type="text" class="rupiah p-2 w-full border" id="refund" name="refund"
-                            onchange="hitungPremiDisetor()" />
+                            onchange="hitungPremiDisetor()" value="old('refund')" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kode Layanan Syariah</label>
                         <select name="kode_ls" class="w-full p-2 border">
                             <option selected value="">-- Kode Layanan Syariah ---</option>
-                            <option value="0">KV</option>
-                            <option value="1">SY</option>
+                            <option @if (old('kode_is') == '0') selected @endif value="0">KV</option>
+                            <option @if (old('kode_is') == '1') selected @endif value="1">SY</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Handling Fee<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="rupiah p-2 w-full border " id="handling_fee" name="handling_fee"
-                            onchange="hitungPremiDisetor()" />
+                            onchange="hitungPremiDisetor()" value="old('handling_fee')"/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi Disetor<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="premi_disetor"
-                            name="premi_disetor" readonly />
+                            name="premi_disetor" readonly value="old('premi_disetor')" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -298,7 +300,6 @@
 @endsection
 
 @push('extraScript')
-    <script src="{{ asset('template/assets/js/axios.min.js') }}"></script>
     <script>
         var urlPost = "http://sandbox-umkm.ekalloyd.id:8387";
 
@@ -328,14 +329,17 @@
         $('#pengajuan').on('change', function() {
             var key = $(this).children("option:selected").data('key');
             var data = @json($dataPengajuan);
+
             var tanggalLahir = new Date(data[key]['tanggal_lahir']);
             var tempMonth = (tanggalLahir.getMonth() + 1).toString().length == 1 ?
                 `0${tanggalLahir.getMonth() + 1}` : tanggalLahir.getMonth() + 1;
             var fullTanggalLahir = `${tanggalLahir.getDate()}-${tempMonth}-${tanggalLahir.getFullYear()}`
+
             var tanggalPK = new Date(data[key]['tgl_cetak_pk']);
-            var tempMonth = (tanggalPK.getMonth() + 1).toString().length == 1 ? `0${tanggalPK.getMonth() + 1}` :
+            var tempMonthPk = (tanggalPK.getMonth() + 1).toString().length == 1 ? `0${tanggalPK.getMonth() + 1}` :
                 tanggalPK.getMonth() + 1;
-            var fullTanggalPK = `${tanggalPK.getDate()}-${tempMonth}-${tanggalPK.getFullYear()}`
+            var fullTanggalPK = `${tanggalPK.getDate()}-${tempMonthPk}-${tanggalPK.getFullYear()}`
+
             var tempTanggalAwalKredit = new Date(data[key]['tanggal']);
             var tanggalAwalKredit = new Date(data[key]['tanggal']);
             tempMonth = (tanggalAwalKredit.getMonth() + 1).toString().length == 1 ?
@@ -375,20 +379,21 @@
             $("[name='no_aplikasi']").val(noAplikasi)
             $("[name='plafon_kredit']").val(jumlahKredit)
             $("[name='no_pk']").val(data[key]['no_pk'])
-            $("[name='tgl_pk']").val(data[key]['tgl_cetak_pk'])
+            // $("[name='tgl_pk']").val(data[key]['tgl_cetak_pk'])
+            $("[name='tgl_pk']").val(fullTanggalPK)
             $('[name="jenis_coverage"]').empty()
             $('[name="jenis_coverage"]').append(`<option selected value="">-- Pilih jenis ---</option>`)
             if (age <= 60) {
                 $('[name="jenis_coverage"]').append(`
-            <option value="01">PNS & NON PNS (PA+ND)</option>
-            <option value="02">NON PNS (PA+ND+PHK)</option>
-            <option value="03">PNS (PA+ND+PHK+MACET)</option>
-            <option value="04">DPRD (PA+ND+PAW)</option>
+            <option @if (old('jenis_coverage') == '01') selected @endif value="01">PNS & NON PNS (PA+ND)</option>
+            <option @if (old('jenis_coverage') == '02') selected @endif value="02">NON PNS (PA+ND+PHK)</option>
+            <option @if (old('jenis_coverage') == '03') selected @endif value="03">PNS (PA+ND+PHK+MACET)</option>
+            <option @if (old('jenis_coverage') == '04') selected @endif value="04">DPRD (PA+ND+PAW)</option>
             `)
             } else {
                 $('[name="jenis_coverage"]').append(`
-            <option value="05">PNS & PENSIUN (PA+ND)</option>
-            <option value="06">DPRD (PA+ND+PAW)</option>
+            <option @if (old('jenis_coverage') == '05') selected @endif value="05">PNS & PENSIUN (PA+ND)</option>
+            <option @if (old('jenis_coverage') == '06') selected @endif value="06">DPRD (PA+ND+PAW)</option>
             `)
             }
 
@@ -406,7 +411,8 @@
                     if (response.data) {
                         var data = response.data
                         for (var i = 0; i < data.length; i++) {
-                            $('#jenis_asuransi').append(`<option value="${data[i].kode}">${data[i].jenis}</option>`)
+                            $('#jenis_asuransi').append(`<option @if (old('jenis_asuransi') == '${data[i].id}-${data[i].kode}')
+                            selected @endif value="${data[i].id}-${data[i].kode}">${data[i].jenis}</option>`)
                         }
                     } else {
                         console.log('Data jenis asuransi tidak ada.');
@@ -600,7 +606,31 @@
 
             if (total_empty_field == 0) {
                 $("#preload-data").removeClass("hidden");
-                $('#form-asuransi-registrasi').submit()
+
+                $.ajax({
+                    url: "{{ route('asuransi.registrasi.check_asuransi') }}",
+                    type: "GET",
+                    accept: "Application/json",
+                    data: {
+                        'no_pk': data['no_pk'],
+                        'jenis_asuransi': data['jenis_asuransi'],
+                    },
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            if (response.message == 'Data ini telah terdaftar') {
+                                $("#preload-data").addClass("hidden");
+                                alertWarning(`Data ini telah terdaftar pada asuransi ${response.jenis}. Harap pilih jenis asuransi yang lain.`)
+                            }
+                            else {
+                                $('#form-asuransi-registrasi').submit()
+                            }
+                        }
+                    },
+                    error: function(response) {
+                        $("#preload-data").addClass("hidden");
+                        alertWarning('Terjadi kesalahan saat melakukan cek asuransi')
+                    }
+                })
             }
         });
 

@@ -31,8 +31,22 @@ class PembayaranPremiController extends Controller
      */
     public function index(Request $request)
     {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
         $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
         $param['role_id'] = $role_id;
+        $param['role'] = $role;
         
         $param['title'] = 'Pembayaran Premi';
         $param['pageTitle'] = 'Pembayaran Premi';
@@ -94,8 +108,22 @@ class PembayaranPremiController extends Controller
      */
     public function create()
     {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
         $role_id = \Session::get(config('global.role_id_session'));
-        if ($role_id != 2) {
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
             return back();
         }
@@ -135,6 +163,7 @@ class PembayaranPremiController extends Controller
      */
     public function store(Request $request)
     {
+        ini_set('max_execution_time', 120);
         $role_id = \Session::get(config('global.role_id_session'));
         if ($role_id != 2) {
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
@@ -205,7 +234,7 @@ class PembayaranPremiController extends Controller
                         return back()->withInput();
                     }else{
                         try {
-                            $response = Http::withHeaders($header)->withOptions(['verify' => false])->post($url, $body);
+                            $response = Http::timeout(60)->withHeaders($header)->withOptions(['verify' => false])->post($url, $body);
 
                             $statusCode = $response->status();
                             if ($statusCode == 200) {
@@ -285,6 +314,26 @@ class PembayaranPremiController extends Controller
 
     public function storeInquery(Request $request)
     {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+        
         $req = [
             "no_aplikasi" => $request->input('row_no_aplikasi'),
             "nobukti_pembayaran" => $request->input('row_nobukti_pembayaran'),

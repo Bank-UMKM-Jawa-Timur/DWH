@@ -19,7 +19,7 @@
                         Status data klaim
                     </h2>
                 </div>
-                @if ($role_id == 2)
+                @if ($role == 'Staf Analis Kredit')
                     <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                         <a href="{{ route('asuransi.pengajuan-klaim.create') }}">
                             <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
@@ -74,9 +74,8 @@
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
-                        <th>No klaim</th>
-                        <th>No Rekening</th>
                         <th>No Aplikasi</th>
+                        <th>No Rekening</th>
                         <th>Status Klaim</th>
                         <th>Keterangan</th>
                         <th>Aksi</th>
@@ -88,33 +87,29 @@
                             <tr>
                                 <td>{{$loop->iteration}}</td>
                                 <td>
-                                    <input type="hidden" name="row_no_aplikasi" value="{{ $item->asuransi->no_aplikasi }}">
-                                    {{$item->asuransi->no_aplikasi}}
+                                    <input type="hidden" name="row_no_aplikasi" value="{{ $item->no_aplikasi }}">
+                                    {{$item->no_aplikasi}}
                                 </td>
                                 <td>
-                                    <input type="hidden" name="row_no_rek" value="{{ $item->asuransi->no_rek }}">
+                                    <input type="hidden" name="row_no_rek" value="{{ $item->no_rek }}">
                                     {{$item->no_rek}}
-                                </td>
-                                <td>
-                                    <input type="hidden" name="row_no_klaim" value="{{$item->no_klaim}}">
-                                    {{$item->no_klaim}}
                                 </td>
                                 <td>
                                     <input type="hidden" name="row_status_klaim" value="{{ $item->stat_klaim }}">
                                     @if ($item->stat_klaim == 1)
-                                    sedang di proses
+                                        sedang di proses
                                     @elseif ($item->stat_klaim == 2)
-                                    disetujui dan sedang menunggu pembayaran
+                                        disetujui dan sedang menunggu pembayaran
                                     @elseif ($item->stat_klaim == 3)
-                                    disetujui dan telah dibayarkan
+                                        disetujui dan telah dibayarkan
                                     @elseif ($item->stat_klaim == 4)
-                                    dokumen belum lengkap
+                                        dokumen belum lengkap
                                     @elseif ($item->stat_klaim == 5)
-                                    premi belum dibayar
+                                        premi belum dibayar
                                     @elseif ($item->stat_klaim == 6)
-                                    ditolak
+                                        ditolak
                                     @else
-                                    data tidak ditemukan
+                                        data tidak ditemukan
                                     @endif
                                 </td>
                                 <td>
@@ -123,7 +118,7 @@
                                     {{$item->status}}
                                 </td>
                                 <td>
-                                    @if ($role_id == 2)
+                                    @if ($role == 'Staf Analis Kredit')
                                         <div class="dropdown">
                                             <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                                 Selengkapnya
@@ -136,11 +131,9 @@
                                                     <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{ $item->id }}">
-                                                        <input type="hidden" name="no_aplikasi" value="{{ $item->asuransi->no_aplikasi }}">
-                                                        <input type="hidden" name="no_rekening" value="{{ $item->asuransi->no_rek }}">
-                                                        <input type="hidden" name="no_polis" value="{{ $item->asuransi->no_polis }}">
-                                                        <input type="hidden" name="no_klaim" value="{{ $item->no_klaim }}">
-                                                        <button type="submit">Batal</button>
+                                                        <input type="hidden" name="no_aplikasi" value="{{ $item->no_aplikasi }}">
+                                                        <input type="hidden" name="no_rekening" value="{{ $item->no_rek }}">
+                                                        <button type="submit">Pembatalan</button>
                                                     </form>
                                                 </li>
                                             </ul>
