@@ -133,7 +133,8 @@
                                                         <input type="hidden" name="id" value="{{ $item->id }}">
                                                         <input type="hidden" name="no_aplikasi" value="{{ $item->no_aplikasi }}">
                                                         <input type="hidden" name="no_rekening" value="{{ $item->no_rek }}">
-                                                        <button type="submit">Pembatalan</button>
+                                                        <input type="hidden" name="no_polis" value="{{ $item->no_polis }}">
+                                                        <button type="button" id="btnBatal">Pembatalan</button>
                                                     </form>
                                                 </li>
                                             </ul>
@@ -173,7 +174,6 @@
 
     $("#btnCekStatus").on("click", function(){
         var noAplikasi = $(this).parents('tr').find("[name=row_no_aplikasi]").val();
-        console.log(noAplikasi);
         $.ajax({
             type: "POST",
             url: "{{ route('asuransi.pengajuan-klaim.cek-status') }}",
@@ -226,6 +226,40 @@
                         text: res.message,
                     })
                 }
+            }
+        })
+    })
+
+    $("#btnBatal").on("click", function(){
+        var parent = $(this).parent();
+        var id = parent.find("[name=id]").val()
+        var no_aplikasi = parent.find("[name=no_aplikasi]").val()
+        var no_rekening = parent.find("[name=no_rekening]").val()
+        var no_polis = parent.find("[name=no_polis]").val()
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: id,
+                no_aplikasi: no_aplikasi,
+                no_rekening: no_rekening,
+                no_polis: no_polis
+            },
+            success: function(res){
+                Swal.fire({
+                    icon: (res.status == "Berhasil") ? "success" : "error",
+                    title: res.status,
+                    text: res.message,
+                })
+            }, 
+            error: function(res){
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan",
+                    text: res.message
+                });
             }
         })
     })

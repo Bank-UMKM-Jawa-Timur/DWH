@@ -52,6 +52,7 @@ class PengajuanKlaimController extends Controller
                                     'p.status',
                                     'a.no_aplikasi',
                                     'a.no_rek',
+                                    'a.no_polis'
                                 )
                                 ->join('asuransi AS a', 'a.id', 'p.asuransi_id');
         if ($request->has('search')) {
@@ -318,7 +319,6 @@ class PengajuanKlaimController extends Controller
             'no_aplikasi' => $request->no_aplikasi,
             'no_rekening' => $request->no_rekening,
             'no_sp' => $request->no_polis,
-            'no_klaim' => $request->no_klaim
         ];
 
         DB::beginTransaction();
@@ -345,18 +345,24 @@ class PengajuanKlaimController extends Controller
                 switch($code){
                     case '01':
                         $message = $responseBody['keterangan'];
-                        Alert::error('Gagal', $message);
-                        return redirect()->route('asuransi.pengajuan-klaim.index');
+                        return response()->json([
+                            'status' => 'Gagal',
+                            'message' => $message
+                        ]);
                         break;
                     case '02':
                         $message = $responseBody['keterangan'];
-                        Alert::error('Gagal', $message);
-                        return redirect()->route('asuransi.pengajuan-klaim.index');
+                        return response()->json([
+                            'status' => 'Gagal',
+                            'message' => $message
+                        ]);
                         break;
                     case '03':
                         $message = $responseBody['keterangan'];
-                        Alert::error('Gagal', $message);
-                        return redirect()->route('asuransi.pengajuan-klaim.index');
+                        return response()->json([
+                            'status' => 'Gagal',
+                            'message' => $message
+                        ]);
                         break;
                     case '05':
                         $message = $responseBody['keterangan'];
@@ -369,32 +375,45 @@ class PengajuanKlaimController extends Controller
                         $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan pengajuan klaim.');
 
                         DB::commit();
-                        Alert::success('Berhasil', $message);
-                        return redirect()->route('asuransi.pengajuan-klaim.index');
+                        return response()->json([
+                            'status' => 'Berhasil',
+                            'message' => $message
+                        ]);
                         break;
                     case '06':
                         $message = $responseBody['keterangan'];
-                        Alert::error('Gagal', $message);
-                        return redirect()->route('asuransi.pengajuan-klaim.index');
+                        return response()->json([
+                            'status' => 'Gagal',
+                            'message' => $message
+                        ]);
                         break;
                     case '48':
                         $message = $responseBody['keterangan'];
-                        Alert::error('Gagal', $message);
-                        return redirect()->route('asuransi.pengajuan-klaim.index');
+                        return response()->json([
+                            'status' => 'Gagal',
+                            'message' => $message
+                        ]);
                         break;
                     default :
-                        Alert::error('Gagal', 'Terjadi kesalahan.');
+                        return response()->json([
+                            'status' => 'Gagal',
+                            'message' => 'Terjadi Kesalahan'
+                        ]);
                         return back();
                 }
             }
             else {
-                Alert::error('Gagal', 'Terjadi kesalahan');
-                return back();
+                return response()->json([
+                    'status' => 'Gagal',
+                    'message' => 'Terjadi Kesalahan'
+                ]);
             }
         } catch(\Exception $e){
             DB::rollBack();
-            Alert::error('Gagal', $e->getMessage());
-            return back();
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e->getMessage()
+            ]);
         }
     }
 }
