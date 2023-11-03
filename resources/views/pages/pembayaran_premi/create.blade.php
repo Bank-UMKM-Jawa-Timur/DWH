@@ -119,6 +119,7 @@
                                         <th>Jenis</th>
                                         <th>No Aplikasi.</th>
                                         <th>Premi</th>
+                                        <th>Premi Disetor</th>
                                         <th>No PK</th>
                                         <th>No Polis</th>
                                         <th>No Rekening.</th>
@@ -188,7 +189,7 @@
                                         data-key="${item.generate_key}" data-id="${item.id}"
                                         data-jenis="${item.jenis}" data-no_aplikasi="${item.no_aplikasi}"
                                         data-premi="${item.premi}" data-no_pk="${item.no_pk}"
-                                        data-no_polis="${item.no_polis}" data-no_rek="${item.no_rek}" ${checked}>
+                                        data-no_polis="${item.no_polis}" data-premi_disetor="${item.premi_disetor}" data-no_rek="${item.no_rek}" ${checked}>
                                     <label for="${item.jenis}">${item.jenis}</label>
                                 </div>`
                                 jenis_asuransi_div.append(checkbox_element)
@@ -232,7 +233,7 @@
 
         function hitungTotalPremi() {
             var format_total_premi = formatRupiah(total_premi.toString())
-            var format_total_premi_distor = formatRupiah(total_premi.toString())
+            var format_total_premi_disetor = parseInt(total_premi_disetor)
             $('#total_premi').val(total_premi)
             $('#display_total_premi').val(format_total_premi)
             $('#total_premi_disetor').val(total_premi_disetor)
@@ -286,6 +287,10 @@
                         else {
                             var premi = $(this).data('premi');
                             var premiRupiah = '0';
+
+                            var premiDisetor = $(this).data('premi_disetor');
+                            var premiDisetorRupiah = '0';
+
                             var no_pk = $(this).data('no_pk');
                             var no_polis = $(this).data('no_polis');
                             var no_rek = $(this).data('no_rek');
@@ -293,6 +298,10 @@
                             if (premi != '') {
                                 premiRupiah = premi.toString().replaceAll('.', ',')
                                 premiRupiah = formatRupiah(premiRupiah.toString())
+                            }
+                            if (premiDisetor != '') {
+                                premiDisetorRupiah = premiDisetor.replaceAll('.', ',')
+                                premiDisetorRupiah = formatRupiah(premiDisetorRupiah)
                             }
 
                             var row_element = `<tr>
@@ -307,6 +316,10 @@
                                 <td>
                                     <input type="hidden" name="row_premi[]" class="row-premi" value="${premi}">
                                     Rp ${premiRupiah}
+                                </td>
+                                <td>
+                                    <input type="hidden" name="row_premi_disetor[]" class="row-premi" value="${premiDisetor}">
+                                    Rp ${premiDisetorRupiah}
                                 </td>
                                 <td>
                                     <input type="hidden" name="row_no_pk[]" value="${no_pk}">
@@ -350,6 +363,7 @@
                             arr_selected_key.push(generate_key)
                             temp_no++;
                             total_premi += premi
+                            total_premi_disetor += premiDisetor
                             hitungTotalPremi()
                         }
                     }

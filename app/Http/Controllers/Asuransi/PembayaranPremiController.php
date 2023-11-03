@@ -48,7 +48,7 @@ class PembayaranPremiController extends Controller
         }
         $param['role_id'] = $role_id;
         $param['role'] = $role;
-        
+
         $param['title'] = 'Pembayaran Premi';
         $param['pageTitle'] = 'Pembayaran Premi';
         $page_length = $request->page_length ? $request->page_length : 5;
@@ -144,8 +144,9 @@ class PembayaranPremiController extends Controller
 
     public function getJenisByNoAplikasi(Request $request){
         $jenis = DB::table('asuransi')
-                ->select('asuransi.*', 'jenis.jenis', DB::raw("LEFT(UUID(), 8) AS generate_key"))
+                ->select('asuransi.*', 'd.premi_disetor', 'jenis.jenis', DB::raw("LEFT(UUID(), 8) AS generate_key"))
                 ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
+                ->join('asuransi_detail as d', 'asuransi.id', '=', 'd.asuransi_id')
                 ->where('asuransi.status', 'onprogress')
                 ->where('asuransi.is_paid', 0)
                 ->where('asuransi.no_aplikasi', $request->no_aplikasi)
@@ -335,7 +336,7 @@ class PembayaranPremiController extends Controller
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
             return back();
         }
-        
+
         $req = [
             "no_aplikasi" => $request->input('row_no_aplikasi'),
             "nobukti_pembayaran" => $request->input('row_nobukti_pembayaran'),
