@@ -32,12 +32,12 @@
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Nomor Rekening<span class="text-theme-primary">*</span></label>
-                    <input type="text" value="old('no_rekening')" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_rekening" readonly/>
+                    <input type="text" value="{{old('no_rekening')}}" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_rekening" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">No Polis<span class="text-theme-primary">*</span></label>
-                    <input type="text" value="old('no_sp')" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_sp" readonly/>
+                    <input type="text" value="{{old('no_sp')}}" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_sp" readonly/>
                     <small class="form-text text-red-600 error"></small>
                 </div>
             </div>
@@ -45,7 +45,7 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" value="old('no_sp3')" name="no_sp3" />
+                    <input type="text" class="p-2 w-full border" id="" value="{{old('no_sp3')}}" name="no_sp3" />
                     <div class="errorSpan hidden" id="errorNoSurat">
                         <p id="errorText">No Surat Peringatan Ke 3 Belum Di Isi.</p>
                     </div>
@@ -54,7 +54,7 @@
                     <label for="" class="uppercase">Tanggal Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
                     <div class="flex border justify-center ">
                         <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
-                        <input type="text" class="datepicker p-2 w-full" value="dd/mm/yyyy" id="" value="old('tgl_sp3')" name="tgl_sp3"/>
+                        <input type="text" class="datepicker p-2 w-full" value="dd/mm/yyyy" id="" value="{{old('tgl_sp3')}}" name="tgl_sp3"/>
                     </div>
                     <div class="errorSpan hidden" id="errorTglSurat">
                         <p id="errorText">Tanggal Surat Peringatan Ke 3 Belum Di Isi.</p>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Tunggakan Pokok<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah disabled-input p-2 w-full border" id="" value="old('tunggakan_pokok')" name="tunggakan_pokok">
+                    <input type="text" class="rupiah disabled-input p-2 w-full border" id="" value="{{old('tunggakan_pokok')}}" name="tunggakan_pokok">
                     <div class="errorSpan hidden" id="errorTnggakanPokok">
                         <p id="errorText">Tunggakan Pokok Belum Di Isi.</p>
                     </div>
@@ -72,21 +72,21 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggakan Bunga<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah p-2 w-full border" id="" value="old('tunggakan_bunga')" name="tunggakan_bunga" />
+                    <input type="text" class="rupiah p-2 w-full border" id="" value="{{old('tunggakan_bunga')}}" name="tunggakan_bunga" />
                     @error('tunggakan_bunga')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggakan Denda<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah p-2 w-full border" id="" value="old('tunggakan_denda')" name="tunggakan_denda" />
+                    <input type="text" class="rupiah p-2 w-full border" id="" value="{{old('tunggakan_denda')}}" name="tunggakan_denda" />
                     @error('tunggakan_denda')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Pengikatan<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah p-2 w-full border" id="" value="old('nilai_pengikatan')" name="nilai_pengikatan" />
+                    <input type="text" class="rupiah p-2 w-full border" id="" value="{{old('nilai_pengikatan')}}" name="nilai_pengikatan" />
                     @error('nilai_pengikatan')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
@@ -97,7 +97,7 @@
 
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Tuntunan Klaim<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah p-2 w-full border" id="" value="old('nilai_tuntutan_klaim')" name="nilai_tuntutan_klaim" />
+                    <input type="text" class="rupiah p-2 w-full border" id="" value="{{old('nilai_tuntutan_klaim')}}" name="nilai_tuntutan_klaim" />
                     @error('nilai_tuntutan_klaim')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
@@ -119,7 +119,7 @@
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Jenis Agunan / Kode Jenis Anggunan<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" value="old('jenis_agunan')" name="jenis_agunan" />
+                    <input type="text" class="p-2 w-full border" id="" value="{{old('jenis_agunan')}}" name="jenis_agunan" />
                     @error('jenis_agunan')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
