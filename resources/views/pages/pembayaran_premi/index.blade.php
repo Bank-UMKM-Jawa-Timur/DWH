@@ -26,7 +26,7 @@
                     Pembayaran Premi
                 </h2>
             </div>
-            @if ($role_id == 2)
+            @if ($role == 'Staf Analis Kredit')
                 <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
                     <a href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                         <span class="lg:mt-0 mt-0">
@@ -116,7 +116,7 @@
                                 <td>{{ $item->total_periode }}</td>
 
                                 <td>
-                                    @if ($role_id == 2)
+                                    @if ($role == 'Staf Analis Kredit')
                                         <div class="dropdown">
                                             <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                                 Selengkapnya

@@ -31,11 +31,38 @@ class RegistrasiController extends Controller
     public function index(Request $request)
     {
         try {
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+
+            $user_id = $token ? $user['id'] : $user->id;
             $role_id = \Session::get(config('global.role_id_session'));
+            $role = '';
+            if ($user) {
+                if (is_array($user)) {
+                    $role = $user['role'];
+                }
+            }
+            else {
+                $role = 'vendor';
+            }
+
             $page_length = $request->page_length ? $request->page_length : 5;
             $data = DB::table('asuransi')
+                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
                 ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                ->select('asuransi.*', 'mst_jenis_asuransi.jenis');
+                ->select('asuransi.*', 'mst_jenis_asuransi.jenis', 'k.kode_cabang')
+                ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role, $user_id) {
+                    if (strtolower($role) == 'administrator' || strtolower($role) == 'kredit umum' || strtolower($role) == 'pemasaran' || strtolower($role) == 'spi' || strtolower($role) == 'penyelia kredit') {
+                        // non staf
+                        $kode_cabang = \Session::get(config('global.user_token_session')) ? 
+                        \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang;
+                        $query->where('k.kode_cabang', $kode_cabang);
+                    }
+                    else {
+                        // staf
+                        $query->where('asuransi.user_id', $user_id);
+                    }
+                });
             if ($request->has('q')) {
                 $q = $request->get('q');
                 $data = $data->where('nama_debitur', 'LIKE', "%$q%")
@@ -53,6 +80,7 @@ class RegistrasiController extends Controller
                             ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
                             ->where('status', $status);
             }
+
             $data = $data->groupBy('no_pk')
                 ->orderBy('no_aplikasi')
                 ->paginate($page_length);
@@ -65,11 +93,27 @@ class RegistrasiController extends Controller
                     ->select('asuransi.*', 'mst_jenis_asuransi.jenis');
                 if ($request->has('q')) {
                     $q = $request->get('q');
-                    $detailAsuransi = $detailAsuransi->where('nama_debitur', 'LIKE', "%$q%")
-                                ->orWhere('no_aplikasi', 'LIKE', "%$q%")
-                                ->orWhere('no_polis', 'LIKE', "%$q%")
-                                ->orWhere('tgl_polis', 'LIKE', "%$q%")
-                                ->orWhere('tgl_rekam', 'LIKE', "%$q%");
+                    $detailAsuransi = $detailAsuransi
+                                        ->where('asuransi.user_id', $user_id)
+                                        ->where('nama_debitur', 'LIKE', "%$q%")
+                                        ->where('no_pk', $item->no_pk)
+                                        ->where('asuransi.id', '!=', $item->id)
+                                        ->orWhere('no_aplikasi', 'LIKE', "%$q%")
+                                        ->where('asuransi.user_id', $user_id)
+                                        ->where('no_pk', $item->no_pk)
+                                        ->where('asuransi.id', '!=', $item->id)
+                                        ->orWhere('no_polis', 'LIKE', "%$q%")
+                                        ->where('asuransi.user_id', $user_id)
+                                        ->where('no_pk', $item->no_pk)
+                                        ->where('asuransi.id', '!=', $item->id)
+                                        ->orWhere('tgl_polis', 'LIKE', "%$q%")
+                                        ->where('asuransi.user_id', $user_id)
+                                        ->where('no_pk', $item->no_pk)
+                                        ->where('asuransi.id', '!=', $item->id)
+                                        ->orWhere('tgl_rekam', 'LIKE', "%$q%")
+                                        ->where('asuransi.user_id', $user_id)
+                                        ->where('no_pk', $item->no_pk)
+                                        ->where('asuransi.id', '!=', $item->id);
                 }
                 if ($request->has('tAwal') && $request->has('tAkhir')) {
                     $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
@@ -77,13 +121,14 @@ class RegistrasiController extends Controller
                     $status = $request->get('status');
                     $detailAsuransi = $detailAsuransi->whereBetween('tgl_polis', [$tAwal, $tAkhir])
                                 ->where('status', $status)
+                                ->where('asuransi.user_id', $user_id)
+                                ->where('no_pk', $item->no_pk)
                                 ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
-                                ->where('status', $status);
+                                ->where('status', $status)
+                                ->where('asuransi.user_id', $user_id)
+                                ->where('no_pk', $item->no_pk);
                 }
-                $detailAsuransi = $detailAsuransi
-                    ->where('no_pk', $item->no_pk)
-                    ->where('asuransi.id', '!=', $item->id)
-                    ->get();
+                $detailAsuransi = $detailAsuransi->get();
 
                 if(count($detailAsuransi) > 0){
                     foreach($detailAsuransi as $j => $itemDetail){
@@ -95,9 +140,8 @@ class RegistrasiController extends Controller
 
                 $item->detail = $dataDetail[$i];
             }
-            // return $data;
 
-            return view('pages.asuransi-registrasi.index', compact('data', 'role_id'));
+            return view('pages.asuransi-registrasi.index', compact('data', 'role_id', 'role'));
         } catch (\Exception $e) {
             dd($e);
             return back()->with('error', $e->getMessage());
@@ -155,8 +199,22 @@ class RegistrasiController extends Controller
      */
     public function create()
     {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
         $role_id = \Session::get(config('global.role_id_session'));
-        if ($role_id != 2) {
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
             return back();
         }
@@ -456,6 +514,26 @@ class RegistrasiController extends Controller
     }
 
     public function inquery(Request $request) {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         try {
             $headers = [
                 "Accept" => "/",
@@ -518,6 +596,26 @@ class RegistrasiController extends Controller
     }
 
     public function batal(Request $request){
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
         try{
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
@@ -606,6 +704,26 @@ class RegistrasiController extends Controller
     }
 
     public function pelunasan(Request $request) {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+        
         try{
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
