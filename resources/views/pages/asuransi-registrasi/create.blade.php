@@ -328,14 +328,17 @@
         $('#pengajuan').on('change', function() {
             var key = $(this).children("option:selected").data('key');
             var data = @json($dataPengajuan);
+
             var tanggalLahir = new Date(data[key]['tanggal_lahir']);
             var tempMonth = (tanggalLahir.getMonth() + 1).toString().length == 1 ?
                 `0${tanggalLahir.getMonth() + 1}` : tanggalLahir.getMonth() + 1;
             var fullTanggalLahir = `${tanggalLahir.getDate()}-${tempMonth}-${tanggalLahir.getFullYear()}`
+
             var tanggalPK = new Date(data[key]['tgl_cetak_pk']);
-            var tempMonth = (tanggalPK.getMonth() + 1).toString().length == 1 ? `0${tanggalPK.getMonth() + 1}` :
+            var tempMonthPk = (tanggalPK.getMonth() + 1).toString().length == 1 ? `0${tanggalPK.getMonth() + 1}` :
                 tanggalPK.getMonth() + 1;
-            var fullTanggalPK = `${tanggalPK.getDate()}-${tempMonth}-${tanggalPK.getFullYear()}`
+            var fullTanggalPK = `${tanggalPK.getDate()}-${tempMonthPk}-${tanggalPK.getFullYear()}`
+
             var tempTanggalAwalKredit = new Date(data[key]['tanggal']);
             var tanggalAwalKredit = new Date(data[key]['tanggal']);
             tempMonth = (tanggalAwalKredit.getMonth() + 1).toString().length == 1 ?
@@ -375,7 +378,8 @@
             $("[name='no_aplikasi']").val(noAplikasi)
             $("[name='plafon_kredit']").val(jumlahKredit)
             $("[name='no_pk']").val(data[key]['no_pk'])
-            $("[name='tgl_pk']").val(data[key]['tgl_cetak_pk'])
+            // $("[name='tgl_pk']").val(data[key]['tgl_cetak_pk'])
+            $("[name='tgl_pk']").val(fullTanggalPK)
             $('[name="jenis_coverage"]').empty()
             $('[name="jenis_coverage"]').append(`<option selected value="">-- Pilih jenis ---</option>`)
             if (age <= 60) {
