@@ -207,19 +207,19 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Polis Sebelumya<span
                                 class="text-theme-primary">*</span> </label>
-                        <input type="text" value="old('no_polis_sebelumnya')" class="p-2 w-full border " id="" name="no_polis_sebelumnya" />
+                        <input type="text" value="{{old('no_polis_sebelumnya')}}" class="p-2 w-full border " id="" name="no_polis_sebelumnya" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Baki Debet<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="" value="old('baki_debet')" name="baki_debet" />
+                        <input type="text" class="rupiah p-2 w-full border " id="" value="{{old('baki_debet')}}" name="baki_debet" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tunggakan<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="tunggakan" value="old('tunggakan')" name="tunggakan" />
+                        <input type="text" class="rupiah p-2 w-full border " id="tunggakan" value="{{old('tunggakan')}}" name="tunggakan" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -229,7 +229,7 @@
                         <label for="" class="uppercase">Premi</label>
                         <input type="hidden" id="rate_premi" name="rate_premi" />
                         <input type="text" class="rupiah p-2 w-full border disabled-input bg-disabled" id="premi"
-                            name="premi" value="old('rate_premi')" readonly />
+                            name="premi"  readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -242,13 +242,13 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tarif<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="tarif"
-                            name="tarif" value="old('tarif')" readonly />
+                            name="tarif" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3 form-6 hidden">
                         <label for="" class="uppercase">Refund<span class="text-theme-primary">*</span></label>
                         <input type="text" class="rupiah p-2 w-full border" id="refund" name="refund"
-                            onchange="hitungPremiDisetor()" value="old('refund')" />
+                            onchange="hitungPremiDisetor()"  />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -263,14 +263,14 @@
                         <label for="" class="uppercase">Handling Fee<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="rupiah p-2 w-full border " id="handling_fee" name="handling_fee"
-                            onchange="hitungPremiDisetor()" value="old('handling_fee')"/>
+                            onchange="hitungPremiDisetor()" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi Disetor<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="premi_disetor"
-                            name="premi_disetor" readonly value="old('premi_disetor')" />
+                            name="premi_disetor" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>

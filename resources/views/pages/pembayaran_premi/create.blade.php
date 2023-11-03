@@ -61,19 +61,19 @@
                         <label for="" class="uppercase">Tanggal Bayar<span class="text-theme-primary">*</span></label>
                         <div class="flex border justify-center ">
                             <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
-                        <input type="text" value="old('tgl_bayar')" class="datepicker p-2 w-full" id="tgl_bayar" name="tgl_bayar" />
+                        <input type="text" value="{{old('tgl_bayar')}}" class="datepicker p-2 w-full" id="tgl_bayar" name="tgl_bayar" />
                         </div>
                         <small class="form-text text-red-600 error tgl-bayar-error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No Bukti Pembayaran<span class="text-theme-primary">*</span></label>
-                        <input type="text" value="old('no_bukti_pembayaran')" class="p-2 w-full border " id="no_bukti_pembayaran" name="no_bukti_pembayaran"/>
+                        <input type="text" value="{{old('no_bukti_pembayaran')}}" class="p-2 w-full border " id="no_bukti_pembayaran" name="no_bukti_pembayaran"/>
                         <small class="form-text text-red-600 error no-bukti-pembayaran-error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
                         <input type="hidden" id="total_premi" name="total_premi"/>
-                        <input type="text" value="old('display_total_premi')" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
+                        <input type="text" value="{{old('display_total_premi')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
 
