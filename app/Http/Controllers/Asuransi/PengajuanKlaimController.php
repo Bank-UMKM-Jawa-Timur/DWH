@@ -32,7 +32,21 @@ class PengajuanKlaimController extends Controller
      */
     public function index(Request $request)
     {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
         $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
         $page_length = $request->page_length ? $request->page_length : 5;
         $data = DB::table('pengajuan_klaim AS p')->select(
                                     'p.id',
@@ -60,14 +74,26 @@ class PengajuanKlaimController extends Controller
             $data = $data->get();
         }
 
-        // return $data;
-
-        return view('pages.pengajuan-klaim.index', compact('data', 'role_id'));
+        return view('pages.pengajuan-klaim.index', compact('data', 'role_id', 'role'));
     }
     public function create(Request $request)
     {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
         $role_id = \Session::get(config('global.role_id_session'));
-        if ($role_id != 2) {
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
             return back();
         }
@@ -263,6 +289,26 @@ class PengajuanKlaimController extends Controller
     }
 
     public function pembatalanKlaim(Request $request){
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+        
         $req = [
             'no_aplikasi' => $request->no_aplikasi,
             'no_rekening' => $request->no_rekening,
