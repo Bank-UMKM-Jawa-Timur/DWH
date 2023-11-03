@@ -140,6 +140,13 @@
     .table-dictionary td {
         @apply text-left;
     }
+    .table-collapse {
+        @apply border-collapse border w-full;
+    }
+    .table-collapse th,
+    td {
+        @apply text-center px-5 py-3;
+    }
     table {
         @apply border-collapse border;
     }

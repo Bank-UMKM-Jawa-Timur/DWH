@@ -206,6 +206,7 @@ class RegistrasiController extends Controller
         }
 
         DB::beginTransaction();
+        
         try {
             $req = [
                 "no_aplikasi"=> $request->get('no_aplikasi'),

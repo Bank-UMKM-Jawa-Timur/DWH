@@ -97,24 +97,32 @@
                         <th>No.</th>
                         <th>Cabang</th>
                         <th>Nama Debitur</th>
-                        <th>Jenis Asuransi</th>
-                        <th>No Aplikasi</th>
-                        <th>No Polis</th>
-                        <th>Tanggal Polis</th>
-                        <th>Tanggal Rekam</th>
-                        <th>Status Bayar</th>
-                        <th>Status</th>
+                        <th>Nomor PK</th>
                         <th>Aksi</th>
                     </tr>
                     <tbody>
                         @forelse ($data as $item)
                             <tr class="view cursor-pointer">
-                                <td><div class="flex gap-4 justify-center">@if(count($item->detail) > 0)<span class="caret-icon transform">@include('components.svg.caret')</span>@else <span class="caret-icon transform"></span>@endif{{$loop->iteration}}</div></td>
+                                <td>{{$loop->iteration}}</td>
                                 <td>Surabaya</td>
                                 <td>{{$item->nama_debitur}}</td>
-                                <td>{{$item->jenis}}</td>
-                                <td>{{$item->no_aplikasi}}</td>
-                                @if($item->is_paid == 1)
+                                <td>{{$item->no_pk}}</td>
+                                <td>
+                                    <div class="flex gap-4 justify-center">
+                                        @if(count($item->detail) > 0)
+                                        <button class="flex gap-2 hover:bg-slate-50 border px-3 py-2">
+                                            <span class="caret-icon transform">
+                                                @include('components.svg.caret')
+                                            </span>
+                                            <span>Lihat Asuransi</span>
+                                        </button>
+                                        @else 
+                                            <span class="caret-icon transform"></span>
+                                        @endif
+                                    </div>
+                                </td>
+                
+                                {{-- @if($item->is_paid == 1)
                                 <td>{{$item->no_polis}}</td>
                                 <td>
                                     @if ($item->tgl_polis)
@@ -150,55 +158,160 @@
                                     @else
                                         Onprogres
                                     @endif
-                                </td>
-                                <td>
-                                    @if ($role_id == 2)
-                                        <div class="dropdown">
-                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                Selengkapnya
-                                            </button>
-                                            <ul class="dropdown-menu right-16">
-                                                <li class="">
-                                                    <a class="item-dropdown modal-batal" href="#"
-                                                        data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                        data-id="{{$item->id}}" data-no_aplikasi="{{$item->no_aplikasi}}"
-                                                        data-no_polis="{{$item->no_polis}}">Pembatalan</a>
-                                                </li>
-                                                <li class="">
-                                                    <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                        <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
-                                                        <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
-                                                    </form>
-                                                </li>
-                                                <li class="">
-                                                    <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                        data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
-                                                        data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
-                                                        data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
-                                                        data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
-                                                </li>
-                                            </ul>
+                                </td> --}}
+                            </tr>
+                            <tr class="collapse-table hidden">
+                                <td colspan="11" class="p-0">
+                                    <div class="bg-theme-primary/5">
+                                        <div class="flex justify-start p-3">
+                                            <h1 class="font-bold text-lg text-theme-primary">Data Asuransi</h1>
                                         </div>
-                                    @else
-                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                            Detail
-                                        </button>
-                                    @endif
+                                        {{-- <table class="table-collapse mt-2">
+                                            <tbody class="divide-y">
+                                                <tr class="column-one">
+                                                    <td>
+                                                        <table class="table-collapse">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Jenis Asuransi</td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>kolektibilitas</td>
+                                                                    <td>: 03-11-2024 </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Jenis Pertanggungan</td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Tipe Premi</td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Jenis Coverage</td>
+                                                                    <td>: Jiwa </td>
+
+                                                                    <td>
+                                                                        @if ($role_id == 2)
+                                                                        <div class="dropdown">
+                                                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                Selengkapnya
+                                                                            </button>
+                                                                            <ul class="dropdown-menu right-16">
+                                                                                <li class="">
+                                                                                    <a class="item-dropdown modal-batal" href="#"
+                                                                                        data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                                                        data-id="{{$item->id}}" data-no_aplikasi="{{$item->no_aplikasi}}"
+                                                                                        data-no_polis="{{$item->no_polis}}">Pembatalan</a>
+                                                                                </li>
+                                                                                <li class="">
+                                                                                    <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                                                        <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
+                                                                                        <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
+                                                                                    </form>
+                                                                                </li>
+                                                                                <li class="">
+                                                                                    <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                                                        data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
+                                                                                        data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
+                                                                                        data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
+                                                                                        data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    @else
+                                                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                            Detail
+                                                                        </button>
+                                                                    @endif
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>No Polis Sebelumnya</td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Baki Debet</td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Tunggakan</td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Tarif </td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Handling Fee</td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td><span class="mr-5 text-theme-primary"><iconify-icon icon="material-symbols:circle"></iconify-icon></span>Premi Disetor</td>
+                                                                    <td>: Jiwa </td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table> --}}
+                                        
+                                        <div class="mt-2 p-3">
+                                            <table class="table-collapse">
+                                                <thead>
+                                                    <th>No.</th>
+                                                    <th>Jenis Asuransi</th>
+                                                    <th>kolektibilitas</th>
+                                                    <th>Jenis Pertanggungan</th>
+                                                    <th>Tipe Premi</th>
+                                                    <th>Jenis Coverage</th>
+                                                    <th>No Polis Sebelumnya</th>
+                                                    <th>Baki Debet</th>
+                                                    <th>Tunggakan</th>
+                                                    <th>Tarif</th>
+                                                    <th>Handling Fee</th>
+                                                    <th>Premi Disetor</th>
+                                                    <th>Aksi</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>Jiwa</td>
+                                                        <td>                                                                        @if ($role_id == 2)
+                                                            <div class="dropdown">
+                                                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                    Selengkapnya
+                                                                </button>
+                                                                <ul class="dropdown-menu right-16">
+                                                                    <li class="">
+                                                                        <a class="item-dropdown modal-batal" href="#"
+                                                                            data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                                            data-id="{{$item->id}}" data-no_aplikasi="{{$item->no_aplikasi}}"
+                                                                            data-no_polis="{{$item->no_polis}}">Pembatalan</a>
+                                                                    </li>
+                                                                    <li class="">
+                                                                        <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                                            <input type="hidden" name="no_aplikasi" value="{{$item->no_aplikasi}}">
+                                                                            <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
+                                                                        </form>
+                                                                    </li>
+                                                                    <li class="">
+                                                                        <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                                            data-modal-target="modalPelunasan"  data-id="{{$item->id}}"
+                                                                            data-no_aplikasi="{{$item->no_aplikasi}}" data-no_rek="{{$item->no_rek}}"
+                                                                            data-no_polis="{{$item->no_polis}}" data-refund="{{$item->refund}}"
+                                                                            data-tgl_awal="{{$item->tanggal_awal}}" data-tgl_akhir="{{$item->tanggal_akhir}}">Pelunasan</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        @else
+                                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                Detail
+                                                            </button>
+                                                        @endif</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
-                            {{-- <tr class="collapse-table hidden bg-[#f2f2f2]">
-                                <td colspan="1"></td>
-                                <td>Surabaya</td>
-                                <td>Mohammad Sahrullah</td>
-                                <td>KB0301371037</td>
-                                <td>23141</td>
-                                <td>23-10-2023</td>
-                                <td>23-10-2023</td>
-                                <td>Dibatalkan</td>
-                                <td>Onprogres</td>
-                                <td></td>
-                            </tr> --}}
-                            @if (count($item->detail) > 0)
+                            {{-- @if (count($item->detail) > 0)
                                 @foreach ($item->detail as $itemDetail)
                                     <tr class="collapse-table hidden bg-[#f2f2f2]">
                                         <td colspan="1"></td>
@@ -248,12 +361,13 @@
                                 @endforeach
                             @else
 
-                            @endif
+                            @endif --}}
                         @empty
                             <tr>
                                 <td colspan="9">Data tidak tersedia.</td>
                             </tr>
                         @endforelse
+
                     </tbody>
                 </table>
             </div>
@@ -270,11 +384,13 @@
     </div>
 @endsection
 @push('extraScript')
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <script>
-        $(".view").on("click", function(e){
-            // $(this + '.caret-icon').toggleClass("rotate-180");
+        $("table .view").on("click", function(e){
+            // console.log($(this).nextElementSiblig("td div.collapse-table"));
             $(this).next(".collapse-table").toggleClass("hidden");
         });
+
         $('.dropdown .dropdown-menu .item-dropdown').on('click', function(e){
             e.stopPropagation();
         })
