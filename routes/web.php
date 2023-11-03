@@ -102,8 +102,9 @@ Route::middleware('auth_api')->group(function () {
                 Route::get('inquery', 'inquery')->name('inquery');
                 Route::post('batal', 'batal')->name('batal');
                 Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');
+                Route::get('/check-asuransi', 'checkAsuransi')->name('check_asuransi');
             });
-        // Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
+
         Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);
         Route::post('/pengajuan-klaim/cek-status', [PengajuanKlaimController::class, 'cekStatus'])->name('pengajuan-klaim.cek-status');
         Route::post('/pengajuan-klaim/pembatalan-klaim', [PengajuanKlaimController::class, 'pembatalanKlaim'])->name('pengajuan-klaim.pembatalan-klaim');
