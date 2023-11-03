@@ -121,7 +121,7 @@
                                 <td>{{$item['nama']}}</td>
                                 <td>{{$item['no_pk']}}</td>
                                 <td>{{$item['skema_kredit']}}</td>
-                                <td>{{number_format($item['jumlah_kredit'], 2, '.', ',')}}</td>
+                                <td>Rp {{number_format($item['jumlah_kredit'], 0, ',', '.')}}</td>
                                 <td>
                                     <div class="flex gap-4 justify-center">
                                         @if(count($item['jenis_asuransi']) > 0)
@@ -173,10 +173,10 @@
                                                             <tr>
                                                                 <td>{{$no_aplikasi}}</td>
                                                                 <td>{{$tarif}}</td>
-                                                                <td>{{$premi != '-' ? 'Rp '.number_format($premi, 0, '.', ',') : '-'}}</td>
-                                                                <td>{{$refund != '-' ? 'Rp '.number_format($refund, 0, '.', ',') : '-'}}</td>
-                                                                <td>{{$handling_fee != '-' ? 'Rp '.number_format($handling_fee, 0, '.', ',') : '-'}}</td>
-                                                                <td>{{$premi_disetor != '-' ? 'Rp '.number_format($premi_disetor, 0, '.', ',') : '-'}}</td>
+                                                                <td>{{$premi != '-' ? 'Rp '.number_format($premi, 0, ',', '.') : '-'}}</td>
+                                                                <td>{{$refund != '-' ? 'Rp '.number_format($refund, 0, ',', '.') : '-'}}</td>
+                                                                <td>{{$handling_fee != '-' ? 'Rp '.number_format($handling_fee, 0, ',', '.') : '-'}}</td>
+                                                                <td>{{$premi_disetor != '-' ? 'Rp '.number_format($premi_disetor, 0, ',', '.') : '-'}}</td>
                                                                 <td>{{$status}}</td>
                                                                 <td>
                                                                     <div class="flex gap-5 justify-center">
