@@ -6,11 +6,37 @@
     <div class="head-pages">
         <p class="text-sm">Asuransi</p>
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-            Tambah Registrasi Asuransi
+            Registrasi
         </h2>
     </div>
     <div class="body-pages">
         <div class="bg-white w-full p-5">
+            <div class="review-penyelia space-y-5">
+                <h2>Review dari Penyelia</h2>
+                <div class="review-timeline bg-theme-primary/5 h-[300px] border overflow-y-auto p-5">
+    
+                    <ol class="relative border-l border-gray-200">                  
+                        <li class="mb-10 ml-4">
+                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary "></div>
+                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">February 2022</time>
+                            <h3 class="text-lg font-semibold text-theme-primary ">Application UI code in Tailwind CSS</h3>
+                            <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">Get access to over 20+ pages including a dashboard layout, charts, kanban board, calendar, and pre-order E-commerce & Marketing pages.</p>
+                        </li>
+                        <li class="mb-10 ml-4">
+                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary"></div>
+                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">March 2022</time>
+                            <h3 class="text-lg font-semibold text-theme-primary ">Marketing UI design in Figma</h3>
+                            <p class="text-base font-normal text-gray-500 dark:text-gray-400">All of the pages and components are first designed in Figma and we keep a parity between the two versions even as we update the project.</p>
+                        </li>
+                        <li class="ml-4">
+                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary"></div>
+                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">April 2022</time>
+                            <h3 class="text-lg font-semibold text-theme-primary ">E-Commerce UI code in Tailwind CSS</h3>
+                            <p class="text-base font-normal text-gray-500 dark:text-gray-400">Get started with dozens of web components and interactive elements built on top of Tailwind CSS.</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
             <form id="form-asuransi-registrasi" action="{{ route('asuransi.registrasi.store') }}" method="post"
                 class="space-y-5 " accept="">
                 @csrf
@@ -274,7 +300,11 @@
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
-
+                <div class="mt-5 space-y-5 bg-white border p-5 w-auto">
+                    <h2 class="text-theme-primary font-bold">Pendapat dari Penyelia</h2>
+                    <p>Apakah form diatas yang diisi sudah benar atau ada kesalahan?.  berikan keterangan secara ringkas</p>
+                    <textarea name="" class="w-2/4 h-80 border p-4 resize-none hover:bg-theme-pages focus:bg-theme-pages" placeholder="Tulis pendapat anda disini..." id="" ></textarea>
+                </div>
                 <div class="flex gap-5">
                     <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit"
                         id="simpan-asuransi">
@@ -294,8 +324,10 @@
                         <span class="lg:block hidden"> Reset </span>
                     </button>
                 </div>
+            </form>
+
         </div>
-        </form>
+
     </div>
 @endsection
 
