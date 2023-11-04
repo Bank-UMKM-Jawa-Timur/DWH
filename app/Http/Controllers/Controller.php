@@ -128,4 +128,28 @@ class Controller extends BaseController
             return $failed_response;
         }
     }
+
+    public function getStafByCabang($kode_cabang) {
+        // retrieve from api
+        $host = config('global.los_api_host');
+        $apiURL = $host . '/kkb/get-data-staf-cabang/' . $kode_cabang;
+
+        $headers = [
+            'token' => config('global.los_api_token')
+        ];
+
+        $responseBody = null;
+
+        try {
+            $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+            return $responseBody;
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return $e->getMessage();
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

@@ -11,43 +11,52 @@
     </div>
     <div class="body-pages">
         <div class="bg-white w-full p-5">
-            <div class="review-penyelia space-y-5">
+            <div class="review-penyelia space-y-5 mb-5">
                 <h2>Review dari Penyelia</h2>
-                <div class="review-timeline bg-theme-primary/5 h-[300px] border overflow-y-auto p-5">
-
+                <div class="review-timeline bg-theme-primary/5 h-auto border overflow-y-auto p-5">
                     <ol class="relative border-l border-gray-200">
                         @forelse ($pendapat as $item)
-                        <li class="mb-10 ml-4">
-                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary "></div>
-                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{$item->created_at}}</time>
-                            <h3 class="text-lg font-semibold text-theme-primary ">{{$item->pendapat}}</h3>
-                            <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{{$item->status}}</p>
-                        </li>
-
+                            <li class="mb-10 ml-4">
+                                <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary"></div>
+                                <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{date('d-m-Y', strtotime($item->created_at))}}</time>
+                                {{--  <h3 class="text-lg font-semibold text-theme-primary ">Application UI code in Tailwind CSS</h3>  --}}
+                                <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{{$item->pendapat}}</p>
+                            </li>
                         @empty
-                        <li class="">
-                            <h3 class="text-lg text-center font-semibold text-theme-primary ">Belum ada pendapat review dari penyelia.</h3>
-                        </li>
+                            <span>Belum ada review dari penyelia.</span>
                         @endforelse
                     </ol>
                 </div>
             </div>
-            <form id="form-asuransi-registrasi" action="{{ route('asuransi.registrasi.update', $jenis_asuransi->asuransi->id) }}" method="post"
-                class="space-y-5 " accept="">
-                @csrf
+            <div class="space-y-5 " accept="">
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
-                        <label class="uppercase">Perusahaan Asuransi</label>
-                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
-                            name="perusahaan" value="{{$jenis_asuransi->asuransi->perusahaan}}" readonly />
+                        <label class="uppercase">Pilih Perusahaan Asuransi</label>
+                        <input type="text" class="disabled-input bg-disabled p-2 w-full border" id="perusahaan"
+                            name="perusahaan" value="{{$perusahaan->nama}}" readonly />
+                        <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
-                        <label class="uppercase">Penyelia</label>
-                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
-                            name="penyelia" value="{{$data['nip_penyelia']}} - {{$data['penyelia']['nama']}}" readonly />
+                        @php
+                            $nip_penyelia = 'undifined';
+                            $penyelia = 'undifined';
+                            if (array_key_exists('penyelia', $pengajuan)) {
+                                if ($pengajuan['penyelia']) {
+                                    if (array_key_exists('nip', $pengajuan['penyelia'])) {
+                                        $nip_penyelia = $pengajuan['penyelia']['nip'];
+                                    }
+                                    if (array_key_exists('nama', $pengajuan['penyelia'])) {
+                                        $penyelia = $pengajuan['penyelia']['nama'];
+                                    }
+                                }
+                            }
+                        @endphp
+                        <label for="" class="uppercase">Penyelia</label>
+                        <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
+                            name="penyelia" value="{{$nip_penyelia.' - '.$penyelia}}" readonly />
+                        <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
-
                 <div class="title-form">
                     <h2 class="text-theme-primary font-bold text-lg">Data Debitur</h2>
                 </div>
@@ -57,20 +66,20 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Nama<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
-                            name="nama_debitur" value="{{$jenis_asuransi->asuransi->nama_debitur}}" readonly />
+                            name="nama_debitur" value="{{$pengajuan['nama']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal lahir<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled  p-2 w-full border" id="tgl_lahir"
-                            name="tgl_lahir" value="{{date('d-m-Y', strtotime($data['tanggal_lahir']))}}" readonly />
+                            name="tgl_lahir" value="{{date('d-m-Y', strtotime($pengajuan['tanggal_lahir']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Alamat<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id=""
-                            name="alamat_debitur" value="{{$data['alamat_rumah']}}" readonly />
+                            name="alamat_debitur" value="{{$pengajuan['alamat_rumah']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -79,20 +88,20 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No KTP<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id=""
-                            name="no_ktp" value="{{$data['no_ktp']}}" readonly />
+                            name="no_ktp" value="{{$pengajuan['no_ktp']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No Aplikasi<span class="text-theme-primary">*</span></label>
                         <input type="text" class="p-2 w-full border disabled-input bg-disabled " id="no_aplikasi"
-                            name="no_aplikasi" value="{{$jenis_asuransi->asuransi->no_aplikasi}}" readonly />
+                            name="no_aplikasi" value="{{$pengajuan['no_aplikasi']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kode Cabang Bank<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id=""
-                            name="kode_cabang" value="{{$data['kode_cabang']}}" readonly />
+                            name="kode_cabang" value="{{$pengajuan['kode_cabang']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -101,59 +110,60 @@
                         <label for="" class="uppercase">Tanggal Awal Kredit<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" name="tanggal_awal_kredit" id="tanggal_awal_kredit"
-                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($data['tanggal']))}}" readonly />
+                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($pengajuan['tanggal']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal Akhir Kredit<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" name="tanggal_akhir_kredit" id="tanggal_akhir_kredit"
-                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($jenis_asuransi->asuransi->tanggal_akhir))}}" readonly />
+                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($pengajuan['tgl_akhir_kredit']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal Jatuh Tempo<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" name="tgl_jatuhtempo" id="tgl_jatuhtempo"
-                            class="disabled-input bg-disabled  p-2 w-full border" value="{{date('d-m-Y', strtotime($jenis_asuransi->asuransi->tanggal_akhir))}}" readonly />
+                            class="disabled-input bg-disabled  p-2 w-full border" value="{{date('d-m-Y', strtotime($pengajuan['tgl_akhir_kredit']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jumlah Bulan<span
                                 class="text-theme-primary">*</span></label>
                         <input type="number" class="disabled-input bg-disabled p-2 w-full border " id="jumlah_bulan"
-                            name="jumlah_bulan" value="{{$data['tenor_yang_diminta']}}" readonly />
+                            name="jumlah_bulan" value="{{$pengajuan['tenor_yang_diminta']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
-                        <label for="add-role" class="uppercase">Jenis Kredit<span class="text-theme-primary">*</span></label>
+                        <label for="add-role" class="uppercase">Jenis Kredit<span class="text-theme-primary">*</span>
+                        </label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
-                            name="jenis_kredit" value="{{$jenis_asuransi->jenis}}" readonly />
+                            name="jenis_kredit" value="{{$pengajuan['skema_kredit']}}" readonly />
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No PK<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="no_pk"
-                            name="no_pk" value="{{$jenis_asuransi->asuransi->no_pk}}" readonly />
+                            name="no_pk" value="{{$pengajuan['no_pk']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal PK<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pk"
-                            value="{{$data['tgl_cetak_pk']}}" readonly />
+                            value="{{date('d-m-Y', strtotime($pengajuan['tgl_cetak_pk']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tanggal Pengajuan<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pengajuan"
-                            value="{{$data['tanggal']}}" readonly />
+                            value="{{date('d-m-Y', strtotime($pengajuan['tanggal']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Plafon Kredit</label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="plafon_kredit"
-                            name="plafon_kredit" value="{{number_format($data['jumlah_kredit'], 0, ',', '.')}}" readonly />
+                            name="plafon_kredit" value="{{number_format($pengajuan['jumlah_kredit'], 0, ',', '.')}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -165,58 +175,44 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Rekening<span class="text-theme-primary">*</span>
                         </label>
-                        <input type="text" class="p-2 w-full border "
-                        id="no_rekening" name="no_rekening" value="{{$jenis_asuransi->asuransi->no_rek}}"/>
+                        <input type="text" class="bg-disabled disabled-input p-2 w-full border"
+                            id="no_rekening" name="no_rekening"
+                            value="{{old('no_rekening', $asuransi->no_rek)}}" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span>
                         </label>
-                        <input type="text" class="p-2 w-full border "
-                        id="no_rekening" name="jenis_asuransi" value="{{$jenis_asuransi->jenis}}" readonly/>
+                        <input type="hidden" name="jenis_asuransi" id="jenis_asuransi"
+                            value="{{$jenisAsuransi->id.'-'.$jenisAsuransi->kode}}">
+                        <input type="text" class="bg-disabled disabled-input p-2 w-full border" name="display_jenis_asuransi"
+                            id="display_jenis_asuransi" value="{{$jenisAsuransi->jenis}}" readonly>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span>
                         </label>
-                        {{-- <input type="text" class="p-2 w-full border "
-                        id="no_rekening" name="jenis_pengajuan" value="{{$jenis_asuransi->asuransi->jenis_pengajuan == '01' ?}}" readonly/> --}}
-                        <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
-                            <option selected value="">-- Pilih Jenis Pengajuan ---</option>
-                            <option {{$jenis_asuransi->asuransi->jenis_pengajuan == '00' ? 'selected' : ''}} value="00">Baru</option>
-                            <option {{$jenis_asuransi->asuransi->jenis_pengajuan == '01' ? 'selected' : ''}} value="01">Top Up</option>
-                        </select>
+                        <input type="text" class="bg-disabled disabled-input p-2 w-full border" name="jenis_pengajuan"
+                            id="jenis_pengajuan" value="@if (old('jenis_pengajuan', $asuransi->jenis_pengajuan) == '00') Baru @elseif (old('jenis_pengajuan', $asuransi->jenis_pengajuan) == '01') Top Up @else - @endif" readonly>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kolektibilitas<span
                                 class="text-theme-primary">*</span></label>
-                        <select name="kolektibilitas" class="w-full p-2 border">
-                            <option selected value="">-- Kolektibilitas ---</option>
-                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '1' ? 'selected' : ''}} value="1">1</option>
-                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '2' ? 'selected' : ''}} value="2">2</option>
-                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '3' ? 'selected' : ''}} value="3">3</option>
-                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '4' ? 'selected' : ''}} value="4">4</option>
-                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '5' ? 'selected' : ''}} value="5">5</option>
-                        </select>
+                        <input type="text" class="bg-disabled disabled-input p-2 w-full border" name="kolektibilitas"
+                            id="kolektibilitas" value="{{old('kolektibilitas', $asuransi->kolektibilitas)}}" readonly>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis PERTANGGUNGAN<span
                                 class="text-theme-primary">*</span> </label>
-                        <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
-                            <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
-                            <option {{$jenis_asuransi->asuransi->jenis_pertanggungan == '01' ? 'selected' : ''}} value="01">Pokok</option>
-                            <option {{$jenis_asuransi->asuransi->jenis_pertanggungan == '02' ? 'selected' : ''}} value="02">Sisa Kredit</option>
-                        </select>
+                        <input type="text" class="bg-disabled disabled-input p-2 w-full border" name="jenis_pertanggungan"
+                            id="jenis_pertanggungan" value="@if (old('jenis_pertanggungan', $asuransi->jenis_pertanggungan) == '01') Pokok @elseif (old('jenis_pertanggungan', $asuransi->jenis_pertanggungan) == '02') Sisa Kredit @else - @endif" readonly>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tipe Premi<span class="text-theme-primary">*</span>
                         </label>
-                        <select name="tipe_premi" class="w-full p-2 border">
-                            <option selected value="">-- Pilih Tipe Premi ---</option>
-                            <option {{$jenis_asuransi->asuransi->tipe_premi == '0' ? 'selected' : ''}} value="0">Biasa</option>
-                            <option {{$jenis_asuransi->asuransi->tipe_premi == '1' ? 'selected' : ''}} value="1">Refund</option>
-                        </select>
+                        <input type="text" class="bg-disabled disabled-input p-2 w-full border" name="tipe_premi"
+                            id="tipe_premi" value="@if (old('tipe_premi', $asuransi->tipe_premi) == '0') Biasa @elseif (old('tipe_premi', $asuransi->tipe_premi) == '1') Refund @else - @endif" readonly>
                     </div>
                 </div>
 
@@ -225,19 +221,20 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Polis Sebelumya<span
                                 class="text-theme-primary">*</span> </label>
-                        <input type="text" value="{{$jenis_asuransi->asuransi->no_polis}}" class="p-2 w-full border " id="" name="no_polis_sebelumnya" />
+                        <input type="text" value="{{old('no_polis_sebelumnya', $asuransi->no_polis_sebelumnya)}}"
+                            class="bg-disabled disabled-input p-2 w-full border " id="" name="no_polis_sebelumnya" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Baki Debet<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="" value="{{$jenis_asuransi->asuransi->baki_debet}}" name="baki_debet" />
+                        <input type="text" class="bg-disabled disabled-input rupiah p-2 w-full border " id="" value="{{old('baki_debet', number_format($asuransi->baki_debet, 0, ',', '.'))}}" name="baki_debet" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tunggakan<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="tunggakan" value="{{$jenis_asuransi->asuransi->tunggakan}}" name="tunggakan" />
+                        <input type="text" class="bg-disabled disabled-input rupiah p-2 w-full border " id="tunggakan" value="{{old('tunggakan', $asuransi->tunggakan)}}" name="tunggakan" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -245,84 +242,92 @@
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi</label>
-                        <input type="hidden" id="rate_premi" name="rate_premi" />
+                        <input type="hidden" id="rate_premi" name="rate_premi" value="{{old('rate_premi', $asuransi->tarif)}}" />
                         <input type="text" class="rupiah p-2 w-full border disabled-input bg-disabled" id="premi"
-                            name="premi" value="{{number_format($jenis_asuransi->asuransi->premi, 0, ',', '.')}}"  readonly />
+                            name="premi" value="{{old('premi', $asuransi->premi)}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Coverage<span class="text-theme-primary">*</span>
                         </label>
-                        <select name="jenis_coverage" class="w-full p-2 border">
-                            @if ($data['age'] <= 60)
-                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '01' ? 'selected' : ''}} value="01">PNS & NON PNS (PA+ND)</option>
-                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '02' ? 'selected' : ''}} value="02">NON PNS (PA+ND+PHK)</option>
-                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '03' ? 'selected' : ''}} value="03">PNS (PA+ND+PHK+MACET)</option>
-                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '04' ? 'selected' : ''}} value="04">DPRD (PA+ND+PAW)</option>
-                            @else
-                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '05' ? 'selected' : ''}} value="05">PNS & PENSIUN (PA+ND)</option>
-                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '06' ? 'selected' : ''}} value="06">DPRD (PA+ND+PAW)</option>
-                            @endif
-                        </select>
+                        @php
+                            $jenis_coverage_arr = [
+                                '01' => 'PNS & NON PNS (PA+ND)',
+                                '02' => 'NON PNS (PA+ND+PHK)',
+                                '03' => 'PNS (PA+ND+PHK+MACET)',
+                                '04' => 'DPRD (PA+ND+PAW)',
+                                '05' => 'PNS & PENSIUN (PA+ND)',
+                                '06' => 'DPRD (PA+ND+PAW)',
+                            ];
+                        @endphp
+                        <input type="text" class="bg-disabled disabled-input p-2 w-full border" id="jenis_coverage"
+                            name="jenis_coverage" value="{{old('jenis_coverage', $jenis_coverage_arr[$asuransi->jenis_coverage])}}" readonly />
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tarif<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="tarif"
-                            name="tarif" value="{{$jenis_asuransi->asuransi->tarif}}" readonly />
+                            name="tarif" value="{{old('tarif', $asuransi->tarif)}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3 form-6 hidden">
                         <label for="" class="uppercase">Refund<span class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border" id="refund" name="refund"
-                            onchange="hitungPremiDisetor()" value="{{$jenis_asuransi->asuransi->refund}}" />
+                        <input type="text" class="bg-disabled disabled-input rupiah p-2 w-full border" id="refund" name="refund"
+                            onchange="hitungPremiDisetor()" value="{{old('refund', number_format($asuransi->refund, 0, ',' ,'.'))}}" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kode Layanan Syariah</label>
-                        <select name="kode_ls" class="w-full p-2 border">
-                            <option selected value="">-- Kode Layanan Syariah ---</option>
-                            <option {{$jenis_asuransi->asuransi->kode_layanan_syariah == '0' ? 'selected' : ''}} @if (old('kode_is') == '0') selected @endif value="0">KV</option>
-                            <option {{$jenis_asuransi->asuransi->kode_layanan_syariah == '1' ? 'selected' : ''}} @if (old('kode_is') == '1') selected @endif value="1">SY</option>
-                        </select>
+                        @php
+                            $kode_ls_arr = [
+                                '0' => 'KV',
+                                '1' => 'SY'
+                            ];
+                        @endphp
+                        <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="kode_ls"
+                            name="kode_ls" value="{{old('kode_ls', $kode_ls_arr[$asuransi->kode_layanan_syariah])}}" readonly />
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Handling Fee<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="handling_fee" name="handling_fee"
-                            onchange="hitungPremiDisetor()"  value="{{number_format($jenis_asuransi->asuransi->handling_fee, 0, ',', '.')}}"/>
+                        <input type="text" class="bg-disabled disabled-input rupiah p-2 w-full border " id="handling_fee" name="handling_fee"
+                            onchange="hitungPremiDisetor()" value="{{old('handling_fee', number_format($asuransi->handling_fee, 0, ',', '.'))}}" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi Disetor<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="premi_disetor"
-                            name="premi_disetor" value="{{number_format($jenis_asuransi->asuransi->premi_disetor, 0, ',', '.')}}" readonly />
+                            name="premi_disetor" value="{{old('premi_disetor', number_format($asuransi->premi_disetor, 0, ',', '.'))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
-                {{-- <div class="mt-5 space-y-5 bg-white border p-5 w-auto">
+                <div class="mt-5 space-y-5 bg-white border p-5 w-auto">
                     <h2 class="text-theme-primary font-bold">Pendapat dari Penyelia</h2>
-                    <p>Apakah form diatas yang diisi sudah benar atau ada kesalahan?.  berikan keterangan secara ringkas</p>
-                    <textarea name="" class="w-2/4 h-80 border p-4 resize-none hover:bg-theme-pages focus:bg-theme-pages" placeholder="Tulis pendapat anda disini..." id="" ></textarea>
-                </div> --}}
+                    <p>Apakah form diatas yang diisi sudah benar atau ada kesalahan?.  berikan keterangan secara ringkas.</p>
+                    <p>Catatan!Kolom ini wajib diisi jika ingin mengembalikan data ke staf.</p>
+                    <textarea name="pendapat" class="w-full h-60 border p-4 resize-none hover:bg-theme-pages focus:bg-theme-pages"
+                        placeholder="Tulis pendapat anda disini..." id="pendapat"></textarea>
+                </div>
                 <div class="flex gap-5">
-                    <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit"
-                        id="simpan-asuransi">
-                        <span class="lg:mt-0 mt-0" >
-                            <iconify-icon icon="basil:edit-outline" class="w-16"></iconify-icon>
+                    <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
+                        id="review-asuransi">
+                        <span class="lg:mt-0 mt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14" />
+                            </svg>
                         </span>
-                        <span class="lg:block hidden"> Edit </span>
+                        <span class="lg:block hidden"> Approve </span>
                     </button>
-                    <a href="{{route('asuransi.registrasi.index')}}" type="button"
+                    <button type="button" id="btn-back-staf"
                         class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
                         <span class="lg:mt-1.5 mt-0">
-                            <iconify-icon icon="icon-park-outline:back" class="w-16"></iconify-icon>
+                            @include('components.svg.reset')
                         </span>
-                        <span class="lg:block hidden"> Kembali </span>
-                    </a>
+                        <span class="lg:block hidden"> Kembalikan ke staf </span>
+                    </button>
                 </div>
-            </form>
-
+            </div>
         </div>
 
     </div>
@@ -330,10 +335,6 @@
 
 @push('extraScript')
     <script>
-        var urlPost = "http://sandbox-umkm.ekalloyd.id:8387";
-
-        $('#pengajuan').select2();
-
         $('#form-reset').on('click', function() {
             $('#form-asuransi-registrasi')[0].reset();
             if ($('#form-asuransi-registrasi .datepicker')[0]) {
@@ -355,11 +356,10 @@
             }
         })
 
-
         $('#jenis_pertanggungan').on('change', function() {
             var masa_asuransi = $('#jumlah_bulan').val()
             if (masa_asuransi == '') {
-                alert('Harap pilih data pengajuan terlebih dahulu')
+                alertWarning('Harap pilih data pengajuan terlebih dahulu')
             }
             var plafon_kredit = $('#plafon_kredit').val()
             if (plafon_kredit != '') {
@@ -396,22 +396,22 @@
                                 $('#tarif').val(rate)
                                 hitungPremiDisetor()
                             } else {
-                                alert('Rate premi tidak ditemukan')
+                                alertWarning('Rate premi tidak ditemukan')
                             }
                         } else {
                             console.log(response.message)
-                            alert('Terjadi  kesalahan saat mengambil rate premi')
+                            alertWarning('Terjadi  kesalahan saat mengambil rate premi')
                         }
                     },
                     error: function(response) {
                         console.log(response)
-                        alert('Terjadi kesalahan saat mengambil rate premi')
+                        alertWarning('Terjadi kesalahan saat mengambil rate premi')
                     }
                 })
             }
         })
 
-        $("#simpan-asuransi").on("click", function(e) {
+        $("#review-asuransi").on("click", function(e) {
             e.preventDefault();
             var total_empty_field = 0;
             var data = {};
@@ -534,36 +534,71 @@
                 alertWarning(message)
                 total_empty_field++;
             }
+            if ($('#perusahaan') === '') {
+                var message = 'Perusahaan harus diisi.'
+                alertWarning(message)
+                total_empty_field++;
+            }
 
             if (total_empty_field == 0) {
                 $("#preload-data").removeClass("hidden");
 
-                $.ajax({
-                    url: "{{ route('asuransi.registrasi.check_asuransi') }}",
-                    type: "GET",
-                    accept: "Application/json",
-                    data: {
-                        'no_pk': data['no_pk'],
-                        'jenis_asuransi': data['jenis_asuransi'],
-                    },
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            if (response.message == 'Data ini telah terdaftar') {
-                                $("#preload-data").addClass("hidden");
-                                alertWarning(`Data ini telah terdaftar pada asuransi ${response.jenis}. Harap pilih jenis asuransi yang lain.`)
-                            }
-                            else {
-                                $('#form-asuransi-registrasi').submit()
-                            }
-                        }
-                    },
-                    error: function(response) {
-                        $("#preload-data").addClass("hidden");
-                        alertWarning('Terjadi kesalahan saat melakukan cek asuransi')
-                    }
-                })
+                storeReview('approved')
             }
         });
+
+        $('#btn-back-staf').on("click", function(e) {
+            $("#preload-data").removeClass("hidden");
+
+            storeReview('revition')
+        })
+
+        function storeReview(type) {
+            var body = {
+                '_token': generateCsrfToken(),
+                'id_asuransi': "{{$_GET['asuransi']}}",
+                'type': type,
+            };
+            if (type == 'revition') {
+                var pendapat = $('#pendapat').val()
+                if (pendapat != '') {
+                    body.pendapat = pendapat
+                }
+                else {
+                    $("#preload-data").addClass("hidden");
+                    alertWarning('Harap isi kolom pendapat untuk mengembalikan data ke staf');
+                }
+            }
+            $.ajax({
+                url: "{{ route('asuransi.registrasi.review_store') }}",
+                type: "POST",
+                accept: "Application/json",
+                data: body,
+                success: function(response) {
+                    if (response.status == 'success') {
+                        Swal.fire({
+                            tittle: 'Success!',
+                            html: 'Berhasil melakukan review',
+                            icon: 'success',
+                            iconColor: '#DC3545',
+                            confirmButtonText: 'Ok',
+                            confirmButtonColor: '#DC3545'
+                        }).then(() => {
+                            window.location = response.redirect_url
+                        })
+                    }
+                    else {
+                        console.log(response)
+                        alertWarning('Gagal melakukan review')
+                    }
+                },
+                error: function(response) {
+                    console.log(response)
+                    $("#preload-data").addClass("hidden");
+                    alertError('Terjadi kesalahan')
+                }
+            })
+        }
 
         function hitungPremiDisetor() {
             //Nilai premi disetor (Premi -(Refund+Handling Fee))
@@ -604,13 +639,35 @@
 
         }
 
+        function alertSuccess(message) {
+            Swal.fire({
+                tittle: 'Success!',
+                html: message,
+                icon: 'success',
+                iconColor: '#DC3545',
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#DC3545'
+            })
+        }
+
         function alertWarning(message) {
             Swal.fire({
                 tittle: 'Warning!',
                 html: message,
                 icon: 'warning',
                 iconColor: '#DC3545',
-                confirmButtonText: 'Ya',
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#DC3545'
+            })
+        }
+
+        function alertError(message) {
+            Swal.fire({
+                tittle: 'Error!',
+                html: message,
+                icon: 'error',
+                iconColor: '#DC3545',
+                confirmButtonText: 'Ok',
                 confirmButtonColor: '#DC3545'
             })
         }

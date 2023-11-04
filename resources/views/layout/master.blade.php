@@ -47,7 +47,7 @@
                     <div class="text-center space-y-5">
                         <img src="{{ asset('template/assets/img/news/loading.svg') }}" class="max-w-[120px] mx-auto"
                             alt="">
-                        <p class="text-white">Updating data...</p>
+                        <p class="text-white">Harap tunggu...</p>
                     </div>
                 </div>
             </div>
@@ -69,6 +69,7 @@
 <script src="{{ asset('template/assets/js/select2.min.js') }}"></script>
 <script src="{{ asset('template/assets/js/apexcharts.js') }}"></script>
 <script src="{{ asset('template/assets/js/jquery-ui.js') }}"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 <script src="{{ asset('js/app.js') }}"></script>
 
 <script>

@@ -13,6 +13,20 @@
                 <input type="text" class="datepicker p-2 w-full border" id="tAkhirs" name="tAkhir" value="{{ Request()->tAkhir != null ? Request()->tAkhir: 'dd/mm/yyyy' }}" required/>
                 <small id="errorTakhirModal" class="hidden form-text text-primary">Tanggal akhir tidak boleh kurang dari tanggal awal</small>
             </div>
+            <div class="input-box space-y-3">
+                <label for="" class="uppercase">Cabang</label>
+                <select name="status" class="w-full p-2 border" id="status">
+                        <option value="in progress" selected>process</option>
+                        <option value="done" selected>Done</option>
+                        <option value="" selected disabled>Pilih Status...</option>
+                </select>
+            </div>
+            <div class="input-box space-y-3">
+                <label for="" class="uppercase">User</label>
+                <select name="status" class="w-full p-2 border" id="status">
+                        <option value="" selected disabled>Pilih User...</option>
+                </select>
+            </div>
             <button class="bg-theme-primary px-8 rounded text-white py-2">
                 Filter
             </button>
@@ -39,6 +53,6 @@
             if (Date.parse(tAkhir) < Date.parse(tAwal)) {
                 $("#tAkhirs").val('');
                 $("#errorTakhirModal").removeClass("hidden");
-        })
+        }})
     </script>
 @endpush
