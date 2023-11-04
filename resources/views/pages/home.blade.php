@@ -801,10 +801,11 @@
             || \Session::get(config('global.role_id_session')) == 4
             || \Session::get(config('global.role_id_session')) == 2
         )
-            @include('pages.dashboard.pemasaran')
-            <div class="mt-5">
-                @include('pages.dashboard.cabang')
+            <div class="mb-5">
+                @include('pages.dashboard.pemasaran')
             </div>
+            @include('pages.dashboard.cabang')
+            @include('pages.dashboard.asuransi')
         @else
             @include('pages.dashboard.cabang')
         @endif
@@ -862,6 +863,32 @@
 
     var donut = new ApexCharts(document.querySelector(".chart"), options);
     donut.render();
+
+        // chart donut
+    var optionsPembayaranPremi = {
+        labels: ['Yang Belum dibayar', 'Yang Sudah dibayar'],
+        series: [44, 55],
+        chart: {
+            type: 'donut',
+            width: '100%',
+            height: 480,
+        },
+        legend: {
+            position: 'bottom'
+        },
+
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 340,
+                },
+            }
+        }]
+    };
+
+    var pembayaranPremi = new ApexCharts(document.querySelector(".pembayaran-permi"), optionsPembayaranPremi);
+    pembayaranPremi.render();
 
     function renderChart(){
         // line chart
@@ -971,7 +998,39 @@
             }
         })
     });
+    var optionsPelaporanPelunasan = {
+        series: [{
+            name: "sales",
+            data: [
+            {
+                x: 'Total',
+                y: 43
+            },
+            ]
+        }],
+        chart: {
+            type: 'bar',
+            height: 500
+        },
+        xaxis: {
+            type: 'category',
+            labels: {},
+            group: {
+            style: {
+                fontSize: '20px',
+                fontWeight: 700
+            },
+            groups: [
+                { title: '2019', cols: 4 },
+                { title: '2020', cols: 4 }
+            ]
+            }
+        },
+    };
 
+        var pelaporanPelunasan = new ApexCharts(document.querySelector(".pelaporan-pelunasan"), optionsPelaporanPelunasan);
+        pelaporanPelunasan.render();
+        
     var tab_type = "@isset($_GET['tab_type']){{$_GET['tab_type']}}@endisset"
     if (tab_type == 'tab-kkb' || !tab_type)
         $("div.tab-wrapper .tab-btn:first").trigger("click");
