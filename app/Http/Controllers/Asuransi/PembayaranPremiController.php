@@ -9,6 +9,7 @@ use App\Models\PembayaranPremi;
 use App\Models\PembayaranPremiDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
@@ -237,6 +238,10 @@ class PembayaranPremiController extends Controller
                     }else{
                         try {
                             $response = Http::timeout(60)->withHeaders($header)->withOptions(['verify' => false])->post($url, $body);
+                            $user_name = \Session::get(config('global.user_name_session'));
+                            $token = \Session::get(config('global.user_token_session'));
+                            $user = $token ? $this->getLoginSession() : Auth::user();
+                            $name = $token ? $user['data']['nip'] : $user->email;
 
                             $statusCode = $response->status();
                             if ($statusCode == 200) {
@@ -271,7 +276,8 @@ class PembayaranPremiController extends Controller
                                         $comma = ($key + 1) < count($premiArray) ? ',' : '';
                                         $noPolisDibayar .= $asuransi->no_polis." $comma";
                                     }
-                                    $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembayaran premi pada nomor polis '. $noPolisDibayar);
+
+                                    $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pembayaran premi pada nomor polis '. $noPolisDibayar , $createPremiDetail->asuransi_id, 1);
 
                                     $message = $responseBody['keterangan'];
                                     DB::commit();
