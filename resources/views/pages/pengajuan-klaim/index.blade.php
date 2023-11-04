@@ -184,30 +184,30 @@
             success: function(res){
                 if(res.status == "Berhasil"){
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
+                        // icon: 'success',
+                        // title: 'Berhasil',
                         html: `
                             <table style="text-align: left !important;" class="w-full">
                                 <tr>
                                     <td><strong>No. Rekening</strong></td>
                                     <td>${res.response.no_rekening}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>No. Aplikasi</strong></td>
                                     <td>${res.response.no_aplikasi}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>Status Klaim</strong></td>
                                     <td>${statKlaim[parseInt(res.response.stat_klaim) + 1]}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>Keterangan</strong></td>
                                     <td>${res.response.keterangan}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>Nilai Persetujuan</strong></td>
                                     <td>${res.response.nilai_persetujuan}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>Tanggal klaim</strong></td>
                                     <td>${res.response.tgl_klaim}</td>
@@ -215,7 +215,7 @@
                                 <tr>
                                     <td><strong>No. Polis</strong></td>
                                     <td>${res.response.no_sp}</td>
-                                </tr>    
+                                </tr>
                             </table>
                         `
                     })
@@ -253,7 +253,7 @@
                     title: res.status,
                     text: res.message,
                 })
-            }, 
+            },
             error: function(res){
                 Swal.fire({
                     icon: "error",

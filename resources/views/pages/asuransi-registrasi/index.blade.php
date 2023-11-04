@@ -95,7 +95,9 @@
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
-                        <th>Cabang</th>
+                        @if ($role_id != 2)
+                            <th>Cabang</th>
+                        @endif
                         <th>Tanggal Pengajuan</th>
                         <th>Nama Debitur</th>
                         <th>Nomor PK</th>
@@ -107,7 +109,9 @@
                         @forelse ($data as $item)
                             <tr class="view cursor-pointer">
                                 <td>{{$loop->iteration}}</td>
-                                <td>{{$item['cabang']}}</td>
+                                @if ($role_id != 2)
+                                    <td>{{$item['cabang']}}</td>
+                                @endif
                                 <td>{{date('d-m-Y', strtotime($item['tanggal']))}}</td>
                                 <td>{{$item['nama']}}</td>
                                 <td>{{$item['no_pk']}}</td>
