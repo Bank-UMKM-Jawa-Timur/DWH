@@ -365,7 +365,7 @@ class RegistrasiController extends Controller
         DB::beginTransaction();
         try {
             $name = \Session::get(config('global.user_name_session'));
-            
+
             $id_asuransi = $request->id_asuransi;
             $type = $request->type; // approved or revition
             $now = date('Y-m-d H:i:s');
@@ -575,7 +575,7 @@ class RegistrasiController extends Controller
             $headers = [
                 'token' => env('LOS_API_TOKEN')
             ];
-            
+
             $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $asuransi->pengajuan_id;
             $api_req = Http::timeout(20)->withHeaders($headers)->get($apiPengajuan);
             $response = json_decode($api_req->getBody(), true);
@@ -1166,55 +1166,15 @@ class RegistrasiController extends Controller
                         ->orderBy('no_aplikasi')
                         ->first();
                     $jenis_asuransi->asuransi = $asuransi;
-                    $pendapat = DB::table('pendapat_asuransi')->where('asuransi_id', $jenis_asuransi->asuransi->id)->get();
+                    $pendapat = DB::table('pendapat_asuransi')->where('asuransi_id', $jenis_asuransi->asuransi->id)->orderBy('created_at', 'DESC')->get();
                     $perusahaan = DB::table('mst_perusahaan_asuransi')
                     ->select('id', 'nama', 'alamat')
                     ->get();
 
                 // return ['data' => $data, 'jenis' => $jenis_asuransi];
-                // $data[$key]['jenis_asuransi'] = $jenis_asuransi;
-                    // return $jenis_asuransi;
-
-                    // foreach ($data as $key => $value) {
-                    //     // retrieve jenis_asuransi
-                    //     $jenis_asuransi = DB::table('mst_jenis_asuransi')
-                    //     ->select('id', 'jenis')
-                    //         ->where('jenis_kredit', $value['skema_kredit'])
-                    //         ->orderBy('jenis')
-                    //         ->first();
-
-
-                    //     foreach ($jenis_asuransi as $key2 => $value2) {
-                    //         // retrieve asuransi data
-                    //         $asuransi = DB::table('asuransi')
-                    //             ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
-                    //             ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                    //             ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
-                    //             ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
-                    //             ->select(
-                    //                 'p.nama AS perusahaan',
-                    //                 'asuransi.*',
-                    //                 'mst_jenis_asuransi.jenis',
-                    //                 'k.kode_cabang',
-                    //                 'd.tarif',
-                    //                 'd.premi_disetor',
-                    //                 'd.handling_fee',
-                    //             )
-                    //             ->where('asuransi.jenis_asuransi_id', $value2->id);
-
-                    //         $asuransi = $asuransi->groupBy('no_pk')
-                    //             ->orderBy('no_aplikasi')
-                    //             ->first();
-                    //         $value2->asuransi = $asuransi;
-                    //     }
-                    //     $data[$key]['jenis_asuransi'] = $jenis_asuransi;
-                    // }
                 } else {
                     return 'gagal';
                 }
-
-
-
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
             }

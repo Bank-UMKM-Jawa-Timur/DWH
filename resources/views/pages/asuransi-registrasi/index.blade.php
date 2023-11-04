@@ -228,9 +228,9 @@
                                                                             @endif
                                                                         @elseif(strtolower($status) == 'revition')
                                                                             @if ($role == 'Staf Analis Kredit')
-                                                                                <button class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
+                                                                                <a href="{{route('asuransi.registrasi.edit', $id_pengajuan)}}" class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
                                                                                     Edit
-                                                                                </button>
+                                                                                </a>
                                                                             @else
                                                                                 -
                                                                             @endif
