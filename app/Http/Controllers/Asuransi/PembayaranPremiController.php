@@ -131,12 +131,12 @@ class PembayaranPremiController extends Controller
 
         $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi', 'asuransi.nama_debitur','jenis.jenis')
         ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
-        ->where('status', 'onprogress')->groupBy('no_aplikasi')
+        ->where('status', 'sended')->groupBy('no_aplikasi')
         ->get();
 
         $param['jenisAsuransi'] = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
         ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
-        ->where('status', 'onprogress')
+        ->where('status', 'sended')
         ->get();
 
         return view('pages.pembayaran_premi.create', $param);
@@ -147,7 +147,7 @@ class PembayaranPremiController extends Controller
                 ->select('asuransi.*', 'd.premi_disetor', 'jenis.jenis', DB::raw("LEFT(UUID(), 8) AS generate_key"))
                 ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
                 ->join('asuransi_detail as d', 'asuransi.id', '=', 'd.asuransi_id')
-                ->where('asuransi.status', 'onprogress')
+                ->where('asuransi.status', 'sended')
                 ->where('asuransi.is_paid', 0)
                 ->where('asuransi.no_aplikasi', $request->no_aplikasi)
                 ->get();

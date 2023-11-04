@@ -368,6 +368,7 @@
                         }
                     }
                 })
+                $("#no_aplikasi").val(null).trigger("change");
             }
         })
 
@@ -520,5 +521,13 @@
                 confirmButtonColor: '#DC3545'
             })
         }
+
+        $("#tgl_bayar").on("change", function(){
+            var date = new Date();
+            var dateNow = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()
+            if(Date.parse($("#tgl_bayar").val()) < Date.parse(dateNow)){
+                alertWarning("Tanggal bayar tidak boleh kurang dari tanggal sekarang")
+            }
+        })
     </script>
 @endpush
