@@ -131,7 +131,7 @@
                                                 </span>
                                                 <span class="collapse-text">Sembunyikan Asuransi</span>
                                             </button>
-                                        @else 
+                                        @else
                                             <span class="caret-icon transform"></span>
                                         @endif
                                     </div>
@@ -201,9 +201,9 @@
                                                                                     Kirim
                                                                                 </button>
                                                                             @elseif(strtolower($status) == 'revition')
-                                                                                <button class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
+                                                                                <a href="{{route('asuransi.registrasi.edit', $id_pengajuan)}}" class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
                                                                                     Edit
-                                                                                </button>
+                                                                                </a>
                                                                             @elseif(strtolower($status) == 'sended')
                                                                                 @if ($role == 'Staf Analisa Kredit')
                                                                                     <div class="dropdown">

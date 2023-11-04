@@ -103,6 +103,8 @@ Route::middleware('auth_api')->group(function () {
                 Route::post('batal', 'batal')->name('batal');
                 Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');
                 Route::get('/check-asuransi', 'checkAsuransi')->name('check_asuransi');
+                Route::get('/edit/{id}', 'edit')->name('edit');
+                Route::post('/update/{id}', 'update')->name('update');
                 Route::get('/detail/{id}', 'detail')->name('detail');
             });
 
