@@ -467,6 +467,7 @@ class RegistrasiController extends Controller
     }
 
     public function pelunasan(Request $request) {
+        ini_set('max_execution_time', 120);
         try{
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
@@ -496,7 +497,7 @@ class RegistrasiController extends Controller
                     $host = config('global.eka_lloyd_host');
                     $url = "$host/lunas";
             
-                    $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
+                    $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
                     $statusCode = $response->status();
             
                     if($statusCode == 200){
