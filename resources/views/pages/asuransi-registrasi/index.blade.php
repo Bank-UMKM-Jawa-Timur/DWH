@@ -95,11 +95,11 @@
                 <table class="table-auto w-full">
                     <tr>
                         <th>No.</th>
+                        <th>Nama Debitur</th>
                         @if ($role_id != 2)
                             <th>Cabang</th>
                         @endif
                         <th>Tanggal Pengajuan</th>
-                        <th>Nama Debitur</th>
                         <th>Nomor PK</th>
                         <th>Jenis Kredit</th>
                         <th>Plafond</th>
@@ -109,11 +109,11 @@
                         @forelse ($data as $item)
                             <tr class="view cursor-pointer">
                                 <td>{{$loop->iteration}}</td>
+                                <td>{{$item['nama']}}</td>
                                 @if ($role_id != 2)
                                     <td>{{$item['cabang']}}</td>
                                 @endif
                                 <td>{{date('d-m-Y', strtotime($item['tanggal']))}}</td>
-                                <td>{{$item['nama']}}</td>
                                 <td>{{$item['no_pk']}}</td>
                                 <td>{{$item['skema_kredit']}}</td>
                                 <td>Rp {{number_format($item['jumlah_kredit'], 0, ',', '.')}}</td>
@@ -166,9 +166,21 @@
                                                         @endphp
                                                         <tr>
                                                             <td>{{$alpha}}</td>
-                                                            <td>{{$perusahaan}}</td>
+                                                            <td>
+                                                                @if ($registered == 1)
+                                                                    {{$perusahaan}}
+                                                                @else
+                                                                    -
+                                                                @endif
+                                                            </td>
                                                             <td>{{$jenis->jenis}}</td>
-                                                            <td>{{$no_aplikasi}}</td>
+                                                            <td>
+                                                                @if ($registered == 1)
+                                                                    {{$no_aplikasi}}
+                                                                @else
+                                                                    -
+                                                                @endif
+                                                            </td>
                                                             <td>{{$is_paid ? $no_polis : '-'}}</td>
                                                             <td>{{$is_paid ? $tgl_polis : '-'}}</td>
                                                             <td>

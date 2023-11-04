@@ -17,7 +17,7 @@
                         </div>
                         <div class="head">
                             <h2 class="text-lg font-semibold">Total Waiting </h2>
-                            <h2 class="font-semibold text-2xl">{{ $total_registrasi }}</h2> 
+                            <h2 class="font-semibold text-2xl">{{ $total_waiting }}</h2>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="head">
                             <h2 class="text-lg font-semibold">Total Approval</h2>
-                            <h2 class="font-semibold text-2xl">{{ $total_registrasi_dibatalkan }}</h2>
+                            <h2 class="font-semibold text-2xl">{{ $total_approved }}</h2>
                         </div>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                         </div>
                         <div class="head">
                             <h2 class="text-lg font-semibold">Total Revisi</h2>
-                            <h2 class="font-semibold text-2xl">{{ $total_pengajuan_klaim }}</h2>
+                            <h2 class="font-semibold text-2xl">{{ $total_revisi }}</h2>
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                         </div>
                         <div class="head">
                             <h2 class="text-lg font-semibold">Total Sended</h2>
-                            <h2 class="font-semibold text-2xl">{{ $total_pengajuan_klaim_dibatalkan }}</h2>
+                            <h2 class="font-semibold text-2xl">{{ $total_sended }}</h2>
                         </div>
                     </div>
                 </div>
@@ -69,12 +69,12 @@
                         </div>
                         <div class="head">
                             <h2 class="text-lg font-semibold">Total Canceled</h2>
-                            <h2 class="font-semibold text-2xl">73</h2>
+                            <h2 class="font-semibold text-2xl">{{$total_canceled}}</h2>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
         <div class="card w-full bg-white border rounded-md">
             <div class="head border-b p-2 font-lexend relative text-center">
                 <h2 class="font-semibold tracking-tighter">Pembayaran Premi</h2>
@@ -82,7 +82,7 @@
             <div class="p-2 space-y-2 mt-5">
                 <div class="pembayaran-permi"></div>
             </div>
-        </div> 
+        </div>
         <div class="card w-full bg-white border rounded-md">
             <div class="head border-b p-2 font-lexend relative text-center">
                 <h2 class="font-semibold tracking-tighter">Pelaporan Pelunasan</h2>
@@ -90,7 +90,7 @@
             <div class="p-2 space-y-2 mt-5">
                 <div class="pelaporan-pelunasan"></div>
             </div>
-        </div> 
+        </div>
     </div>
     <div class="border p-3 mt-5">
         <div class="head border p-2 font-lexend relative text-center">
@@ -105,7 +105,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">23</h2>
+                    <h2 class="text-5xl font-bold">2</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">
@@ -116,7 +116,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">13</h2>
+                    <h2 class="text-5xl font-bold">{{$yangDibatalkan}}</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">
@@ -127,7 +127,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">43</h2>
+                    <h2 class="text-5xl font-bold">{{$sudahKlaim}}</h2>
                 </div>
             </div>
         </div>

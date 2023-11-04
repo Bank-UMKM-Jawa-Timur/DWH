@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">23</h2>
+                    <h2 class="text-5xl font-bold">{{$kkbProses}}</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">13</h2>
+                    <h2 class="text-5xl font-bold">{{$kkbBulanIni}}</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">43</h2>
+                    <h2 class="text-5xl font-bold">{{$kkbSelesai}}</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">
@@ -45,7 +45,7 @@
                     <h2 class="mt-3 max-w-[250px]">Total import KKB Google Spreadsheet</h2>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">63</h2>
+                    <h2 class="text-5xl font-bold">{{$kkbImported}}</h2>
                 </div>
             </div>
         </div>
