@@ -302,6 +302,7 @@
                                                                                             <li class="">
                                                                                                 <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
                                                                                                     <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
+                                                                                                    <input type="hidden" name="id_asuransi" value="{{$id_pengajuan}}">
                                                                                                     <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
                                                                                                 </form>
                                                                                             </li>

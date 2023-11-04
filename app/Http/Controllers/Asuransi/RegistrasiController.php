@@ -363,7 +363,11 @@ class RegistrasiController extends Controller
 
         DB::beginTransaction();
         try {
-            $name = \Session::get(config('global.user_name_session'));
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
 
             $id_asuransi = $request->id_asuransi;
             $type = $request->type; // approved or revition
@@ -385,7 +389,7 @@ class RegistrasiController extends Controller
                 ]);
             }
 
-            $this->logActivity->store('Pengguna ' . $name . ' menyimpan review asuransi.');
+            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menyimpan review asuransi.', $id_asuransi, 1);
 
             DB::commit();
             $status = 'success';
@@ -467,6 +471,11 @@ class RegistrasiController extends Controller
         DB::beginTransaction();
 
         try {
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
             $jenis_asuransi_option = explode('-', $request->jenis_asuransi);
 
             $tgl_awal = date('Y-m-d', strtotime($request->get('tanggal_awal_kredit')));
@@ -521,7 +530,7 @@ class RegistrasiController extends Controller
             $newDetail->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
             $newDetail->save();
 
-            $this->logActivity->store('Pengguna ' . $request->name . ' menyimpan data asuransi.');
+            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menyimpan data asuransi.', $newAsuransi->id, 1);
 
             DB::commit();
             Alert::success('Berhasil', 'Berhasil menyimpan data');
@@ -648,6 +657,11 @@ class RegistrasiController extends Controller
                 "Connection" => "Keep-Alive"
             ];
 
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
             $host = config('global.eka_lloyd_host');
             $url = "$host/upload";
             $response = Http::timeout(60)->withHeaders($headers)
@@ -676,7 +690,7 @@ class RegistrasiController extends Controller
                             $newAsuransi->status = 'sended';
                             $newAsuransi->save();
 
-                            $this->logActivity->store('Pengguna ' . $request->name . ' mengirimkan registrasi asuransi.');
+                            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' mengirimkan registrasi asuransi.', $id_asuransi, 1);
 
                             $message = $responseBody['keterangan'];
 
@@ -803,6 +817,10 @@ class RegistrasiController extends Controller
         }
 
         try {
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
             $headers = [
                 "Accept" => "/",
                 "x-api-key" => config('global.eka_lloyd_token'),
@@ -828,7 +846,7 @@ class RegistrasiController extends Controller
                             # success
                             $message = $responseBody['keterangan'];
 
-                            $this->logActivity->store('Pengguna ' . $request->name . ' melakukan inquery registrasi asuransi.');
+                            // $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan inquery registrasi asuransi.', $id, 1);
 
                             Alert::success('Berhasil', $message);
                             return redirect()->route('asuransi.registrasi.index');
@@ -888,6 +906,10 @@ class RegistrasiController extends Controller
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
             $user_id = $token ? $user['id'] : $user->id;
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
             $asuransi = Asuransi::find($request->id);
             if ($asuransi) {
                 if (!$asuransi->is_paid) {
@@ -927,7 +949,7 @@ class RegistrasiController extends Controller
                                             $asuransi->canceled_by = $user_id;
                                             $asuransi->save();
 
-                                            $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan registrasi asuransi.');
+                                            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pembatalan registrasi asuransi.', $request->id, 1);
 
                                             Alert::success('Berhasil', $keterangan);
                                             break;
@@ -1003,6 +1025,11 @@ class RegistrasiController extends Controller
             $user_id = $token ? $user['id'] : $user->id;
             $asuransi = Asuransi::find($request->id);
 
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
             if ($asuransi) {
                 if ($asuransi->is_paid) {
                     if ($asuransi->status == 'onprogress') {
@@ -1047,7 +1074,7 @@ class RegistrasiController extends Controller
                                             $asuransi->done_by = $user_id;
                                             $asuransi->save();
 
-                                            $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pelunasan registrasi asuransi.');
+                                            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pelunasan registrasi asuransi.', $request->id, 1);
 
                                             Alert::success('Berhasil', $keterangan);
                                             return redirect()->route('asuransi.registrasi.index');
@@ -1191,6 +1218,10 @@ class RegistrasiController extends Controller
     }
 
     public function update(Request $request, $id){
+        $user_name = \Session::get(config('global.user_name_session'));
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+        $name = $token ? $user['data']['nip'] : $user->email;
         // return ['id' => $id, $request->all()];
         DB::beginTransaction();
         try {
@@ -1219,6 +1250,7 @@ class RegistrasiController extends Controller
             $editDetailAsuransi->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
             $editDetailAsuransi->save();
 
+        $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '('. $name .')'.' melakukan edit data registrasi asuransi.', $id, 1);
 
         DB::commit();
         Alert::success('Berhasil', 'Berhasil edit data');
@@ -1244,6 +1276,10 @@ class RegistrasiController extends Controller
 
             $user_id = $token ? $user['id'] : $user->id;
             $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
 
             $id_pengajuan = $request->id_pengajuan;
 
@@ -1262,7 +1298,7 @@ class RegistrasiController extends Controller
             $asuransi->registered = false;
             $asuransi->save();
 
-            $this->logActivity->store('Pengguna ' . $user_name . ' melakukan tidak registrasi asuransi.');
+            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan tidak registrasi asuransi.', $asuransi->id, 1);
 
             DB::commit();
 
