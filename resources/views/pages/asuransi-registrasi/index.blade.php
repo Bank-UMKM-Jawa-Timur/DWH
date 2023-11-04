@@ -171,7 +171,21 @@
                                                             <td>
                                                                 @if ($jenis->asuransi)
                                                                     @if ($registered == 1)
-                                                                        {{$is_paid != '' && $is_paid == 1 ? 'sudah dibayar' : $status}}
+                                                                        @if ($is_paid == 1)
+                                                                            Sudah dibayar
+                                                                        @else
+                                                                            @if ($status == 'waiting approval')
+                                                                                Menunggu persutujuan
+                                                                            @elseif ($status == 'approved')
+                                                                                Disetujui
+                                                                            @elseif ($status == 'revition')
+                                                                                Revisi data
+                                                                            @elseif ($status == 'sended')
+                                                                                Harap bayar premi
+                                                                            @else
+                                                                                Dibatalkan
+                                                                            @endif
+                                                                        @endif
                                                                     @else
                                                                         Tidak registrasi
                                                                     @endif
