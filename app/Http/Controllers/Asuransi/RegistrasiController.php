@@ -604,9 +604,9 @@ class RegistrasiController extends Controller
                         ->where('id', $asuransi->perusahaan_asuransi_id)
                         ->first();
 
-            $jenis_asuransi_option = $jenisAsuransi->id.'-'.$jenisAsuransi->kode;
+            $jenis_asuransi_option = explode('-', $jenisAsuransi->id.'-'.$jenisAsuransi->kode);
             $req = [
-                "no_aplikasi"=> $asuransi->no_aplikasi.'a2',
+                "no_aplikasi"=> $asuransi->no_aplikasi,
                 "no_rekening"=> $asuransi->no_rek,
                 "jenis_asuransi"=> $jenis_asuransi_option[1],
                 "tgl_pengajuan"=> date("Y-m-d", strtotime($pengajuan['tanggal'])) ,
@@ -623,21 +623,21 @@ class RegistrasiController extends Controller
                 "tgl_akhir_kredit"=> date("Y-m-d", strtotime($pengajuan['tgl_akhir_kredit'])),
                 "jml_bulan"=> $pengajuan['tenor_yang_diminta'],
                 "jenis_pengajuan"=> $asuransi->jenis_pengajuan,
-                "bade"=> $asuransi->baki_debet,
-                "tunggakan"=> $asuransi->tunggakan,
+                "bade"=> strval(intval($asuransi->baki_debet)),
+                "tunggakan"=> strval(intval($asuransi->tunggakan)),
                 "kolektibilitas"=> $asuransi->kolektibilitas,
                 "no_polis_sebelumnya"=> $asuransi->no_polis_sebelumnya,
                 "jenis_pertanggungan"=> $asuransi->jenis_pertanggungan,
                 "tipe_premi"=> $asuransi->tipe_premi,
-                "premi"=> UtilityController::clearCurrencyFormat($asuransi->premi),
+                "premi"=> UtilityController::clearCurrencyFormat(strval(intval($asuransi->premi))),
                 "jenis_coverage"=> $asuransi->jenis_coverage,
                 "tarif"=> $asuransi->tarif,
-                "refund"=> UtilityController::clearCurrencyFormat($asuransi->refund),
+                "refund"=> UtilityController::clearCurrencyFormat(strval(intval($asuransi->refund))),
                 "kode_ls"=> $asuransi->kode_layanan_syariah,
                 // "jenis_kredit"=> $request->get('jenis_kredit'),
                 "jenis_kredit"=> "01",
-                "handling_fee"=> UtilityController::clearCurrencyFormat($asuransi->handling_fee),
-                "premi_disetor"=> UtilityController::clearCurrencyFormat($asuransi->premi_disetor),
+                "handling_fee"=> UtilityController::clearCurrencyFormat(strval(intval($asuransi->handling_fee))),
+                "premi_disetor"=> UtilityController::clearCurrencyFormat(strval(intval($asuransi->premi_disetor))),
             ];
 
             $headers = [

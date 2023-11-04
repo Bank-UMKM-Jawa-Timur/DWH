@@ -191,7 +191,7 @@
                                                                                     <button class="px-4 py-2 bg-green-400/20 rounded text-green-500 modal-kirim"
                                                                                         data-modal-target="modalSend" data-id="{{$jenis->asuransi->id}}"
                                                                                         data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-debitur="{{$item['nama']}}">
-                                                                                        Kirim
+                                                                                        Registrasi
                                                                                     </button>
                                                                                 @else
                                                                                     -
@@ -214,21 +214,21 @@
                                                                                             <li class="">
                                                                                                 <a class="item-dropdown modal-batal" href="#"
                                                                                                     data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                                    data-id="" data-no_aplikasi=""
-                                                                                                    data-no_polis="">Pembatalan</a>
+                                                                                                    data-id="{{$jenis->asuransi->id}}" data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}"
+                                                                                                    data-no_polis="{{$jenis->asuransi->no_polis}}">Pembatalan</a>
                                                                                             </li>
                                                                                             <li class="">
                                                                                                 <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                                                                    <input type="hidden" name="no_aplikasi" value="">
+                                                                                                    <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
                                                                                                     <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
                                                                                                 </form>
                                                                                             </li>
                                                                                             <li class="">
                                                                                                 <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                                                                    data-modal-target="modalPelunasan"  data-id=""
-                                                                                                    data-no_aplikasi="" data-no_rek=""
-                                                                                                    data-no_polis="" data-refund=""
-                                                                                                    data-tgl_awal="" data-tgl_akhir="">Pelunasan</a>
+                                                                                                    data-modal-target="modalPelunasan"  data-id="{{$jenis->asuransi->id}}"
+                                                                                                    data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek="{{$jenis->asuransi->no_rek}}"
+                                                                                                    data-no_polis="{{$jenis->asuransi->no_polis}}" data-refund="{{$jenis->asuransi->refund}}"
+                                                                                                    data-tgl_awal="{{$jenis->asuransi->tanggal_awal}}" data-tgl_akhir="{{$jenis->asuransi->tanggal_akhir}}">Pelunasan</a>
                                                                                             </li>
                                                                                         </ul>
                                                                                     </div>
@@ -242,14 +242,14 @@
                                                                             @endif
                                                                         @else
                                                                             @if ($role == 'Staf Analis Kredit')
-                                                                                <button class="px-4 py-2  bg-theme-primary/20 rounded text-theme-primary">
-                                                                                    Tidak Registrasi
-                                                                                </button>
                                                                                 <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
                                                                                     <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
                                                                                         Registrasi
                                                                                     </button>
                                                                                 </a>
+                                                                                <button class="px-4 py-2  bg-theme-primary/20 rounded text-theme-primary">
+                                                                                    Tidak Registrasi
+                                                                                </button>
                                                                             @else
                                                                                 -
                                                                             @endif
