@@ -199,7 +199,8 @@
                                                                                 @endif
                                                                             @elseif(strtolower($status) == 'approved')
                                                                                 @if ($role == 'Staf Analis Kredit')
-                                                                                    <button class="px-4 py-2  bg-green-400/20 rounded text-green-500">
+                                                                                    <button class="px-4 py-2 bg-green-400/20 rounded text-green-500 btn-kirim"
+                                                                                        >
                                                                                         Kirim
                                                                                     </button>
                                                                                 @else

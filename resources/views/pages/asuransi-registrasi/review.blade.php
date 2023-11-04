@@ -303,7 +303,8 @@
                 </div>
                 <div class="mt-5 space-y-5 bg-white border p-5 w-auto">
                     <h2 class="text-theme-primary font-bold">Pendapat dari Penyelia</h2>
-                    <p>Apakah form diatas yang diisi sudah benar atau ada kesalahan?.  berikan keterangan secara ringkas</p>
+                    <p>Apakah form diatas yang diisi sudah benar atau ada kesalahan?.  berikan keterangan secara ringkas.</p>
+                    <p>Catatan!Kolom ini wajib diisi jika ingin mengembalikan data ke staf.</p>
                     <textarea name="pendapat" class="w-full h-60 border p-4 resize-none hover:bg-theme-pages focus:bg-theme-pages"
                         placeholder="Tulis pendapat anda disini..." id="pendapat"></textarea>
                 </div>
@@ -316,7 +317,7 @@
                                     stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14" />
                             </svg>
                         </span>
-                        <span class="lg:block hidden"> Simpan </span>
+                        <span class="lg:block hidden"> Approve </span>
                     </button>
                     <button type="button" id="btn-back-staf"
                         class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
