@@ -85,7 +85,7 @@
         </div>
     </div>
 </div>
-<div class="card w-full bg-white border rounded-md mb-5">
+{{-- <div class="card w-full bg-white border rounded-md mb-5">
     <div class="head border-b p-2 font-lexend relative text-center">
         <p class="left-3 absolute">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
@@ -123,5 +123,5 @@
             </div>
         @endforelse
     </div>
-</div>
+</div> --}}
 

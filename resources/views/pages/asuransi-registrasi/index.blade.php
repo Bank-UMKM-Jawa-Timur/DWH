@@ -167,7 +167,13 @@
                                                             <td>{{$no_aplikasi}}</td>
                                                             <td>{{$is_paid ? $no_polis : '-'}}</td>
                                                             <td>{{$is_paid ? $tgl_polis : '-'}}</td>
-                                                            <td>{{$tgl_rekam}}</td>
+                                                            <td>
+                                                                @if ($registered == 1)
+                                                                    {{$tgl_rekam}}
+                                                                @else
+                                                                    -
+                                                                @endif
+                                                            </td>
                                                             <td>
                                                                 @if ($jenis->asuransi)
                                                                     @if ($registered == 1)
@@ -196,53 +202,102 @@
                                                             <td>
                                                                 <div class="flex gap-5 justify-center">
                                                                     @if ($jenis->asuransi)
-                                                                        @if (strtolower($status) == 'waiting approval')
-                                                                            @if ($role == 'Staf Analis Kredit')
-                                                                                -
-                                                                            @else
-                                                                                <a href="{{route('asuransi.registrasi.review')}}?id={{$id_pengajuan}}&asuransi={{$jenis->asuransi->id}}">
-                                                                                    <button class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
-                                                                                        Review
+                                                                        @if ($registered == 1)
+                                                                            @if (strtolower($status) == 'waiting approval')
+                                                                                @if ($role == 'Staf Analis Kredit')
+                                                                                    -
+                                                                                @else
+                                                                                    <a href="{{route('asuransi.registrasi.review')}}?id={{$id_pengajuan}}&asuransi={{$jenis->asuransi->id}}">
+                                                                                        <button class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
+                                                                                            Review
+                                                                                        </button>
+                                                                                    </a>
+                                                                                @endif
+                                                                            @elseif(strtolower($status) == 'approved')
+                                                                                @if ($role == 'Staf Analis Kredit')
+                                                                                    <button class="px-4 py-2 bg-green-400/20 rounded text-green-500 modal-kirim"
+                                                                                        data-modal-target="modalSend" data-id="{{$jenis->asuransi->id}}"
+                                                                                        data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-debitur="{{$item['nama']}}">
+                                                                                        Registrasi
                                                                                     </button>
-                                                                                </a>
-                                                                            @endif
-                                                                        @elseif(strtolower($status) == 'approved')
-                                                                            @if ($role == 'Staf Analis Kredit')
-                                                                                <button class="px-4 py-2 bg-green-400/20 rounded text-green-500 modal-kirim"
-                                                                                    data-modal-target="modalSend" data-id="{{$jenis->asuransi->id}}"
-                                                                                    data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-debitur="{{$item['nama']}}">
-                                                                                    Registrasi
-                                                                                </button>
+                                                                                @elseif(strtolower($status) == 'revition')
+                                                                                    <a href="{{route('asuransi.registrasi.edit', $id_pengajuan)}}" class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
+                                                                                        Edit
+                                                                                    </a>
+                                                                                @elseif(strtolower($status) == 'sended')
+                                                                                    @if ($role == 'Staf Analisa Kredit')
+                                                                                        <div class="dropdown">
+                                                                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                                Selengkapnya
+                                                                                            </button>
+                                                                                            <ul class="dropdown-menu right-16">
+                                                                                                <li class="">
+                                                                                                    <a class="item-dropdown modal-batal" href="#"
+                                                                                                        data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                                                                        data-id="" data-no_aplikasi=""
+                                                                                                        data-no_polis="">Pembatalan</a>
+                                                                                                </li>
+                                                                                                <li class="">
+                                                                                                    <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                                                                        <input type="hidden" name="no_aplikasi" value="">
+                                                                                                        <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
+                                                                                                    </form>
+                                                                                                </li>
+                                                                                                <li class="">
+                                                                                                    <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                                                                        data-modal-target="modalPelunasan"  data-id=""
+                                                                                                        data-no_aplikasi="" data-no_rek=""
+                                                                                                        data-no_polis="" data-refund=""
+                                                                                                        data-tgl_awal="" data-tgl_akhir="">Pelunasan</a>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    @else
+                                                                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                            Detail
+                                                                                        </button>
+                                                                                    @endif
+                                                                                @else
+                                                                                    -
+                                                                                @endif
                                                                             @elseif(strtolower($status) == 'revition')
-                                                                                <a href="{{route('asuransi.registrasi.edit', $id_pengajuan)}}" class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
-                                                                                    Edit
-                                                                                </a>
+                                                                                @if ($role == 'Staf Analis Kredit')
+                                                                                    <a href="{{route('asuransi.registrasi.edit', $id_pengajuan)}}" class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
+                                                                                        Edit
+                                                                                    </a>
+                                                                                @else
+                                                                                    -
+                                                                                @endif
                                                                             @elseif(strtolower($status) == 'sended')
-                                                                                @if ($role == 'Staf Analisa Kredit')
+                                                                                @if ($role == 'Staf Analis Kredit')
                                                                                     <div class="dropdown">
                                                                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                                                                             Selengkapnya
                                                                                         </button>
                                                                                         <ul class="dropdown-menu right-16">
-                                                                                            <li class="">
-                                                                                                <a class="item-dropdown modal-batal" href="#"
-                                                                                                    data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                                    data-id="" data-no_aplikasi=""
-                                                                                                    data-no_polis="">Pembatalan</a>
-                                                                                            </li>
+                                                                                            @if (!$jenis->asuransi->is_paid)
+                                                                                                <li class="">
+                                                                                                    <a class="item-dropdown modal-batal" href="#"
+                                                                                                        data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                                                                        data-id="{{$jenis->asuransi->id}}" data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}"
+                                                                                                        data-no_polis="{{$jenis->asuransi->no_polis}}">Pembatalan</a>
+                                                                                                </li>
+                                                                                            @endif
                                                                                             <li class="">
                                                                                                 <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                                                                    <input type="hidden" name="no_aplikasi" value="">
+                                                                                                    <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
                                                                                                     <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
                                                                                                 </form>
                                                                                             </li>
-                                                                                            <li class="">
-                                                                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                                                                    data-modal-target="modalPelunasan"  data-id=""
-                                                                                                    data-no_aplikasi="" data-no_rek=""
-                                                                                                    data-no_polis="" data-refund=""
-                                                                                                    data-tgl_awal="" data-tgl_akhir="">Pelunasan</a>
-                                                                                            </li>
+                                                                                            @if ($jenis->asuransi->is_paid && !$jenis->asuransi->canceled_at)
+                                                                                                <li class="">
+                                                                                                    <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                                                                        data-modal-target="modalPelunasan"  data-id="{{$jenis->asuransi->id}}"
+                                                                                                        data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek="{{$jenis->asuransi->no_rek}}"
+                                                                                                        data-no_polis="{{$jenis->asuransi->no_polis}}" data-refund="{{$jenis->asuransi->refund}}"
+                                                                                                        data-tgl_awal="{{$jenis->asuransi->tanggal_awal}}" data-tgl_akhir="{{$jenis->asuransi->tanggal_akhir}}">Pelunasan</a>
+                                                                                                </li>
+                                                                                            @endif
                                                                                         </ul>
                                                                                     </div>
                                                                                 @else
@@ -253,58 +308,13 @@
                                                                             @else
                                                                                 -
                                                                             @endif
-                                                                        @elseif(strtolower($status) == 'revition')
-                                                                            @if ($role == 'Staf Analis Kredit')
-                                                                                <a href="{{route('asuransi.registrasi.edit', $id_pengajuan)}}" class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
-                                                                                    Edit
-                                                                                </a>
-                                                                            @else
-                                                                                -
-                                                                            @endif
-                                                                        @elseif(strtolower($status) == 'sended')
-                                                                            @if ($role == 'Staf Analis Kredit')
-                                                                                <div class="dropdown">
-                                                                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                                                        Selengkapnya
-                                                                                    </button>
-                                                                                    <ul class="dropdown-menu right-16">
-                                                                                        @if (!$jenis->asuransi->is_paid)
-                                                                                            <li class="">
-                                                                                                <a class="item-dropdown modal-batal" href="#"
-                                                                                                    data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                                    data-id="{{$jenis->asuransi->id}}" data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}"
-                                                                                                    data-no_polis="{{$jenis->asuransi->no_polis}}">Pembatalan</a>
-                                                                                            </li>
-                                                                                        @endif
-                                                                                        <li class="">
-                                                                                            <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                                                                <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
-                                                                                                <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
-                                                                                            </form>
-                                                                                        </li>
-                                                                                        @if ($jenis->asuransi->is_paid && !$jenis->asuransi->canceled_at)
-                                                                                            <li class="">
-                                                                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                                                                    data-modal-target="modalPelunasan"  data-id="{{$jenis->asuransi->id}}"
-                                                                                                    data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek="{{$jenis->asuransi->no_rek}}"
-                                                                                                    data-no_polis="{{$jenis->asuransi->no_polis}}" data-refund="{{$jenis->asuransi->refund}}"
-                                                                                                    data-tgl_awal="{{$jenis->asuransi->tanggal_awal}}" data-tgl_akhir="{{$jenis->asuransi->tanggal_akhir}}">Pelunasan</a>
-                                                                                            </li>
-                                                                                        @endif
-                                                                                    </ul>
-                                                                                </div>
-                                                                            @else
-                                                                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                                                    Detail
-                                                                                </button>
-                                                                            @endif
                                                                         @else
-                                                                            -
+                                                                        -
                                                                         @endif
                                                                     @else
                                                                         @if ($role == 'Staf Analis Kredit')
                                                                             @if ($jenis->asuransi)
-                                                                                @if ($jenis->asuransi->registered == null)
+                                                                                @if ($registered == null)
                                                                                     <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
                                                                                         <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
                                                                                             Registrasi
@@ -316,7 +326,7 @@
                                                                                         Tidak Registrasi
                                                                                     </button>
                                                                                 @else
-                                                                                    {{$jenis->asuransi->registered ? '-' : 'Tidak registrasi'}}
+                                                                                    {{$registered ? '-' : 'Tidak registrasi'}}
                                                                                 @endif
                                                                             @else
                                                                             <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
