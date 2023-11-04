@@ -112,6 +112,12 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/pembayaran-premi', PembayaranPremiController::class);
         Route::post('/pembayaran-premi/inquery', [PembayaranPremiController::class, 'storeInquery'])->name('pembayaran_premi.inquery');
         Route::get('/jenis-by-no-aplikasi', [PembayaranPremiController::class, 'getJenisByNoAplikasi'])->name('jenis_by_no_aplikasi');
+
+        // Review klaim
+        Route::get('/pengajuan-klaim/review-penyelia/{id}', [PengajuanKlaimController::class, 'reviewPenyelia'])->name('pengajuan-klaim.review-penyelia');
+        Route::post('/pengajuan-klaim/approval/{id}', [PengajuanKlaimController::class, 'approval'])->name('pengajuan-klaim.approval');
+        Route::post('/pengajuan-klaim/kembalikan-ke-staf/{id}', [PengajuanKlaimController::class, 'kembalikanKeStaf'])->name('pengajuan-klaim.kembalikan-ke-staf');
+        Route::post('/pengajuan-klaim/hit-endpoint/{id}', [PengajuanKlaimController::class, 'hitEndpoint'])->name('pengajuan-klaim.hit-endpoint');
     });
 
     Route::prefix('kredit')->name('kredit.')->group(function() {
