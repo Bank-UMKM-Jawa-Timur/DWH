@@ -309,14 +309,14 @@
                     <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit"
                         id="simpan-asuransi">
                         <span class="lg:mt-0 mt-0" >
-                            <iconify-icon icon="icon-park-outline:back" class="w-16"></iconify-icon>
+                            <iconify-icon icon="basil:edit-outline" class="w-16"></iconify-icon>
                         </span>
                         <span class="lg:block hidden"> Edit </span>
                     </button>
                     <a href="{{route('asuransi.registrasi.index')}}" type="button"
                         class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
                         <span class="lg:mt-1.5 mt-0">
-                            <iconify-icon icon="basil:edit-outline" class="w-16"></iconify-icon>
+                            <iconify-icon icon="icon-park-outline:back" class="w-16"></iconify-icon>
                         </span>
                         <span class="lg:block hidden"> Kembali </span>
                     </a>
