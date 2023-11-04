@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use stdClass;
 
 class PengajuanKlaimController extends Controller
-{   
+{
 
     private $logActivity;
 
@@ -110,7 +110,7 @@ class PengajuanKlaimController extends Controller
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
             return back();
         }
-        
+
         $validator = Validator::make($request->all(), [
             'no_sp' => 'required',
             'no_sp3' => 'required',
@@ -162,6 +162,11 @@ class PengajuanKlaimController extends Controller
                 "Access-Control-Allow-Methods" => "*"
             ];
 
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
             $host = config('global.eka_lloyd_host');
             $url = "$host/klaim";
             $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
@@ -186,7 +191,7 @@ class PengajuanKlaimController extends Controller
                             $newPengajuanKlaim->status = 'onprogress';
                             $newPengajuanKlaim->save();
 
-                            $this->logActivity->store('Pengguna ' . $request->name . ' menambahkan pengajuan klaim');
+                            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menambahkan pengajuan klaim.', $asuransi->id, 1);
 
                             DB::commit();
                             Alert::success('Berhasil', $message);
@@ -243,7 +248,7 @@ class PengajuanKlaimController extends Controller
             // "no_rekening_debet" => $request->input('row_no_rekening_debit'),
             // "no_klaim" => $request->input('row_no_klaim')
         ];
-        
+
         DB::beginTransaction();
         try {
             $headers = [
@@ -314,7 +319,7 @@ class PengajuanKlaimController extends Controller
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
             return back();
         }
-        
+
         $req = [
             'no_aplikasi' => $request->no_aplikasi,
             'no_rekening' => $request->no_rekening,
@@ -333,6 +338,10 @@ class PengajuanKlaimController extends Controller
                 "Access-Control-Allow-Origin" => "*",
                 "Access-Control-Allow-Methods" => "*"
             ];
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
 
             $host = config('global.eka_lloyd_host');
             $url = "$host/batal";
@@ -366,13 +375,14 @@ class PengajuanKlaimController extends Controller
                         break;
                     case '05':
                         $message = $responseBody['keterangan'];
+                        $data = PengajuanKlaim::find($request->id);
 
                         $pengajuanKlaim = PengajuanKlaim::find($request->id);
                         $pengajuanKlaim->canceled_at = date('Y-m-d');
                         $pengajuanKlaim->canceled_by = $user_id;
                         $pengajuanKlaim->save();
 
-                        $this->logActivity->store('Pengguna ' . $request->name . ' melakukan pembatalan pengajuan klaim.');
+                        $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pembatalan pengajuan klaim.', $data->asuransi_id, 1);
 
                         DB::commit();
                         return response()->json([
