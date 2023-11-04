@@ -128,7 +128,7 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Kredit<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
-                            name="jenis_kredit" value="{{$jenis_asuransi->jenis}}" readonly />
+                            name="jenis_kredit" value="{{$data['skema_kredit']}}" readonly />
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No PK<span class="text-theme-primary">*</span></label>
