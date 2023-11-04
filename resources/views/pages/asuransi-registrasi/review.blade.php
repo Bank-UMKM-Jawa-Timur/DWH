@@ -11,6 +11,23 @@
     </div>
     <div class="body-pages">
         <div class="bg-white w-full p-5">
+            <div class="review-penyelia space-y-5 mb-5">
+                <h2>Review dari Penyelia</h2>
+                <div class="review-timeline bg-theme-primary/5 h-auto border overflow-y-auto p-5">
+                    <ol class="relative border-l border-gray-200">
+                        @forelse ($pendapat as $item)
+                            <li class="mb-10 ml-4">
+                                <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary"></div>
+                                <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{date('d-m-Y', strtotime($item->created_at))}}</time>
+                                {{--  <h3 class="text-lg font-semibold text-theme-primary ">Application UI code in Tailwind CSS</h3>  --}}
+                                <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{{$item->pendapat}}</p>
+                            </li>
+                        @empty
+                            <span>Belum ada review dari penyelia.</span>
+                        @endforelse
+                    </ol>
+                </div>
+            </div>
             <div class="space-y-5 " accept="">
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">

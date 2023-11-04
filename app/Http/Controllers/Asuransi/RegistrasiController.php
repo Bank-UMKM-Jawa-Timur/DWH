@@ -317,6 +317,13 @@ class RegistrasiController extends Controller
                         ->where('id', $asuransi->perusahaan_asuransi_id)
                         ->first();
 
+        $pendapat = DB::table('pendapat_asuransi AS p')
+                        ->select('p.id', 'p.pendapat', 'p.created_at')
+                        ->join('asuransi AS a', 'a.id', 'p.asuransi_id')
+                        ->where('a.id', $asuransi->id)
+                        ->orderBy('id', 'DESC')
+                        ->get();
+
         $host = env('LOS_API_HOST');
         $headers = [
             'token' => env('LOS_API_TOKEN')
@@ -346,7 +353,7 @@ class RegistrasiController extends Controller
                             ->where('id', $asuransi->jenis_asuransi_id)
                             ->first();
 
-        return view('pages.asuransi-registrasi.review', compact('perusahaan', 'pengajuan', 'asuransi', 'jenisAsuransi'));
+        return view('pages.asuransi-registrasi.review', compact('perusahaan', 'pengajuan', 'asuransi', 'jenisAsuransi', 'pendapat'));
     }
 
     public function reviewStore(Request $request) {
