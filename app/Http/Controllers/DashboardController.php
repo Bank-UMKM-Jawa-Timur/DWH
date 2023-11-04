@@ -166,6 +166,15 @@ class DashboardController extends Controller
 
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+            $apiCabang = $host . '/kkb/get-cabang/';
+            $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+            $responseCabang = json_decode($api_req->getBody(), true);
+            $this->param['dataCabang'] = $responseCabang;
             if (!$token)
                 $user_id = 0; // <vendor></vendor>
             return view('pages.home', $this->param);

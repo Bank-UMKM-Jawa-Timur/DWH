@@ -15,16 +15,11 @@
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Cabang</label>
-                <select name="status" class="w-full p-2 border" id="status">
-                        <option value="in progress" selected>process</option>
-                        <option value="done" selected>Done</option>
-                        <option value="" selected disabled>Pilih Status...</option>
-                </select>
-            </div>
-            <div class="input-box space-y-3">
-                <label for="" class="uppercase">User</label>
-                <select name="status" class="w-full p-2 border" id="status">
-                        <option value="" selected disabled>Pilih User...</option>
+                <select name="cabang" class="w-full p-2 border" id="cabang">
+                    <option value="" selected>-- Pilih Cabang --</option>
+                    @foreach ($dataCabang as $item)
+                        <option value="{{$item['kode_cabang']}}">{{$item['kode_cabang']}} - {{$item['cabang']}}</option>
+                    @endforeach
                 </select>
             </div>
             <button class="bg-theme-primary px-8 rounded text-white py-2">
