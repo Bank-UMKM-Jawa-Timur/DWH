@@ -102,6 +102,7 @@ Route::middleware('auth_api')->group(function () {
                 Route::post('/', 'store')->name('store');
                 Route::post('/review', 'reviewStore')->name('review_store');
                 Route::post('/send', 'send')->name('send');
+                Route::post('/not-register', 'tidakRegistrasi')->name('not_register');
                 Route::get('inquery', 'inquery')->name('inquery');
                 Route::post('batal', 'batal')->name('batal');
                 Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');

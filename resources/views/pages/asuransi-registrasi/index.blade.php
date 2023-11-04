@@ -14,6 +14,8 @@
     @include('pages.asuransi-registrasi.modal.pelunasan')
     <!-- Modal-Send -->
     @include('pages.asuransi-registrasi.modal.send')
+    <!-- Modal-Tidak Registrasi -->
+    @include('pages.asuransi-registrasi.modal.tidak-registrasi')
 @endsection
 @section('content')
     <div class="head-pages">
@@ -156,6 +158,7 @@
                                                             $tgl_rekam = $jenis->asuransi ? date('d-m-Y', strtotime($jenis->asuransi->tgl_rekam)) : '-';
                                                             $status = $jenis->asuransi ? $jenis->asuransi->status : '-';
                                                             $is_paid = $jenis->asuransi ? $jenis->asuransi->is_paid : '-';
+                                                            $registered = $jenis->asuransi ? $jenis->asuransi->registered : null;
                                                         @endphp
                                                         <tr>
                                                             <td>{{$alpha}}</td>
@@ -165,7 +168,17 @@
                                                             <td>{{$is_paid ? $no_polis : '-'}}</td>
                                                             <td>{{$is_paid ? $tgl_polis : '-'}}</td>
                                                             <td>{{$tgl_rekam}}</td>
-                                                            <td>{{$is_paid != '' && $is_paid == 1 ? 'sudah dibayar' : $status}}</td>
+                                                            <td>
+                                                                @if ($jenis->asuransi)
+                                                                    @if ($registered == 1)
+                                                                        {{$is_paid != '' && $is_paid == 1 ? 'sudah dibayar' : $status}}
+                                                                    @else
+                                                                        Tidak registrasi
+                                                                    @endif
+                                                                @else
+                                                                    -
+                                                                @endif
+                                                            </td>
                                                             <td>
                                                                 <div class="flex gap-5 justify-center">
                                                                     @if ($jenis->asuransi)
@@ -276,14 +289,33 @@
                                                                         @endif
                                                                     @else
                                                                         @if ($role == 'Staf Analis Kredit')
+                                                                            @if ($jenis->asuransi)
+                                                                                @if ($jenis->asuransi->registered == null)
+                                                                                    <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
+                                                                                        <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
+                                                                                            Registrasi
+                                                                                        </button>
+                                                                                    </a>
+                                                                                    <button class="px-4 py-2 bg-theme-primary/20 rounded text-theme-primary modal-tidak-register" data-modal-toggle="modalTidakRegister" data-modal-target="modalTidakRegister" data-id="{{$item['id']}}"
+                                                                                        data-no_pk="{{$item['no_pk']}}" data-debitur="{{$item['nama']}}"
+                                                                                        data-jenis_asuransi_id="{{$jenis->id}}" data-jenis_asuransi="{{$jenis->jenis}}">
+                                                                                        Tidak Registrasi
+                                                                                    </button>
+                                                                                @else
+                                                                                    {{$jenis->asuransi->registered ? '-' : 'Tidak registrasi'}}
+                                                                                @endif
+                                                                            @else
                                                                             <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
                                                                                 <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
                                                                                     Registrasi
                                                                                 </button>
                                                                             </a>
-                                                                            <button class="px-4 py-2  bg-theme-primary/20 rounded text-theme-primary">
+                                                                            <button class="px-4 py-2 bg-theme-primary/20 rounded text-theme-primary modal-tidak-register" data-modal-toggle="modalTidakRegister" data-modal-target="modalTidakRegister" data-id="{{$item['id']}}"
+                                                                                data-no_pk="{{$item['no_pk']}}" data-debitur="{{$item['nama']}}"
+                                                                                data-jenis_asuransi_id="{{$jenis->id}}" data-jenis_asuransi="{{$jenis->jenis}}">
                                                                                 Tidak Registrasi
                                                                             </button>
+                                                                            @endif
                                                                         @else
                                                                             -
                                                                         @endif

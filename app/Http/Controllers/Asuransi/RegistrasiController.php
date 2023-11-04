@@ -80,8 +80,8 @@ class RegistrasiController extends Controller
                                     $asuransi = DB::table('asuransi')
                                                 ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
                                                 ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                                                ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
-                                                ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->leftJoin('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                                 ->select(
                                                     'p.nama AS perusahaan',
                                                     'asuransi.*',
@@ -144,7 +144,6 @@ class RegistrasiController extends Controller
                 // return $e->getMessage();
             }
 
-            // return $data;
             return view('pages.asuransi-registrasi.index', compact('data', 'role_id', 'role'));
         } catch (\Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
@@ -502,6 +501,7 @@ class RegistrasiController extends Controller
             $newAsuransi->tanggal_awal = $tgl_awal;
             $newAsuransi->tanggal_akhir = $tgl_akhir;
             $newAsuransi->status = 'waiting approval';
+            $newAsuransi->registered = true;
             $newAsuransi->save();
 
             // insert detail asuransi
@@ -1231,6 +1231,54 @@ class RegistrasiController extends Controller
             DB::rollBack();
             Alert::error('Terjadi kesalahan', $e->getMessage());
             return redirect()->route('asuransi.registrasi.index')->with('error', 'Terjadi kesalahan pada database. ' . $e->getMessage());
+        }
+    }
+
+    public function tidakRegistrasi(Request $request) {
+        $status = '';
+        $message = '';
+
+        try {
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+
+            $user_id = $token ? $user['id'] : $user->id;
+            $user_name = \Session::get(config('global.user_name_session'));
+
+            $id_pengajuan = $request->id_pengajuan;
+
+            $kredit = DB::table('kredits')
+                        ->select('id', 'pengajuan_id', 'kode_cabang')
+                        ->where('pengajuan_id', $id_pengajuan)
+                        ->where('is_asuransi', true)
+                        ->first();
+
+            $asuransi = new Asuransi;
+            $asuransi->no_pk = $request->no_pk;
+            $asuransi->kredit_id = $kredit->id;
+            $asuransi->jenis_asuransi_id = $request->jenis_asuransi_id;
+            $asuransi->user_id = $user_id;
+            $asuransi->nama_debitur = $request->nama_debitur;
+            $asuransi->registered = false;
+            $asuransi->save();
+
+            $this->logActivity->store('Pengguna ' . $user_name . ' melakukan tidak registrasi asuransi.');
+
+            DB::commit();
+
+            $status = 'success';
+            $message = 'Berhasil menyimpan data';
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $status = 'failed';
+            $message = $e->getMessage();
+        } finally {
+            $res = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($res);
         }
     }
 }
