@@ -11,23 +11,35 @@
     </div>
     <div class="body-pages">
         <div class="bg-white w-full p-5">
+            <div class="review-penyelia space-y-5">
+                <h2>Review dari Penyelia</h2>
+                <div class="review-timeline bg-theme-primary/5 h-[300px] border overflow-y-auto p-5">
+    
+                    <ol class="relative border-l border-gray-200">                  
+                        <li class="mb-10 ml-4">
+                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary "></div>
+                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">February 2022</time>
+                            <h3 class="text-lg font-semibold text-theme-primary ">Application UI code in Tailwind CSS</h3>
+                            <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">Get access to over 20+ pages including a dashboard layout, charts, kanban board, calendar, and pre-order E-commerce & Marketing pages.</p>
+                        </li>
+                        <li class="mb-10 ml-4">
+                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary"></div>
+                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">March 2022</time>
+                            <h3 class="text-lg font-semibold text-theme-primary ">Marketing UI design in Figma</h3>
+                            <p class="text-base font-normal text-gray-500 dark:text-gray-400">All of the pages and components are first designed in Figma and we keep a parity between the two versions even as we update the project.</p>
+                        </li>
+                        <li class="ml-4">
+                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary"></div>
+                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">April 2022</time>
+                            <h3 class="text-lg font-semibold text-theme-primary ">E-Commerce UI code in Tailwind CSS</h3>
+                            <p class="text-base font-normal text-gray-500 dark:text-gray-400">Get started with dozens of web components and interactive elements built on top of Tailwind CSS.</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
             <form id="form-asuransi-registrasi" action="{{ route('asuransi.registrasi.store') }}" method="post"
                 class="space-y-5 " accept="">
                 @csrf
-                <input type="hidden" name="pengajuan" value="{{$_GET['id']}}">
-                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
-                    <div class="input-box space-y-3">
-                        <label class="uppercase">Pilih Perusahaan Asuransi</label>
-                        <select name="perusahaan" id="perusahaan" class="w-full p-2 border" required>
-                            <option selected>-- Pilih ---</option>
-                            @foreach ($perusahaan as $key => $item)
-                                <option value="{{ $item->id }}" data-key="{{ $key }}"
-                                    @if (old('perusahaan') == $item->id) selected @endif>
-                                    {{ $item->nama }} </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
                 <div class="title-form">
                     <h2 class="text-theme-primary font-bold text-lg">Data Debitur</h2>
                 </div>
@@ -109,7 +121,7 @@
                         <label for="add-role" class="uppercase">Jenis Kredit<span class="text-theme-primary">*</span>
                         </label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
-                            name="jenis_kredit" value="{{$pengajuan['skema_kredit']}}" readonly />
+                            name="jenis_kredit" readonly />
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No PK<span class="text-theme-primary">*</span></label>
@@ -121,14 +133,14 @@
                         <label for="" class="uppercase">Tanggal PK<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pk"
-                            value="{{date('d-m-Y', strtotime($pengajuan['tgl_cetak_pk']))}}" readonly />
+                            value="{{$pengajuan['tgl_cetak_pk']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tanggal Pengajuan<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pengajuan"
-                            value="{{date('d-m-Y', strtotime($pengajuan['tanggal']))}}" readonly />
+                            value="{{$pengajuan['tanggal']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -153,11 +165,12 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span>
                         </label>
-                        <input type="hidden" name="jenis_asuransi" id="jenis_asuransi"
-                            value="{{$jenisAsuransi->id.'-'.$jenisAsuransi->kode}}">
-                        <input type="text" class="bg-disabled disabled-input p-2 w-full border" name="display_jenis_asuransi"
-                            id="display_jenis_asuransi" value="{{$jenisAsuransi->jenis}}" readonly>
-                        <small class="form-text text-red-600 error"></small>
+                        <select name="jenis_asuransi" class="w-full p-2 border" id="jenis_asuransi">
+                            <option selected value="">-- Pilih Jenis Asuransi ---</option>
+                            @foreach ($dataAsuransi as $item)
+                                <option value="{{$item->id.'-'.$item->kode}}">{{$item->jenis}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span>
@@ -236,15 +249,6 @@
                         </label>
                         <select name="jenis_coverage" class="w-full p-2 border">
                             <option selected value="">-- Pilih jenis ---</option>
-                            @if ($pengajuan['age'] <= 60)
-                                <option @if (old('jenis_coverage') == '01') selected @endif value="01">PNS & NON PNS (PA+ND)</option>
-                                <option @if (old('jenis_coverage') == '02') selected @endif value="02">NON PNS (PA+ND+PHK)</option>
-                                <option @if (old('jenis_coverage') == '03') selected @endif value="03">PNS (PA+ND+PHK+MACET)</option>
-                                <option @if (old('jenis_coverage') == '04') selected @endif value="04">DPRD (PA+ND+PAW)</option>
-                            @else
-                                <option @if (old('jenis_coverage') == '05') selected @endif value="05">PNS & PENSIUN (PA+ND)</option>
-                                <option @if (old('jenis_coverage') == '06') selected @endif value="06">DPRD (PA+ND+PAW)</option>
-                            @endif
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -282,6 +286,11 @@
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
+                <div class="mt-5 space-y-5 bg-white border p-5 w-auto">
+                    <h2 class="text-theme-primary font-bold">Pendapat dari Penyelia</h2>
+                    <p>Apakah form diatas yang diisi sudah benar atau ada kesalahan?.  berikan keterangan secara ringkas</p>
+                    <textarea name="" class="w-2/4 h-80 border p-4 resize-none hover:bg-theme-pages focus:bg-theme-pages" placeholder="Tulis pendapat anda disini..." id="" ></textarea>
+                </div>
                 <div class="flex gap-5">
                     <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit"
                         id="simpan-asuransi">
@@ -291,7 +300,7 @@
                                     stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14" />
                             </svg>
                         </span>
-                        <span class="lg:block hidden"> Simpan </span>
+                        <span class="lg:block hidden"> Registrasi </span>
                     </button>
                     <button type="button" id="form-reset"
                         class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
@@ -310,9 +319,9 @@
 
 @push('extraScript')
     <script>
-        $('#perusahaan').select2()
+        var urlPost = "http://sandbox-umkm.ekalloyd.id:8387";
 
-        var urlPost = "{{config('global.eka_lloyd_host')}}";
+        $('#pengajuan').select2();
 
         $('#form-reset').on('click', function() {
             $('#form-asuransi-registrasi')[0].reset();
@@ -335,10 +344,11 @@
             }
         })
 
+
         $('#jenis_pertanggungan').on('change', function() {
             var masa_asuransi = $('#jumlah_bulan').val()
             if (masa_asuransi == '') {
-                alertWarning('Harap pilih data pengajuan terlebih dahulu')
+                alert('Harap pilih data pengajuan terlebih dahulu')
             }
             var plafon_kredit = $('#plafon_kredit').val()
             if (plafon_kredit != '') {
@@ -375,16 +385,16 @@
                                 $('#tarif').val(rate)
                                 hitungPremiDisetor()
                             } else {
-                                alertWarning('Rate premi tidak ditemukan')
+                                alert('Rate premi tidak ditemukan')
                             }
                         } else {
                             console.log(response.message)
-                            alertWarning('Terjadi  kesalahan saat mengambil rate premi')
+                            alert('Terjadi  kesalahan saat mengambil rate premi')
                         }
                     },
                     error: function(response) {
                         console.log(response)
-                        alertWarning('Terjadi kesalahan saat mengambil rate premi')
+                        alert('Terjadi kesalahan saat mengambil rate premi')
                     }
                 })
             }
@@ -510,11 +520,6 @@
             }
             if (data['no_rekening'] === '') {
                 var message = 'Nomor rekening belum diisi.'
-                alertWarning(message)
-                total_empty_field++;
-            }
-            if ($('#perusahaan') === '') {
-                var message = 'Perusahaan harus diisi.'
                 alertWarning(message)
                 total_empty_field++;
             }

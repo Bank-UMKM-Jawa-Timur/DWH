@@ -338,12 +338,12 @@ class PembayaranPremiController extends Controller
         }
 
         $req = [
-            "no_aplikasi" => $request->input('row_no_aplikasi'),
-            "nobukti_pembayaran" => $request->input('row_nobukti_pembayaran'),
-            "no_rekening" => $request->input('row_no_rek'),
-            "outstanding" => $request->input('row_outstanding'),
-            "periode_premi" => $request->input('row_periode_premi'),
-            "no_polis" => $request->input('row_no_polis'),
+            "no_aplikasi" => $request->no_aplikasi,
+            "nobukti_pembayaran" => $request->nobukti_pembayaran,
+            "no_rekening" => $request->no_rekening,
+            "outstanding" => $request->outstanding,
+            "periode_premi" => $request->periode_premi,
+            "no_polis" => $request->no_polis,
         ];
 
         try {
@@ -367,21 +367,29 @@ class PembayaranPremiController extends Controller
                     $message = $responseBody['keterangan'];
                     $nilai = $responseBody['nilai_premi'];
                     $this->logActivity->store('Pengguna ' . $request->name . ' melakukan inquery pembayaran premi.');
-                    Alert::success('Berhasil', $message . ', Nilai Premi ' . $this->formatCurrency($nilai));
-                    return back();
+                    return response()->json([
+                        'status' => 'Berhasil',
+                        'response' => $responseBody
+                    ]);
                 }else{
                     $message = $responseBody['keterangan'];
-                    Alert::error('Gagal', $message);
-                    return back();
+                    return response()->json([
+                        'status' => 'Gagal',
+                        'response' => $message
+                    ]);
                 }
             }
             else {
-                Alert::error('Gagal', 'Terjadi kesalahan');
-                return back();
+                return response()->json([
+                    'status' => 'Gagal',
+                    'response' => 'Terjadi kesalahan'
+                ]);
             }
         } catch (\Throwable $e) {
-            Alert::error('Gagal', $e->getMessage());
-            return back();
+            return response()->json([
+                'status' => 'Gagal',
+                'response' => $e->getMessage()
+            ]);
         }
     }
 

@@ -122,7 +122,7 @@
                                                 Selengkapnya
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <button type="submit" class="item-dropdown">
+                                                <button type="button" id="btnInquery" class="item-dropdown">
                                                     Inquery
                                                 </button>
                                                 {{-- <li class="">
@@ -376,5 +376,47 @@
         errorSpan.innerText = message;
         input.focus();
     }
+
+    $(".table-auto").on("click", "#btnInquery", function(){
+        var parent = $(this).parents('tr');
+        var data = {
+            _token: "{{ csrf_token() }}",
+            no_aplikasi: parent.find("[name=row_no_aplikasi]").val(),
+            nobukti_pembayaran: parent.find("[name=row_nobukti_pembayaran]").val(),
+            no_rekening: parent.find("[name=row_no_rek]").val(),
+            outstanding: parent.find("[name=row_outstanding]").val(),
+            periode_premi: parent.find("[name=row_periode_premi]").val(),
+            no_polis: parent.find("[name=row_no_polis]").val()
+        }
+        
+        console.log(data);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('asuransi.pembayaran_premi.inquery') }}",
+            data: data,
+            success: function(res){
+                if(res.status == 'Berhasil'){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: `${res.response.keterangan}, Nilai Premi Rp. ${formatRupiah(res.response.nilai_premi)}`
+                    });
+                } else{
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal",
+                        text: res.response
+                    })
+                }
+            },
+            error: function(res){
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal",
+                    text: "Terjadi kesalahan."
+                })
+            }
+        })
+    })
 </script>
 @endpush
