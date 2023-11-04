@@ -96,9 +96,11 @@ Route::middleware('auth_api')->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/get-user/{user_id}', 'getUser')->name('get_user');
                 Route::get('/create', 'create')->name('create');
+                Route::get('/review', 'review')->name('review');
                 Route::get('jenis-asuransi', 'getJenisAsuransi')->name('jenis_asuransi');
                 Route::get('rate-premi', 'getRatePremi')->name('rate_premi');
                 Route::post('/', 'store')->name('store');
+                Route::post('/review', 'reviewStore')->name('review_store');
                 Route::get('inquery', 'inquery')->name('inquery');
                 Route::post('batal', 'batal')->name('batal');
                 Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');

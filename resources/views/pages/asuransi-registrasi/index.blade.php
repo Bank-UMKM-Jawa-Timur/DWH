@@ -188,22 +188,31 @@
                                                                     <div class="flex gap-5 justify-center">
                                                                         @if ($jenis->asuransi)
                                                                             @if (strtolower($status) == 'waiting approval')
-                                                                                <button class="px-4 py-2  bg-theme-primary/20 rounded text-theme-primary">
-                                                                                    Tidak Registrasi
-                                                                                </button>
-                                                                                <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
-                                                                                    <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
-                                                                                        Registrasi
-                                                                                    </button>
-                                                                                </a>
+                                                                                @if ($role == 'Staf Analis Kredit')
+                                                                                    -
+                                                                                @else
+                                                                                    <a href="{{route('asuransi.registrasi.review')}}?id={{$id_pengajuan}}&asuransi={{$jenis->asuransi->id}}">
+                                                                                        <button class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
+                                                                                            Review
+                                                                                        </button>
+                                                                                    </a>
+                                                                                @endif
                                                                             @elseif(strtolower($status) == 'approved')
-                                                                                <button class="px-4 py-2  bg-green-400/20 rounded text-green-500">
-                                                                                    Kirim
-                                                                                </button>
+                                                                                @if ($role == 'Staf Analis Kredit')
+                                                                                    <button class="px-4 py-2  bg-green-400/20 rounded text-green-500">
+                                                                                        Kirim
+                                                                                    </button>
+                                                                                @else
+                                                                                    -
+                                                                                @endif
                                                                             @elseif(strtolower($status) == 'revition')
-                                                                                <button class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
-                                                                                    Edit
-                                                                                </button>
+                                                                                @if ($role == 'Staf Analis Kredit')
+                                                                                    <button class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
+                                                                                        Edit
+                                                                                    </button>
+                                                                                @else
+                                                                                    -
+                                                                                @endif
                                                                             @elseif(strtolower($status) == 'sended')
                                                                                 @if ($role == 'Staf Analisa Kredit')
                                                                                     <div class="dropdown">

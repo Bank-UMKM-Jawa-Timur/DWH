@@ -260,6 +260,146 @@ class RegistrasiController extends Controller
         return view('pages.asuransi-registrasi.create', compact('perusahaan', 'pengajuan', 'jenisAsuransi'));
     }
 
+    public function review(Request $request)
+    {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Penyelia Kredit') {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
+        $id_pengajuan = $request->id;
+        $id_asuransi = $request->asuransi;
+
+        $asuransi = DB::table('asuransi AS a')
+                    ->select(
+                        'a.id',
+                        'a.perusahaan_asuransi_id',
+                        'a.jenis_asuransi_id',
+                        'a.no_aplikasi',
+                        'a.no_rek',
+                        'a.no_pk',
+                        'a.premi',
+                        'a.refund',
+                        'd.jenis_pengajuan',
+                        'd.kolektibilitas',
+                        'd.jenis_pertanggungan',
+                        'd.tipe_premi',
+                        'd.jenis_coverage',
+                        'd.tarif',
+                        'd.kode_layanan_syariah',
+                        'd.handling_fee',
+                        'd.premi_disetor',
+                        'd.no_polis_sebelumnya',
+                        'd.baki_debet',
+                        'd.tunggakan',
+                    )
+                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'a.id')
+                    ->where('a.id', $id_asuransi)
+                    ->first();
+
+        $perusahaan = DB::table('mst_perusahaan_asuransi')
+                        ->select('id', 'nama', 'alamat')
+                        ->where('id', $asuransi->perusahaan_asuransi_id)
+                        ->first();
+
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+
+        $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $id_pengajuan;
+        $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
+        $response = json_decode($api_req->getBody(), true);
+        $pengajuan = null;
+        if ($response) {
+            if (array_key_exists('status', $response)) {
+                if ($response['status'] == 'success') {
+                    $pengajuan = $response['data'];
+                }
+            }
+        }
+
+        $pengajuan['no_aplikasi'] = $asuransi->no_aplikasi;
+        $tenor = $pengajuan['tenor_yang_diminta'];
+        $pengajuan['tgl_akhir_kredit'] = date('d-m-Y', strtotime($pengajuan['tanggal'] . " +$tenor month"));
+
+        $skema_kredit = $pengajuan['skema_kredit'];
+        $pengajuan['age'] = UtilityController::countAge($pengajuan['tanggal_lahir']);
+
+        $jenisAsuransi = DB::table('mst_jenis_asuransi')
+                            ->select('id', 'kode', 'jenis')
+                            ->where('id', $asuransi->jenis_asuransi_id)
+                            ->first();
+
+        return view('pages.asuransi-registrasi.review', compact('perusahaan', 'pengajuan', 'asuransi', 'jenisAsuransi'));
+    }
+
+    public function reviewStore(Request $request) {
+        $status = '';
+        $message = '';
+        $redirect_url = '';
+
+        DB::beginTransaction();
+        try {
+            $name = \Session::get(config('global.user_name_session'));
+            
+            $id_asuransi = $request->id_asuransi;
+            $type = $request->type; // approved or revition
+            $now = date('Y-m-d H:i:s');
+
+            DB::table('asuransi')
+                ->where('id', $id_asuransi)
+                ->update([
+                    'status' => $type,
+                    'updated_at' => $now,
+                ]);
+
+            if ($type == 'revition') {
+                DB::table('pendapat_asuransi')->insert([
+                    'asuransi_id' => $id_asuransi,
+                    'pendapat' => $request->pendapat,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
+
+            $this->logActivity->store('Pengguna ' . $name . ' menyimpan review asuransi.');
+
+            DB::commit();
+            $status = 'success';
+            $message = 'Berhasil melakukan review';
+            $redirect_url = route('asuransi.registrasi.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $status = 'failed';
+            $message = $e->getMessage();
+            $redirect_url = back();
+        } finally {
+            $res = [
+                'status' => $status,
+                'message' => $message,
+                'redirect_url' => $redirect_url,
+            ];
+
+            return response()->json($res);
+        }
+    }
+
     public function getJenisAsuransi(Request $request){
         $dataAsuransi = DB::table('mst_jenis_asuransi')->where('jenis_kredit', $request->jenis_kredit)->get();
 

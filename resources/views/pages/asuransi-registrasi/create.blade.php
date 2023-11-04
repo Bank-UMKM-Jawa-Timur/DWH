@@ -120,14 +120,14 @@
                         <label for="" class="uppercase">Tanggal PK<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pk"
-                            value="{{$pengajuan['tgl_cetak_pk']}}" readonly />
+                            value="{{date('d-m-Y', strtotime($pengajuan['tgl_cetak_pk']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tanggal Pengajuan<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pengajuan"
-                            value="{{$pengajuan['tanggal']}}" readonly />
+                            value="{{date('d-m-Y', strtotime($pengajuan['tanggal']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
@@ -185,8 +185,8 @@
                                 class="text-theme-primary">*</span> </label>
                         <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
-                            <option @if (old('jeniss_pertanggungan') == '01') selected @endif value="01">Pokok</option>
-                            <option @if (old('jeniss_pertanggungan') == '02') selected @endif value="02">Sisa Kredit</option>
+                            <option @if (old('jenis_pertanggungan') == '01') selected @endif value="01">Pokok</option>
+                            <option @if (old('jenis_pertanggungan') == '02') selected @endif value="02">Sisa Kredit</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -262,8 +262,8 @@
                         <label for="" class="uppercase">Kode Layanan Syariah</label>
                         <select name="kode_ls" class="w-full p-2 border">
                             <option selected value="">-- Kode Layanan Syariah ---</option>
-                            <option @if (old('kode_is') == '0') selected @endif value="0">KV</option>
-                            <option @if (old('kode_is') == '1') selected @endif value="1">SY</option>
+                            <option @if (old('kode_ls') == '0') selected @endif value="0">KV</option>
+                            <option @if (old('kode_ls') == '1') selected @endif value="1">SY</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -290,7 +290,7 @@
                                     stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14" />
                             </svg>
                         </span>
-                        <span class="lg:block hidden"> Registrasi </span>
+                        <span class="lg:block hidden"> Simpan </span>
                     </button>
                     <button type="button" id="form-reset"
                         class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
