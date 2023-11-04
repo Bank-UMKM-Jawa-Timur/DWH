@@ -101,6 +101,7 @@ Route::middleware('auth_api')->group(function () {
                 Route::get('rate-premi', 'getRatePremi')->name('rate_premi');
                 Route::post('/', 'store')->name('store');
                 Route::post('/review', 'reviewStore')->name('review_store');
+                Route::post('/send', 'send')->name('send');
                 Route::get('inquery', 'inquery')->name('inquery');
                 Route::post('batal', 'batal')->name('batal');
                 Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');

@@ -14,6 +14,7 @@
             <form id="form-asuransi-registrasi" action="{{ route('asuransi.registrasi.store') }}" method="post"
                 class="space-y-5 " accept="">
                 @csrf
+                <input type="hidden" name="pengajuan" value="{{$_GET['id']}}">
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
                         <label class="uppercase">Pilih Perusahaan Asuransi</label>

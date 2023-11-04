@@ -12,6 +12,8 @@
     @include('pages.asuransi-registrasi.modal.batal')
     <!-- Modal-Pelunasan -->
     @include('pages.asuransi-registrasi.modal.pelunasan')
+    <!-- Modal-Send -->
+    @include('pages.asuransi-registrasi.modal.send')
 @endsection
 @section('content')
     <div class="head-pages">
@@ -50,19 +52,6 @@
                             <span class="lg:block hidden"> Filter </span>
                         </button>
                     </a>
-                    @if ($role == 'Staf Analis Kredit')
-                        <a href="{{ route('asuransi.registrasi.create') }}">
-                            <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                                <span class="lg:mt-0 mt-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
-                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="M5 12h14m-7-7v14" />
-                                    </svg>
-                                </span>
-                                <span class="lg:block hidden"> Tambah  </span>
-                            </button>
-                        </a>
-                    @endif
                 </div>
             </div>
             <form id="form" method="get">
@@ -199,8 +188,9 @@
                                                                                 @endif
                                                                             @elseif(strtolower($status) == 'approved')
                                                                                 @if ($role == 'Staf Analis Kredit')
-                                                                                    <button class="px-4 py-2 bg-green-400/20 rounded text-green-500 btn-kirim"
-                                                                                        >
+                                                                                    <button class="px-4 py-2 bg-green-400/20 rounded text-green-500 modal-kirim"
+                                                                                        data-modal-target="modalSend" data-id="{{$jenis->asuransi->id}}"
+                                                                                        data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-debitur="{{$item['nama']}}">
                                                                                         Kirim
                                                                                     </button>
                                                                                 @else
@@ -215,7 +205,7 @@
                                                                                     -
                                                                                 @endif
                                                                             @elseif(strtolower($status) == 'sended')
-                                                                                @if ($role == 'Staf Analisa Kredit')
+                                                                                @if ($role == 'Staf Analis Kredit')
                                                                                     <div class="dropdown">
                                                                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                                                                             Selengkapnya
@@ -251,14 +241,18 @@
                                                                                 -
                                                                             @endif
                                                                         @else
-                                                                            <button class="px-4 py-2  bg-theme-primary/20 rounded text-theme-primary">
-                                                                                Tidak Registrasi
-                                                                            </button>
-                                                                            <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
-                                                                                <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
-                                                                                    Registrasi
+                                                                            @if ($role == 'Staf Analis Kredit')
+                                                                                <button class="px-4 py-2  bg-theme-primary/20 rounded text-theme-primary">
+                                                                                    Tidak Registrasi
                                                                                 </button>
-                                                                            </a>
+                                                                                <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
+                                                                                    <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
+                                                                                        Registrasi
+                                                                                    </button>
+                                                                                </a>
+                                                                            @else
+                                                                                -
+                                                                            @endif
                                                                         @endif
                                                                     </div>
                                                                 </td>
@@ -267,109 +261,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                        @endforeach
-                                        {{-- B - Jiwa  --}}
-                                        {{--  <div>
-                                            <div class="flex justify-start p-3">
-                                                <h1 class="font-bold text-lg text-theme-primary">B - Jiwa</h1>
-                                            </div>
-                                            <div class="mt-2 p-3">
-                                                <table class="table-collapse">
-                                                    <thead>
-                                                        <th>Nomor Aplikasi</th>
-                                                        <th>Tarif</th>
-                                                        <th>Premi </th>
-                                                        <th>Refund</th>
-                                                        <th>Handling Fee</th>
-                                                        <th>Premi Disetor</th>
-                                                        <th>Status</th>
-                                                        <th>Aksi</th>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>K21002022000002</td>
-                                                            <td>39.97</td>
-                                                            <td>2113802</td>
-                                                            <td>60000</td>
-                                                            <td>261256</td>
-                                                            <td>2113802</td>
-                                                            <td>Sending</td>
-                                                            <td>
-                                                                <div class="flex gap-5 justify-center">
-                                                                    <button class="px-4 py-2  bg-green-400/20 rounded text-grebg-green-500">
-                                                                        Kirim
-                                                                    </button>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="flex justify-start p-3">
-                                                <h1 class="font-bold text-lg text-theme-primary">C - kredit</h1>
-                                            </div>
-                                            <div class="mt-2 p-3">
-                                                <table class="table-collapse">
-                                                    <thead>
-                                                        <th>Nomor Aplikasi</th>
-                                                        <th>Tarif</th>
-                                                        <th>Premi </th>
-                                                        <th>Refund</th>
-                                                        <th>Handling Fee</th>
-                                                        <th>Premi Disetor</th>
-                                                        <th>Status</th>
-                                                        <th>Aksi</th>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>K21002022000002</td>
-                                                            <td>39.97</td>
-                                                            <td>2113802</td>
-                                                            <td>60000</td>
-                                                            <td>261256</td>
-                                                            <td>2113802</td>
-                                                            <td>Approval</td>
-                                                            <td>
-                                                                @if ($role_id == 2)
-                                                                    <div class="dropdown">
-                                                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                                            Selengkapnya
-                                                                        </button>
-                                                                        <ul class="dropdown-menu right-16">
-                                                                            <li class="">
-                                                                                <a class="item-dropdown modal-batal" href="#"
-                                                                                    data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                    data-id="" data-no_aplikasi=""
-                                                                                    data-no_polis="">Pembatalan</a>
-                                                                            </li>
-                                                                            <li class="">
-                                                                                <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                                                    <input type="hidden" name="no_aplikasi" value="">
-                                                                                    <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
-                                                                                </form>
-                                                                            </li>
-                                                                            <li class="">
-                                                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                                                    data-modal-target="modalPelunasan"  data-id=""
-                                                                                    data-no_aplikasi="" data-no_rek=""
-                                                                                    data-no_polis="" data-refund=""
-                                                                                    data-tgl_awal="" data-tgl_akhir="">Pelunasan</a>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                @else
-                                                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                                        Detail
-                                                                    </button>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>  --}}
+                                        @endforeach\
                                     </div>
                                 </td>
                             </tr>
