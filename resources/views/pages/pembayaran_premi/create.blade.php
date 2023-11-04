@@ -70,11 +70,19 @@
                         <input type="text" value="{{old('no_bukti_pembayaran')}}" class="p-2 w-full border " id="no_bukti_pembayaran" name="no_bukti_pembayaran"/>
                         <small class="form-text text-red-600 error no-bukti-pembayaran-error"></small>
                     </div>
-                    <div class="input-box space-y-3">
-                        <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
-                        <input type="hidden" id="total_premi" name="total_premi"/>
-                        <input type="text" value="{{old('display_total_premi')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
-                        <small class="form-text text-red-600 error"></small>
+                    <div class="flex gap-5">
+                        <div class="w-full input-box space-y-3">
+                            <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
+                            <input type="hidden" id="total_premi" name="total_premi"/>
+                            <input type="text" value="{{old('display_total_premi')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
+                        <div class="w-full input-box space-y-3">
+                            <label for="" class="uppercase">Total Premi Disetor<span class="text-theme-primary">*</span></label>
+                            <input type="hidden" id="total_premi_disetor" name="total_premi_disetor"/>
+                            <input type="text" value="{{old('display_total_premi_disetor')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi_disetor" name="display_total_premi_disetor" readonly/>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
                     </div>
 
                 </div>
@@ -111,6 +119,7 @@
                                         <th>Jenis</th>
                                         <th>No Aplikasi.</th>
                                         <th>Premi</th>
+                                        <th>Premi Disetor</th>
                                         <th>No PK</th>
                                         <th>No Polis</th>
                                         <th>No Rekening.</th>
@@ -180,11 +189,15 @@
                                         data-key="${item.generate_key}" data-id="${item.id}"
                                         data-jenis="${item.jenis}" data-no_aplikasi="${item.no_aplikasi}"
                                         data-premi="${item.premi}" data-no_pk="${item.no_pk}"
-                                        data-no_polis="${item.no_polis}" data-no_rek="${item.no_rek}" ${checked}>
+                                        data-no_polis="${item.no_polis}" data-premi_disetor="${item.premi_disetor}" data-no_rek="${item.no_rek}" ${checked}>
                                     <label for="${item.jenis}">${item.jenis}</label>
                                 </div>`
                                 jenis_asuransi_div.append(checkbox_element)
                             }
+                        }
+                        else{
+                            var message = 'Tidak ada premi yang harus dibayar pada no aplikasi ini'
+                            alertWarning(message)
                         }
                     },
                     error: function(e) {
@@ -215,12 +228,16 @@
         var arr_selected_key = [];
         var temp_no = 1;
         var total_premi = 0;
+        var total_premi_disetor = 0;
         hitungTotalPremi()
 
         function hitungTotalPremi() {
             var format_total_premi = formatRupiah(total_premi.toString())
+            var format_total_premi_disetor = parseInt(total_premi_disetor)
             $('#total_premi').val(total_premi)
             $('#display_total_premi').val(format_total_premi)
+            $('#total_premi_disetor').val(total_premi_disetor)
+            $('#display_total_premi_disetor').val(format_total_premi_disetor)
         }
 
         $("#btnLeftForm").on("click", function(e){
@@ -270,6 +287,10 @@
                         else {
                             var premi = $(this).data('premi');
                             var premiRupiah = '0';
+
+                            var premiDisetor = $(this).data('premi_disetor');
+                            var premiDisetorRupiah = '0';
+
                             var no_pk = $(this).data('no_pk');
                             var no_polis = $(this).data('no_polis');
                             var no_rek = $(this).data('no_rek');
@@ -277,6 +298,10 @@
                             if (premi != '') {
                                 premiRupiah = premi.toString().replaceAll('.', ',')
                                 premiRupiah = formatRupiah(premiRupiah.toString())
+                            }
+                            if (premiDisetor != '') {
+                                premiDisetorRupiah = premiDisetor.replaceAll('.', ',')
+                                premiDisetorRupiah = formatRupiah(premiDisetorRupiah)
                             }
 
                             var row_element = `<tr>
@@ -291,6 +316,10 @@
                                 <td>
                                     <input type="hidden" name="row_premi[]" class="row-premi" value="${premi}">
                                     Rp ${premiRupiah}
+                                </td>
+                                <td>
+                                    <input type="hidden" name="row_premi_disetor[]" class="row-premi" value="${premiDisetor}">
+                                    Rp ${premiDisetorRupiah}
                                 </td>
                                 <td>
                                     <input type="hidden" name="row_no_pk[]" value="${no_pk}">
@@ -334,10 +363,12 @@
                             arr_selected_key.push(generate_key)
                             temp_no++;
                             total_premi += premi
+                            total_premi_disetor += premiDisetor
                             hitungTotalPremi()
                         }
                     }
                 })
+                $("#no_aplikasi").val(null).trigger("change");
             }
         })
 
@@ -479,5 +510,24 @@
                 confirmButtonColor: '#DC3545'
             })
         }
+
+        function alertWarning(message) {
+            Swal.fire({
+                tittle: 'Warning!',
+                html: message,
+                icon: 'warning',
+                iconColor: '#DC3545',
+                confirmButtonText: 'Ya',
+                confirmButtonColor: '#DC3545'
+            })
+        }
+
+        $("#tgl_bayar").on("change", function(){
+            var date = new Date();
+            var dateNow = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()
+            if(Date.parse($("#tgl_bayar").val()) < Date.parse(dateNow)){
+                alertWarning("Tanggal bayar tidak boleh kurang dari tanggal sekarang")
+            }
+        })
     </script>
 @endpush

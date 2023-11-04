@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -47,7 +48,7 @@ class PembayaranPremiController extends Controller
         }
         $param['role_id'] = $role_id;
         $param['role'] = $role;
-        
+
         $param['title'] = 'Pembayaran Premi';
         $param['pageTitle'] = 'Pembayaran Premi';
         $page_length = $request->page_length ? $request->page_length : 5;
@@ -130,12 +131,12 @@ class PembayaranPremiController extends Controller
 
         $param['noAplikasi'] = DB::table('asuransi')->select('asuransi.no_aplikasi', 'asuransi.nama_debitur','jenis.jenis')
         ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
-        ->where('status', 'onprogress')->groupBy('no_aplikasi')
+        ->where('status', 'sended')->groupBy('no_aplikasi')
         ->get();
 
         $param['jenisAsuransi'] = DB::table('asuransi')->select('asuransi.*', 'jenis.jenis')
         ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
-        ->where('status', 'onprogress')
+        ->where('status', 'sended')
         ->get();
 
         return view('pages.pembayaran_premi.create', $param);
@@ -143,10 +144,11 @@ class PembayaranPremiController extends Controller
 
     public function getJenisByNoAplikasi(Request $request){
         $jenis = DB::table('asuransi')
-                ->select('asuransi.*', 'jenis.jenis', DB::raw("LEFT(UUID(), 8) AS generate_key"))
+                ->select('asuransi.*', 'd.premi_disetor', 'jenis.jenis', DB::raw("LEFT(UUID(), 8) AS generate_key"))
                 ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', '=', 'jenis.id')
-                ->where('asuransi.status', 'onprogress')
-                ->where('asuransi.is_paid', false)
+                ->join('asuransi_detail as d', 'asuransi.id', '=', 'd.asuransi_id')
+                ->where('asuransi.status', 'sended')
+                ->where('asuransi.is_paid', 0)
                 ->where('asuransi.no_aplikasi', $request->no_aplikasi)
                 ->get();
 
@@ -275,7 +277,8 @@ class PembayaranPremiController extends Controller
                                     DB::commit();
                                     Alert::success('Berhasil', $message);
                                     return redirect()->route('asuransi.pembayaran-premi.index');
-                                }else{
+                                }
+                                else{
                                     $message = $responseBody['keterangan'];
                                     Alert::error('Gagal', $message);
                                     return back();
@@ -333,7 +336,7 @@ class PembayaranPremiController extends Controller
             Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
             return back();
         }
-        
+
         $req = [
             "no_aplikasi" => $request->no_aplikasi,
             "nobukti_pembayaran" => $request->nobukti_pembayaran,

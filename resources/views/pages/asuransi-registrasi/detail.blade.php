@@ -170,8 +170,8 @@
                                 class="text-theme-primary">*</span> </label>
                         <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
-                            <option @if (old('jeniss_pertanggungan') == '01') selected @endif value="01">Pokok</option>
-                            <option @if (old('jeniss_pertanggungan') == '02') selected @endif value="02">Sisa Kredit</option>
+                            <option @if (old('jenis_pertanggungan') == '01') selected @endif value="01">Pokok</option>
+                            <option @if (old('jenis_pertanggungan') == '02') selected @endif value="02">Sisa Kredit</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -241,8 +241,8 @@
                         <label for="" class="uppercase">Kode Layanan Syariah</label>
                         <select name="kode_ls" class="w-full p-2 border">
                             <option selected value="">-- Kode Layanan Syariah ---</option>
-                            <option @if (old('kode_is') == '0') selected @endif value="0">KV</option>
-                            <option @if (old('kode_is') == '1') selected @endif value="1">SY</option>
+                            <option @if (old('kode_ls') == '0') selected @endif value="0">KV</option>
+                            <option @if (old('kode_ls') == '1') selected @endif value="1">SY</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
