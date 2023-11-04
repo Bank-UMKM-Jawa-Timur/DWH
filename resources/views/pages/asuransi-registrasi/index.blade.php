@@ -118,7 +118,7 @@
                                                 <span class="caret-icon transform">
                                                     @include('components.svg.caret')
                                                 </span>
-                                                <span class="collapse-text">Sembunyikan Asuransi</span>
+                                                <span id="text_collapse" class="collapse-text">Sembunyikan Asuransi</span>
                                             </button>
                                         @else
                                             <span class="caret-icon transform"></span>
@@ -324,6 +324,12 @@
         $("table .view").on("click", function(e){
             // console.log($(this).nextElementSiblig("td div.collapse-table"));
             $(this).next(".collapse-table").toggleClass("hidden");
+            const text = document.querySelector('.collapse-table');
+            if (text.classList.contains('hidden')) {
+                $('#text_collapse').text("Tampilkan Asuransi")
+            } else {
+                $('#text_collapse').text("Sembunyikan Asuransi")
+            }
         });
 
         $('.dropdown .dropdown-menu .item-dropdown').on('click', function(e){
