@@ -30,6 +30,7 @@ class RegistrasiController extends Controller
      */
     public function index(Request $request)
     {
+        ini_set('max_execution_time', 120);
         try {
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
@@ -47,110 +48,108 @@ class RegistrasiController extends Controller
             }
 
             $page_length = $request->page_length ? $request->page_length : 5;
-            $data = DB::table('asuransi')
-                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
-                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                ->select('asuransi.*', 'mst_jenis_asuransi.jenis', 'k.kode_cabang')
-                ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role, $user_id) {
-                    if (strtolower($role) == 'administrator' || strtolower($role) == 'kredit umum' || strtolower($role) == 'pemasaran' || strtolower($role) == 'spi' || strtolower($role) == 'penyelia kredit') {
-                        // non staf
-                        $kode_cabang = \Session::get(config('global.user_token_session')) ?
-                        \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang;
-                        $query->where('k.kode_cabang', $kode_cabang);
+
+            // retrieve from api
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+            $apiURL = "$host/v1/get-list-pengajuan/$user_id";
+
+            try {
+                $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+
+                if ($responseBody) {
+                    if(array_key_exists('data', $responseBody)) {
+                        if (array_key_exists('data', $responseBody['data'])) {
+                            $data = $responseBody['data']['data'];
+
+                            foreach ($data as $key => $value) {
+                                // retrieve jenis_asuransi
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
+    
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $asuransi = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                                ->select(
+                                                    'p.nama AS perusahaan',
+                                                    'asuransi.*',
+                                                    'mst_jenis_asuransi.jenis',
+                                                    'k.kode_cabang',
+                                                    'd.tarif',
+                                                    'd.premi_disetor',
+                                                    'd.handling_fee',
+                                                )
+                                                ->when($role_id, function ($query) use ($request, $role, $user_id, $token) {
+                                                    if (strtolower($role) == 'administrator' || strtolower($role) == 'kredit umum' || strtolower($role) == 'pemasaran' || strtolower($role) == 'spi' || strtolower($role) == 'penyelia kredit') {
+                                                        // non staf
+                                                        $kode_cabang = $token ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang;
+                                                        $query->where('k.kode_cabang', $kode_cabang);
+                                                    }
+                                                    else {
+                                                        // staf
+                                                        $query->where('asuransi.user_id', $user_id);
+                                                    }
+                                                })
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
+    
+                                    if ($request->has('q')) {
+                                        $q = $request->get('q');
+                                        $asuransi = $asuransi->where('nama_debitur', 'LIKE', "%$q%")
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id)
+                                                    ->orWhere('no_aplikasi', 'LIKE', "%$q%")
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id)
+                                                    ->orWhere('no_polis', 'LIKE', "%$q%")
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id)
+                                                    ->orWhere('tgl_polis', 'LIKE', "%$q%")
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id)
+                                                    ->orWhere('tgl_rekam', 'LIKE', "%$q%")
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id);
+                                    }
+                                    if ($request->has('tAwal') && $request->has('tAkhir')) {
+                                        $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
+                                        $tAkhir = date('Y-m-d', strtotime($request->get('tAkhir')));
+                                        $status = $request->get('status');
+                                        $asuransi = $asuransi->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                                                    ->where('status', $status)
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id)
+                                                    ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
+                                                    ->where('status', $status)
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id);
+                                    }
+    
+                                    $asuransi = $asuransi->groupBy('no_pk')
+                                                        ->orderBy('no_aplikasi')
+                                                        ->first();
+                                    $value2->asuransi = $asuransi;
+                                }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                            }
+                        }
                     }
-                    else {
-                        // staf
-                        $query->where('asuransi.user_id', $user_id);
-                    }
-                });
-            if ($request->has('q')) {
-                $q = $request->get('q');
-                $data = $data->where('nama_debitur', 'LIKE', "%$q%")
-                            ->orWhere('no_aplikasi', 'LIKE', "%$q%")
-                            ->orWhere('no_polis', 'LIKE', "%$q%")
-                            ->orWhere('tgl_polis', 'LIKE', "%$q%")
-                            ->orWhere('tgl_rekam', 'LIKE', "%$q%");
-            }
-            if ($request->has('tAwal') && $request->has('tAkhir')) {
-                $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
-                $tAkhir = date('Y-m-d', strtotime($request->get('tAkhir')));
-                $status = $request->get('status');
-                $data = $data->whereBetween('tgl_polis', [$tAwal, $tAkhir])
-                            ->where('status', $status)
-                            ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
-                            ->where('status', $status);
-            }
-
-            $data = $data->groupBy('no_pk')
-                ->orderBy('no_aplikasi')
-                ->paginate($page_length);
-
-            $dataDetail = [];
-            foreach($data as $i => $item){
-                $dataDetail[$i] = [];
-                $detailAsuransi = DB::table('asuransi')
-                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                    ->select('asuransi.*', 'mst_jenis_asuransi.jenis');
-                if ($request->has('q')) {
-                    $q = $request->get('q');
-                    $detailAsuransi = $detailAsuransi
-                                        ->where('asuransi.user_id', $user_id)
-                                        ->where('nama_debitur', 'LIKE', "%$q%")
-                                        ->where('no_pk', $item->no_pk)
-                                        ->where('asuransi.id', '!=', $item->id)
-                                        ->orWhere('no_aplikasi', 'LIKE', "%$q%")
-                                        ->where('asuransi.user_id', $user_id)
-                                        ->where('no_pk', $item->no_pk)
-                                        ->where('asuransi.id', '!=', $item->id)
-                                        ->orWhere('no_polis', 'LIKE', "%$q%")
-                                        ->where('asuransi.user_id', $user_id)
-                                        ->where('no_pk', $item->no_pk)
-                                        ->where('asuransi.id', '!=', $item->id)
-                                        ->orWhere('tgl_polis', 'LIKE', "%$q%")
-                                        ->where('asuransi.user_id', $user_id)
-                                        ->where('no_pk', $item->no_pk)
-                                        ->where('asuransi.id', '!=', $item->id)
-                                        ->orWhere('tgl_rekam', 'LIKE', "%$q%")
-                                        ->where('asuransi.user_id', $user_id)
-                                        ->where('no_pk', $item->no_pk)
-                                        ->where('asuransi.id', '!=', $item->id);
+                } else {
                 }
-                if ($request->has('tAwal') && $request->has('tAkhir')) {
-                    $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
-                    $tAkhir = date('Y-m-d', strtotime($request->get('tAkhir')));
-                    $status = $request->get('status');
-                    $detailAsuransi = $detailAsuransi->whereBetween('tgl_polis', [$tAwal, $tAkhir])
-                                ->where('status', $status)
-                                ->where('asuransi.user_id', $user_id)
-                                ->where('no_pk', $item->no_pk)
-                                ->where('asuransi.id', '!=', $item->id)
-                                ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
-                                ->where('status', $status)
-                                ->where('asuransi.user_id', $user_id)
-                                ->where('no_pk', $item->no_pk)
-                                ->where('asuransi.id', '!=', $item->id);
-                }
-                $detailAsuransi = $detailAsuransi->where('asuransi.no_pk', $item->no_pk)
-                                                ->where('asuransi.id', '!=', $item->id)
-                                                ->get();
-
-                if(count($detailAsuransi) > 0){
-                    foreach($detailAsuransi as $j => $itemDetail){
-                        array_push($dataDetail[$i], $itemDetail);
-                    }
-                } else{
-                    $dataDetail[$i] = [];
-                }
-
-                $item->detail = $dataDetail[$i];
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
             }
 
             return view('pages.asuransi-registrasi.index', compact('data', 'role_id', 'role'));
         } catch (\Exception $e) {
-            dd($e);
+            Alert::error('Terjadi kesalahan', $e->getMessage());
             return back()->with('error', $e->getMessage());
         } catch (\Illuminate\Database\QueryException $e) {
-            dd($e);
+            Alert::error('Terjadi kesalahan', $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan pada database. '.$e->getMessage());
         }
     }
@@ -201,7 +200,7 @@ class RegistrasiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         $token = \Session::get(config('global.user_token_session'));
         $user = $token ? $this->getLoginSession() : Auth::user();
@@ -223,27 +222,42 @@ class RegistrasiController extends Controller
             return back();
         }
 
-        $token = \Session::get(config('global.user_token_session'));
-        $user = $token ? $this->getLoginSession() : Auth::user();
+        $id_pengajuan = $request->id;
 
-        $user_id = $token ? $user['id'] : $user->id;
+        $perusahaan = DB::table('mst_perusahaan_asuransi')
+                        ->select('id', 'nama', 'alamat')
+                        ->get();
+
         $host = env('LOS_API_HOST');
         $headers = [
             'token' => env('LOS_API_TOKEN')
         ];
 
-        $apiPengajuan = $host . '/v1/get-list-pengajuan/' . $user_id;
+        $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $id_pengajuan;
         $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
         $response = json_decode($api_req->getBody(), true);
-        $dataPengajuan = [];
-        if (is_array($response)) {
-            if (array_key_exists('data', $response))
-                $dataPengajuan = $response['data'];
+        $pengajuan = null;
+        if ($response) {
+            if (array_key_exists('status', $response)) {
+                if ($response['status'] == 'success') {
+                    $pengajuan = $response['data'];
+                }
+            }
         }
 
-        $dataAsuransi = DB::table('mst_jenis_asuransi')->get();
+        $pengajuan['no_aplikasi'] = \Str::random(10);
+        $tenor = $pengajuan['tenor_yang_diminta'];
+        $pengajuan['tgl_akhir_kredit'] = date('d-m-Y', strtotime($pengajuan['tanggal'] . " +$tenor month"));
 
-        return view('pages.asuransi-registrasi.create', compact('dataPengajuan', 'dataAsuransi'));
+        $skema_kredit = $pengajuan['skema_kredit'];
+        $pengajuan['age'] = UtilityController::countAge($pengajuan['tanggal_lahir']);
+
+        $jenisAsuransi = DB::table('mst_jenis_asuransi')
+                            ->select('id', 'kode', 'jenis')
+                            ->where('id', $request->jenis_asuransi)
+                            ->first();
+
+        return view('pages.asuransi-registrasi.create', compact('perusahaan', 'pengajuan', 'jenisAsuransi'));
     }
 
     public function getJenisAsuransi(Request $request){
@@ -305,6 +319,77 @@ class RegistrasiController extends Controller
 
         DB::beginTransaction();
 
+        try {
+            $jenis_asuransi_option = explode('-', $request->jenis_asuransi);
+
+            $tgl_awal = date('Y-m-d', strtotime($request->get('tanggal_awal_kredit')));
+            $tgl_akhir = date('Y-m-d', strtotime($request->get('tanggal_akhir_kredit')));
+
+            $newKredit = new Kredit();
+            $newKredit->pengajuan_id = $request->pengajuan;
+            $newKredit->is_asuransi = 1;
+            $newKredit->kode_cabang = $request->kode_cabang;
+            $newKredit->created_at = now();
+            $newKredit->save();
+
+            $premi = UtilityController::clearCurrencyFormat($request->get('premi'));
+            $refund = UtilityController::clearCurrencyFormat($request->get('refund'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+
+            $user_id = $token ? $user['id'] : $user->id;
+            $jenis_asuransi_id = $jenis_asuransi_option[0];
+            // insert asuransi
+            $newAsuransi = new Asuransi();
+            $newAsuransi->perusahaan_asuransi_id = $request->perusahaan;
+            $newAsuransi->no_aplikasi = $request->no_aplikasi;
+            $newAsuransi->no_pk = $request->no_pk;
+            $newAsuransi->no_rek = $request->no_rekening;
+            $newAsuransi->premi = $premi;
+            $newAsuransi->refund = $refund;
+            $newAsuransi->kredit_id = $newKredit->id;
+            $newAsuransi->jenis_asuransi_id = $jenis_asuransi_id;
+            $newAsuransi->user_id = $user_id;
+            $newAsuransi->nama_debitur = $request->nama_debitur;
+            $newAsuransi->tanggal_awal = $tgl_awal;
+            $newAsuransi->tanggal_akhir = $tgl_akhir;
+            $newAsuransi->status = 'onprogress';
+            $newAsuransi->save();
+
+            // insert detail asuransi
+            $newDetail = new DetailAsuransi();
+            $newDetail->asuransi_id = $newAsuransi->id;
+            $newDetail->jenis_pengajuan = $request->jenis_pengajuan;
+            $newDetail->kolektibilitas = $request->kolektibilitas;
+            $newDetail->jenis_pertanggungan = $request->jenis_pertanggungan;
+            $newDetail->tipe_premi = $request->tipe_premi;
+            $newDetail->jenis_coverage = $request->jenis_coverage;
+            $newDetail->no_polis_sebelumnya = $request->no_polis_sebelumnya;
+            $newDetail->baki_debet = UtilityController::clearCurrencyFormat($request->baki_debet);
+            $newDetail->tunggakan = UtilityController::clearCurrencyFormat($request->tunggakan);
+            $newDetail->tarif = $request->tarif;
+            $newDetail->kode_layanan_syariah = $request->kode_ls;
+            $newDetail->handling_fee = UtilityController::clearCurrencyFormat($request->handling_fee);
+            $newDetail->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
+            $newDetail->save();
+
+            $this->logActivity->store('Pengguna ' . $request->name . ' menyimpan data asuransi.');
+
+            DB::commit();
+            Alert::success('Berhasil', 'Berhasil menyimpan data');
+            return redirect()->route('asuransi.registrasi.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Alert::error('Gagal', $e->getMessage());
+            return back()->withInput();
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            DB::rollBack();
+            Alert::error('Gagal timeout', $e->getMessage());
+            return back()->withInput();
+        }
+    }
+
+    public function send(Request $request) {
         try {
             $jenis_asuransi_option = explode('-', $request->jenis_asuransi);
             $req = [
@@ -371,57 +456,15 @@ class RegistrasiController extends Controller
                             $tgl_awal = date('Y-m-d', strtotime($request->get('tanggal_awal_kredit')));
                             $tgl_akhir = date('Y-m-d', strtotime($request->get('tanggal_akhir_kredit')));
 
-                            $newKredit = new Kredit();
-                            $newKredit->pengajuan_id = $request->pengajuan;
-                            $newKredit->is_asuransi = 1;
-                            $newKredit->kode_cabang = $request->kode_cabang;
-                            $newKredit->created_at = now();
-                            $newKredit->save();
-
-                            $premi = UtilityController::clearCurrencyFormat($request->get('premi'));
-                            $refund = UtilityController::clearCurrencyFormat($request->get('refund'));
-                            $token = \Session::get(config('global.user_token_session'));
-                            $user = $token ? $this->getLoginSession() : Auth::user();
-
-                            $user_id = $token ? $user['id'] : $user->id;
-                            $jenis_asuransi_id = $jenis_asuransi_option[0];
-                            // insert asuransi
-                            $newAsuransi = new Asuransi();
-                            $newAsuransi->no_aplikasi = $request->no_aplikasi;
-                            $newAsuransi->no_pk = $request->no_pk;
-                            $newAsuransi->no_rek = $request->no_rekening;
-                            $newAsuransi->premi = $premi;
-                            $newAsuransi->refund = $refund;
-                            $newAsuransi->kredit_id = $newKredit->id;
-                            $newAsuransi->jenis_asuransi_id = $jenis_asuransi_id;
-                            $newAsuransi->user_id = $user_id;
-                            $newAsuransi->nama_debitur = $request->nama_debitur;
+                            // update asuransi
+                            $newAsuransi = Asuransi::find($request->id);
                             $newAsuransi->no_polis = $polis;
                             $newAsuransi->tgl_polis = $tgl_polis;
                             $newAsuransi->tgl_rekam = $tgl_rekam;
-                            $newAsuransi->tanggal_awal = $tgl_awal;
-                            $newAsuransi->tanggal_akhir = $tgl_akhir;
-                            $newAsuransi->status = 'onprogress';
+                            $newAsuransi->status = 'sended';
                             $newAsuransi->save();
 
-                            // insert detail asuransi
-                            $newDetail = new DetailAsuransi();
-                            $newDetail->asuransi_id = $newAsuransi->id;
-                            $newDetail->jenis_pengajuan = $request->jenis_pengajuan;
-                            $newDetail->kolektibilitas = $request->kolektibilitas;
-                            $newDetail->jenis_pertanggungan = $request->jenis_pertanggungan;
-                            $newDetail->tipe_premi = $request->tipe_premi;
-                            $newDetail->jenis_coverage = $request->jenis_coverage;
-                            $newDetail->no_polis_sebelumnya = $request->no_polis_sebelumnya;
-                            $newDetail->baki_debet = UtilityController::clearCurrencyFormat($request->baki_debet);
-                            $newDetail->tunggakan = UtilityController::clearCurrencyFormat($request->tunggakan);
-                            $newDetail->tarif = $request->tarif;
-                            $newDetail->kode_layanan_syariah = $request->kode_ls;
-                            $newDetail->handling_fee = UtilityController::clearCurrencyFormat($request->handling_fee);
-                            $newDetail->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
-                            $newDetail->save();
-
-                            $this->logActivity->store('Pengguna ' . $request->name . ' tambah registrasi asuransi.');
+                            $this->logActivity->store('Pengguna ' . $request->name . ' mengirimkan registrasi asuransi.');
 
                             $message = $responseBody['keterangan'];
 
