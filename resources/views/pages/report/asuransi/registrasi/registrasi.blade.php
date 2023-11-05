@@ -23,62 +23,64 @@
                         @endif
                     </div>
                 </div>
-                <div class="px-3 mb-5">
-                    <div class="lg:grid-cols-4 w-full md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
-                        <div class="input-box-calendar space-y-3 col-span-1">
-                            <label for="" class="uppercase">Dari<span class="text-theme-primary">*</span></label>
-                            <input type="text" class="datepicker p-2 w-full border" id="dari"
-                                name="dari" value="@if(\Request::has('dari')) {{\Request::get('dari')}} @endif" required/>
-                            <small class="form-text text-red-600 error dari-error"></small>
-                        </div>
-                        <div class="input-box-calendar space-y-3 col-span-1">
-                            <label for="" class="uppercase">Sampai<span class="text-theme-primary">*</span></label>
-                            <input type="text" class="datepicker p-2 w-full border" id="sampai"
-                                name="sampai" value="{{old('sampai')}}" required/>
-                            <small class="form-text text-red-600 error sampai-error"></small>
-                        </div>
-                        <div class="input-box space-y-3 col-span-1">
-                            <label for="" class="uppercase">Cabang</label> 
-                            <select name="cabang" id="cabang" class="w-full p-2 border" required>
-                                <option value="all" selected>-- Semua cabang ---</option>
-                                @foreach ($cabang as $item)
-                                    <option value="{{$item['kode_cabang']}}" @if(\Request::has('cabang')){{$item['kode_cabang'] == \Request::get('cabang') ? 'selected' : ''}}@endif>{{$item['kode_cabang']}} - {{$item['cabang']}}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-red-600 error"></small>
-                        </div>
-                        <div class="input-box space-y-3 col-span-1">
-                            <label for="" class="uppercase">NIP</label>
-                            <select name="nip" id="nip" class="w-full p-2 border" required>
-                                <option value="all" selected>-- Semua nip ---</option>
-                                @if (\Request::has('cabang'))
-                                    @if (\Request::get('cabang') != 'all')
-                                        @foreach ($staf as $item)
-                                            @if (is_array($item))
-                                                @if (array_key_exists('id', $item))
-                                                    <option value="{{$item['id']}}" @if(\Request::has('nip')){{$item['id'] == \Request::get('nip') ? 'selected' : ''}}@endif>{{$item['nip']}} - {{$item['detail']['nama']}}</option>
+                <div class="px-3 mb-5 lg:flex grid grid-cols-1 gap-5">
+                    <div class="p-5 w-full">
+                        <div class="lg:grid-cols-2 w-full md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                            <div class="input-box-calendar space-y-3 col-span-1">
+                                <label for="" class="uppercase">Dari<span class="text-theme-primary">*</span></label>
+                                <input type="text" class="datepicker p-2 w-full border" id="dari"
+                                    name="dari" value="@if(\Request::has('dari')) {{\Request::get('dari')}} @endif" required/>
+                                <small class="form-text text-red-600 error dari-error"></small>
+                            </div>
+                            <div class="input-box-calendar space-y-3 col-span-1">
+                                <label for="" class="uppercase">Sampai<span class="text-theme-primary">*</span></label>
+                                <input type="text" class="datepicker p-2 w-full border" id="sampai"
+                                    name="sampai" value="{{old('sampai')}}" required/>
+                                <small class="form-text text-red-600 error sampai-error"></small>
+                            </div>
+                            <div class="input-box space-y-3 col-span-1">
+                                <label for="" class="uppercase">Cabang</label> 
+                                <select name="cabang" id="cabang" class="w-full p-2 border" required>
+                                    <option value="all" selected>-- Semua cabang ---</option>
+                                    @foreach ($cabang as $item)
+                                        <option value="{{$item['kode_cabang']}}" @if(\Request::has('cabang')){{$item['kode_cabang'] == \Request::get('cabang') ? 'selected' : ''}}@endif>{{$item['kode_cabang']}} - {{$item['cabang']}}</option>
+                                    @endforeach
+                                </select>
+                                <small class="form-text text-red-600 error"></small>
+                            </div>
+                            <div class="input-box space-y-3 col-span-1">
+                                <label for="" class="uppercase">NIP</label>
+                                <select name="nip" id="nip" class="w-full p-2 border" required>
+                                    <option value="all" selected>-- Semua nip ---</option>
+                                    @if (\Request::has('cabang'))
+                                        @if (\Request::get('cabang') != 'all')
+                                            @foreach ($staf as $item)
+                                                @if (is_array($item))
+                                                    @if (array_key_exists('id', $item))
+                                                        <option value="{{$item['id']}}" @if(\Request::has('nip')){{$item['id'] == \Request::get('nip') ? 'selected' : ''}}@endif>{{$item['nip']}} - {{$item['detail']['nama']}}</option>
+                                                    @endif
                                                 @endif
-                                            @endif
-                                        @endforeach
+                                            @endforeach
+                                        @endif
                                     @endif
-                                @endif
-                            </select>
-                            <small class="form-text text-red-600 error"></small>
+                                </select>
+                                <small class="form-text text-red-600 error"></small>
+                            </div>
+                        </div>
+                        <div class="flex gap-5 justify-end mt-4">
+                            <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
+                                id="btn-show">
+                                <span class=""> Tampilkan </span>
+                            </button>
+                            @if (\Request::has('dari') && \Request::has('sampai'))
+                                <a href="{{route('asuransi.report.registrasi.registrasi')}}" id="btn-reset"
+                                    class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                                    <span class=""> Reset </span>
+                                </a>
+                            @endif
                         </div>
                     </div>
-                    <div class="flex gap-5 justify-end mt-4">
-                        <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
-                            id="btn-show">
-                            <span class="lg:block hidden"> Tampilkan </span>
-                        </button>
-                        @if (\Request::has('dari') && \Request::has('sampai'))
-                            <a href="{{route('asuransi.report.registrasi.registrasi')}}" id="btn-reset"
-                                class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
-                                <span class="lg:block hidden"> Reset </span>
-                            </a>
-                        @endif
-                    </div>
-                    <div class="p-2 space-y-2 mt-5">
+                    <div class="p-2 space-y-2 mt-5 w-full">
                         <div class="registrasi-chart"></div>
                     </div>  
                 </div>
