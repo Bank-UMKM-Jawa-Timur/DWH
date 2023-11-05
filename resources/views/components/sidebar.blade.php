@@ -111,6 +111,104 @@
           </a>
         </ul>
       </div>
+      <li class="item-link dropdown-toggle">
+        <div class="relative">
+          <a
+            href="#"
+            class="nav-link relative"
+          >
+            <span>
+              @include('components.svg.insurance')
+            </span>
+            <div>Laporan</div>
+          </a>
+          <span class="dropdown-arrow absolute right-2 bottom-2.5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M12 15.121a.997.997 0 0 1-.707-.293L7.05 10.586a1 1 0 0 1 1.414-1.414L12 12.707l3.536-3.535a1 1 0 0 1 1.414 1.414l-4.243 4.242a.997.997 0 0 1-.707.293Z"
+              />
+            </svg>
+          </span>
+        </div>
+      </li>
+      <div class="dropdown-menu-link hidden">
+        <ul class="menu-dropdown">
+          <a href="{{ route('asuransi.pembayaran-premi.index') }}">
+            <li class="dropdown-item-link">
+              KKB
+            </li>
+          </a>
+          <li class="item-link dropdown-toggle">
+            <div class="relative">
+              <a
+                href="#"
+                class="nav-link relative"
+              >
+                <div>Asuransi</div>
+              </a>
+              <span class="dropdown-arrow absolute right-2 bottom-2.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M12 15.121a.997.997 0 0 1-.707-.293L7.05 10.586a1 1 0 0 1 1.414-1.414L12 12.707l3.536-3.535a1 1 0 0 1 1.414 1.414l-4.243 4.242a.997.997 0 0 1-.707.293Z"
+                  />
+                </svg>
+              </span>
+            </div>
+          </li>
+          <div class="dropdown-menu-link hidden">
+            <ul class="menu-dropdown">
+              <!-- add rule class active-dropdown-link for active navigation -->
+              <a href="{{route('asuransi.report.registrasi')}}">
+                <li class="dropdown-item-link">
+                  Registrasi
+                </li>
+              </a>
+              <a href="#">
+                <li class="dropdown-item-link {{ request()->is('asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*') ? 'active-dropdown-link' : '' }}">
+                  Pembatalan Registrasi
+                </li>
+              </a>
+              <a href="#">
+                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+                  Pembayaran Premi
+                </li>
+              </a>
+              <a href="#">
+                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+                  Pengajuan Klaim
+                </li>
+              </a>
+              <a href="#">
+                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+                  Pembatalan Klaim
+                </li>
+              </a>
+              <a href="#">
+                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+                  Pelaporan Pelunasan
+                </li>
+              </a>
+              <a href="#">
+                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+                  Log Data
+                </li>
+              </a>
+            </ul>
+          </div>
+        </ul>
+      </div>
       @endif
       @if (\Session::get(config('global.role_id_session')) == 4)
       <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*') ? 'active-link' : '' }}">

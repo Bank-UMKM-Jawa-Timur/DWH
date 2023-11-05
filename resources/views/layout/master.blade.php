@@ -47,7 +47,7 @@
                     <div class="text-center space-y-5">
                         <img src="{{ asset('template/assets/img/news/loading.svg') }}" class="max-w-[120px] mx-auto"
                             alt="">
-                        <p class="text-white">Updating data...</p>
+                        <p class="text-white">Harap tunggu...</p>
                     </div>
                 </div>
             </div>
