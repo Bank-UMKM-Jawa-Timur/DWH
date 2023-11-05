@@ -18,8 +18,8 @@
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
                             Form Laporan Log Activity Asuransi
                         </h2>
-                        @if (\Request::get('tAwal') && \Request::get('tAkhir'))
-                            <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b> dengan status <b>{{Request()->status == 'canceled' ? 'dibatalkan' : 'onprogres'}}</b>.</p>
+                        @if (\Request::get('dari') && \Request::get('sampai'))
+                            <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('dari')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('sampai')))}}.</p>
                         @endif
                     </div>
                 </div>
