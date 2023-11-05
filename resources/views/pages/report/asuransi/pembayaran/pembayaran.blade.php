@@ -7,7 +7,7 @@
     <div class="head-pages">
         <p class="text-sm">Laporan</p>
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-            Registrasi Asuransi
+            Pembayaran
         </h2>
     </div>
     <div class="body-pages">
@@ -16,7 +16,7 @@
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 justify-between">
                     <div class="title-table lg:p-3 p-2 text-left">
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                            Form Laporan Registrasi Asuransi
+                            Form Laporan Pembayaran
                         </h2>
                         @if (\Request::get('tAwal') && \Request::get('tAkhir'))
                             <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b> dengan status <b>{{Request()->status == 'canceled' ? 'dibatalkan' : 'onprogres'}}</b>.</p>
@@ -72,7 +72,7 @@
                             <span class="lg:block hidden"> Tampilkan </span>
                         </button>
                         @if (\Request::has('dari') && \Request::has('sampai'))
-                            <a href="{{route('asuransi.report.registrasi.registrasi')}}" id="btn-reset"
+                            <a href="{{route('asuransi.report.pembayaran')}}" id="btn-reset"
                                 class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
                                 <span class="lg:block hidden"> Reset </span>
                             </a>
@@ -80,112 +80,109 @@
                     </div>
                 </div>
             </div>
-            @if (\Request::has('dari') && \Request::has('sampai'))
-                <div class="table-wrapper bg-white border rounded-md w-full p-2 mt-5">
-                    <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
-                        <div class="title-table lg:p-3 p-2 text-left">
-                            <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                                Laporan Registrasi Asuransi
-                            </h2>
-                            @if (\Request::get('tAwal') && \Request::get('tAkhir'))
-                                <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b> dengan status <b>{{Request()->status == 'canceled' ? 'dibatalkan' : 'onprogres'}}</b>.</p>
-                            @endif
-                        </div>
+            <div class="table-wrapper bg-white border rounded-md w-full p-2 mt-5">
+                <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
+                    <div class="title-table lg:p-3 p-2 text-left">
+                        <h2 class="font-bold text-lg text-theme-text tracking-tighter">
+                            Laporan Registrasi Asuransi
+                        </h2>
+                        @if (!\Request::has('dari') && !\Request::has('sampai'))
+                            <p class="text-gray-600 text-sm">Menampilkan data pada bulan ini.</p>
+                        @endif
                     </div>
-                    <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
-                        <div class="sorty pl-1 w-full">
-                            <label for="" class="mr-3 text-sm text-neutral-400">show</label>
-                            <select name="page_length" id="page_length"
-                                class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center">
-                                <option value="5"
-                                    @isset($_GET['page_length']) {{ $_GET['page_length'] == 5 ? 'selected' : '' }} @endisset>
-                                    5</option>
-                                <option value="10"
-                                    @isset($_GET['page_length']) {{ $_GET['page_length'] == 10 ? 'selected' : '' }} @endisset>
-                                    10</option>
-                                <option value="15"
-                                    @isset($_GET['page_length']) {{ $_GET['page_length'] == 15 ? 'selected' : '' }} @endisset>
-                                    15</option>
-                                <option value="20"
-                                    @isset($_GET['page_length']) {{ $_GET['page_length'] == 20 ? 'selected' : '' }} @endisset>
-                                    20</option>
-                            </select>
-                            <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
-                        </div>
-                        <div class="search-table lg:w-96 w-full">
-                            <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
-                                <span class="mt-2 ml-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                                        <path fill="currentColor"
-                                            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
-                                    </svg>
-                                </span>
-                                <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-                                    autocomplete="off" name="q" id="q" value="{{Request()->q}}" />
-                            </div>
-                        </div>
+                </div>
+                <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    <div class="sorty pl-1 w-full">
+                        <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                        <select name="page_length" id="page_length"
+                            class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center">
+                            <option value="5"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 5 ? 'selected' : '' }} @endisset>
+                                5</option>
+                            <option value="10"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 10 ? 'selected' : '' }} @endisset>
+                                10</option>
+                            <option value="15"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 15 ? 'selected' : '' }} @endisset>
+                                15</option>
+                            <option value="20"
+                                @isset($_GET['page_length']) {{ $_GET['page_length'] == 20 ? 'selected' : '' }} @endisset>
+                                20</option>
+                        </select>
+                        <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
                     </div>
-                    <div class="tables mt-2">
-                        <table class="table-auto w-full">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th colspan="6" class="border-r">Debitur</th>
-                                    <th colspan="4">Asuransi</th>
-                                </tr>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Nama Debitur</th>
-                                    <th>Cabang</th>
-                                    <th>Tanggal Pengajuan</th>
-                                    <th>Nomor PK</th>
-                                    <th>Jenis Kredit</th>
-                                    <th class="border-r">Plafond</th>
-                                    <th>No Aplikasi</th>
-                                    <th>No Polis</th>
-                                    <th>Tanggal Polis</th>
-                                    <th>Tanggal Rekam</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($asuransi as $item)
-                                    @php
-                                        $cabang = $item->pengajuan ? $item->pengajuan['cabang'] : 'undifined';
-                                        $skema_kredit = $item->pengajuan ? $item->pengajuan['skema_kredit'] : 'undifined';
-                                        $plafond = $item->pengajuan ? $item->pengajuan['jumlah_kredit'] : 0;
-                                    @endphp
-                                    <tr>
-                                        <td>{{$loop->iteration}}</td>
-                                        <td>{{$item->nama_debitur}}</td>
-                                        <td>{{$cabang}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tanggal_awal))}}</td>
-                                        <td>{{$item->no_pk}}</td>
-                                        <td>{{$skema_kredit}}</td>
-                                        <td>{{number_format($plafond, 0, ',', '.')}}</td>
-                                        <td>{{$item->no_aplikasi}}</td>
-                                        <td>{{$item->no_polis}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tgl_polis))}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tgl_rekam))}}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="11">Belum ada data asuransi.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
-                        <div class="w-full">
-                            <div class="pagination kkb-pagination">
-                                @if ($asuransi instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                    {{ $asuransi->links('pagination::tailwind') }}
-                                @endif
-                            </div>
+                    <div class="search-table lg:w-96 w-full">
+                        <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                            <span class="mt-2 ml-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z" />
+                                </svg>
+                            </span>
+                            <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                                autocomplete="off" name="q" id="q" value="{{Request()->q}}" />
                         </div>
                     </div>
                 </div>
-            @endif
+                <div class="tables mt-2">
+                    <table class="table-auto w-full">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Perusahaan</th>
+                                <th>Debitur</th>
+                                <th>Cabang</th>
+                                <th>No Aplikasi</th>
+                                <th>No Bukti Pembayaran</th>
+                                <th>No Rekening</th>
+                                <th>No PK</th>
+                                <th>Tanggal</th>
+                                <th>Premi</th>
+                                <th>Premi Disetor</th>
+                                <th>Periode Bayar</th>
+                                <th>Total Periode(dalam tahun)</th>
+                                <th>Status Bayar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($pembayaran as $item)
+                                @php
+                                    $cabang = $item->pengajuan ? $item->pengajuan['cabang'] : 'undifined';
+                                @endphp
+                                <tr>
+                                    <td>{{$loop->iteration}}</td>
+                                    <td>{{$item->perusahaan}}</td>
+                                    <td>{{$item->nama_debitur}}</td>
+                                    <td>{{$cabang}}</td>
+                                    <td>{{$item->no_aplikasi}}</td>
+                                    <td>{{$item->nobukti_pembayaran}}</td>
+                                    <td>{{$item->no_rek}}</td>
+                                    <td>{{$item->no_pk}}</td>
+                                    <td>{{date('d-m-y', strtotime($item->tgl_bayar))}}</td>
+                                    <td>{{number_format($item->premi, 0, ',', '.')}}</td>
+                                    <td>{{number_format($item->premi_disetor, 0, ',', '.')}}</td>
+                                    <td>{{$item->periode_bayar}}</td>
+                                    <td>{{$item->total_periode}}</td>
+                                    <td>{{$item->is_paid ? 'Sudah' : 'Belum'}}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="13">Belum ada data.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+                    <div class="w-full">
+                        <div class="pagination kkb-pagination">
+                            @if ($pembayaran instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                {{ $pembayaran->links('pagination::tailwind') }}
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 @endsection
@@ -228,7 +225,6 @@
         $('#btn-show').on('click', function(e) {
             e.preventDefault()
             $('#preload-data').removeClass('hidden')
-
             var dari = $('#dari').val()
             var sampai = $('#sampai').val()
 
@@ -237,7 +233,6 @@
             }
             else {
                 $('#preload-data').addClass('hidden')
-
                 var msg = 'Harap pilih tanggal terlebih dahulu.'
                 $('.dari-error').html(msg)
                 $('.sampai-error').html(msg)

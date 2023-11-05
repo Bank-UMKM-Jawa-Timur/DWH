@@ -180,7 +180,7 @@
                   Pembatalan Registrasi
                 </li>
               </a>
-              <a href="#">
+              <a href="{{route('asuransi.report.pembayaran')}}">
                 <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
                   Pembayaran Premi
                 </li>
