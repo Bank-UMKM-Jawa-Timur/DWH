@@ -138,6 +138,7 @@ Route::middleware('auth_api')->group(function () {
                     ->group(function() {
                         Route::get('/registrasi', 'registrasi')->name('registrasi');
                         Route::get('/pembatalan', 'pembatalan')->name('pembatalan');
+                        Route::get('/log-data', 'logData')->name('log-data');
                     });
             });
     });

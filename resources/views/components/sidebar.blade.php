@@ -200,8 +200,8 @@
                   Pelaporan Pelunasan
                 </li>
               </a>
-              <a href="#">
-                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+              <a href="{{route('asuransi.report.registrasi.log-data')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/registrasi/log-data') ? 'active-dropdown-link' : '' }}">
                   Log Data
                 </li>
               </a>

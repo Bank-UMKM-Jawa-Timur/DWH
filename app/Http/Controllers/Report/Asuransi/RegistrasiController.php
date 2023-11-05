@@ -90,19 +90,19 @@ class RegistrasiController extends Controller
                                         ->orWhere('asuransi.tgl_rekam', 'LIKE', "%$q%")
                                         ->where('asuransi.status', 'sended');
                 }
-    
+
                 if (is_numeric($page_length)) {
                     $asuransi = $asuransi->orderBy('no_aplikasi')->paginate($page_length);
                 } else {
                     $asuransi = $asuransi->orderBy('no_aplikasi')->get();
                 }
-    
+
                 foreach ($asuransi as $key => $value) {
                     $host = env('LOS_API_HOST');
                     $headers = [
                         'token' => env('LOS_API_TOKEN')
                     ];
-    
+
                     $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $value->pengajuan_id;
                     $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
                     $response = json_decode($api_req->getBody(), true);
@@ -123,7 +123,7 @@ class RegistrasiController extends Controller
                 'staf' => $staf,
                 'asuransi' => $asuransi,
             ];
-            
+
             return view('pages.report.asuransi.registrasi.registrasi', $data);
         } catch (Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
@@ -158,6 +158,7 @@ class RegistrasiController extends Controller
 
                 $tAwal = date('Y-m-d', strtotime($request->get('dari')));
                 $tAkhir = date('Y-m-d', strtotime($request->get('sampai')));
+
 
                 $asuransi = DB::table('asuransi')
                             ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
@@ -209,19 +210,19 @@ class RegistrasiController extends Controller
                                         ->orWhere('asuransi.tgl_rekam', 'LIKE', "%$q%")
                                         ->where('asuransi.status', 'canceled');
                 }
-    
+
                 if (is_numeric($page_length)) {
                     $asuransi = $asuransi->orderBy('no_aplikasi')->paginate($page_length);
                 } else {
                     $asuransi = $asuransi->orderBy('no_aplikasi')->get();
                 }
-    
+
                 foreach ($asuransi as $key => $value) {
                     $host = env('LOS_API_HOST');
                     $headers = [
                         'token' => env('LOS_API_TOKEN')
                     ];
-    
+
                     $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $value->pengajuan_id;
                     $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
                     $response = json_decode($api_req->getBody(), true);
@@ -242,8 +243,42 @@ class RegistrasiController extends Controller
                 'staf' => $staf,
                 'asuransi' => $asuransi,
             ];
-            
+
             return view('pages.report.asuransi.registrasi.pembatalan', $data);
+        } catch (Exception $e) {
+            Alert::error('Terjadi kesalahan', $e->getMessage());
+            return back();
+        }
+    }
+
+
+    public function logData(Request $request){
+    ini_set('max_execution_time', 120);
+        try {
+            $tAwal = date('Y-m-d', strtotime($request->get('dari')));
+            $tAkhir = $request->get('sampai');
+            $hari_ini = now();
+
+            if (empty($tAkhir)) {
+                $tAkhir = $hari_ini;
+            } else {
+                $tAkhir = date('Y-m-d', strtotime($tAkhir));
+            }
+
+            $page_length = $request->page_length ? $request->page_length : 5;
+            $data = DB::table('log_activities')->where('is_asuransi', 1)
+            ->whereBetween('created_at', [$tAwal, $tAkhir]);
+            if ($request->has('q')) {
+                $q = $request->get('q');
+                $data = $data->where('content', 'LIKE', "%$q%");
+            }
+
+            if (is_numeric($page_length)) {
+                $data = $data->orderBy('created_at', 'DESC')->paginate($page_length);
+            } else {
+                $data = $data->orderBy('created_at', 'DESC')->get();
+            }
+            return view('pages.report.asuransi.registrasi.log-data', $data);
         } catch (Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
             return back();
