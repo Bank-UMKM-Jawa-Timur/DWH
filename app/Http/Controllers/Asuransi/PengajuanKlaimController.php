@@ -141,7 +141,6 @@ class PengajuanKlaimController extends Controller
             'penyebab_klaim' => 'Penyebab Klaim',
         ]);
 
-        // return $request;
         DB::beginTransaction();
         try {
             $asuransi = DB::table('asuransi')
@@ -169,68 +168,19 @@ class PengajuanKlaimController extends Controller
                 'created_at' => now()
             ];
 
+            $detailPengajuanKlaim = new DetailPengajuanKlaim();
+            $detailPengajuanKlaim->insert($detail);
+
             $user_name = \Session::get(config('global.user_name_session'));
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
             $name = $token ? $user['data']['nip'] : $user->email;
 
-            $host = config('global.eka_lloyd_host');
-            $url = "$host/klaim";
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
-            $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
-            $statusCode = $response->status();
-            if ($statusCode == 200) {
-                $responseBody = json_decode($response->getBody(), true);
-                if ($responseBody) {
-                    $status = $responseBody['status'];
-                    $message = '';
-                    switch ($status) {
-                        case '00':
-                            # success
-                            $message = $responseBody['keterangan'];
-                            $asuransi = DB::table('asuransi')
-                                            ->select('id')
-                                            ->where('no_aplikasi', $request->no_aplikasi)
-                                            ->first();
-                            $detailPengajuanKlaim = new DetailPengajuanKlaim();
-                            $detailPengajuanKlaim->insert($detail);
+            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menambahkan pengajuan klaim.', $asuransi->id, 1);
 
-                            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menambahkan pengajuan klaim.', $asuransi->id, 1);
-
-                            DB::commit();
-                            Alert::success('Berhasil', $message);
-                            return redirect()->route('asuransi.pengajuan-klaim.index');
-                            break;
-                        case '01':
-                            # no aplikasi tidak ditemukan
-                            $message = $responseBody['keterangan'];
-                            Alert::error('Gagal', $message);
-                            return back();
-                            break;
-                        case '02':
-                            # gagal
-                            $message = $responseBody['keterangan'];
-                            Alert::error('Gagal', $message);
-                            return back();
-                            break;
-                        case '03':
-                            # data Kurang lengkap
-                            $message = $responseBody['keterangan'];
-                            Alert::error('Gagal', $message);
-                            return back();
-                            break;
-                        default:
-                            Alert::error('Gagal', 'Terjadi kesalahan');
-                            return back();
-                            break;
-                    }
-                }
-            } else {
-                Alert::error('Gagal', 'Terjadi kesalahan');
-                return back();
-            }
+            DB::commit();
+            Alert::success('Berhasil', 'Berhasil menambahkan pengajuan klaim.');
+            return redirect()->route('asuransi.pengajuan-klaim.index');
         } catch (\Exception $e) {
             DB::rollBack();
             Alert::error(
