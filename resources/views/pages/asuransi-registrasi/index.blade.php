@@ -394,14 +394,16 @@
 @push('extraScript')
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <script>
-        $("table .view").on("click", function(e){
-            // console.log($(this).nextElementSiblig("td div.collapse-table"));
-            $(this).next(".collapse-table").toggleClass("hidden");
-            const text = document.querySelector('.collapse-table');
-            if (text.classList.contains('hidden')) {
-                $('#text_collapse').text("Tampilkan Asuransi")
+        $("table .view").on("click", function(e) {
+            const $collapseTable = $(this).next(".collapse-table");
+            $collapseTable.toggleClass("hidden");
+
+            const $textCollapse = $(this).find('#text_collapse');
+
+            if ($collapseTable.hasClass('hidden')) {
+                $textCollapse.text("Tampilkan Asuransi");
             } else {
-                $('#text_collapse').text("Sembunyikan Asuransi")
+                $textCollapse.text("Sembunyikan Asuransi");
             }
         });
 
