@@ -864,7 +864,7 @@
     var donut = new ApexCharts(document.querySelector(".chart"), options);
     donut.render();
 
-        // chart donut
+    // chart donut
     var optionsPembayaranPremi = {
         labels: ['Yang Belum dibayar', 'Yang Sudah dibayar'],
         series: [44, 55],

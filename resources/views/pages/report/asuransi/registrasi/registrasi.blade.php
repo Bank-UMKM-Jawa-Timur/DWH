@@ -78,9 +78,12 @@
                             </a>
                         @endif
                     </div>
+                    <div class="p-2 space-y-2 mt-5">
+                        <div class="registrasi-chart"></div>
+                    </div>  
                 </div>
             </div>
-            @if (\Request::has('dari') && \Request::has('sampai'))
+            {{--  @if (\Request::has('dari') && \Request::has('sampai'))
                 <div class="table-wrapper bg-white border rounded-md w-full p-2 mt-5">
                     <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                         <div class="title-table lg:p-3 p-2 text-left">
@@ -185,7 +188,7 @@
                         </div>
                     </div>
                 </div>
-            @endif
+            @endif  --}}
         </form>
     </div>
 @endsection
@@ -265,6 +268,39 @@
     @if(\Request::has('sampai'))
         <script>
             $('#sampai').val("{{\Request::get('sampai')}}")
+        </script>
+    @endif
+
+    @if (\Request::has('dari') && \Request::has('sampai'))
+        <script>
+            // chart donut
+            var registered = parseInt("{{$registered}}")
+            var not_register = parseInt("{{$not_register}}")
+            var belum_registrasi = parseInt("{{$belum_registrasi}}")
+            var optionsRegistrasi = {
+                labels: ['Registrasi', 'Tidak Registrasi', 'Belum Registrasi'],
+                series: [registered, not_register, belum_registrasi],
+                chart: {
+                    type: 'donut',
+                    width: '100%',
+                    height: 480,
+                },
+                legend: {
+                    position: 'bottom'
+                },
+
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 340,
+                        },
+                    }
+                }]
+            };
+
+            var registrasiChart = new ApexCharts(document.querySelector(".registrasi-chart"), optionsRegistrasi);
+            registrasiChart.render();
         </script>
     @endif
 @endpush
