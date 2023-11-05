@@ -297,6 +297,68 @@ class RegistrasiController extends Controller
     }
 
 
+
+    public function pelaporanPelunasan(Request $request){
+    ini_set('max_execution_time', 120);
+        try {
+            $tAwal = date('Y-m-d', strtotime($request->get('dari')));
+            $tAkhir = $request->get('sampai');
+            $hari_ini = now();
+
+            if (empty($tAkhir)) {
+                $tAkhir = $hari_ini;
+            } else {
+                $tAkhir = date('Y-m-d', strtotime($tAkhir));
+            }
+
+            $page_length = $request->page_length ? $request->page_length : 5;
+            $data = DB::table('asuransi')
+                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                ->select(
+                    'k.pengajuan_id',
+                    'p.nama AS perusahaan',
+                    'asuransi.*',
+                    'mst_jenis_asuransi.jenis',
+                    'k.kode_cabang',
+                    'd.tarif',
+                    'd.premi_disetor',
+                    'd.handling_fee',
+                )
+                ->where('k.is_asuransi', true)
+                ->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                ->where('asuransi.done_at', 1)
+                ->where('k.is_asuransi', true);
+
+            if ($request->has('q')) {
+                $q = $request->get('q');
+                $data = $data->when($q, function ($query) use ($q) {
+                    $query->where('asuransi.nama_debitur', 'LIKE', "%$q%")
+                    ->where('asuransi.done_at', 1)
+                    ->orWhere('asuransi.no_aplikasi', 'LIKE', "%$q%")
+                    ->where('asuransi.done_at', 1)
+                    ->orWhere('asuransi.no_polis', 'LIKE', "%$q%")
+                    ->where('asuransi.done_at', 1)
+                    ->orWhere('asuransi.tgl_polis', 'LIKE', "%$q%")
+                    ->where('asuransi.done_at', 1)
+                    ->orWhere('asuransi.tgl_rekam', 'LIKE', "%$q%")
+                    ->where('asuransi.done_at', 1);
+                });
+            }
+
+            if (is_numeric($page_length)) {
+                $data = $data->orderBy('created_at', 'DESC')->paginate($page_length);
+            } else {
+                $data = $data->orderBy('created_at', 'DESC')->get();
+            }
+            return view('pages.report.asuransi.pelunasan.pelunasan', $data);
+        } catch (Exception $e) {
+            Alert::error('Terjadi kesalahan', $e->getMessage());
+            return back();
+        }
+    }
     public function logData(Request $request){
     ini_set('max_execution_time', 120);
         try {
@@ -311,7 +373,7 @@ class RegistrasiController extends Controller
             }
 
             $page_length = $request->page_length ? $request->page_length : 5;
-            $data = DB::table('log_activities')->where('is_asuransi', 1)
+            $data = DB::table('asuransi')->where('asuransi.done_by', 1)
             ->whereBetween('created_at', [$tAwal, $tAkhir]);
             if ($request->has('q')) {
                 $q = $request->get('q');
