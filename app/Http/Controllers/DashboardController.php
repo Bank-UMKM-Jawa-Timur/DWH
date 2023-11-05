@@ -140,10 +140,34 @@ class DashboardController extends Controller
             $this->param['yangDibatalkan'] = DB::table('pengajuan_klaim')->where('status', 'canceled')->count();
             $this->param['sudahKlaim'] = DB::table('pengajuan_klaim')->where('stat_klaim', '3')->count();
 
-            // $dataAsuransi = DB::table('asuransi')->get();
-            // $dataKlaim = DB::table('pengajuan_klaim')->select('asuransi_id')->get();
-            // return $dataKlaim;
-            // $belumKlaim = count($dataKlaim->asuransi_id = $dataAsuransi->id);
+            $dataAsuransi = DB::table('asuransi')->get();
+            $dataKlaim = DB::table('pengajuan_klaim')->select('asuransi_id')->get();
+
+            $belumKlaim = 0;
+
+            foreach ($dataAsuransi as $asuransi) {
+                $asuransiId = $asuransi->id;
+
+                $adaDiKlaim = $dataKlaim->contains('asuransi_id', $asuransiId);
+
+                if (!$adaDiKlaim) {
+                    $belumKlaim++;
+                }
+            }
+
+            $this->param['belumKlaim'] = $belumKlaim;
+
+            // data chart premi
+            $this->param['dataYangSudahDibayar'] = DB::table('pembayaran_premi_detail')
+            ->select('asuransi_id')
+            ->distinct()
+            ->pluck('asuransi_id')
+            ->toArray();
+
+            $this->param['dataAsuransiChart'] = DB::table('asuransi')
+            ->select('id')
+            ->pluck('id')
+            ->toArray();
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();

@@ -105,7 +105,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">2</h2>
+                    <h2 class="text-5xl font-bold">{{$belumKlaim}}</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">

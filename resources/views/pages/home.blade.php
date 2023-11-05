@@ -861,34 +861,42 @@
         },
     };
 
-    var donut = new ApexCharts(document.querySelector(".chart"), options);
-    donut.render();
 
-        // chart donut
+    var dataYangSudahDibayar = @json($dataYangSudahDibayar);
+
+    var dataAsuransi = @json($dataAsuransiChart);
+
+    // data yang sudah dibayar
+    var jumlahYangSudahDibayar = dataYangSudahDibayar.length;
+
+    //  data yang belum dibayar
+    var jumlahYangBelumDibayar = dataAsuransi.length - jumlahYangSudahDibayar;
+
     var optionsPembayaranPremi = {
         labels: ['Yang Belum dibayar', 'Yang Sudah dibayar'],
-        series: [44, 55],
+        series: [jumlahYangBelumDibayar, jumlahYangSudahDibayar],
         chart: {
             type: 'donut',
             width: '100%',
             height: 480,
         },
         legend: {
-            position: 'bottom'
+            position: 'bottom',
         },
-
         responsive: [{
             breakpoint: 480,
             options: {
                 chart: {
                     width: 340,
                 },
-            }
-        }]
+            },
+        }],
     };
 
     var pembayaranPremi = new ApexCharts(document.querySelector(".pembayaran-permi"), optionsPembayaranPremi);
     pembayaranPremi.render();
+
+
 
     function renderChart(){
         // line chart
@@ -1030,7 +1038,7 @@
 
         var pelaporanPelunasan = new ApexCharts(document.querySelector(".pelaporan-pelunasan"), optionsPelaporanPelunasan);
         pelaporanPelunasan.render();
-        
+
     var tab_type = "@isset($_GET['tab_type']){{$_GET['tab_type']}}@endisset"
     if (tab_type == 'tab-kkb' || !tab_type)
         $("div.tab-wrapper .tab-btn:first").trigger("click");
