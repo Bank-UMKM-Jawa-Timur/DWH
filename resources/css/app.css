@@ -38,7 +38,7 @@
         @apply w-10 h-10 rounded-full bg-gray-100;
     }
     .layout-sidebar {
-        @apply w-[280px] overflow-auto bg-white border-r h-full lg:relative fixed lg:z-0 z-40  lg:left-0;
+        @apply w-[280px] overflow-y-auto bg-white border-r h-screen lg:relative fixed lg:z-0 z-40  lg:left-0;
     }
     .layout-pages {
         @apply w-full box-border h-screen bg-theme-pages drop-shadow-md overflow-auto;
