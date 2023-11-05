@@ -225,6 +225,13 @@
             }
         })
 
+        function formatRupiah(angka) {
+            var reverse = angka.toString().split('').reverse().join('');
+            var ribuan = reverse.match(/\d{1,3}/g);
+            var formatted = ribuan.join('.').split('').reverse().join('');
+            return formatted;
+        }
+
         var arr_selected_key = [];
         var temp_no = 1;
         var total_premi = 0;
@@ -232,8 +239,10 @@
         hitungTotalPremi()
 
         function hitungTotalPremi() {
-            var format_total_premi = formatRupiah(total_premi.toString())
-            var format_total_premi_disetor = parseInt(total_premi_disetor)
+            var int_total_premi = parseInt(total_premi)
+            var int_total_premi_disetor = parseInt(total_premi_disetor)
+            var format_total_premi = formatRupiah(int_total_premi)
+            var format_total_premi_disetor = formatRupiah(int_total_premi_disetor)
             $('#total_premi').val(total_premi)
             $('#display_total_premi').val(format_total_premi)
             $('#total_premi_disetor').val(total_premi_disetor)
