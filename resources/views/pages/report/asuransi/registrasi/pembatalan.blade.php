@@ -7,7 +7,7 @@
     <div class="head-pages">
         <p class="text-sm">Laporan</p>
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-            Registrasi Asuransi
+            Pembatalan Registrasi Asuransi
         </h2>
     </div>
     <div class="body-pages">
@@ -16,7 +16,7 @@
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 justify-between">
                     <div class="title-table lg:p-3 p-2 text-left">
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                            Form Laporan Registrasi Asuransi
+                            Form Laporan Pembatalan Registrasi Asuransi
                         </h2>
                         @if (\Request::get('tAwal') && \Request::get('tAkhir'))
                             <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b> dengan status <b>{{Request()->status == 'canceled' ? 'dibatalkan' : 'onprogres'}}</b>.</p>
@@ -53,9 +53,11 @@
                                 <option value="all" selected>-- Semua nip ---</option>
                                 @if (\Request::has('cabang'))
                                     @if (\Request::get('cabang') != 'all')
-                                    @foreach ($staf as $item)
-                                        <option value="{{$item['id']}}" @if(\Request::has('nip')){{$item['id'] == \Request::get('nip') ? 'selected' : ''}}@endif>{{$item['nip']}} - {{$item['detail']['nama']}}</option>
-                                    @endforeach
+                                        @foreach ($staf as $item)
+                                            @if (array_key_exists('id', $item))
+                                                <option value="{{$item['id']}}" @if(\Request::has('nip')){{$item['id'] == \Request::get('nip') ? 'selected' : ''}}@endif>{{$item['nip']}} - {{$item['detail']['nama']}}</option>
+                                            @endif
+                                        @endforeach
                                     @endif
                                 @endif
                             </select>
@@ -187,8 +189,6 @@
         })
         
         $('.datepicker').val('dd-mm-yyyy');
-        $('#dari').val("@if(\Request::has('dari')){{\Request::get('dari')}}@endif")
-        $('#sampai').val("@if(\Request::has('dari')){{\Request::get('sampai')}}@endif")
         $('#cabang').select2()
         $('#nip').select2()
 
@@ -241,4 +241,14 @@
             }
         });
     </script>
+    @if(\Request::has('dari'))
+        <script>
+            $('#dari').val("{{\Request::get('dari')}}")
+        </script>
+    @endif
+    @if(\Request::has('sampai'))
+        <script>
+            $('#sampai').val("{{\Request::get('sampai')}}")
+        </script>
+    @endif
 @endpush
