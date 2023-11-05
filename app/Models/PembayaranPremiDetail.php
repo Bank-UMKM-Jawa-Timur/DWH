@@ -16,8 +16,8 @@ class PembayaranPremiDetail extends Model
         return $this->belongsTo(PembayaranPremi::class, 'pembayaran_premi_id', 'id');
     }
 
-    // public function asuransi()
-    // {
-    //     return $this->belongsTo(Asuransi::class, 'asuransi_id', 'id');
-    // }
+    public function asuransi()
+    {
+        return $this->belongsTo(Asuransi::class, 'asuransi_id', 'id');
+    }
 }

@@ -60,34 +60,47 @@ class PembayaranPremiController extends Controller
         $param['data'] = $data;
         $param['page_length'] = $page_length;
 
+        // $param['detail'] = PembayaranPremiDetail::where('pembayaran_premi_id', '2')->get();
+
+        // $dataDetail = [];
+        // foreach ($data as $i => $item) {
+        //     $dataDetail[$i] = [];
+        //     $detailPremi = PembayaranPremiDetail::with(['pembayaranPremi','asuransi'])
+        //     ->where('pembayaran_premi_id', $item->id)
+        //     ->get();
+
+        //         foreach ($detailPremi as $j => $itemDetail) {
+        //             array_push($dataDetail[$i], $itemDetail);
+        //         }
+
+        //     $param['item_detail'] = $dataDetail[$i];
+        // }
+
         return view('pages.pembayaran_premi.index', $param);
     }
 
     public function list($page_length = 5 , $searchQuery, $searchBy)
     {
-        $query = DB::table('pembayaran_premi_detail AS d')
+        $query = DB::table('pembayaran_premi')
                     ->select(
-                        'a.id AS asuransi_id',
-                        'p.id AS pembayaran_premi_id',
-                        'd.id AS detail_id',
+                        'pembayaran_premi.*', 
+                        'd.pembayaran_premi_id',
                         'a.no_aplikasi',
                         'a.no_polis',
-                        'p.nobukti_pembayaran',
-                        'p.tgl_bayar',
-                        'p.total_premi',
                         'd.no_rek',
                         'd.no_pk',
                         'd.periode_bayar',
                         'd.total_periode'
-                    )
-                    ->join('pembayaran_premi AS p', 'p.id', 'd.pembayaran_premi_id')
-                    ->join('asuransi AS a', 'a.id', 'd.asuransi_id');
+                        )
+                    ->join('pembayaran_premi_detail AS d', 'd.pembayaran_premi_id', 'pembayaran_premi.id')
+                    ->join('asuransi AS a', 'a.id', 'd.asuransi_id')
+                    ->groupBy('d.pembayaran_premi_id');
         if ($searchQuery && $searchBy == 'field') {
             $query->where('a.no_aplikasi', 'like', '%' . $searchQuery . '%')
                 ->orWhere('a.no_polis', 'like', '%' . $searchQuery . '%')
-                ->orWhere('p.nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
-                ->orWhere('p.tgl_bayar', 'like', '%' . $searchQuery . '%')
-                ->orWhere('p.total_premi', 'like', '%' . $searchQuery . '%')
+                ->orWhere('pembayaran_premi.nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
+                ->orWhere('pembayaran_premi.tgl_bayar', 'like', '%' . $searchQuery . '%')
+                ->orWhere('pembayaran_premi.total_premi', 'like', '%' . $searchQuery . '%')
                 ->orWhere('d.no_rek', 'like', '%' . $searchQuery . '%')
                 ->orWhere('d.no_pk', 'like', '%' . $searchQuery . '%')
                 ->orWhere('d.periode_bayar', 'like', '%' . $searchQuery . '%')

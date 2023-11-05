@@ -70,81 +70,118 @@
             <table class="table-auto w-full">
                 <tr>
                     <th>No.</th>
-                    <th>No Aplikasi</th>
-                    <th>No Polis</th>
                     <th>No Bukti Pembayaran</th>
                     <th>Tanggal Bayar</th>
                     <th>Total Premi</th>
-                    <th>No Rekening</th>
-                    <th>No PK</th>
-                    <th>Periode Bayar</th>
-                    <th>Total Periode(dalam tahun)</th>
                     <th>Aksi</th>
                 </tr>
                 <tbody>
                     @forelse ($data as $item)
-                        <form action="{{ route('asuransi.pembayaran_premi.inquery') }}" method="post">
-                            @csrf
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
+                    <form action="{{ route('asuransi.pembayaran_premi.inquery') }}" method="post">
+                        @csrf
+                            <tr class="view cursor-pointer">
+                                <td>{{ $loop->iteration}}</td>
                                 <td>
-                                    <input type="hidden" name="row_no_aplikasi" value="{{ $item->no_aplikasi }}">
-                                    {{ $item->no_aplikasi }}
-                                </td>
-                                <td>
-                                    <input type="hidden" name="row_no_polis" value="{{ $item->no_polis }}">
-                                    {{ $item->no_polis }}
-                                </td>
-                                <td>
-                                    <input type="hidden" name="row_nobukti_pembayaran" value="{{ $item->nobukti_pembayaran }}">
+                                    <input type="hidden" name="nobukti_pembayaran" value="{{ $item->nobukti_pembayaran }}">
                                     {{ $item->nobukti_pembayaran }}
                                 </td>
                                 <td>{{ $item->tgl_bayar }}</td>
                                 <td>
-                                    <input type="hidden" name="row_outstanding" value="{{ $item->total_premi }}">
+                                    <input type="hidden" name="outstanding" value="{{ $item->total_premi }}">
                                     {{ number_format((int)$item->total_premi, 0, ',', '.') }}
                                 </td>
-                                <td>
-                                    <input type="hidden" name="row_no_rek" value="{{ $item->no_rek }}">
-                                    {{ $item->no_rek }}
-                                </td>
-                                <td>{{ $item->no_pk }}</td>
-                                <td>
-                                    <input type="hidden" name="row_periode_premi" value="{{ $item->periode_bayar }}">
-                                    {{ $item->periode_bayar }}
-                                </td>
-                                <td>{{ $item->total_periode }}</td>
 
                                 <td>
-                                    @if ($role == 'Staf Analis Kredit')
-                                        <div class="dropdown">
-                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                Selengkapnya
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <button type="button" id="btnInquery" class="item-dropdown">
-                                                    Inquery
-                                                </button>
-                                                {{-- <li class="">
-                                                    <a class="item-dropdown" href="#" onclick="alertWarning()">Inquery</a>
-                                                </li> --}}
-                                            </ul>
-                                        </div>
-                                    @else
-                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                            Detail
+                                    <div class="flex gap-4 justify-center">
+                                        <button type="button" id="btnAksi" class="flex gap-2 hover:bg-slate-50 border px-3 py-2">
+                                            <span class="caret-icon transform">
+                                                @include('components.svg.caret')
+                                            </span>
+                                            <span class="collapse-text">Sembunyikan Detail</span>
                                         </button>
-                                    @endif
+                                    </div>
                                 </td>
                             </tr>
-                        </form>
-                        @empty
+                            <tr class="collapse-table">
+                                <td colspan="11" class="p-0">
+                                    <div class="bg-theme-primary/5">
+                                        <div>
+                                            <div class="mt-0 p-3">
+                                                {{-- <form action="{{ route('asuransi.pembayaran_premi.inquery') }}" method="post">
+                                                    @csrf --}}
+                                                    <table class="table-collapse">
+                                                        <thead>
+                                                            <th>No Aplikasi</th>
+                                                            <th>No Polis</th>
+                                                            <th>No Rekening</th>
+                                                            <th>No PK</th>
+                                                            <th>Periode Bayar</th>
+                                                            <th>Periode Tahun Bayar</th>
+                                                            <th>Aksi</th>
+                                                        </thead>
+                                                        @php
+                                                            $detailPembayaran = \App\Models\PembayaranPremiDetail::with(['pembayaranPremi','asuransi'])
+                                                            ->where('pembayaran_premi_id', $item->id)
+                                                            ->orderBy('id', 'ASC')
+                                                            ->get();
+                                                        @endphp
+                                                        <tbody>
+                                                            @foreach ($detailPembayaran as $item2)
+                                                                <tr>
+                                                                    <td>
+                                                                        <input type="hidden" name="no_aplikasi" value="{{ $item2->asuransi->no_aplikasi }}">
+                                                                        {{ $item2->asuransi->no_aplikasi }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="no_polis" value="{{ $item2->asuransi->no_polis }}">
+                                                                        {{ $item2->asuransi->no_polis }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="no_rekening" value="{{ $item2->no_rek }}">
+                                                                        {{ $item2->no_rek }}
+                                                                    </td>
+                                                                    <td>{{ $item2->no_pk }}</td>
+                                                                    <td>{{ $item2->periode_bayar }}</td>
+                                                                    <td>
+                                                                        <input type="hidden" name="periode_premi" value="{{ $item2->total_periode }}">
+                                                                        {{ $item2->total_periode }}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if ($role == 'Staf Analis Kredit')
+                                                                            <div class="dropdown">
+                                                                                <button type="button" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                    Selengkapnya
+                                                                                </button>
+                                                                                <ul class="dropdown-menu">
+                                                                                    <button type="submit" id="btnInquery" class="item-dropdown">
+                                                                                        Inquery
+                                                                                    </button>
+                                                                                </ul>
+                                                                            </div>
+                                                                        @else
+                                                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                Detail
+                                                                            </button>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                {{-- </form> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
                         <tr>
                             <td colspan="10" class="text-center">
                                 <span class="text-danger">Maaf data belum tersedia.</span>
                             </td>
                         </tr>
                     @endforelse
+                    </form>
                 </tbody>
             </table>
         </div>
@@ -162,6 +199,22 @@
 @endsection
 @push('extraScript')
 <script>
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     var form = document.getElementById('formIndex');
+    //     var btnLeft = document.getElementById('btnAksi');
+
+    //     btnLeft.addEventListener('click', function(event) {
+    //         event.preventDefault();
+    //     });
+    // });
+    $(".view").on("click", function(e){
+        // $(this + '.caret-icon').toggleClass("rotate-180");
+        $(this).next(".collapse-table").toggleClass("hidden");
+    });
+    $('.dropdown .dropdown-menu .item-dropdown').on('click', function(e){
+        e.stopPropagation();
+    })
+
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
