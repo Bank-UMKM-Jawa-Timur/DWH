@@ -79,7 +79,8 @@ class RegistrasiController extends Controller
 
                 if ($request->has('q')) {
                     $q = $request->get('q');
-                    $asuransi = $asuransi->where('asuransi.nama_debitur', 'LIKE', "%$q%")
+                    $asuransi = $asuransi->when($q, function($query) use ($q) {
+                        $query->where('asuransi.nama_debitur', 'LIKE', "%$q%")
                                         ->where('asuransi.status', 'sended')
                                         ->orWhere('asuransi.no_aplikasi', 'LIKE', "%$q%")
                                         ->where('asuransi.status', 'sended')
@@ -89,6 +90,7 @@ class RegistrasiController extends Controller
                                         ->where('asuransi.status', 'sended')
                                         ->orWhere('asuransi.tgl_rekam', 'LIKE', "%$q%")
                                         ->where('asuransi.status', 'sended');
+                    });
                 }
 
                 if (is_numeric($page_length)) {
@@ -199,16 +201,18 @@ class RegistrasiController extends Controller
                             });
                 if ($request->has('q')) {
                     $q = $request->get('q');
-                    $asuransi = $asuransi->where('asuransi.nama_debitur', 'LIKE', "%$q%")
-                                        ->where('asuransi.status', 'canceled')
-                                        ->orWhere('asuransi.no_aplikasi', 'LIKE', "%$q%")
-                                        ->where('asuransi.status', 'canceled')
-                                        ->orWhere('asuransi.no_polis', 'LIKE', "%$q%")
-                                        ->where('asuransi.status', 'canceled')
-                                        ->orWhere('asuransi.tgl_polis', 'LIKE', "%$q%")
-                                        ->where('asuransi.status', 'canceled')
-                                        ->orWhere('asuransi.tgl_rekam', 'LIKE', "%$q%")
-                                        ->where('asuransi.status', 'canceled');
+                    $asuransi = $asuransi->when($q, function($query) use ($q) {
+                        $query->where('asuransi.nama_debitur', 'LIKE', "%$q%")
+                            ->where('asuransi.status', 'canceled')
+                            ->orWhere('asuransi.no_aplikasi', 'LIKE', "%$q%")
+                            ->where('asuransi.status', 'canceled')
+                            ->orWhere('asuransi.no_polis', 'LIKE', "%$q%")
+                            ->where('asuransi.status', 'canceled')
+                            ->orWhere('asuransi.tgl_polis', 'LIKE', "%$q%")
+                            ->where('asuransi.status', 'canceled')
+                            ->orWhere('asuransi.tgl_rekam', 'LIKE', "%$q%")
+                            ->where('asuransi.status', 'canceled');
+                    });
                 }
 
                 if (is_numeric($page_length)) {

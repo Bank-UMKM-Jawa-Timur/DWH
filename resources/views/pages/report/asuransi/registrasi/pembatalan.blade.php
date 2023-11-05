@@ -54,8 +54,10 @@
                                 @if (\Request::has('cabang'))
                                     @if (\Request::get('cabang') != 'all')
                                         @foreach ($staf as $item)
-                                            @if (array_key_exists('id', $item))
-                                                <option value="{{$item['id']}}" @if(\Request::has('nip')){{$item['id'] == \Request::get('nip') ? 'selected' : ''}}@endif>{{$item['nip']}} - {{$item['detail']['nama']}}</option>
+                                            @if (is_array($item))
+                                                @if (array_key_exists('id', $item))
+                                                    <option value="{{$item['id']}}" @if(\Request::has('nip')){{$item['id'] == \Request::get('nip') ? 'selected' : ''}}@endif>{{$item['nip']}} - {{$item['detail']['nama']}}</option>
+                                                @endif
                                             @endif
                                         @endforeach
                                     @endif
@@ -69,6 +71,12 @@
                             id="btn-show">
                             <span class="lg:block hidden"> Tampilkan </span>
                         </button>
+                        @if (\Request::has('dari') && \Request::has('sampai'))
+                            <a href="{{route('asuransi.report.registrasi.pembatalan')}}" id="btn-reset"
+                                class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
+                                <span class="lg:block hidden"> Reset </span>
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -219,6 +227,7 @@
 
         $('#btn-show').on('click', function(e) {
             e.preventDefault()
+            $('#preload-data').removeClass('hidden')
             var dari = $('#dari').val()
             var sampai = $('#sampai').val()
 
@@ -226,12 +235,18 @@
                 $('#form-report').submit()
             }
             else {
+                $('#preload-data').addClass('hidden')
+
                 var msg = 'Harap pilih tanggal terlebih dahulu.'
                 $('.dari-error').html(msg)
                 $('.sampai-error').html(msg)
                 $('#dari').addClass('border-red-500')
                 $('#sampai').addClass('border-red-500')
             }
+        })
+
+        $('#btn-reset').on('click', function(e) {
+            $('#preload-data').removeClass('hidden')
         })
 
         $('#q').keypress(function (e) {
