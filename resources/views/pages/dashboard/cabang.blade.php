@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">23</h2>
+                    <h2 class="text-5xl font-bold">{{$kkbProses}}</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">13</h2>
+                    <h2 class="text-5xl font-bold">{{$kkbBulanIni}}</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">43</h2>
+                    <h2 class="text-5xl font-bold">{{$kkbSelesai}}</h2>
                 </div>
             </div>
             <div class="card bg-white w-full p-5 border">
@@ -45,7 +45,7 @@
                     <h2 class="mt-3 max-w-[250px]">Total import KKB Google Spreadsheet</h2>
                 </div>
                 <div class="p-3">
-                    <h2 class="text-5xl font-bold">63</h2>
+                    <h2 class="text-5xl font-bold">{{$kkbImported}}</h2>
                 </div>
             </div>
         </div>
@@ -85,7 +85,7 @@
         </div>
     </div>
 </div>
-<div class="card w-full bg-white border rounded-md mb-5">
+{{-- <div class="card w-full bg-white border rounded-md mb-5">
     <div class="head border-b p-2 font-lexend relative text-center">
         <p class="left-3 absolute">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
@@ -123,5 +123,5 @@
             </div>
         @endforelse
     </div>
-</div>
+</div> --}}
 

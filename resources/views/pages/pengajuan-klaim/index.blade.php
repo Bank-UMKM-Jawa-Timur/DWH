@@ -1,5 +1,6 @@
 
 @extends('layout.master')
+@include('pages.pengajuan-klaim.modal.loading')
 @push('extraStyle')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
@@ -82,7 +83,7 @@
                     </tr>
                     <tbody>
                         @forelse ($data as $item)
-                        <form action="{{ route('asuransi.pengajuan-klaim.cek-status') }}" method="post">
+                        {{-- <form action="{{ route('asuransi.pengajuan-klaim.cek-status') }}" method="post"> --}}
                             @csrf
                             <tr>
                                 <td>{{$loop->iteration}}</td>
@@ -119,30 +120,59 @@
                                 </td>
                                 <td>
                                     @if ($role == 'Staf Analis Kredit')
-                                        <div class="dropdown">
-                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                Selengkapnya
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li class="">
-                                                    <button type="button" id="btnCekStatus" class="item-dropdown">Cek Data Pengajuan Klaim</button>
-                                                </li>
-                                                <li class="item-dropdown">
-                                                    <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
-                                                        @csrf
-                                                        <input type="hidden" name="id" value="{{ $item->id }}">
-                                                        <input type="hidden" name="no_aplikasi" value="{{ $item->no_aplikasi }}">
-                                                        <input type="hidden" name="no_rekening" value="{{ $item->no_rek }}">
-                                                        <input type="hidden" name="no_polis" value="{{ $item->no_polis }}">
-                                                        <button type="button" id="btnBatal">Pembatalan</button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        @if ($item->status == 'waiting approval')
+                                            -    
+                                        @elseif ($item->status == 'approved')
+                                            <form action="{{ route('asuransi.pengajuan-klaim.hit-endpoint', $item->id) }}" method="post">
+                                                @csrf
+                                                <a href="#">
+                                                    <button type="submit" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn" id="btnKirim">
+                                                        Kirim
+                                                    </button>
+                                                </a>
+                                            </form>
+                                        @elseif ($item->status == 'revition')
+                                            <a href="{{ route('asuransi.pengajuan-klaim.edit', $item->id) }}">
+                                                <button type="button" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                    Edit
+                                                </button>
+                                            </a>
+                                        @elseif ($item->status == 'sended')
+                                            <div class="dropdown">
+                                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                    Selengkapnya
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li class="">
+                                                        <button type="button" id="btnCekStatus" class="item-dropdown">Cek Data Pengajuan Klaim</button>
+                                                    </li>
+                                                    <li class="item-dropdown">
+                                                        <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{ $item->id }}">
+                                                            <input type="hidden" name="no_aplikasi" value="{{ $item->no_aplikasi }}">
+                                                            <input type="hidden" name="no_rekening" value="{{ $item->no_rek }}">
+                                                            <input type="hidden" name="no_polis" value="{{ $item->no_polis }}">
+                                                            <button type="button" id="btnBatal">Pembatalan</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        @endif
+                                    @elseif ($role == 'Penyelia Kredit')
+                                        @if ($item->status == 'waiting approval')
+                                            <a href="{{ route('asuransi.pengajuan-klaim.review-penyelia', $item->id) }}">
+                                                <button type="button" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                    Review
+                                                </button>
+                                            </a>
+                                        @else
+                                            -
+                                        @endif
                                     @endif
                                 </td>
                             </tr>
-                        </form>
+                        {{-- </form> --}}
                         @empty
                         <tr>
                             <td class="text-theme-primary text-center" colspan="7">
@@ -184,30 +214,30 @@
             success: function(res){
                 if(res.status == "Berhasil"){
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
+                        // icon: 'success',
+                        // title: 'Berhasil',
                         html: `
                             <table style="text-align: left !important;" class="w-full">
                                 <tr>
                                     <td><strong>No. Rekening</strong></td>
                                     <td>${res.response.no_rekening}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>No. Aplikasi</strong></td>
                                     <td>${res.response.no_aplikasi}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>Status Klaim</strong></td>
                                     <td>${statKlaim[parseInt(res.response.stat_klaim) + 1]}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>Keterangan</strong></td>
                                     <td>${res.response.keterangan}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>Nilai Persetujuan</strong></td>
                                     <td>${res.response.nilai_persetujuan}</td>
-                                </tr>    
+                                </tr>
                                 <tr>
                                     <td><strong>Tanggal klaim</strong></td>
                                     <td>${res.response.tgl_klaim}</td>
@@ -215,7 +245,7 @@
                                 <tr>
                                     <td><strong>No. Polis</strong></td>
                                     <td>${res.response.no_sp}</td>
-                                </tr>    
+                                </tr>
                             </table>
                         `
                     })
@@ -253,7 +283,7 @@
                     title: res.status,
                     text: res.message,
                 })
-            }, 
+            },
             error: function(res){
                 Swal.fire({
                     icon: "error",
@@ -262,6 +292,10 @@
                 });
             }
         })
+    })
+
+    $(".table-auto").on("click", "#btnKirim", function(){
+        $("#preload-data").removeClass("hidden");
     })
 </script>
 @endpush

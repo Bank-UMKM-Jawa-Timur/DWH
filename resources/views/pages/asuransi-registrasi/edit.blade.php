@@ -14,32 +14,40 @@
             <div class="review-penyelia space-y-5">
                 <h2>Review dari Penyelia</h2>
                 <div class="review-timeline bg-theme-primary/5 h-[300px] border overflow-y-auto p-5">
-    
-                    <ol class="relative border-l border-gray-200">                  
+
+                    <ol class="relative border-l border-gray-200">
+                        @forelse ($pendapat as $item)
                         <li class="mb-10 ml-4">
                             <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary "></div>
-                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">February 2022</time>
-                            <h3 class="text-lg font-semibold text-theme-primary ">Application UI code in Tailwind CSS</h3>
-                            <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">Get access to over 20+ pages including a dashboard layout, charts, kanban board, calendar, and pre-order E-commerce & Marketing pages.</p>
+                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{$item->created_at}}</time>
+                            <h3 class="text-lg font-semibold text-theme-primary ">{{$item->pendapat}}</h3>
+                            <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{{$item->status}}</p>
                         </li>
-                        <li class="mb-10 ml-4">
-                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary"></div>
-                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">March 2022</time>
-                            <h3 class="text-lg font-semibold text-theme-primary ">Marketing UI design in Figma</h3>
-                            <p class="text-base font-normal text-gray-500 dark:text-gray-400">All of the pages and components are first designed in Figma and we keep a parity between the two versions even as we update the project.</p>
+
+                        @empty
+                        <li class="">
+                            <h3 class="text-lg text-center font-semibold text-theme-primary ">Belum ada pendapat review dari penyelia.</h3>
                         </li>
-                        <li class="ml-4">
-                            <div class="absolute w-3 h-3  rounded-full mt-1.5 -left-1.5 border border-theme-primary bg-theme-primary"></div>
-                            <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">April 2022</time>
-                            <h3 class="text-lg font-semibold text-theme-primary ">E-Commerce UI code in Tailwind CSS</h3>
-                            <p class="text-base font-normal text-gray-500 dark:text-gray-400">Get started with dozens of web components and interactive elements built on top of Tailwind CSS.</p>
-                        </li>
+                        @endforelse
                     </ol>
                 </div>
             </div>
-            <form id="form-asuransi-registrasi" action="{{ route('asuransi.registrasi.store') }}" method="post"
+            <form id="form-asuransi-registrasi" action="{{ route('asuransi.registrasi.update', $jenis_asuransi->asuransi->id) }}" method="post"
                 class="space-y-5 " accept="">
                 @csrf
+                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                    <div class="input-box space-y-3">
+                        <label class="uppercase">Perusahaan Asuransi</label>
+                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
+                            name="perusahaan" value="{{$jenis_asuransi->asuransi->perusahaan}}" readonly />
+                    </div>
+                    <div class="input-box space-y-3">
+                        <label class="uppercase">Penyelia</label>
+                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
+                            name="penyelia" value="{{$data['nip_penyelia']}} - {{$data['penyelia']['nama']}}" readonly />
+                    </div>
+                </div>
+
                 <div class="title-form">
                     <h2 class="text-theme-primary font-bold text-lg">Data Debitur</h2>
                 </div>
@@ -49,20 +57,20 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Nama<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
-                            name="nama_debitur" value="{{$pengajuan['nama']}}" readonly />
+                            name="nama_debitur" value="{{$jenis_asuransi->asuransi->nama_debitur}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal lahir<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled  p-2 w-full border" id="tgl_lahir"
-                            name="tgl_lahir" value="{{date('d-m-Y', strtotime($pengajuan['tanggal_lahir']))}}" readonly />
+                            name="tgl_lahir" value="{{date('d-m-Y', strtotime($data['tanggal_lahir']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Alamat<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id=""
-                            name="alamat_debitur" value="{{$pengajuan['alamat_rumah']}}" readonly />
+                            name="alamat_debitur" value="{{$data['alamat_rumah']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -71,20 +79,20 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No KTP<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id=""
-                            name="no_ktp" value="{{$pengajuan['no_ktp']}}" readonly />
+                            name="no_ktp" value="{{$data['no_ktp']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No Aplikasi<span class="text-theme-primary">*</span></label>
                         <input type="text" class="p-2 w-full border disabled-input bg-disabled " id="no_aplikasi"
-                            name="no_aplikasi" value="{{$pengajuan['no_aplikasi']}}" readonly />
+                            name="no_aplikasi" value="{{$jenis_asuransi->asuransi->no_aplikasi}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kode Cabang Bank<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id=""
-                            name="kode_cabang" value="{{$pengajuan['kode_cabang']}}" readonly />
+                            name="kode_cabang" value="{{$data['kode_cabang']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -93,60 +101,59 @@
                         <label for="" class="uppercase">Tanggal Awal Kredit<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" name="tanggal_awal_kredit" id="tanggal_awal_kredit"
-                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($pengajuan['tanggal']))}}" readonly />
+                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($data['tanggal']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal Akhir Kredit<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" name="tanggal_akhir_kredit" id="tanggal_akhir_kredit"
-                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($pengajuan['tgl_akhir_kredit']))}}" readonly />
+                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($jenis_asuransi->asuransi->tanggal_akhir))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal Jatuh Tempo<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" name="tgl_jatuhtempo" id="tgl_jatuhtempo"
-                            class="disabled-input bg-disabled  p-2 w-full border" value="{{date('d-m-Y', strtotime($pengajuan['tgl_akhir_kredit']))}}" readonly />
+                            class="disabled-input bg-disabled  p-2 w-full border" value="{{date('d-m-Y', strtotime($jenis_asuransi->asuransi->tanggal_akhir))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jumlah Bulan<span
                                 class="text-theme-primary">*</span></label>
                         <input type="number" class="disabled-input bg-disabled p-2 w-full border " id="jumlah_bulan"
-                            name="jumlah_bulan" value="{{$pengajuan['tenor_yang_diminta']}}" readonly />
+                            name="jumlah_bulan" value="{{$data['tenor_yang_diminta']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
-                        <label for="add-role" class="uppercase">Jenis Kredit<span class="text-theme-primary">*</span>
-                        </label>
+                        <label for="add-role" class="uppercase">Jenis Kredit<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" id=""
-                            name="jenis_kredit" readonly />
+                            name="jenis_kredit" value="{{$data['skema_kredit']}}" readonly />
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">No PK<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="no_pk"
-                            name="no_pk" value="{{$pengajuan['no_pk']}}" readonly />
+                            name="no_pk" value="{{$jenis_asuransi->asuransi->no_pk}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
                         <label for="" class="uppercase">Tanggal PK<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pk"
-                            value="{{$pengajuan['tgl_cetak_pk']}}" readonly />
+                            value="{{$data['tgl_cetak_pk']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tanggal Pengajuan<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border" name="tgl_pengajuan"
-                            value="{{$pengajuan['tanggal']}}" readonly />
+                            value="{{$data['tanggal']}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Plafon Kredit</label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="plafon_kredit"
-                            name="plafon_kredit" value="{{number_format($pengajuan['jumlah_kredit'], 0, ',', '.')}}" readonly />
+                            name="plafon_kredit" value="{{number_format($data['jumlah_kredit'], 0, ',', '.')}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -159,26 +166,25 @@
                         <label for="add-role" class="uppercase">No Rekening<span class="text-theme-primary">*</span>
                         </label>
                         <input type="text" class="p-2 w-full border "
-                        id="no_rekening" name="no_rekening" value="{{old('no_rekening')}}"/>
+                        id="no_rekening" name="no_rekening" value="{{$jenis_asuransi->asuransi->no_rek}}"/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span>
                         </label>
-                        <select name="jenis_asuransi" class="w-full p-2 border" id="jenis_asuransi">
-                            <option selected value="">-- Pilih Jenis Asuransi ---</option>
-                            @foreach ($dataAsuransi as $item)
-                                <option value="{{$item->id.'-'.$item->kode}}">{{$item->jenis}}</option>
-                            @endforeach
-                        </select>
+                        <input type="text" class="p-2 w-full border "
+                        id="no_rekening" name="jenis_asuransi" value="{{$jenis_asuransi->jenis}}" readonly/>
+                        <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span>
                         </label>
+                        {{-- <input type="text" class="p-2 w-full border "
+                        id="no_rekening" name="jenis_pengajuan" value="{{$jenis_asuransi->asuransi->jenis_pengajuan == '01' ?}}" readonly/> --}}
                         <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pengajuan ---</option>
-                            <option @if (old('jenis_pengajuan') == '00') selected @endif value="00">Baru</option>
-                            <option @if (old('jenis_pengajuan') == '01')selected @endif value="01">Top Up</option>
+                            <option {{$jenis_asuransi->asuransi->jenis_pengajuan == '00' ? 'selected' : ''}} value="00">Baru</option>
+                            <option {{$jenis_asuransi->asuransi->jenis_pengajuan == '01' ? 'selected' : ''}} value="01">Top Up</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -186,11 +192,11 @@
                                 class="text-theme-primary">*</span></label>
                         <select name="kolektibilitas" class="w-full p-2 border">
                             <option selected value="">-- Kolektibilitas ---</option>
-                            <option @if (old('kolektibilitas') == '1')selected @endif value="1">1</option>
-                            <option @if (old('kolektibilitas') == '2')selected @endif value="2">2</option>
-                            <option @if (old('kolektibilitas') == '3')selected @endif value="3">3</option>
-                            <option @if (old('kolektibilitas') == '4')selected @endif value="4">4</option>
-                            <option @if (old('kolektibilitas') == '5')selected @endif value="5">5</option>
+                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '1' ? 'selected' : ''}} value="1">1</option>
+                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '2' ? 'selected' : ''}} value="2">2</option>
+                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '3' ? 'selected' : ''}} value="3">3</option>
+                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '4' ? 'selected' : ''}} value="4">4</option>
+                            <option {{$jenis_asuransi->asuransi->kolektibilitas == '5' ? 'selected' : ''}} value="5">5</option>
                         </select>
                         <small class="form-text text-red-600 error"></small>
                     </div>
@@ -199,8 +205,8 @@
                                 class="text-theme-primary">*</span> </label>
                         <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
-                            <option @if (old('jenis_pertanggungan') == '01') selected @endif value="01">Pokok</option>
-                            <option @if (old('jenis_pertanggungan') == '02') selected @endif value="02">Sisa Kredit</option>
+                            <option {{$jenis_asuransi->asuransi->jenis_pertanggungan == '01' ? 'selected' : ''}} value="01">Pokok</option>
+                            <option {{$jenis_asuransi->asuransi->jenis_pertanggungan == '02' ? 'selected' : ''}} value="02">Sisa Kredit</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
@@ -208,8 +214,8 @@
                         </label>
                         <select name="tipe_premi" class="w-full p-2 border">
                             <option selected value="">-- Pilih Tipe Premi ---</option>
-                            <option @if (old('tipe_premi') == '0') selected @endif value="0">Biasa</option>
-                            <option @if (old('tipe_premi') == '1') selected @endif value="1">Refund</option>
+                            <option {{$jenis_asuransi->asuransi->tipe_premi == '0' ? 'selected' : ''}} value="0">Biasa</option>
+                            <option {{$jenis_asuransi->asuransi->tipe_premi == '1' ? 'selected' : ''}} value="1">Refund</option>
                         </select>
                     </div>
                 </div>
@@ -219,19 +225,19 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Polis Sebelumya<span
                                 class="text-theme-primary">*</span> </label>
-                        <input type="text" value="{{old('no_polis_sebelumnya')}}" class="p-2 w-full border " id="" name="no_polis_sebelumnya" />
+                        <input type="text" value="{{$jenis_asuransi->asuransi->no_polis}}" class="p-2 w-full border " id="" name="no_polis_sebelumnya" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Baki Debet<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="" value="{{old('baki_debet')}}" name="baki_debet" />
+                        <input type="text" class="rupiah p-2 w-full border " id="" value="{{$jenis_asuransi->asuransi->baki_debet}}" name="baki_debet" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tunggakan<span
                                 class="text-theme-primary">*</span></label>
-                        <input type="text" class="rupiah p-2 w-full border " id="tunggakan" value="{{old('tunggakan')}}" name="tunggakan" />
+                        <input type="text" class="rupiah p-2 w-full border " id="tunggakan" value="{{$jenis_asuransi->asuransi->tunggakan}}" name="tunggakan" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
@@ -241,74 +247,79 @@
                         <label for="" class="uppercase">Premi</label>
                         <input type="hidden" id="rate_premi" name="rate_premi" />
                         <input type="text" class="rupiah p-2 w-full border disabled-input bg-disabled" id="premi"
-                            name="premi"  readonly />
+                            name="premi" value="{{number_format($jenis_asuransi->asuransi->premi, 0, ',', '.')}}"  readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Coverage<span class="text-theme-primary">*</span>
                         </label>
                         <select name="jenis_coverage" class="w-full p-2 border">
-                            <option selected value="">-- Pilih jenis ---</option>
+                            @if ($data['age'] <= 60)
+                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '01' ? 'selected' : ''}} value="01">PNS & NON PNS (PA+ND)</option>
+                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '02' ? 'selected' : ''}} value="02">NON PNS (PA+ND+PHK)</option>
+                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '03' ? 'selected' : ''}} value="03">PNS (PA+ND+PHK+MACET)</option>
+                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '04' ? 'selected' : ''}} value="04">DPRD (PA+ND+PAW)</option>
+                            @else
+                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '05' ? 'selected' : ''}} value="05">PNS & PENSIUN (PA+ND)</option>
+                                <option {{$jenis_asuransi->asuransi->jenis_coverage == '06' ? 'selected' : ''}} value="06">DPRD (PA+ND+PAW)</option>
+                            @endif
                         </select>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tarif<span class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="tarif"
-                            name="tarif" readonly />
+                            name="tarif" value="{{$jenis_asuransi->asuransi->tarif}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3 form-6 hidden">
                         <label for="" class="uppercase">Refund<span class="text-theme-primary">*</span></label>
                         <input type="text" class="rupiah p-2 w-full border" id="refund" name="refund"
-                            onchange="hitungPremiDisetor()"  />
+                            onchange="hitungPremiDisetor()" value="{{$jenis_asuransi->asuransi->refund}}" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Kode Layanan Syariah</label>
                         <select name="kode_ls" class="w-full p-2 border">
                             <option selected value="">-- Kode Layanan Syariah ---</option>
-                            <option @if (old('kode_ls') == '0') selected @endif value="0">KV</option>
-                            <option @if (old('kode_ls') == '1') selected @endif value="1">SY</option>
+                            <option {{$jenis_asuransi->asuransi->kode_layanan_syariah == '0' ? 'selected' : ''}} @if (old('kode_is') == '0') selected @endif value="0">KV</option>
+                            <option {{$jenis_asuransi->asuransi->kode_layanan_syariah == '1' ? 'selected' : ''}} @if (old('kode_is') == '1') selected @endif value="1">SY</option>
                         </select>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Handling Fee<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="rupiah p-2 w-full border " id="handling_fee" name="handling_fee"
-                            onchange="hitungPremiDisetor()" />
+                            onchange="hitungPremiDisetor()"  value="{{number_format($jenis_asuransi->asuransi->handling_fee, 0, ',', '.')}}"/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi Disetor<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" class="disabled-input bg-disabled p-2 w-full border " id="premi_disetor"
-                            name="premi_disetor" readonly />
+                            name="premi_disetor" value="{{number_format($jenis_asuransi->asuransi->premi_disetor, 0, ',', '.')}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
-                <div class="mt-5 space-y-5 bg-white border p-5 w-auto">
+                {{-- <div class="mt-5 space-y-5 bg-white border p-5 w-auto">
                     <h2 class="text-theme-primary font-bold">Pendapat dari Penyelia</h2>
                     <p>Apakah form diatas yang diisi sudah benar atau ada kesalahan?.  berikan keterangan secara ringkas</p>
                     <textarea name="" class="w-2/4 h-80 border p-4 resize-none hover:bg-theme-pages focus:bg-theme-pages" placeholder="Tulis pendapat anda disini..." id="" ></textarea>
-                </div>
+                </div> --}}
                 <div class="flex gap-5">
                     <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit"
                         id="simpan-asuransi">
-                        <span class="lg:mt-0 mt-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
-                                <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                    stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14" />
-                            </svg>
+                        <span class="lg:mt-0 mt-0" >
+                            <iconify-icon icon="basil:edit-outline" class="w-16"></iconify-icon>
                         </span>
-                        <span class="lg:block hidden"> Registrasi </span>
+                        <span class="lg:block hidden"> Edit </span>
                     </button>
-                    <button type="button" id="form-reset"
+                    <a href="{{route('asuransi.registrasi.index')}}" type="button"
                         class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
                         <span class="lg:mt-1.5 mt-0">
-                            @include('components.svg.reset')
+                            <iconify-icon icon="icon-park-outline:back" class="w-16"></iconify-icon>
                         </span>
-                        <span class="lg:block hidden"> Reset </span>
-                    </button>
+                        <span class="lg:block hidden"> Kembali </span>
+                    </a>
                 </div>
             </form>
 

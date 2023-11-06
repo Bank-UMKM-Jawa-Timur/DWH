@@ -52,6 +52,7 @@ class DashboardController extends Controller
             $data_realisasi = [];
             $total_terealisasi = 0;
 
+
             $all_data = Kredit::select(
                 \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
             )
@@ -68,6 +69,28 @@ class DashboardController extends Controller
                 ->whereNotNull('kredits.pengajuan_id')
                 ->whereNull('kredits.imported_data_id')
                 ->get();
+
+            $dataDashboard = Kredit::select(
+                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+            )
+                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                ->groupBy([
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.imported_data_id',
+                    'kredits.kode_cabang',
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.id',
+                    'kkb.tgl_ketersediaan_unit',
+                ]);
+                // card kkb
+                $this->param['kkbProses'] = $dataDashboard->having('status', 'in progress')->count();
+                $this->param['kkbSelesai'] = $dataDashboard->having('status', 'done')->count();
+                $this->param['kkbBulanIni'] = $dataDashboard->whereBetween('kkb.tgl_ketersediaan_unit', [$tanggalAwal, $hari_ini])->count();
+                $this->param['kkbImported'] = $dataDashboard->where('kredits.imported_data_id', '!=', null )->count();
+
+
             foreach ($all_data as $key => $value) {
                 if ($value->status == 'done')
                     $total_terealisasi++;
@@ -103,54 +126,48 @@ class DashboardController extends Controller
             $tab_type = $request->get('tab_type');
             $temp_page = $request->page;
 
-            $this->param['total_registrasi'] = DB::table('asuransi')->where('tanggal_awal', $tanggalAwal)->where('tanggal_akhir', $hari_ini)
-            ->where('status', 'onprogress')
-            ->when($request->tAwal, function ($query) use ($tAwal) {
-                return $query->where('tanggal_awal', [$tAwal]);
-            })
-            ->when($request->tAkhir, function ($query) use ($tAkhir) {
-                return $query->where('tanggal_akhir', $tAkhir);
-            }, function ($query) use ($hari_ini) {
-                return $query->where('tanggal_akhir', $hari_ini);
-            })
+            // data registrasi
+            $this->param['total_waiting'] = DB::table('asuransi')->where('status', 'waiting approval')->count();
+            $this->param['total_approved'] = DB::table('asuransi')
+            ->where('status', 'approved')->count();
+            $this->param['total_revisi'] = DB::table('asuransi')
+            ->where('status', 'revition')
             ->count();
+            $this->param['total_sended'] = DB::table('asuransi')->where('status', 'sended')->count();
+            $this->param['total_canceled'] = DB::table('asuransi')->where('status', 'canceled')->count();
 
-            $this->param['total_registrasi_dibatalkan'] = DB::table('asuransi')
-            ->where('status', 'canceled')
-            ->where('tanggal_awal', $tanggalAwal)->where('tanggal_akhir', $hari_ini)
-            ->when($request->tAwal, function ($query) use ($tAwal) {
-                return $query->where('tanggal_awal', [$tAwal]);
-            })
-            ->when($request->tAkhir, function ($query) use ($tAkhir) {
-                return $query->where('tanggal_akhir', $tAkhir);
-            }, function ($query) use ($hari_ini) {
-                return $query->where('tanggal_akhir', $hari_ini);
-            })
-            ->count();
+            // data klaim
+            $this->param['yangDibatalkan'] = DB::table('pengajuan_klaim')->where('status', 'canceled')->count();
+            $this->param['sudahKlaim'] = DB::table('pengajuan_klaim')->where('stat_klaim', '3')->count();
 
-            $this->param['total_pengajuan_klaim'] = DB::table('pengajuan_klaim')->join('asuransi', 'pengajuan_klaim.asuransi_id', '=', 'asuransi.id')
-            ->where('asuransi.tanggal_awal', $tanggalAwal)->where('asuransi.tanggal_akhir', $hari_ini)
-            ->when($request->tAwal, function ($query) use ($tAwal) {
-                return $query->where('asuransi.tanggal_awal', [$tAwal]);
-            })
-            ->when($request->tAkhir, function ($query) use ($tAkhir) {
-                return $query->where('asuransi.tanggal_akhir', $tAkhir);
-            }, function ($query) use ($hari_ini) {
-                return $query->where('asuransi.tanggal_akhir', $hari_ini);
-            })
-            ->where('pengajuan_klaim.status', 'onprogress')
-            ->count();
+            $dataAsuransi = DB::table('asuransi')->get();
+            $dataKlaim = DB::table('pengajuan_klaim')->select('asuransi_id')->get();
 
-            $this->param['total_pengajuan_klaim_dibatalkan'] = DB::table('pengajuan_klaim')->join('asuransi', 'pengajuan_klaim.asuransi_id', '=', 'asuransi.id')
-            ->where('asuransi.tanggal_awal', $tanggalAwal)->where('asuransi.tanggal_akhir', $hari_ini)
-            ->when($request->tAwal, function ($query) use ($tAwal) {
-                return $query->where('asuransi.tanggal_awal', [$tAwal]);
-            })
-            ->when($request->tAkhir, function ($query) use ($tAkhir) {
-                return $query->where('asuransi.tanggal_akhir', $tAkhir);
-            }, function ($query) use ($hari_ini) {
-                return $query->where('asuransi.tanggal_akhir', $hari_ini);
-            })->where('pengajuan_klaim.status', 'canceled')->count();
+            $belumKlaim = 0;
+
+            foreach ($dataAsuransi as $asuransi) {
+                $asuransiId = $asuransi->id;
+
+                $adaDiKlaim = $dataKlaim->contains('asuransi_id', $asuransiId);
+
+                if (!$adaDiKlaim) {
+                    $belumKlaim++;
+                }
+            }
+
+            $this->param['belumKlaim'] = $belumKlaim;
+
+            // data chart premi
+            $this->param['dataYangSudahDibayar'] = DB::table('pembayaran_premi_detail')
+            ->select('asuransi_id')
+            ->distinct()
+            ->pluck('asuransi_id')
+            ->toArray();
+
+            $this->param['dataAsuransiChart'] = DB::table('asuransi')
+            ->select('id')
+            ->pluck('id')
+            ->toArray();
 
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
@@ -166,6 +183,15 @@ class DashboardController extends Controller
 
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+            $apiCabang = $host . '/kkb/get-cabang/';
+            $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+            $responseCabang = json_decode($api_req->getBody(), true);
+            $this->param['dataCabang'] = $responseCabang;
             if (!$token)
                 $user_id = 0; // <vendor></vendor>
             return view('pages.home', $this->param);
