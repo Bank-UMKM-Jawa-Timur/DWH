@@ -22,7 +22,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Master\PerusahaanAsuransiController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Report\Asuransi\ReportController;
+use App\Http\Controllers\Report\Asuransi\PembayaranPremiController as AsuransiPembayaranPremiController;
+use App\Http\Controllers\Report\Asuransi\RegistrasiController as ReportRegistrasiController;
 use App\Http\Controllers\TargetController;
 use App\Models\Kredit;
 use Illuminate\Support\Facades\Route;
@@ -131,9 +132,17 @@ Route::middleware('auth_api')->group(function () {
         // Report
         Route::prefix('/report')
             ->name('report.')
-            ->controller(ReportController::class)
             ->group(function() {
-                Route::get('/registrasi', 'registrasi')->name('registrasi');
+                Route::prefix('/registrasi')
+                    ->name('registrasi.')
+                    ->controller(ReportRegistrasiController::class)
+                    ->group(function() {
+                        Route::get('/registrasi', 'registrasi')->name('registrasi');
+                        Route::get('/pembatalan', 'pembatalan')->name('pembatalan');
+                        Route::get('/pelaporan-pelunasan', 'pelaporanPelunasan')->name('pelaporan-pelunasan');
+                        Route::get('/log-data', 'logData')->name('log-data');
+                    });
+                Route::get('/pembayaran', [AsuransiPembayaranPremiController::class, 'index'])->name('pembayaran');
             });
     });
 

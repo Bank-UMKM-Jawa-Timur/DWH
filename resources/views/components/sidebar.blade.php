@@ -137,7 +137,7 @@
           </span>
         </div>
       </li>
-      <div class="dropdown-menu-link hidden">
+      <div class="dropdown-menu-link {{ request()->is('asuransi/report/*') ? 'show' : 'hidden' }}">
         <ul class="menu-dropdown">
           <a href="{{ route('asuransi.pembayaran-premi.index') }}">
             <li class="dropdown-item-link">
@@ -167,20 +167,20 @@
               </span>
             </div>
           </li>
-          <div class="dropdown-menu-link hidden">
+          <div class="dropdown-menu-link {{ request()->is('asuransi/report/*') ? 'show' : 'hidden' }}">
             <ul class="menu-dropdown">
               <!-- add rule class active-dropdown-link for active navigation -->
-              <a href="{{route('asuransi.report.registrasi')}}">
-                <li class="dropdown-item-link">
+              <a href="{{route('asuransi.report.registrasi.registrasi')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/registrasi/registrasi') ? 'active-dropdown-link' : '' }}">
                   Registrasi
                 </li>
               </a>
-              <a href="#">
-                <li class="dropdown-item-link {{ request()->is('asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*') ? 'active-dropdown-link' : '' }}">
+              <a href="{{route('asuransi.report.registrasi.pembatalan')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/registrasi/pembatalan') ? 'active-dropdown-link' : '' }}">
                   Pembatalan Registrasi
                 </li>
               </a>
-              <a href="#">
+              <a href="{{route('asuransi.report.pembayaran')}}">
                 <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
                   Pembayaran Premi
                 </li>
@@ -195,13 +195,13 @@
                   Pembatalan Klaim
                 </li>
               </a>
-              <a href="#">
-                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+              <a href="{{route('asuransi.report.registrasi.pelaporan-pelunasan')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi.report.registrasi.pelaporan-pelunasan') ? 'active-dropdown-link' : '' }}">
                   Pelaporan Pelunasan
                 </li>
               </a>
-              <a href="#">
-                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+              <a href="{{route('asuransi.report.registrasi.log-data')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/registrasi/log-data') ? 'active-dropdown-link' : '' }}">
                   Log Data
                 </li>
               </a>

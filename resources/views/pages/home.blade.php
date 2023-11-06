@@ -863,7 +863,6 @@
     var donut = new ApexCharts(document.querySelector(".chart"), options);
     donut.render();
 
-
     var dataYangSudahDibayar = @json($dataYangSudahDibayar);
 
     var dataAsuransi = @json($dataAsuransiChart);
@@ -874,6 +873,7 @@
     //  data yang belum dibayar
     var jumlahYangBelumDibayar = dataAsuransi.length - jumlahYangSudahDibayar;
 
+    // chart donut
     var optionsPembayaranPremi = {
         labels: ['Yang Belum dibayar', 'Yang Sudah dibayar'],
         series: [jumlahYangBelumDibayar, jumlahYangSudahDibayar],

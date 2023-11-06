@@ -7,7 +7,7 @@
     <div class="head-pages">
         <p class="text-sm">Laporan</p>
         <h2 class="text-2xl font-bold text-theme-primary tracking-tighter">
-            Registrasi Asuransi
+            Log Activity Asuransi
         </h2>
     </div>
     <div class="body-pages">
@@ -16,10 +16,10 @@
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 justify-between">
                     <div class="title-table lg:p-3 p-2 text-left">
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                            Form Laporan Registrasi Asuransi
+                            Form Laporan Log Activity Asuransi
                         </h2>
-                        @if (\Request::get('tAwal') && \Request::get('tAkhir'))
-                            <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b> dengan status <b>{{Request()->status == 'canceled' ? 'dibatalkan' : 'onprogres'}}</b>.</p>
+                        @if (\Request::get('dari') && \Request::get('sampai'))
+                            <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('dari')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('sampai')))}}.</p>
                         @endif
                     </div>
                 </div>
@@ -37,36 +37,13 @@
                                 name="sampai" value="{{old('sampai')}}" required/>
                             <small class="form-text text-red-600 error sampai-error"></small>
                         </div>
-                        <div class="input-box space-y-3 col-span-1">
-                            <label for="" class="uppercase">Cabang</label> 
-                            <select name="cabang" id="cabang" class="w-full p-2 border" required>
-                                <option value="all" selected>-- Semua cabang ---</option>
-                                @foreach ($cabang as $item)
-                                    <option value="{{$item['kode_cabang']}}" @if(\Request::has('cabang')){{$item['kode_cabang'] == \Request::get('cabang') ? 'selected' : ''}}@endif>{{$item['kode_cabang']}} - {{$item['cabang']}}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-red-600 error"></small>
+                        <div class="flex space-y-8 col-span-1">
+                            <label for="" class="uppercase"><span class="text-theme-primary"></span></label>
+                            <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
+                                id="btn-show">
+                                <span class="lg:block hidden"> Tampilkan </span>
+                            </button>
                         </div>
-                        <div class="input-box space-y-3 col-span-1">
-                            <label for="" class="uppercase">NIP</label>
-                            <select name="nip" id="nip" class="w-full p-2 border" required>
-                                <option value="all" selected>-- Semua nip ---</option>
-                                @if (\Request::has('cabang'))
-                                    @if (\Request::get('cabang') != 'all')
-                                    @foreach ($staf as $item)
-                                        <option value="{{$item['id']}}" @if(\Request::has('nip')){{$item['id'] == \Request::get('nip') ? 'selected' : ''}}@endif>{{$item['nip']}} - {{$item['detail']['nama']}}</option>
-                                    @endforeach
-                                    @endif
-                                @endif
-                            </select>
-                            <small class="form-text text-red-600 error"></small>
-                        </div>
-                    </div>
-                    <div class="flex gap-5 justify-end mt-4">
-                        <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
-                            id="btn-show">
-                            <span class="lg:block hidden"> Tampilkan </span>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -78,7 +55,7 @@
                                 Laporan Registrasi Asuransi
                             </h2>
                             @if (\Request::get('tAwal') && \Request::get('tAkhir'))
-                                <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b> dengan status <b>{{Request()->status == 'canceled' ? 'dibatalkan' : 'onprogres'}}</b>.</p>
+                                <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b>.</p>
                             @endif
                         </div>
                     </div>
@@ -119,47 +96,56 @@
                         <table class="table-auto w-full">
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th colspan="6" class="border-r">Debitur</th>
-                                    <th colspan="4">Asuransi</th>
-                                </tr>
-                                <tr>
                                     <th>No.</th>
-                                    <th>Nama Debitur</th>
-                                    <th>Cabang</th>
-                                    <th>Tanggal Pengajuan</th>
-                                    <th>Nomor PK</th>
-                                    <th>Jenis Kredit</th>
-                                    <th class="border-r">Plafond</th>
-                                    <th>No Aplikasi</th>
-                                    <th>No Polis</th>
-                                    <th>Tanggal Polis</th>
-                                    <th>Tanggal Rekam</th>
+                                    <th>content</th>
+                                    <th>tanggal</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($asuransi as $item)
-                                    @php
-                                        $cabang = $item->pengajuan ? $item->pengajuan['cabang'] : 'undifined';
-                                        $skema_kredit = $item->pengajuan ? $item->pengajuan['skema_kredit'] : 'undifined';
-                                        $plafond = $item->pengajuan ? $item->pengajuan['jumlah_kredit'] : 0;
-                                    @endphp
+                                <?php
+                                    function formatTanggalLocal($date)
+                                    {
+                                        $days = [
+                                            'Sunday' => 'Minggu',
+                                            'Monday' => 'Senin',
+                                            'Tuesday' => 'Selasa',
+                                            'Wednesday' => 'Rabu',
+                                            'Thursday' => 'Kamis',
+                                            'Friday' => 'Jumat',
+                                            'Saturday' => 'Sabtu',
+                                        ];
+
+                                        $months = [
+                                            'January' => 'Januari',
+                                            'February' => 'Februari',
+                                            'March' => 'Maret',
+                                            'April' => 'April',
+                                            'May' => 'Mei',
+                                            'June' => 'Juni',
+                                            'July' => 'Juli',
+                                            'August' => 'Agustus',
+                                            'September' => 'September',
+                                            'October' => 'Oktober',
+                                            'November' => 'November',
+                                            'December' => 'Desember',
+                                        ];
+
+                                        $carbonDate = \Carbon\Carbon::parse($date);
+                                        $dayName = $carbonDate->format('l');
+                                        $monthName = $carbonDate->format('F');
+
+                                        return $carbonDate->format('H:i, ') . $days[$dayName] . ', ' . $carbonDate->format('d') . ' ' . $months[$monthName] . ' ' . $carbonDate->format('Y');
+                                    }
+                                ?>
+                                @forelse ($data as $item)
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
-                                        <td>{{$item->nama_debitur}}</td>
-                                        <td>{{$cabang}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tanggal_awal))}}</td>
-                                        <td>{{$item->no_pk}}</td>
-                                        <td>{{$skema_kredit}}</td>
-                                        <td>{{number_format($plafond, 0, ',', '.')}}</td>
-                                        <td>{{$item->no_aplikasi}}</td>
-                                        <td>{{$item->no_polis}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tgl_polis))}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tgl_rekam))}}</td>
+                                        <td>{{$item->content}}</td>
+                                        <td>{{ formatTanggalLocal($item->created_at) }}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="11">Belum ada data asuransi.</td>
+                                        <td colspan="3">Belum ada data.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -168,8 +154,8 @@
                     <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
                         <div class="w-full">
                             <div class="pagination kkb-pagination">
-                                @if ($asuransi instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                    {{ $asuransi->links('pagination::tailwind') }}
+                                @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                    {{ $data->links('pagination::tailwind') }}
                                 @endif
                             </div>
                         </div>
@@ -185,10 +171,8 @@
         $('#page_length').on('change', function() {
             $('#form-report').submit()
         })
-        
+
         $('.datepicker').val('dd-mm-yyyy');
-        $('#dari').val("@if(\Request::has('dari')){{\Request::get('dari')}}@endif")
-        $('#sampai').val("@if(\Request::has('dari')){{\Request::get('sampai')}}@endif")
         $('#cabang').select2()
         $('#nip').select2()
 
@@ -241,4 +225,14 @@
             }
         });
     </script>
+    @if(\Request::has('dari'))
+        <script>
+            $('#dari').val("{{\Request::get('dari')}}")
+        </script>
+    @endif
+    @if(\Request::has('sampai'))
+        <script>
+            $('#sampai').val("{{\Request::get('sampai')}}")
+        </script>
+    @endif
 @endpush
