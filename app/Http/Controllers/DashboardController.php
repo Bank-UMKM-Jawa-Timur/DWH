@@ -130,11 +130,11 @@ class DashboardController extends Controller
             $this->param['total_waiting'] = DB::table('asuransi')->where('status', 'waiting approval')->count();
             $this->param['total_approved'] = DB::table('asuransi')
             ->where('status', 'approved')->count();
-            $this->param['total_revisi'] = DB::table('pengajuan_klaim')
+            $this->param['total_revisi'] = DB::table('asuransi')
             ->where('status', 'revition')
             ->count();
-            $this->param['total_sended'] = DB::table('pengajuan_klaim')->where('status', 'sended')->count();
-            $this->param['total_canceled'] = DB::table('pengajuan_klaim')->where('status', 'canceled')->count();
+            $this->param['total_sended'] = DB::table('asuransi')->where('status', 'sended')->count();
+            $this->param['total_canceled'] = DB::table('asuransi')->where('status', 'canceled')->count();
 
             // data klaim
             $this->param['yangDibatalkan'] = DB::table('pengajuan_klaim')->where('status', 'canceled')->count();
