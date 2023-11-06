@@ -860,6 +860,8 @@
             enabled: false,
         },
     };
+    var donut = new ApexCharts(document.querySelector(".chart"), options);
+    donut.render();
 
 
     var dataYangSudahDibayar = @json($dataYangSudahDibayar);
