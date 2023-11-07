@@ -392,18 +392,30 @@ class RegistrasiController extends Controller
             $tAkhir = $request->get('sampai');
             $hari_ini = now();
 
-            if (empty($tAkhir)) {
-                $tAkhir = $hari_ini;
-            } else {
+            // if (empty($tAkhir)) {
+            //     $tAkhir = $hari_ini;
+            // } else {
                 $tAkhir = date('Y-m-d', strtotime($tAkhir));
-            }
+            // }
 
             $page_length = $request->page_length ? $request->page_length : 5;
-            $data = DB::table('asuransi')->where('asuransi.done_by', 1)
-            ->whereBetween('created_at', [$tAwal, $tAkhir]);
+            $data = DB::table('asuransi')
+            ->select(
+                'id',
+                'no_aplikasi',
+                'nama_debitur',
+                'no_rek',
+                'no_polis',
+            );
+
+
+            // $data = DB::table('log_activities')
+            // ->where('is_asuransi', true)
+            // ->whereBetween('created_at', [$tAwal, $tAkhir]);
             if ($request->has('q')) {
                 $q = $request->get('q');
-                $data = $data->where('content', 'LIKE', "%$q%");
+                $data = $data->where('no_aplikasi', 'LIKE', "%$q%")
+                ->orWhere('nama_debitur','LIKE', "%$q%");
             }
 
             if (is_numeric($page_length)) {
@@ -411,6 +423,16 @@ class RegistrasiController extends Controller
             } else {
                 $data = $data->orderBy('created_at', 'DESC')->get();
             }
+
+            foreach ($data as $key => $value) {
+               $value->activity = DB::table('log_activities')
+               ->where('asuransi_id', $value->id)
+               ->where('is_asuransi', true)
+                // ->whereBetween('created_at', [$tAwal, $tAkhir])
+                ->get();
+            }
+
+            // return $data;
             return view('pages.report.asuransi.registrasi.log-data', $data);
         } catch (Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
