@@ -87,8 +87,11 @@ class PembayaranPremiController extends Controller
             $tAkhir = date('Y-m-d', strtotime($request->get('sampai')));
 
             $data = $data->when($status, function($query) use ($status) {
-                            if ($status != 'all') {
-                                $query->where('is_paid', $status);
+                            if ($status == '1') {
+                                $query->where('is_paid', 1);
+                            }
+                            else {
+                                $query->where('is_paid', 0);
                             }
                         })
                         ->where('k.is_asuransi', true)
