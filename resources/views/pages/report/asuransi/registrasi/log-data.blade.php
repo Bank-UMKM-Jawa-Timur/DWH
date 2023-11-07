@@ -16,7 +16,7 @@
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 justify-between">
                     <div class="title-table lg:p-3 p-2 text-left">
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                            Form Laporan Log Activity Asuransi
+                            Form Log Data Asuransi
                         </h2>
                         @if (\Request::get('dari') && \Request::get('sampai'))
                             <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('dari')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('sampai')))}}.</p>
@@ -52,7 +52,7 @@
                     <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                         <div class="title-table lg:p-3 p-2 text-left">
                             <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                                Laporan Registrasi Asuransi
+                                Log Data Asuransi
                             </h2>
                             @if (\Request::get('tAwal') && \Request::get('tAkhir'))
                                 <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b>.</p>
@@ -97,8 +97,11 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>content</th>
-                                    <th>tanggal</th>
+                                    <th>NO Aplikasi</th>
+                                    <th>Nama Debitur</th>
+                                    <th>No Rekening</th>
+                                    <th>No Polis</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -138,10 +141,52 @@
                                     }
                                 ?>
                                 @forelse ($data as $item)
-                                    <tr>
+                                    <tr class="view cursor-pointer">
                                         <td>{{$loop->iteration}}</td>
-                                        <td>{{$item->content}}</td>
-                                        <td>{{ formatTanggalLocal($item->created_at) }}</td>
+                                        <td>{{$item->no_aplikasi}}</td>
+                                        <td>{{$item->nama_debitur}}</td>
+                                        <td>{{$item->no_rek}}</td>
+                                        <td>{{$item->no_polis}}</td>
+                                        <td>
+                                            <div class="flex gap-4 justify-center">
+                                                {{-- @if(count($item['jenis_asuransi']) > 0) --}}
+                                                    <button class="flex gap-2 hover:bg-slate-50 border px-3 py-2">
+                                                        <span class="caret-icon transform">
+                                                            @include('components.svg.caret')
+                                                        </span>
+                                                        <span id="text_collapse" class="collapse-text">Sembunyikan Log Activity</span>
+                                                    </button>
+                                                {{-- @else
+                                                    <span class="caret-icon transform"></span>
+                                                @endif --}}
+                                            </div>
+                                        </td>
+                                        {{-- <td>{{ formatTanggalLocal($item->created_at) }}</td> --}}
+                                    </tr>
+                                    <tr class="collapse-table">
+                                        <td class="bg-theme-primary/5"></td>
+                                        <td colspan="8" class="p-0">
+                                            <div class="bg-theme-primary/5">
+                                                <div>
+                                                    <table class="table-collapse">
+                                                        <thead>
+                                                            <th>#</th>
+                                                            <th>aktivitas</th>
+                                                            <th>tanggal</th>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($item->activity as $log)
+                                                                <tr>
+                                                                    <td>{{$loop->iteration}}</td>
+                                                                    <td>{{$log->content}}</td>
+                                                                    <td>{{ formatTanggalLocal($log->created_at) }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -171,6 +216,18 @@
         $('#page_length').on('change', function() {
             $('#form-report').submit()
         })
+        $("table .view").on("click", function(e) {
+            const $collapseTable = $(this).next(".collapse-table");
+            $collapseTable.toggleClass("hidden");
+
+            const $textCollapse = $(this).find('#text_collapse');
+
+            if ($collapseTable.hasClass('hidden')) {
+                $textCollapse.text("Tampilkan Log Activity");
+            } else {
+                $textCollapse.text("Sembunyikan Log Activity");
+            }
+        });
 
         $('.datepicker').val('dd-mm-yyyy');
         $('#cabang').select2()

@@ -38,7 +38,7 @@
                             <small class="form-text text-red-600 error sampai-error"></small>
                         </div>
                         <div class="input-box space-y-3 col-span-1">
-                            <label for="" class="uppercase">Cabang</label> 
+                            <label for="" class="uppercase">Cabang</label>
                             <select name="cabang" id="cabang" class="w-full p-2 border" required>
                                 <option value="all" selected>-- Semua cabang ---</option>
                                 @foreach ($cabang as $item)
@@ -65,6 +65,14 @@
                             </select>
                             <small class="form-text text-red-600 error"></small>
                         </div>
+                         <div class="input-box space-y-3 col-span-1">
+                            <label for="" class="uppercase">Status Bayar</label>
+                            <select name="status" id="status" class="w-full p-2 border" required>
+                                <option value="1" >Sudah</option>
+                                <option value="0" >Belum</option>
+                            </select>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
                     </div>
                     <div class="flex gap-5 justify-end mt-4">
                         <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
@@ -84,7 +92,7 @@
                 <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                     <div class="title-table lg:p-3 p-2 text-left">
                         <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                            Laporan Registrasi Asuransi
+                            Laporan Pembayaran Premi
                         </h2>
                         @if (!\Request::has('dari') && !\Request::has('sampai'))
                             <p class="text-gray-600 text-sm">Menampilkan data pada bulan ini.</p>
@@ -137,14 +145,18 @@
                                 <th>No Rekening</th>
                                 <th>No PK</th>
                                 <th>Tanggal</th>
-                                <th>Premi</th>
-                                <th>Premi Disetor</th>
                                 <th>Periode Bayar</th>
                                 <th>Total Periode(dalam tahun)</th>
+                                <th>Premi</th>
+                                <th>Premi Disetor</th>
                                 <th>Status Bayar</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $totalPremi = 0;
+                                $totalPremiDisetor = 0;
+                            @endphp
                             @forelse ($pembayaran as $item)
                                 @php
                                     $cabang = $item->pengajuan ? $item->pengajuan['cabang'] : 'undifined';
@@ -159,18 +171,29 @@
                                     <td>{{$item->no_rek}}</td>
                                     <td>{{$item->no_pk}}</td>
                                     <td>{{date('d-m-y', strtotime($item->tgl_bayar))}}</td>
-                                    <td>{{number_format($item->premi, 0, ',', '.')}}</td>
-                                    <td>{{number_format($item->premi_disetor, 0, ',', '.')}}</td>
                                     <td>{{$item->periode_bayar}}</td>
                                     <td>{{$item->total_periode}}</td>
+                                    <td>{{number_format($item->premi, 0, ',', '.')}}</td>
+                                    <td>{{number_format($item->premi_disetor, 0, ',', '.')}}</td>
                                     <td>{{$item->is_paid ? 'Sudah' : 'Belum'}}</td>
                                 </tr>
+                                @php
+                                    $totalPremi += $item->premi;
+                                    $totalPremiDisetor += $item->premi_disetor;
+                                @endphp
                             @empty
                                 <tr>
                                     <td colspan="13">Belum ada data.</td>
                                 </tr>
                             @endforelse
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="11" class="tetxt-center fw-bold">Total</th>
+                                <th class="fw-bold">{{number_format($totalPremi, 0, ',', '.')}}</th>
+                                <th class="fw-bold">{{number_format($totalPremiDisetor, 0, ',', '.')}}</th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
@@ -192,7 +215,7 @@
         $('#page_length').on('change', function() {
             $('#form-report').submit()
         })
-        
+
         $('.datepicker').val('dd-mm-yyyy');
         $('#cabang').select2()
         $('#nip').select2()
