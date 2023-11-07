@@ -58,6 +58,8 @@ class PembayaranPremiController extends Controller
         $searchBy = $request->query('search_by');
 
         $data = $this->list($page_length, $searchQuery, $searchBy);
+
+        // return $data;
         $param['data'] = $data;
         $param['page_length'] = $page_length;
 
@@ -82,35 +84,57 @@ class PembayaranPremiController extends Controller
 
     public function list($page_length = 5 , $searchQuery, $searchBy)
     {
-        $query = DB::table('pembayaran_premi')
-                    ->select(
-                        'pembayaran_premi.*', 
-                        'd.pembayaran_premi_id',
-                        'a.no_aplikasi',
-                        'a.no_polis',
-                        'd.no_rek',
-                        'd.no_pk',
-                        'd.periode_bayar',
-                        'd.total_periode'
-                        )
-                    ->join('pembayaran_premi_detail AS d', 'd.pembayaran_premi_id', 'pembayaran_premi.id')
-                    ->join('asuransi AS a', 'a.id', 'd.asuransi_id')
-                    ->groupBy('d.pembayaran_premi_id');
+        $query = DB::table('pembayaran_premi');
+
         if ($searchQuery && $searchBy == 'field') {
-            $query->where('a.no_aplikasi', 'like', '%' . $searchQuery . '%')
-                ->orWhere('a.no_polis', 'like', '%' . $searchQuery . '%')
-                ->orWhere('pembayaran_premi.nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
+            $query->where('pembayaran_premi.nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
                 ->orWhere('pembayaran_premi.tgl_bayar', 'like', '%' . $searchQuery . '%')
-                ->orWhere('pembayaran_premi.total_premi', 'like', '%' . $searchQuery . '%')
-                ->orWhere('d.no_rek', 'like', '%' . $searchQuery . '%')
-                ->orWhere('d.no_pk', 'like', '%' . $searchQuery . '%')
-                ->orWhere('d.periode_bayar', 'like', '%' . $searchQuery . '%')
-                ->orWhere('d.total_periode', 'like', '%' . $searchQuery . '%');
+                ->orWhere('pembayaran_premi.total_premi', 'like', '%' . $searchQuery . '%');
         }
         if (is_numeric($page_length)) {
             $data = $query->paginate($page_length);
         } else {
             $data = $query->get();
+        }
+
+        foreach ($data as $key => $value) {
+            $query = DB::table('pembayaran_premi_detail AS d')
+                    ->select(
+                        'd.id', 
+                        'd.pembayaran_premi_id',
+                        'a.no_aplikasi',
+                        'a.no_polis',
+                        'a.premi',
+                        'd.no_rek',
+                        'd.no_pk',
+                        'd.periode_bayar',
+                        'd.total_periode'
+                        )
+                    ->join('asuransi AS a', 'a.id', 'd.asuransi_id')
+                    ->where('d.pembayaran_premi_id', $value->id);
+
+            if ($searchQuery && $searchBy == 'field') {
+                $query->where('a.no_aplikasi', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('a.no_polis', 'like', '%' . $searchQuery . '%')
+                    ->where('d.pembayaran_premi_id', $value->id)
+                    ->orWhere('pembayaran_premi.nobukti_pembayaran', 'like', '%' . $searchQuery . '%')
+                    ->where('d.pembayaran_premi_id', $value->id)
+                    ->orWhere('pembayaran_premi.tgl_bayar', 'like', '%' . $searchQuery . '%')
+                    ->where('d.pembayaran_premi_id', $value->id)
+                    ->orWhere('pembayaran_premi.total_premi', 'like', '%' . $searchQuery . '%')
+                    ->where('d.pembayaran_premi_id', $value->id)
+                    ->orWhere('d.no_rek', 'like', '%' . $searchQuery . '%')
+                    ->where('d.pembayaran_premi_id', $value->id)
+                    ->orWhere('d.no_pk', 'like', '%' . $searchQuery . '%')
+                    ->where('d.pembayaran_premi_id', $value->id)
+                    ->orWhere('d.periode_bayar', 'like', '%' . $searchQuery . '%')
+                    ->where('d.pembayaran_premi_id', $value->id)
+                    ->orWhere('d.total_periode', 'like', '%' . $searchQuery . '%')
+                    ->where('d.pembayaran_premi_id', $value->id);
+            }
+
+            $d = $query->get();
+            $value->detail = $d;
         }
 
         return $data;
@@ -338,6 +362,8 @@ class PembayaranPremiController extends Controller
     {
         $token = \Session::get(config('global.user_token_session'));
         $user = $token ? $this->getLoginSession() : Auth::user();
+        $user_nip = \Session::get(config('global.user_nip_session'));
+        $user_name = \Session::get(config('global.user_name_session'));
 
         $user_id = $token ? $user['id'] : $user->id;
         $role_id = \Session::get(config('global.role_id_session'));
@@ -365,6 +391,7 @@ class PembayaranPremiController extends Controller
             "no_polis" => $request->no_polis,
         ];
 
+        DB::beginTransaction();
         try {
             $headers = [
                 "Accept" => "/",
@@ -385,38 +412,33 @@ class PembayaranPremiController extends Controller
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
                     $nilai = $responseBody['nilai_premi'];
-                    $this->logActivity->store('Pengguna ' . $request->name . ' melakukan inquery pembayaran premi.');
-                    Alert::success('Berhasil', $message . 'Nilai Premi ' . number_format($nilai, 0, ',', '.'));
-                    return redirect()->route('asuransi.pembayaran-premi.index');
-                    // return response()->json([
-                    //     'status' => 'Berhasil',
-                    //     'response' => $responseBody
-                    // ]);
+                    $this->logActivity->store("Pengguna $user_name($user_nip) melakukan inquery pembayaran premi.");
+                    DB::commit();
+
+                    return response()->json([
+                        'status' => 'Berhasil',
+                        'response' => $responseBody
+                    ]);
                 }else{
                     $message = $responseBody['keterangan'];
-                    Alert::error('Gagal', $message);
-                    return back();
-                    // return response()->json([
-                    //     'status' => 'Gagal',
-                    //     'response' => $message
-                    // ]);
+                    return response()->json([
+                        'status' => 'Gagal',
+                        'response' => $message
+                    ]);
                 }
             }
             else {
-                Alert::error('Gagal', 'Terjadi kesalahan');
-                return back();
-                // return response()->json([
-                //     'status' => 'Gagal',
-                //     'response' => 'Terjadi kesalahan'
-                // ]);
+                return response()->json([
+                    'status' => 'Gagal',
+                    'response' => 'Terjadi kesalahan'
+                ]);
             }
         } catch (\Throwable $e) {
-            Alert::error('Gagal', $e->getMessage());
-            return back();
-            // return response()->json([
-            //     'status' => 'Gagal',
-            //     'response' => $e->getMessage()
-            // ]);
+            DB::rollBack();
+            return response()->json([
+                'status' => 'Gagal',
+                'response' => $e->getMessage()
+            ]);
         }
     }
 

@@ -1106,9 +1106,6 @@ video {
 .border-t {
   border-top-width: 1px;
 }
-.border-t-0 {
-  border-top-width: 0px;
-}
 .border-\[\#E6E6E6\] {
   --tw-border-opacity: 1;
   border-color: rgb(230 230 230 / var(--tw-border-opacity));
