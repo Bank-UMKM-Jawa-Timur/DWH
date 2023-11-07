@@ -130,7 +130,7 @@
                                     <th>Tanggal Lunas</th>
                                     <th>Nomor Polis</th>
                                     <th>Refund</th>
-                                    <th>Siswa Jw</th>
+                                    <th>Siswa Jangka Waktu</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -190,7 +190,7 @@
                             $('#nip').empty()
                             $('#nip').append(`<option value="all" selected>-- Semua nip ---</option>`)
                             for (var i=0; i < response.length; i++) {
-                                $('#nip').append(`<option value="${response[i]['id']}" selected>${response[i]['nip']} - ${response[i]['detail']['nama']}</option>`)
+                                $('#nip').append(`<option value="${response[i]['id']}">${response[i]['nip']} - ${response[i]['detail']['nama']}</option>`)
                             }
                             $('#preload-data').addClass('hidden')
                         }

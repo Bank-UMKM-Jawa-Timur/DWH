@@ -377,6 +377,7 @@ class RegistrasiController extends Controller
 
             $data = [
                 'pelunasan' => $pelunasan,
+                'staf' => $staf,
                 'cabang' => $allCabang
             ];
             return view('pages.report.asuransi.pelunasan.pelunasan', $data);
