@@ -23,6 +23,7 @@ use App\Http\Controllers\Master\PerusahaanAsuransiController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Report\Asuransi\PembayaranPremiController as AsuransiPembayaranPremiController;
+use App\Http\Controllers\Report\Asuransi\PengajuanKlaimController as AsuransiPengajuanKlaimController;
 use App\Http\Controllers\Report\Asuransi\RegistrasiController as ReportRegistrasiController;
 use App\Http\Controllers\TargetController;
 use App\Models\Kredit;
@@ -143,6 +144,14 @@ Route::middleware('auth_api')->group(function () {
                         Route::get('/log-data', 'logData')->name('log-data');
                     });
                 Route::get('/pembayaran', [AsuransiPembayaranPremiController::class, 'index'])->name('pembayaran');
+            })
+            ->group(function(){
+                Route::prefix('/pengajuan-klaim')
+                    ->name('pengajuan-klaim.')
+                    ->controller(AsuransiPengajuanKlaimController::class)
+                    ->group(function(){
+                        Route::get('/', 'index')->name('index');
+                    });
             });
     });
 
