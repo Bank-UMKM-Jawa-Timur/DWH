@@ -38,13 +38,13 @@
         @apply w-10 h-10 rounded-full bg-gray-100;
     }
     .layout-sidebar {
-        @apply w-[280px] overflow-auto bg-white border-r h-full lg:relative fixed lg:z-0 z-40  lg:left-0;
+        @apply w-[280px] overflow-y-auto bg-white border-r h-screen lg:relative fixed lg:z-0 z-40  lg:left-0;
     }
     .layout-pages {
         @apply w-full box-border h-screen bg-theme-pages drop-shadow-md overflow-auto;
     }
     .head-pages {
-        @apply p-5;
+        @apply p-5 w-full;
     }
     .body-pages {
         @apply p-5;
@@ -101,7 +101,7 @@
     }
 
     .tables {
-        @apply overflow-visible overflow-x-auto p-2;
+        @apply overflow-x-auto p-2;
     }
     body {
         @apply overflow-hidden;
@@ -140,6 +140,13 @@
     .table-dictionary td {
         @apply text-left;
     }
+    .table-collapse {
+        @apply border-collapse border w-full;
+    }
+    .table-collapse th,
+    td {
+        @apply text-center px-5 py-3;
+    }
     table {
         @apply border-collapse border;
     }
@@ -175,7 +182,7 @@
         @apply relative mx-auto;
     }
     .dropdown-menu {
-        @apply hidden border bg-white divide-y absolute text-left text-gray-700 z-30 bottom-0;
+        @apply hidden border bg-white divide-y text-left text-gray-700 z-30 lg:right-auto right-16 bottom-auto fixed;
     }
     .item-dropdown {
         @apply bg-white hover:bg-gray-200 py-2 px-8 block;
@@ -188,6 +195,13 @@
 input {
     outline: none !important;
 }
+select {
+    outline: none !important;
+}
+textarea {
+    outline: none !important;
+}
+
 .select2.select2-container {
     width: 100% !important;
 }

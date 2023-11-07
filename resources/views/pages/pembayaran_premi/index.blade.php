@@ -26,14 +26,16 @@
                     Pembayaran Premi
                 </h2>
             </div>
-            <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                <a href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                    <span class="lg:mt-0 mt-0">
-                        @include('components.svg.plus')
-                    </span>
-                    <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
-                </a>
-            </div>
+            @if ($role == 'Staf Analis Kredit')
+                <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
+                    <a href="{{route('asuransi.pembayaran-premi.create')}}" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
+                        <span class="lg:mt-0 mt-0">
+                            @include('components.svg.plus')
+                        </span>
+                        <span class="lg:block hidden"> Tambah Pembayaran Premi </span>
+                    </a>
+                </div>
+            @endif
         </div>
         <div
             class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
@@ -68,86 +70,118 @@
             <table class="table-auto w-full">
                 <tr>
                     <th>No.</th>
-                    <th>No Aplikasi</th>
-                    <th>No Polis</th>
                     <th>No Bukti Pembayaran</th>
                     <th>Tanggal Bayar</th>
                     <th>Total Premi</th>
-                    <th>No Rekening</th>
-                    <th>No PK</th>
-                    <th>Periode Bayar</th>
-                    <th>Total Periode</th>
                     <th>Aksi</th>
                 </tr>
                 <tbody>
-                    @php
-                        function formatCurrency($number)
-                        {
-                            $formattedNumber = number_format($number, 0, ',', '.');
-                            $formattedNumber = 'Rp ' . $formattedNumber;
-                            return $formattedNumber;
-                        }
-                    @endphp
                     @forelse ($data as $item)
-                    @php
-                        $noAplikasi = App\Models\Asuransi::where('id', $item->pembayaranPremi->asuransi_id)->get();
-                    @endphp
                     <form action="{{ route('asuransi.pembayaran_premi.inquery') }}" method="post">
                         @csrf
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>
-                                <input type="hidden" name="row_no_aplikasi" value="{{ $noAplikasi[0]->no_aplikasi }}">
-                                {{ $noAplikasi[0]->no_aplikasi }}
-                            </td>
-                            <td>
-                                <input type="hidden" name="row_no_polis" value="{{ $noAplikasi[0]->no_polis }}">
-                                {{ $noAplikasi[0]->no_polis }}
-                            </td>
-                            <td>
-                                <input type="hidden" name="row_nobukti_pembayaran" value="{{ $item->pembayaranPremi->nobukti_pembayaran }}">
-                                {{ $item->pembayaranPremi->nobukti_pembayaran }}
-                            </td>
-                            <td>{{ $item->pembayaranPremi->tgl_bayar }}</td>
-                            <td>
-                                <input type="hidden" name="row_outstanding" value="{{ $item->pembayaranPremi->total_premi }}">
-                                {{ formatCurrency((int)$item->pembayaranPremi->total_premi) }}
-                            </td>
-                            <td>
-                                <input type="hidden" name="row_no_rek" value="{{ $item->no_rek }}">
-                                {{ $item->no_rek }}
-                            </td>
-                            <td>{{ $item->no_pk }}</td>
-                            <td>
-                                <input type="hidden" name="row_periode_premi" value="{{ $item->periode_bayar }}">
-                                {{ $item->periode_bayar }}
-                            </td>
-                            <td>{{ $item->total_periode }}</td>
-    
-                            <td>
-                                <div class="dropdown">
-                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                        Selangkapnya
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <button type="submit" class="item-dropdown">
-                                            Inquery
+                            <tr class="view cursor-pointer">
+                                <td>{{ $loop->iteration}}</td>
+                                <td>
+                                    <input type="hidden" name="nobukti_pembayaran" value="{{ $item->nobukti_pembayaran }}">
+                                    {{ $item->nobukti_pembayaran }}
+                                </td>
+                                <td>{{ $item->tgl_bayar }}</td>
+                                <td>
+                                    <input type="hidden" name="outstanding" value="{{ $item->total_premi }}">
+                                    {{ number_format((int)$item->total_premi, 0, ',', '.') }}
+                                </td>
+
+                                <td>
+                                    <div class="flex gap-4 justify-center">
+                                        <button type="button" id="btnAksi" class="flex gap-2 hover:bg-slate-50 border px-3 py-2">
+                                            <span class="caret-icon transform">
+                                                @include('components.svg.caret')
+                                            </span>
+                                            <span class="collapse-text">Sembunyikan Detail</span>
                                         </button>
-                                        {{-- <li class="">
-                                            <a class="item-dropdown" href="#" onclick="alertWarning()">Inquery</a>
-                                        </li> --}}
-                                    </ul>
-                                </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="collapse-table">
+                                <td colspan="11" class="p-0">
+                                    <div class="bg-theme-primary/5">
+                                        <div>
+                                            <div class="mt-0 p-3">
+                                                {{-- <form action="{{ route('asuransi.pembayaran_premi.inquery') }}" method="post">
+                                                    @csrf --}}
+                                                    <table class="table-collapse">
+                                                        <thead>
+                                                            <th>No Aplikasi</th>
+                                                            <th>No Polis</th>
+                                                            <th>No Rekening</th>
+                                                            <th>No PK</th>
+                                                            <th>Periode Bayar</th>
+                                                            <th>Periode Tahun Bayar</th>
+                                                            <th>Aksi</th>
+                                                        </thead>
+                                                        @php
+                                                            $detailPembayaran = \App\Models\PembayaranPremiDetail::with(['pembayaranPremi','asuransi'])
+                                                            ->where('pembayaran_premi_id', $item->id)
+                                                            ->orderBy('id', 'ASC')
+                                                            ->get();
+                                                        @endphp
+                                                        <tbody>
+                                                            @foreach ($detailPembayaran as $item2)
+                                                                <tr>
+                                                                    <td>
+                                                                        <input type="hidden" name="no_aplikasi" value="{{ $item2->asuransi->no_aplikasi }}">
+                                                                        {{ $item2->asuransi->no_aplikasi }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="no_polis" value="{{ $item2->asuransi->no_polis }}">
+                                                                        {{ $item2->asuransi->no_polis }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="no_rekening" value="{{ $item2->no_rek }}">
+                                                                        {{ $item2->no_rek }}
+                                                                    </td>
+                                                                    <td>{{ $item2->no_pk }}</td>
+                                                                    <td>{{ $item2->periode_bayar }}</td>
+                                                                    <td>
+                                                                        <input type="hidden" name="periode_premi" value="{{ $item2->total_periode }}">
+                                                                        {{ $item2->total_periode }}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if ($role == 'Staf Analis Kredit')
+                                                                            <div class="dropdown">
+                                                                                <button type="button" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                    Selengkapnya
+                                                                                </button>
+                                                                                <ul class="dropdown-menu">
+                                                                                    <button type="submit" id="btnInquery" class="item-dropdown">
+                                                                                        Inquery
+                                                                                    </button>
+                                                                                </ul>
+                                                                            </div>
+                                                                        @else
+                                                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                Detail
+                                                                            </button>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                {{-- </form> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                        <tr>
+                            <td colspan="10" class="text-center">
+                                <span class="text-danger">Maaf data belum tersedia.</span>
                             </td>
                         </tr>
-                    </form>
-                    @empty
-                    <tr>
-                        <td colspan="10" class="text-center">
-                            <span class="text-danger">Maaf data belum tersedia.</span>
-                        </td>
-                    </tr>
                     @endforelse
+                    </form>
                 </tbody>
             </table>
         </div>
@@ -165,6 +199,22 @@
 @endsection
 @push('extraScript')
 <script>
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     var form = document.getElementById('formIndex');
+    //     var btnLeft = document.getElementById('btnAksi');
+
+    //     btnLeft.addEventListener('click', function(event) {
+    //         event.preventDefault();
+    //     });
+    // });
+    $(".view").on("click", function(e){
+        // $(this + '.caret-icon').toggleClass("rotate-180");
+        $(this).next(".collapse-table").toggleClass("hidden");
+    });
+    $('.dropdown .dropdown-menu .item-dropdown').on('click', function(e){
+        e.stopPropagation();
+    })
+
     $('#page_length').on('change', function() {
         $('#form').submit()
     })
@@ -190,7 +240,7 @@
         $(`#${targetId} #edit-nama`).val(data_nama)
         $(`#${targetId} #edit-telp`).val(data_telp)
         $(`#${targetId} #edit-alamat`).val(data_alamat)
-        
+
         $("#" + targetId).removeClass("hidden");
         $(".layout-form").addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
@@ -205,7 +255,7 @@
             $(".layout-overlay-form").addClass("hidden");
         }
     });
-    
+
     $("#simpanButton").on('click', function(e) {
         e.preventDefault();
         const req_nama = document.getElementById('add-nama')
@@ -355,7 +405,7 @@
         })
     })
 
-    //$('.add-modal-pembayaran-premi').on('click', function (e) { 
+    //$('.add-modal-pembayaran-premi').on('click', function (e) {
     //  alertWarning()
     //});
 
@@ -379,5 +429,47 @@
         errorSpan.innerText = message;
         input.focus();
     }
+
+    $(".table-auto").on("click", "#btnInquery", function(){
+        var parent = $(this).parents('tr');
+        var data = {
+            _token: "{{ csrf_token() }}",
+            no_aplikasi: parent.find("[name=row_no_aplikasi]").val(),
+            nobukti_pembayaran: parent.find("[name=row_nobukti_pembayaran]").val(),
+            no_rekening: parent.find("[name=row_no_rek]").val(),
+            outstanding: parent.find("[name=row_outstanding]").val(),
+            periode_premi: parent.find("[name=row_periode_premi]").val(),
+            no_polis: parent.find("[name=row_no_polis]").val()
+        }
+        
+        console.log(data);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('asuransi.pembayaran_premi.inquery') }}",
+            data: data,
+            success: function(res){
+                if(res.status == 'Berhasil'){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: `${res.response.keterangan}, Nilai Premi Rp. ${formatRupiah(res.response.nilai_premi)}`
+                    });
+                } else{
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal",
+                        text: res.response
+                    })
+                }
+            },
+            error: function(res){
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal",
+                    text: "Terjadi kesalahan."
+                })
+            }
+        })
+    })
 </script>
 @endpush

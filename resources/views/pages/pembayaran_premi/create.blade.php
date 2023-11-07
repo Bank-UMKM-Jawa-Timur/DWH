@@ -2,6 +2,7 @@
 
 @section('modal')
     @include('pages.pembayaran_premi.modal.modal-calculator')
+    @include('pages.pembayaran_premi.modal.loading')
 @endsection
 
 @section('content')
@@ -42,44 +43,61 @@
                 <h2 class="font-bold text-lg text-theme-text tracking-tighter mb-3">
                     Pembayaran Premi
                 </h2>
-                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
-                    <div class="input-box-calendar space-y-3">
-                        <label for="" class="uppercase">Tanggal Bayar<span class="text-theme-primary">*</span></label>
-                        <div class="flex border justify-center ">
-                            <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
-                        <input type="text" class="datepicker p-2 w-full" id="tgl_bayar" name="tgl_bayar" />
-                        </div>
-                        <small class="form-text text-red-600 error"></small>
-                    </div>
-                    <div class="input-box space-y-3">
-                        <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
-                        <input type="hidden" id="total_premi" name="total_premi"/>
-                        <input type="text" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
-                        <small class="form-text text-red-600 error"></small>
-                    </div>
+                <div class="lg:grid-cols-2 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3" id="inputBoxNoAplikasi">
                         <label for="add-role" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span> </label>
                         <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
                             <option value="" selected>-- Pilih No Aplikasi ---</option>
                             @foreach ($noAplikasi as $item)
-                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}}</option>
+                                <option @if (old('no_aplikasi') == $item->no_aplikasi)
+                                    selected @endif value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}} - {{$item->nama_debitur}}</option>
                             @endforeach
                         </select>
                         <div class="errorSpan" id="errorNoAplikasi">
                             <p id="errorText">Nomor aplikasi harus diisi.</p>
                         </div>
                     </div>
+                    <div class="input-box-calendar space-y-3">
+                        <label for="" class="uppercase">Tanggal Bayar<span class="text-theme-primary">*</span></label>
+                        <div class="flex border justify-center ">
+                            <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
+                        <input type="text" value="{{old('tgl_bayar')}}" class="datepicker p-2 w-full" id="tgl_bayar" name="tgl_bayar" />
+                        </div>
+                        <small class="form-text text-red-600 error tgl-bayar-error"></small>
+                    </div>
+                    <div class="input-box space-y-3">
+                        <label for="" class="uppercase">No Bukti Pembayaran<span class="text-theme-primary">*</span></label>
+                        <input type="text" value="{{old('no_bukti_pembayaran')}}" class="p-2 w-full border " id="no_bukti_pembayaran" name="no_bukti_pembayaran"/>
+                        <small class="form-text text-red-600 error no-bukti-pembayaran-error"></small>
+                    </div>
+                    <div class="flex gap-5">
+                        <div class="w-full input-box space-y-3">
+                            <label for="" class="uppercase">Total Premi<span class="text-theme-primary">*</span></label>
+                            <input type="hidden" id="total_premi" name="total_premi"/>
+                            <input type="text" value="{{old('display_total_premi')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi" name="display_total_premi" readonly/>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
+                        <div class="w-full input-box space-y-3">
+                            <label for="" class="uppercase">Total Premi Disetor<span class="text-theme-primary">*</span></label>
+                            <input type="hidden" id="total_premi_disetor" name="total_premi_disetor"/>
+                            <input type="text" value="{{old('display_total_premi_disetor')}}" class="input-disabled bg-disabled p-2 w-full border " id="display_total_premi_disetor" name="display_total_premi_disetor" readonly/>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="">
                     <div class="p-2 mt-3 mb-3 space-y-4" id="inputBoxJenisAsuransi">
                         <h2 class="font-bold font-lexend jenis-asuransi-title hidden">Jenis Asuransi</h2>
-                        <div class="jenis-asuransi"></div>
+                        <div class="jenis-asuransi flex justify-start gap-5 mt-5"></div>
                         <div class="errorSpan" id="errorJenisAsuransi">
                             <p id="errorText">Jenis asuransi harus diisi.</p>
                         </div>
                     </div>
-                    <div class="p-2">
+                    <div class="p-2 hidden"  id="btnLeftForm">
                         <button
                         href="{{route('asuransi.pembayaran-premi.create')}}"
-                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white hidden" id="btnLeftForm">
+                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
                             <span class="lg:mt-0 mt-0">
                                 @include('components.svg.plus')
                             </span>
@@ -90,38 +108,6 @@
             </div>
 
             <div class="lg:flex grid md:grid-cols-1 grid-cols-1 w-full gap-5 mt-3">
-                {{-- form pilih no_apk --}}
-                {{--  <div class="bg-white form-selection lg:w-[20rem] w-full flex-none p-5 border" id="leftForm">
-                    <div class="input-box space-y-3" id="inputBoxNoAplikasi">
-                        <label for="add-role" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span> </label>
-                        <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
-                            <option value="" selected>-- Pilih No Aplikasi ---</option>
-                            @foreach ($noAplikasi as $item)
-                                <option value="{{$item->no_aplikasi}}">{{$item->no_aplikasi}}</option>
-                            @endforeach
-                        </select>
-                        <div class="errorSpan" id="errorNoAplikasi">
-                            <p id="errorText">Nomor aplikasi harus diisi.</p>
-                        </div>
-                    </div>
-                    <div class="p-2 mt-3 mb-3 space-y-4" id="inputBoxJenisAsuransi">
-                        <h2 class="font-bold font-lexend jenis-asuransi-title hidden">Jenis Asuransi</h2>
-                        <div class="jenis-asuransi"></div>
-                        <div class="errorSpan" id="errorJenisAsuransi">
-                            <p id="errorText">Jenis asuransi harus diisi.</p>
-                        </div>
-                    </div>
-                    <div class="p-2">
-                        <button
-                        href="{{route('asuransi.pembayaran-premi.create')}}"
-                        class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white hidden" id="btnLeftForm">
-                            <span class="lg:mt-0 mt-0">
-                                @include('components.svg.plus')
-                            </span>
-                            <span class="lg:block hidden"> Pilih</span>
-                        </button>
-                    </div>
-                </div>  --}}
                 <div class="flex-auto lg:w-[40rem] w-full">
                     <div class="table-wrapper bg-white border rounded-md w-full p-2">
                         {{-- <form action="{{ route('asuransi.pembayaran-premi.store') }}" method="post">
@@ -130,15 +116,15 @@
                                 <table class="table-auto w-full">
                                     <tr>
                                         <th>No.</th>
-                                        <th>No Bukti Pembayaran</th>
                                         <th>Jenis</th>
                                         <th>No Aplikasi.</th>
                                         <th>Premi</th>
+                                        <th>Premi Disetor</th>
                                         <th>No PK</th>
                                         <th>No Polis</th>
                                         <th>No Rekening.</th>
                                         <th>Periode Bayar</th>
-                                        <th>Total Periode Bayar</th>
+                                        <th>Total Periode Bayar (dalam tahun)</th>
                                         <th>Aksi</th>
                                     </tr>
                                     <tbody id="rightForm"></tbody>
@@ -196,17 +182,22 @@
                             for (var i=0; i < data.length; i++) {
                                 var item = data[i]
                                 var checked = arr_selected_key.indexOf(item.id) > -1 ? 'checked' : ''
-                                var checkbox_element = `<div class="input-checked flex gap-5">
+                                var checkbox_element = `
+                                <div class="input-checked flex gap-5">
                                     <input type="checkbox" name="jenis[]" id="${item.jenis}"
-                                        class="accent-theme-primary jenis-asuransi-check"
+                                        class="accent-theme-primary rounded h-5 w-5 jenis-asuransi-check"
                                         data-key="${item.generate_key}" data-id="${item.id}"
                                         data-jenis="${item.jenis}" data-no_aplikasi="${item.no_aplikasi}"
                                         data-premi="${item.premi}" data-no_pk="${item.no_pk}"
-                                        data-no_polis="${item.no_polis}" data-no_rek="${item.no_rek}" ${checked}>
+                                        data-no_polis="${item.no_polis}" data-premi_disetor="${item.premi_disetor}" data-no_rek="${item.no_rek}" ${checked}>
                                     <label for="${item.jenis}">${item.jenis}</label>
                                 </div>`
                                 jenis_asuransi_div.append(checkbox_element)
                             }
+                        }
+                        else{
+                            var message = 'Tidak ada premi yang harus dibayar pada no aplikasi ini'
+                            alertWarning(message)
                         }
                     },
                     error: function(e) {
@@ -234,15 +225,28 @@
             }
         })
 
+        function formatRupiah(angka) {
+            var reverse = angka.toString().split('').reverse().join('');
+            var ribuan = reverse.match(/\d{1,3}/g);
+            var formatted = ribuan.join('.').split('').reverse().join('');
+            return formatted;
+        }
+
         var arr_selected_key = [];
         var temp_no = 1;
         var total_premi = 0;
+        var total_premi_disetor = 0;
         hitungTotalPremi()
 
         function hitungTotalPremi() {
-            var format_total_premi = formatRupiah(total_premi.toString())
+            var int_total_premi = parseInt(total_premi)
+            var int_total_premi_disetor = parseInt(total_premi_disetor)
+            var format_total_premi = formatRupiah(int_total_premi)
+            var format_total_premi_disetor = formatRupiah(int_total_premi_disetor)
             $('#total_premi').val(total_premi)
             $('#display_total_premi').val(format_total_premi)
+            $('#total_premi_disetor').val(total_premi_disetor)
+            $('#display_total_premi_disetor').val(format_total_premi_disetor)
         }
 
         $("#btnLeftForm").on("click", function(e){
@@ -292,26 +296,26 @@
                         else {
                             var premi = $(this).data('premi');
                             var premiRupiah = '0';
+
+                            var premiDisetor = $(this).data('premi_disetor');
+                            var premiDisetorRupiah = '0';
+
                             var no_pk = $(this).data('no_pk');
                             var no_polis = $(this).data('no_polis');
                             var no_rek = $(this).data('no_rek');
-    
+
                             if (premi != '') {
                                 premiRupiah = premi.toString().replaceAll('.', ',')
                                 premiRupiah = formatRupiah(premiRupiah.toString())
                             }
-    
+                            if (premiDisetor != '') {
+                                premiDisetorRupiah = premiDisetor.replaceAll('.', ',')
+                                premiDisetorRupiah = formatRupiah(premiDisetorRupiah)
+                            }
+
                             var row_element = `<tr>
                                 <input type="hidden" name="row_key[]" class="row-key" value="${generate_key}">
                                 <td>${temp_no}</td>
-                                <td>
-                                    <div class="input-box">
-                                        <input type="number" placeholder="Input nilai disini.." class="bg-white border px-5 py-2" name="row_nobukti_pembayaran[]">
-                                        <div class="errorSpan hidden" id="errorNobuktiPembayaran">
-                                            <p id="errorText">No Bukti bayar harus diisi.</p>
-                                        </div>
-                                    </div>
-                                </td>
                                 <td>${jenis}</td>
                                 <td>
                                     <input type="hidden" name="row_id_no_aplikasi[]" value="${id}">
@@ -321,6 +325,10 @@
                                 <td>
                                     <input type="hidden" name="row_premi[]" class="row-premi" value="${premi}">
                                     Rp ${premiRupiah}
+                                </td>
+                                <td>
+                                    <input type="hidden" name="row_premi_disetor[]" class="row-premi" value="${premiDisetor}">
+                                    Rp ${premiDisetorRupiah}
                                 </td>
                                 <td>
                                     <input type="hidden" name="row_no_pk[]" value="${no_pk}">
@@ -358,16 +366,18 @@
                                     </button>
                                 </td>
                             </tr>`;
-    
+
                             $('#rightForm').append(row_element)
-    
+
                             arr_selected_key.push(generate_key)
                             temp_no++;
                             total_premi += premi
+                            total_premi_disetor += premiDisetor
                             hitungTotalPremi()
                         }
                     }
                 })
+                $("#no_aplikasi").val(null).trigger("change");
             }
         })
 
@@ -376,7 +386,7 @@
             var premi = $(this).parent().parent().find('.row-premi').val()
             var key = $(this).parent().parent().find('.row-key').val()
             const index = arr_selected_key.indexOf(parseInt(key));
-            if (index > -1) { 
+            if (index > -1) {
                 // only splice array when item is found
                 arr_selected_key.splice(index, 1);
                 temp_no--;
@@ -401,8 +411,32 @@
         }
 
         $("#btnRightForm").on("click", function(e){
+            var total_input_null = 0;
+            var no_bukti_pembayaran = $('#no_bukti_pembayaran').val()
+            if(no_bukti_pembayaran == ''){
+                e.preventDefault();
+                total_input_null++;
+                $(`#no_bukti_pembayaran`).addClass('border-2 border-rose-600')
+                $(`.no-bukti-pembayaran-error`).html('Nomor aplikasi tidak boleh kosong')
+            } else {
+                $(`#no_bukti_pembayaran`).removeClass('border-2 border-rose-600')
+                $(`.no-bukti-pembayaran-error`).html('')
+            }
+
+            var tgl_bayar = $('#tgl_bayar').val()
+            if (tgl_bayar != 'dd/mm/yyyy') {
+                $(`#tgl_bayar`).removeClass('border-2 border-rose-600')
+                $(`.tgl-bayar-error`).html('')
+            }
+            else {
+                total_input_null++;
+                $(`#tgl_bayar`).addClass('border-2 border-rose-600')
+                $(`.tgl-bayar-error`).html('Harap pilih tanggal bayar')
+            }
+
             $("#rightForm tr").each(function(){
                 if($(this).find('input[name="no_rekening[]"]').val() == ''){
+                    total_input_null++;
                     e.preventDefault();
                     $(this).find("#errorNoRekening").show();
                     $(this).find('input[name="no_rekening[]"]').css({"border": "2px solid red"});
@@ -410,6 +444,7 @@
                     $(this).find("#errorNoRekening").hide();
                 }
                 if($(this).find('input[name="row_nobukti_pembayaran[]"]').val() == ''){
+                    total_input_null++;
                     e.preventDefault();
                     $(this).find("#errorNobuktiPembayaran").show();
                     $(this).find('input[name="row_nobukti_pembayaran[]"]').css({"border": "2px solid red"});
@@ -417,6 +452,7 @@
                     $(this).find("#errorPeriodeBayar").hide();
                 }
                 if($(this).find('input[name="row_periode_bayar[]"]').val() == ''){
+                    total_input_null++;
                     e.preventDefault();
                     $(this).find("#errorPeriodeBayar").show();
                     $(this).find('input[name="row_periode_bayar[]"]').css({"border": "2px solid red"});
@@ -424,6 +460,7 @@
                     $(this).find("#errorPeriodeBayar").hide();
                 }
                 if($(this).find('input[name="row_total_periode_bayar[]"]').val() == ''){
+                    total_input_null++;
                     e.preventDefault();
                     $(this).find('input[name="row_total_periode_bayar[]"]').css({"border": "2px solid red"});
                     $(this).find("#errorTotalPeriodeBayar").show();
@@ -431,8 +468,12 @@
                     $(this).find("#errorTotalPeriodeBayar").hide();
                 }
             })
+
+            if (total_input_null == 0) {
+                $("#preload-data").removeClass("hidden");
+            }
         })
-        
+
             // var data = {
             //     "nobukti_pembayaran": "0002",
             //     "tgl_bayar": "2017-08-07",
@@ -478,5 +519,24 @@
                 confirmButtonColor: '#DC3545'
             })
         }
+
+        function alertWarning(message) {
+            Swal.fire({
+                tittle: 'Warning!',
+                html: message,
+                icon: 'warning',
+                iconColor: '#DC3545',
+                confirmButtonText: 'Ya',
+                confirmButtonColor: '#DC3545'
+            })
+        }
+
+        $("#tgl_bayar").on("change", function(){
+            var date = new Date();
+            var dateNow = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()
+            if(Date.parse($("#tgl_bayar").val()) < Date.parse(dateNow)){
+                alertWarning("Tanggal bayar tidak boleh kurang dari tanggal sekarang")
+            }
+        })
     </script>
 @endpush

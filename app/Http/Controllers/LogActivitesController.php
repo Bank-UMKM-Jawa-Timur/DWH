@@ -45,7 +45,7 @@ class LogActivitesController extends Controller
             $data = $data->paginate($page_length);
         else
             $data = $data->get();
-        
+
 
         foreach ($data as $key => $value) {
             if ($value->role_id != 3) {
@@ -53,18 +53,18 @@ class LogActivitesController extends Controller
                 // retrieve from api
                 $host = config('global.los_api_host');
                 $apiURL = $host . '/kkb/get-data-users-by-id/' . $value->user_id;
-    
+
                 $headers = [
                     'token' => config('global.los_api_token')
                 ];
-    
+
                 $responseBody = null;
-    
+
                 $user = null;
-    
+
                 try {
                     $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-    
+
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
                     $user = $responseBody;
@@ -95,6 +95,24 @@ class LogActivitesController extends Controller
         $newActivity = new LogActivity();
         $newActivity->user_id = $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id;
         $newActivity->content = $content;
+
+        $newActivity->save();
+    }
+
+    public function storeAsuransi($content, $asuransi_id, $is_asuransi)
+    {
+
+        $token = \Session::get(config('global.user_token_session'));
+
+        $newActivity = new LogActivity();
+
+        $newActivity->user_id = $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id;
+
+        $newActivity->content = $content;
+
+        $newActivity->asuransi_id = $asuransi_id;
+
+        $newActivity->is_asuransi = $is_asuransi;
 
         $newActivity->save();
     }

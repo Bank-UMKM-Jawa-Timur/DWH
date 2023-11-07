@@ -18,9 +18,12 @@ use App\Http\Controllers\Master\VendorController;
 use App\Http\Controllers\Asuransi\RegistrasiController;
 use App\Http\Controllers\Asuransi\PengajuanKlaimController;
 use App\Http\Controllers\Asuransi\PembayaranPremiController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\Master\PerusahaanAsuransiController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Report\Asuransi\PembayaranPremiController as AsuransiPembayaranPremiController;
+use App\Http\Controllers\Report\Asuransi\RegistrasiController as ReportRegistrasiController;
 use App\Http\Controllers\TargetController;
 use App\Models\Kredit;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +55,7 @@ Route::post('first-login', [AuthenticatedSessionController::class, 'firstLoginSt
     ->name('first-login.store');
 
 Route::middleware('auth_api')->group(function () {
+    Route::get('/get-staf-by-cabang/{kode_cabang}', [Controller::class, 'getStafByCabang'])->name('get_staf_by_cabang');
     Route::get('send-notif/{action_id}/{kredit_id}', [NotificationController::class, 'send']);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -88,7 +92,7 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
     });
 
-    Route::prefix('asuransi')->name('asuransi.')->group(function() {
+    Route::middleware('asuransi_permission')->prefix('asuransi')->name('asuransi.')->group(function() {
         Route::prefix('/registrasi')
             ->name('registrasi.')
             ->controller(RegistrasiController::class)
@@ -96,18 +100,50 @@ Route::middleware('auth_api')->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/get-user/{user_id}', 'getUser')->name('get_user');
                 Route::get('/create', 'create')->name('create');
-                Route::get('jenis-asuransi/{jenis_kredit}', 'getJenisAsuransi')->name('jenis_asuransi');
+                Route::get('/review', 'review')->name('review');
+                Route::get('jenis-asuransi', 'getJenisAsuransi')->name('jenis_asuransi');
                 Route::get('rate-premi', 'getRatePremi')->name('rate_premi');
                 Route::post('/', 'store')->name('store');
+                Route::post('/review', 'reviewStore')->name('review_store');
+                Route::post('/send', 'send')->name('send');
+                Route::post('/not-register', 'tidakRegistrasi')->name('not_register');
                 Route::get('inquery', 'inquery')->name('inquery');
-                Route::get('batal', 'batal')->name('batal');
+                Route::post('batal', 'batal')->name('batal');
                 Route::post('/pelaporan-pelunasan', 'pelunasan')->name('pelunasan');
+                Route::get('/check-asuransi', 'checkAsuransi')->name('check_asuransi');
+                Route::get('/edit/{id}', 'edit')->name('edit');
+                Route::post('/update/{id}', 'update')->name('update');
+                Route::get('/detail/{id}', 'detail')->name('detail');
             });
-        // Route::resource('/pelaporan-pelunasan', PelaporanPelunasanController::class);
+
         Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);
+        Route::post('/pengajuan-klaim/cek-status', [PengajuanKlaimController::class, 'cekStatus'])->name('pengajuan-klaim.cek-status');
+        Route::post('/pengajuan-klaim/pembatalan-klaim', [PengajuanKlaimController::class, 'pembatalanKlaim'])->name('pengajuan-klaim.pembatalan-klaim');
         Route::resource('/pembayaran-premi', PembayaranPremiController::class);
         Route::post('/pembayaran-premi/inquery', [PembayaranPremiController::class, 'storeInquery'])->name('pembayaran_premi.inquery');
         Route::get('/jenis-by-no-aplikasi', [PembayaranPremiController::class, 'getJenisByNoAplikasi'])->name('jenis_by_no_aplikasi');
+
+        // Review klaim
+        Route::get('/pengajuan-klaim/review-penyelia/{id}', [PengajuanKlaimController::class, 'reviewPenyelia'])->name('pengajuan-klaim.review-penyelia');
+        Route::post('/pengajuan-klaim/approval/{id}', [PengajuanKlaimController::class, 'approval'])->name('pengajuan-klaim.approval');
+        Route::post('/pengajuan-klaim/kembalikan-ke-staf/{id}', [PengajuanKlaimController::class, 'kembalikanKeStaf'])->name('pengajuan-klaim.kembalikan-ke-staf');
+        Route::post('/pengajuan-klaim/hit-endpoint/{id}', [PengajuanKlaimController::class, 'hitEndpoint'])->name('pengajuan-klaim.hit-endpoint');
+
+        // Report
+        Route::prefix('/report')
+            ->name('report.')
+            ->group(function() {
+                Route::prefix('/registrasi')
+                    ->name('registrasi.')
+                    ->controller(ReportRegistrasiController::class)
+                    ->group(function() {
+                        Route::get('/registrasi', 'registrasi')->name('registrasi');
+                        Route::get('/pembatalan', 'pembatalan')->name('pembatalan');
+                        Route::get('/pelaporan-pelunasan', 'pelaporanPelunasan')->name('pelaporan-pelunasan');
+                        Route::get('/log-data', 'logData')->name('log-data');
+                    });
+                Route::get('/pembayaran', [AsuransiPembayaranPremiController::class, 'index'])->name('pembayaran');
+            });
     });
 
     Route::prefix('kredit')->name('kredit.')->group(function() {
