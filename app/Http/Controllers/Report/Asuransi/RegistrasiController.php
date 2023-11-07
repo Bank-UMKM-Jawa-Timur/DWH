@@ -312,47 +312,73 @@ class RegistrasiController extends Controller
             }
 
             $page_length = $request->page_length ? $request->page_length : 5;
-            $data = DB::table('asuransi')
-                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
-                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
-                ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+            $allCabang = $this->getAllCabang();
+
+            if ($allCabang['status'] == 'berhasil') {
+                $allCabang = $allCabang['data'];
+            }
+
+            $kode_cabang = 'all';
+            if ($request->has('cabang')) {
+                $kode_cabang = $request->cabang;
+                if ($request->cabang != 'all') {
+                    $staf = $this->getStafByCabang($request->cabang);
+                }
+            }
+            $user_id = 'all';
+            if ($request->has('nip')) {
+                $user_id = $request->nip;
+            }
+
+            $pelunasan = DB::table('pelaporan_pelunasan as pp')
+                ->join('asuransi as a', 'a.id', 'pp.asuransi_id')
+                ->join('kredits AS k', 'k.id', 'a.kredit_id')
                 ->select(
-                    'k.pengajuan_id',
-                    'p.nama AS perusahaan',
-                    'asuransi.*',
-                    'mst_jenis_asuransi.jenis',
-                    'k.kode_cabang',
-                    'd.tarif',
-                    'd.premi_disetor',
-                    'd.handling_fee',
+                    'a.no_aplikasi',
+                    'a.nama_debitur',
+                    'a.no_rek',
+                    'a.no_polis',
+                    'pp.tanggal',
+                    'pp.refund',
+                    'pp.sisa_jkw'
                 )
-                ->where('k.is_asuransi', true)
-                ->whereBetween('tgl_polis', [$tAwal, $tAkhir])
-                ->where('asuransi.done_at', 1)
-                ->where('k.is_asuransi', true);
+                ->whereBetween('pp.tanggal', [$tAwal, $tAkhir])
+                ->where('a.done_by', '!=', null)
+                ->when($kode_cabang, function ($query) use ($kode_cabang) {
+                    if ($kode_cabang != 'all')
+                        $query->where('k.kode_cabang', $kode_cabang);
+                })
+                ->when($user_id, function ($query) use ($user_id) {
+                    if ($user_id != 'all')
+                        $query->where('a.user_id', $user_id);
+                });
 
             if ($request->has('q')) {
                 $q = $request->get('q');
-                $data = $data->when($q, function ($query) use ($q) {
-                    $query->where('asuransi.nama_debitur', 'LIKE', "%$q%")
-                    ->where('asuransi.done_at', 1)
-                    ->orWhere('asuransi.no_aplikasi', 'LIKE', "%$q%")
-                    ->where('asuransi.done_at', 1)
-                    ->orWhere('asuransi.no_polis', 'LIKE', "%$q%")
-                    ->where('asuransi.done_at', 1)
-                    ->orWhere('asuransi.tgl_polis', 'LIKE', "%$q%")
-                    ->where('asuransi.done_at', 1)
-                    ->orWhere('asuransi.tgl_rekam', 'LIKE', "%$q%")
-                    ->where('asuransi.done_at', 1);
+                $pelunasan = $pelunasan->when($q, function ($query) use ($q) {
+                    $query->where('a.nama_debitur', 'LIKE', "%$q%")
+                    ->where('a.done_at', true)
+                    ->orWhere('a.no_aplikasi', 'LIKE', "%$q%")
+                    ->where('a.done_at', true)
+                    ->orWhere('a.no_polis', 'LIKE', "%$q%")
+                    ->where('a.done_at', true)
+                    ->orWhere('a.tgl_polis', 'LIKE', "%$q%")
+                    ->where('a.done_at', true)
+                    ->orWhere('a.tgl_rekam', 'LIKE', "%$q%")
+                    ->where('a.done_at', true);
                 });
             }
 
             if (is_numeric($page_length)) {
-                $data = $data->orderBy('created_at', 'DESC')->paginate($page_length);
+                $pelunasan = $pelunasan->orderBy('pp.tanggal', 'DESC')->paginate($page_length);
             } else {
-                $data = $data->orderBy('created_at', 'DESC')->get();
+                $pelunasan = $pelunasan->orderBy('pp.tanggal', 'DESC')->get();
             }
+
+            $data = [
+                'pelunasan' => $pelunasan,
+                'cabang' => $allCabang
+            ];
             return view('pages.report.asuransi.pelunasan.pelunasan', $data);
         } catch (Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());

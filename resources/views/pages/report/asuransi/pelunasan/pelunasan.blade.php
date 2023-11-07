@@ -37,13 +37,40 @@
                                 name="sampai" value="{{old('sampai')}}" required/>
                             <small class="form-text text-red-600 error sampai-error"></small>
                         </div>
-                        <div class="flex space-y-8 col-span-1">
-                            <label for="" class="uppercase"><span class="text-theme-primary"></span></label>
-                            <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
-                                id="btn-show">
-                                <span class="lg:block hidden"> Tampilkan </span>
-                            </button>
+                        <div class="input-box space-y-3 col-span-1">
+                            <label for="" class="uppercase">Cabang</label>
+                            <select name="cabang" id="cabang" class="w-full p-2 border" required>
+                                <option value="all" selected>-- Semua cabang ---</option>
+                                @foreach ($cabang as $item)
+                                    <option value="{{$item['kode_cabang']}}" @if(\Request::has('cabang')){{$item['kode_cabang'] == \Request::get('cabang') ? 'selected' : ''}}@endif>{{$item['kode_cabang']}} - {{$item['cabang']}}</option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-red-600 error"></small>
                         </div>
+                        <div class="input-box space-y-3 col-span-1">
+                            <label for="" class="uppercase">NIP</label>
+                            <select name="nip" id="nip" class="w-full p-2 border" required>
+                                <option value="all" selected>-- Semua nip ---</option>
+                                @if (\Request::has('cabang'))
+                                    @if (\Request::get('cabang') != 'all')
+                                        @foreach ($staf as $item)
+                                            @if (is_array($item))
+                                                @if (array_key_exists('id', $item))
+                                                    <option value="{{$item['id']}}" @if(\Request::has('nip')){{$item['id'] == \Request::get('nip') ? 'selected' : ''}}@endif>{{$item['nip']}} - {{$item['detail']['nama']}}</option>
+                                                @endif
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                @endif
+                            </select>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 justify-end mt-4">
+                        <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
+                            id="btn-show">
+                            <span class=""> Tampilkan </span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -98,33 +125,25 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Nama Debitur</th>
-                                    <th>Tanggal Pengajuan</th>
-                                    <th>Nomor PK</th>
-                                    <th>Jenis Kredit</th>
-                                    <th>Plafond</th>
                                     <th>No Aplikasi</th>
-                                    <th>No Polis</th>
-                                    <th>Tanggal Polis</th>
-                                    <th>Tanggal Rekam</th>
+                                    <th>No Rekening</th>
+                                    <th>Tanggal Lunas</th>
+                                    <th>Nomor Polis</th>
+                                    <th>Refund</th>
+                                    <th>Siswa Jw</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($data as $item)
-                                    @php
-                                        $skema_kredit = $item->pengajuan ? $item->pengajuan['skema_kredit'] : '0';
-                                        $plafond = $item->pengajuan ? $item->pengajuan['jumlah_kredit'] : 0;
-                                    @endphp
+                                @forelse ($pelunasan as $item)
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{$item->nama_debitur}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tanggal_awal))}}</td>
-                                        <td>{{$item->no_pk}}</td>
-                                        <td>{{$skema_kredit}}</td>
-                                        <td>{{number_format($plafond, 0, ',', '.')}}</td>
                                         <td>{{$item->no_aplikasi}}</td>
+                                        <td>{{$item->no_rek}}</td>
+                                        <td>{{date('d-m-Y', strtotime($item->tanggal))}}</td>
                                         <td>{{$item->no_polis}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tgl_polis))}}</td>
-                                        <td>{{date('d-m-Y', strtotime($item->tgl_rekam))}}</td>
+                                        <td>{{$item->refund}}</td>
+                                        <td>{{$item->sisa_jkw}}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -137,8 +156,8 @@
                     <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
                         <div class="w-full">
                             <div class="pagination kkb-pagination">
-                                @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                    {{ $data->links('pagination::tailwind') }}
+                                @if ($pelunasan instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                    {{ $pelunasan->links('pagination::tailwind') }}
                                 @endif
                             </div>
                         </div>
@@ -186,6 +205,8 @@
 
         $('#btn-show').on('click', function(e) {
             e.preventDefault()
+            $('#preload-data').removeClass('hidden')
+
             var dari = $('#dari').val()
             var sampai = $('#sampai').val()
 
@@ -193,12 +214,18 @@
                 $('#form-report').submit()
             }
             else {
+                $('#preload-data').addClass('hidden')
+
                 var msg = 'Harap pilih tanggal terlebih dahulu.'
                 $('.dari-error').html(msg)
                 $('.sampai-error').html(msg)
                 $('#dari').addClass('border-red-500')
                 $('#sampai').addClass('border-red-500')
             }
+        })
+
+        $('#btn-reset').on('click', function(e) {
+            $('#preload-data').removeClass('hidden')
         })
 
         $('#q').keypress(function (e) {
