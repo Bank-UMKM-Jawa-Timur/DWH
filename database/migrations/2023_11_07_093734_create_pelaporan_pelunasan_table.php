@@ -13,9 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('log_activities', function (Blueprint $table) {
-            $table->bigInteger('asuransi_id')->nullable()->after('id');
-            $table->boolean('is_asuransi')->nullable(false)->after('content');
+        Schema::create('pelaporan_pelunasan', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('asuransi_id', false, true);
+            $table->date('tanggal');
+            $table->decimal('refund', 10, 2, true);
+            $table->smallInteger('sisa_jkw', false, true);
+            $table->bigInteger('user_id', false, true);
+            $table->timestamps();
 
             $table->foreign('asuransi_id')->references('id')->on('asuransi')->cascadeOnDelete();
         });
@@ -28,10 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('log_activities', function (Blueprint $table) {
-            $table->dropForeign('log_activities_asuransi_id_foreign');
-            $table->dropColumn('asuransi_id');
-            $table->dropColumn('is_asuransi');
-        });
+        Schema::dropIfExists('pelaporan_pelunasan');
     }
 };

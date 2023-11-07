@@ -1020,6 +1020,7 @@ class RegistrasiController extends Controller
             return back();
         }
 
+        DB::beginTransaction();
         try{
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
@@ -1044,6 +1045,7 @@ class RegistrasiController extends Controller
                         $tgl_lunas = date('Y-m-d', strtotime($request->tgl_lunas));
                         $refund = UtilityController::clearCurrencyFormat($request->refund);
                         $jkw = str_replace(' bulan', '', $request->sisa_jangka_waktu);
+                        $current_time = date('Y-m-d H:i:s');
                         $body = [
                             "no_aplikasi" => $request->no_aplikasi,
                             "no_rekening" => $request->no_rek,
@@ -1074,9 +1076,20 @@ class RegistrasiController extends Controller
                                             $asuransi->done_at = date('Y-m-d');
                                             $asuransi->done_by = $user_id;
                                             $asuransi->save();
+                                            
+                                            DB::table('pelaporan_pelunasan')->insert([
+                                                'asuransi_id' => $asuransi->id,
+                                                'user_id' => $user_id,
+                                                'tanggal' => date('Y-m-d'),
+                                                'refund' => $refund,
+                                                'sisa_jkw' => $jkw,
+                                                'created_at' => $current_time,
+                                                'updated_at' => $current_time,
+                                            ]);
 
                                             $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pelunasan registrasi asuransi.', $request->id, 1);
 
+                                            DB::commit();
                                             Alert::success('Berhasil', $keterangan);
                                             return redirect()->route('asuransi.registrasi.index');
                                             break;
@@ -1130,6 +1143,7 @@ class RegistrasiController extends Controller
                 return back();
             }
         } catch(\Exception $e){
+            DB::rollBack();
             Alert::error('Gagal', $e->getMessage());
             return back();
         }
