@@ -39,7 +39,7 @@
                                 <small class="form-text text-red-600 error sampai-error"></small>
                             </div>
                             <div class="input-box space-y-3 col-span-1">
-                                <label for="" class="uppercase">Cabang</label> 
+                                <label for="" class="uppercase">Cabang</label>
                                 <select name="cabang" id="cabang" class="w-full p-2 border" required>
                                     <option value="all" selected>-- Semua cabang ---</option>
                                     @foreach ($cabang as $item)
@@ -82,7 +82,7 @@
                     </div>
                     <div class="p-2 space-y-2 mt-5 w-full">
                         <div class="registrasi-chart"></div>
-                    </div>  
+                    </div>
                 </div>
             </div>
             {{--  @if (\Request::has('dari') && \Request::has('sampai'))
@@ -200,7 +200,7 @@
         $('#page_length').on('change', function() {
             $('#form-report').submit()
         })
-        
+
         $('.datepicker').val('dd-mm-yyyy');
         $('#cabang').select2()
         $('#nip').select2()
@@ -279,6 +279,7 @@
             var registered = parseInt("{{$registered}}")
             var not_register = parseInt("{{$not_register}}")
             var belum_registrasi = parseInt("{{$belum_registrasi}}")
+            var total = registered + not_register + belum_registrasi
             var optionsRegistrasi = {
                 labels: ['Registrasi', 'Tidak Registrasi', 'Belum Registrasi'],
                 series: [registered, not_register, belum_registrasi],
@@ -289,6 +290,47 @@
                 },
                 legend: {
                     position: 'bottom'
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return parseInt(val)
+                    }
+                },
+
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            labels: {
+                                show: true,
+                                name: {
+                                    show: true,
+                                    fontSize: '22px',
+                                    fontFamily: 'Rubik',
+                                    color: '#dfsda',
+                                    offsetY: -10
+                                },
+                                value: {
+                                    show: true,
+                                    fontSize: '16px',
+                                    fontFamily: 'Helvetica, Arial, sans-serif',
+                                    color: undefined,
+                                    offsetY: 16,
+                                    formatter: function (val) {
+                                        return val
+                                    }
+                                },
+                                total: {
+                                    show: true,
+                                    label: 'Total',
+                                    color: '#373d3f',
+                                    formatter: function (w) {
+                                        return total
+                                    }
+                                }
+                            }
+                        }
+                    }
                 },
 
                 responsive: [{
