@@ -183,110 +183,124 @@ class RegistrasiController extends Controller
             if ($allCabang['status'] == 'berhasil') {
                 $allCabang = $allCabang['data'];
             }
-
+            
             $asuransi = null;
             $staf = null;
+            $selected_cabang = null;
+            $arrCabang = [];
+            $arrStaf = [];
+            $arrCanceled = [];
             if ($request->has('dari') && $request->has('sampai')) {
-                $kode_cabang = 'all';
-                if ($request->has('cabang')) {
-                    $kode_cabang = $request->cabang;
-                    if ($request->cabang != 'all') {
-                        $staf = $this->getStafByCabang($request->cabang);
-                    }
-                }
+                $tAwal = date('Y-m-d', strtotime($request->get('dari')));
+                $tAkhir = date('Y-m-d', strtotime($request->get('sampai')));
                 $user_id = 'all';
                 if ($request->has('nip')) {
                     $user_id = $request->nip;
                 }
 
-                $tAwal = date('Y-m-d', strtotime($request->get('dari')));
-                $tAkhir = date('Y-m-d', strtotime($request->get('sampai')));
-
-
-                $asuransi = DB::table('asuransi')
-                            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
-                            ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                            ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
-                            ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
-                            ->select(
-                                'k.pengajuan_id',
-                                'p.nama AS perusahaan',
-                                'asuransi.*',
-                                'mst_jenis_asuransi.jenis',
-                                'k.kode_cabang',
-                                'd.tarif',
-                                'd.premi_disetor',
-                                'd.handling_fee',
-                            )
-                            ->where('asuransi.status', 'canceled')
-                            ->where('k.is_asuransi', true)
-                            ->whereBetween('tgl_polis', [$tAwal, $tAkhir])
-                            ->when($kode_cabang, function ($query) use ($kode_cabang) {
-                                if ($kode_cabang != 'all')
-                                    $query->where('k.kode_cabang', $kode_cabang);
-                            })
-                            ->when($user_id, function ($query) use ($user_id) {
-                                if ($user_id != 'all')
-                                    $query->where('asuransi.user_id', $user_id);
-                            })
-                            ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
-                            ->where('asuransi.status', 'canceled')
-                            ->where('k.is_asuransi', true)
-                            ->when($kode_cabang, function ($query) use ($kode_cabang) {
-                                if ($kode_cabang != 'all')
-                                    $query->where('k.kode_cabang', $kode_cabang);
-                            })
-                            ->when($user_id, function ($query) use ($user_id) {
-                                if ($user_id != 'all')
-                                    $query->where('asuransi.user_id', $user_id);
-                            });
-                if ($request->has('q')) {
-                    $q = $request->get('q');
-                    $asuransi = $asuransi->when($q, function($query) use ($q) {
-                        $query->where('asuransi.nama_debitur', 'LIKE', "%$q%")
-                            ->where('asuransi.status', 'canceled')
-                            ->orWhere('asuransi.no_aplikasi', 'LIKE', "%$q%")
-                            ->where('asuransi.status', 'canceled')
-                            ->orWhere('asuransi.no_polis', 'LIKE', "%$q%")
-                            ->where('asuransi.status', 'canceled')
-                            ->orWhere('asuransi.tgl_polis', 'LIKE', "%$q%")
-                            ->where('asuransi.status', 'canceled')
-                            ->orWhere('asuransi.tgl_rekam', 'LIKE', "%$q%")
-                            ->where('asuransi.status', 'canceled');
-                    });
+                $kode_cabang = 'all';
+                foreach ($allCabang as $key => $value) {
+                    array_push($arrCabang, $value['cabang']);
                 }
+                if ($request->has('cabang')) {
+                    $kode_cabang = $request->cabang;
+                    if ($request->cabang != 'all') {
+                        $staf = $this->getStafByCabang($request->cabang);
+                        if ($request->nip != 'all') {
+                            $total_canceled = DB::table('asuransi')
+                                        ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                        ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                        ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                        ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                        ->select('asuransi.no_aplikasi')
+                                        ->where('asuransi.status', 'canceled')
+                                        ->where('k.is_asuransi', true)
+                                        ->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                                        ->where('k.kode_cabang', $kode_cabang)
+                                        ->when($user_id, function ($query) use ($user_id) {
+                                            if ($user_id != 'all')
+                                                $query->where('asuransi.user_id', $user_id);
+                                        })
+                                        ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
+                                        ->where('asuransi.status', 'canceled')
+                                        ->where('k.is_asuransi', true)
+                                        ->where('k.kode_cabang', $kode_cabang)
+                                        ->when($user_id, function ($query) use ($user_id) {
+                                            if ($user_id != 'all')
+                                                $query->where('asuransi.user_id', $user_id);
+                                        })
+                                        ->count();
 
-                if (is_numeric($page_length)) {
-                    $asuransi = $asuransi->orderBy('no_aplikasi')->paginate($page_length);
-                } else {
-                    $asuransi = $asuransi->orderBy('no_aplikasi')->get();
-                }
+                            $index_cabang = array_search($kode_cabang, $arrCabang);
+                            $selected_cabang = [$arrCabang[$index_cabang]];
+                            array_push($arrCanceled, $total_canceled);
+                        }
+                        else {
+                            foreach ($staf as $key => $value) {
+                                $staf_name = $value['detail']['nama'];
+                                $total_canceled = DB::table('asuransi')
+                                        ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                        ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                        ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                        ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                        ->select('asuransi.no_aplikasi')
+                                        ->where('asuransi.status', 'canceled')
+                                        ->where('k.is_asuransi', true)
+                                        ->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                                        ->where('k.kode_cabang', $kode_cabang)
+                                        ->where('asuransi.user_id', $value['id'])
+                                        ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
+                                        ->where('asuransi.status', 'canceled')
+                                        ->where('k.is_asuransi', true)
+                                        ->where('k.kode_cabang', $kode_cabang)
+                                        ->where('asuransi.user_id', $value['id'])
+                                        ->count();
 
-                foreach ($asuransi as $key => $value) {
-                    $host = env('LOS_API_HOST');
-                    $headers = [
-                        'token' => env('LOS_API_TOKEN')
-                    ];
-
-                    $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $value->pengajuan_id;
-                    $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
-                    $response = json_decode($api_req->getBody(), true);
-                    $pengajuan = null;
-                    if ($response) {
-                        if (array_key_exists('status', $response)) {
-                            if ($response['status'] == 'success') {
-                                $pengajuan = $response['data'];
+                                array_push($arrStaf, $staf_name);
+                                array_push($arrCanceled, $total_canceled);
                             }
                         }
+
+                    } else {
+                        foreach ($allCabang as $key => $value) {
+                            $total_canceled = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                                ->select('asuransi.no_aplikasi')
+                                                ->where('asuransi.status', 'canceled')
+                                                ->where('k.is_asuransi', true)
+                                                ->whereBetween('tgl_polis', [$tAwal, $tAkhir])
+                                                ->when($user_id, function ($query) use ($user_id) {
+                                                    if ($user_id != 'all')
+                                                        $query->where('asuransi.user_id', $user_id);
+                                                })
+                                                ->where('k.kode_cabang', $value['kode_cabang'])
+                                                ->orWhereBetween('tgl_rekam', [$tAwal, $tAkhir])
+                                                ->where('asuransi.status', 'canceled')
+                                                ->where('k.is_asuransi', true)
+                                                ->when($user_id, function ($query) use ($user_id) {
+                                                    if ($user_id != 'all')
+                                                        $query->where('asuransi.user_id', $user_id);
+                                                })
+                                                ->where('k.kode_cabang', $value['kode_cabang'])
+                                                ->count();
+
+                            array_push($arrCanceled, $total_canceled);
+                        }
                     }
-                    $value->pengajuan = $pengajuan;
                 }
             }
-
+            
             $data = [
                 'cabang' => $allCabang,
                 'staf' => $staf,
                 'asuransi' => $asuransi,
+                'selectedCabang' => $selected_cabang,
+                'dataCanceled' => $arrCanceled,
+                'dataCabang' => $arrCabang,
+                'dataStaf' => $arrStaf,
             ];
 
             return view('pages.report.asuransi.registrasi.pembatalan', $data);

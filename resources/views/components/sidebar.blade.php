@@ -139,11 +139,11 @@
       </li>
       <div class="dropdown-menu-link {{ request()->is('asuransi/report/*') ? 'show' : 'hidden' }}">
         <ul class="menu-dropdown">
-          <a href="{{ route('asuransi.pembayaran-premi.index') }}">
+          {{--  <a href="{{ route('asuransi.pembayaran-premi.index') }}">
             <li class="dropdown-item-link">
               KKB
             </li>
-          </a>
+          </a>  --}}
           <li class="item-link dropdown-toggle">
             <div class="relative">
               <a
@@ -323,28 +323,6 @@
         </a>
       </li>
       @endif
-      @if (\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
-      <li class="item-link hidden">
-        <a
-          href="/laporan"
-          class="nav-link relative"
-        >
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon-nav"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M11 2.05v3.02a7.002 7.002 0 1 0 5.192 12.536l2.137 2.137A9.958 9.958 0 0 1 12 22C6.477 22 2 17.523 2 12c0-5.185 3.947-9.449 9-9.95ZM21.95 13a9.954 9.954 0 0 1-2.207 5.328l-2.137-2.136A6.964 6.964 0 0 0 18.93 13h3.022ZM13.002 2.05a10.004 10.004 0 0 1 8.95 8.95H18.93a7.005 7.005 0 0 0-5.928-5.929V2.049Z"
-              />
-            </svg>
-          </span>
-          <div>Laporan</div>
-        </a>
-      </li>
-      @endif
       @if (\Session::get(config('global.role_id_session')) == 4)
       <li class="item-link {{ request()->is('target') ? 'active-link' : '' }}">
         <a
@@ -366,29 +344,6 @@
           <div>Target</div>
         </a>
       </li>
-      {{--  <li class="item-link {{ request()->is('collection') ? 'active-link' : '' }}">
-        <a
-          href="{{ route('collection.index') }}"
-          class="nav-link relative"
-        >
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon-nav"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-width="1.5"
-                d="m15.578 3.382l2 1.05c2.151 1.129 3.227 1.693 3.825 2.708C22 8.154 22 9.417 22 11.94v.117c0 2.525 0 3.788-.597 4.802c-.598 1.015-1.674 1.58-3.825 2.709l-2 1.049C13.822 21.539 12.944 22 12 22s-1.822-.46-3.578-1.382l-2-1.05c-2.151-1.129-3.227-1.693-3.825-2.708C2 15.846 2 14.583 2 12.06v-.117c0-2.525 0-3.788.597-4.802c.598-1.015 1.674-1.58 3.825-2.708l2-1.05C10.178 2.461 11.056 2 12 2s1.822.46 3.578 1.382ZM21 7.5l-4 2M12 12L3 7.5m9 4.5v9.5m0-9.5l4.5-2.25l.5-.25m0 0V13m0-3.5l-9.5-5"
-              />
-            </svg>
-          </span>
-          <div>Collection</div>
-        </a>
-      </li>  --}}
       @endif
       @if (\Session::get(config('global.role_id_session')) != 3)
         <li class="item-link {{ request()->is('notifikasi') ? 'active-link' : '' }}">
