@@ -55,7 +55,7 @@ Route::post('first-login', [AuthenticatedSessionController::class, 'firstLoginSt
     ->name('first-login.store');
 
 Route::middleware('auth_api')->group(function () {
-    Route::get('/get-users-by-cabang/{kode_cabang}', [Controller::class, 'getStafByCabang'])->name('get_staf_by_cabang');
+    Route::get('/get-staf-by-cabang/{kode_cabang}', [Controller::class, 'getStafByCabang'])->name('get_staf_by_cabang');
     Route::get('send-notif/{action_id}/{kredit_id}', [NotificationController::class, 'send']);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
