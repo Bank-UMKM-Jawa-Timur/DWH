@@ -501,7 +501,7 @@ class DashboardController extends Controller
         }
     }
 
-    public function detailRegistrasi() {
+    public function detailRegistrasi(Request $request) {
         $token = \Session::get(config('global.user_token_session'));
         $user = $token ? $this->getLoginSession() : Auth::user();
         $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
@@ -553,25 +553,28 @@ class DashboardController extends Controller
             $apiURL = "$host/v1/get-list-pengajuan";
 
             try {
+                $user = $request->has('id_penyelia') ? $request->id_penyelia : 'all';
                 $response = Http::timeout(60)
                                 ->withHeaders($headers)
                                 ->withOptions(['verify' => false])
                                 ->get($apiURL, [
                                     'kode_cabang' => $user_cabang,
-                                    'user' => 'all',
+                                    'user' => $user,
                                 ]);
 
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
-
+                
                 if ($responseBody) {
                     if(array_key_exists('data', $responseBody)) {
                         if (array_key_exists('data', $responseBody['data'])) {
                             $data = $responseBody['data']['data'];
 
                             foreach ($data as $key => $value) {
-                                $nip = $value['karyawan']['nip'];
-                                $nama = $value['karyawan']['nama'];
+                                $id = $value['id_penyelia'];
+                                $debitur = $value['nama'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
                                 // retrieve jenis_asuransi
                                 $jenis_asuransi = DB::table('mst_jenis_asuransi')
                                                     ->select('id', 'jenis')
@@ -597,13 +600,17 @@ class DashboardController extends Controller
                                                         ->first();
                                     if (!$asuransi) {
                                         $belum_registrasi++;
+                                    } else {
+                                        $jml_diproses++;
                                     }
                                     $value2->asuransi = $asuransi;
                                 }
                                 $data[$key]['jenis_asuransi'] = $jenis_asuransi;
                                 $d = [
+                                    'id' => $id,
                                     'nip' => $nip,
                                     'nama' => $nama,
+                                    'debitur' => $debitur,
                                     'jml_asuransi' => $jml_asuransi,
                                     'jml_diproses' => $jml_diproses,
                                 ];
@@ -640,8 +647,10 @@ class DashboardController extends Controller
                             $data = $responseBody['data']['data'];
 
                             foreach ($data as $key => $value) {
-                                $nip = $value['karyawan']['nip'];
-                                $nama = $value['karyawan']['nama'];
+                                $id = $value['id_penyelia'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $role == 'Penyelia Kredit' || $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
+                                $debitur = $value['nama'];
                                 // retrieve jenis_asuransi
                                 $jenis_asuransi = DB::table('mst_jenis_asuransi')
                                                     ->select('id', 'jenis')
@@ -669,6 +678,7 @@ class DashboardController extends Controller
                                         $belum_registrasi++;
                                     }
                                     else {
+                                        $jml_diproses++;
                                         $registered += $asuransi->registered ? 1 : 0;
                                         $not_registered += $asuransi->registered ? 0 : 1;
                                     }
@@ -676,8 +686,10 @@ class DashboardController extends Controller
                                 }
                                 $data[$key]['jenis_asuransi'] = $jenis_asuransi;
                                 $d = [
+                                    'id' => $id,
                                     'nip' => $nip,
                                     'nama' => $nama,
+                                    'debitur' => $debitur,
                                     'jml_asuransi' => $jml_asuransi,
                                     'jml_diproses' => $jml_diproses,
                                 ];
@@ -695,8 +707,20 @@ class DashboardController extends Controller
         $this->param['registered'] = $registered;
         $this->param['not_registered'] = $not_registered;
         $this->param['belum_registrasi'] = $belum_registrasi;
-        
-        $result = $this->group_by("nip", $data_registrasi);
+        $this->param['role'] = $role;
+
+        if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            $result = $request->has('id_penyelia') ? $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+        }
+        else {
+            if ($role == 'Staf Analis Kredit') {
+                $result = $this->group_by("debitur", $data_registrasi);
+            }
+            else {
+                $result = $this->group_by("nip", $data_registrasi);
+            }
+        }
+
         $finalResult = [];
         if ($result) {
             foreach ($result as $key => $value) {
@@ -706,9 +730,23 @@ class DashboardController extends Controller
                     $jml_asuransi += $value[$i]['jml_asuransi'];
                     $jml_diproses += $value[$i]['jml_diproses'];
                 };
+
+                if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                    $nip = $request->has('id_penyelia') ? $value[0]['nip']  : $key;
+                }
+                else {
+                    if ($role == 'Staf Analis Kredit') {
+                        $nip = $value[0]['nip'];
+                    }
+                    else {
+                        $nip = $key;
+                    }
+                }
                 $final_d = [
-                    'nip' => $key,
+                    'id' => $value[0]['id'],
+                    'nip' => $nip,
                     'nama' => $value[0]['nama'],
+                    'debitur' => $value[0]['debitur'],
                     'jml_asuransi' => $jml_asuransi,
                     'jml_diproses' => $jml_diproses,
                 ];
@@ -716,6 +754,7 @@ class DashboardController extends Controller
                 array_push($finalResult, $final_d);
             }
         }
+        
         $this->param['result'] = $finalResult;
         
         return view('pages.detail.registrasi', $this->param);
