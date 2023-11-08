@@ -256,7 +256,7 @@
                                                                                 @if ($role == 'Staf Analis Kredit')
                                                                                     <button class="px-4 py-2 bg-green-400/20 rounded text-green-500 modal-kirim"
                                                                                         data-modal-target="modalSend" data-id="{{$jenis->asuransi->id}}"
-                                                                                        data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-debitur="{{$item['nama']}}">
+                                                                                        data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek={{$jenis->asuransi->no_rek}} data-debitur="{{$item['nama']}}" data-tgl_pengajuan="{{$item['tanggal']}}" data-jenis_kredit="{{$jenis->jenis}}" data-premi="{{$jenis->asuransi->premi}}" data-tarif="{{$jenis->asuransi->tarif}}" data-fee="{{$jenis->asuransi->handling_fee}}" data-premi_disetor={{$jenis->asuransi->premi_disetor}}>
                                                                                         Registrasi
                                                                                     </button>
                                                                                 @elseif(strtolower($status) == 'revition')
@@ -312,7 +312,7 @@
                                                                                     @if ($is_paid == 1)
                                                                                         @if ($jenis->pengajuan_klaim != null)
                                                                                             @if ($jenis->pengajuan_klaim->status == 'waiting approval')
-                                                                                                -    
+                                                                                                -
                                                                                             @elseif ($jenis->pengajuan_klaim->status == 'approved')
                                                                                                 <form action="{{ route('asuransi.pengajuan-klaim.hit-endpoint', $jenis->pengajuan_klaim->id) }}" method="post">
                                                                                                     @csrf
