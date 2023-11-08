@@ -58,11 +58,11 @@
                                             @endif
                                             @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO')
                                                 <td>
-                                                    @if (\Request::has('id_penyelia') && \Request::has('staf'))
-                                                        <a href="?id_penyelia={{$item['id']}}" class="border-b border-black text-blue-500">
+                                                    @if (\Request::has('id_penyelia'))
+                                                        <a href="?id_penyelia={{$item['id']}}&staf=true" class="border-b border-black text-blue-500">
                                                         {{$item['nama']}}</a>
                                                     @else
-                                                        <a href="?id_penyelia={{$item['id']}}&staf=true" class="border-b border-black text-blue-500">
+                                                        <a href="?id_penyelia={{$item['id']}}" class="border-b border-black text-blue-500">
                                                         {{$item['nama']}}</a>
                                                     @endif
                                                 </td>
