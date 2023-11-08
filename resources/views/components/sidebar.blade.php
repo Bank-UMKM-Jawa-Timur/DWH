@@ -190,8 +190,8 @@
                   Pengajuan Klaim
                 </li>
               </a>
-              <a href="#">
-                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+              <a href="{{ route('asuransi.report.pengajuan.pembatalan-klaim') }}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/pengajuan/pembatalan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
                   Pembatalan Klaim
                 </li>
               </a>

@@ -412,7 +412,7 @@ class PembayaranPremiController extends Controller
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
                     $nilai = $responseBody['nilai_premi'];
-                    $this->logActivity->store("Pengguna $user_name($user_nip) melakukan inquery pembayaran premi.");
+                    $this->logActivity->store("Pengguna $user_name($user_nip) melakukan inquery pembayaran premi.", $request->id, 1);
                     DB::commit();
 
                     return response()->json([

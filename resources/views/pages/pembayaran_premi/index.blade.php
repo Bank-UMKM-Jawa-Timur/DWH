@@ -129,6 +129,7 @@
                                                                 <td>
                                                                     @if ($role == 'Staf Analis Kredit')
                                                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn btn-inquery"
+                                                                            data-id="{{ $detail->id }}"
                                                                             data-no_aplikasi="{{$detail->no_aplikasi}}" data-no_polis="{{$detail->no_polis}}"
                                                                             data-no_rek="{{$detail->no_rek}}" data-premi="{{$detail->premi}}"
                                                                             data-periode_premi="{{$detail->periode_bayar}}" data-nobukti_pembayaran="{{$item->nobukti_pembayaran}}">
@@ -226,6 +227,7 @@
         $("#preload-data").removeClass("hidden");
         e.preventDefault()
         var token = generateCsrfToken()
+        const id = $(this).data('id')
         const no_aplikasi = $(this).data('no_aplikasi')
         const nobukti_pembayaran = $(this).data('nobukti_pembayaran')
         const no_rek = $(this).data('no_rek')
@@ -235,6 +237,7 @@
         
         var data = {
             _token: token,
+            id: id,
             no_aplikasi: no_aplikasi,
             nobukti_pembayaran: nobukti_pembayaran,
             no_rekening: no_rek,

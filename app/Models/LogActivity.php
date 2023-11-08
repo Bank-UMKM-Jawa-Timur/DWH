@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class LogActivity extends Model
 {
     use HasFactory;
+
+    protected $table = 'log_activities';
+
+    public function asuransi()
+    {
+        return $this->belongsTo(Asuransi::class, 'asuransi_id', 'id');
+    }
 }
