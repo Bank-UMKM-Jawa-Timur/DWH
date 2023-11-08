@@ -109,7 +109,7 @@
                                 $totalData = count($item['jenis_asuransi']);
                                 $totalDataTerproses = 0;
 
-                                foreach ($item['jenis_asuransi'] as $key => $value) {\
+                                foreach ($item['jenis_asuransi'] as $key => $value) {
                                     if ($value->asuransi) {
                                         if ($value->asuransi->registered != null)
                                             $totalDataTerproses++;
