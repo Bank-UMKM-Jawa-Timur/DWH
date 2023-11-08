@@ -949,7 +949,7 @@
     // chart Pembayaran Premi
 
     var sudahBayar = @json($sudahBayar);
-    var belumBayar = @json($sudahBayar);
+    var belumBayar = @json($belumBayar);
     var total_premi = sudahBayar + belumBayar;
     var optionsPembayaranPremi = {
         labels: ['Sudah', 'Belum'],
