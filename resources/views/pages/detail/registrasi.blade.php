@@ -38,6 +38,7 @@
                                 @endif
                                 <th rowspan="2">Jumlah Asuransi</th>
                                 <th colspan="2">Registrasi</th>
+                                <th rowspan="2">Status</th>
                             </tr>
                             <tr>
                                 <th>Sudah</th>
@@ -83,10 +84,19 @@
                                         <td>{{$item['jml_asuransi']}}</td>
                                         <td>{{$item['jml_diproses']}}</td>
                                         <td>{{($item['jml_asuransi'] - $item['jml_diproses'])}}</td>
+                                        <td>
+                                            @if ($item['jml_diproses'] == 0)
+                                                Open
+                                            @elseif ($item['jml_diproses'] > 0)
+                                                Process
+                                            @else
+                                                Close
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="{{\Request::has('id_penyelia') ? 7 : 6}}">Belum ada data.</td>
+                                        <td colspan="{{\Request::has('id_penyelia') ? 8 : 7}}">Belum ada data.</td>
                                     </tr>
                                 @endforelse
                         </table>
