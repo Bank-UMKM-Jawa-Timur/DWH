@@ -187,9 +187,9 @@
                 },
                 dataLabels: {
                     enabled: true,
-                    formatter: function (val) {
-                        return parseInt(val)
-                    }
+                    formatter: function (val, opts) {
+                        return opts.w.config.series[opts.seriesIndex]
+                    },
                 },
 
                 plotOptions: {

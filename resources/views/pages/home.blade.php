@@ -873,10 +873,87 @@
     //  data yang belum dibayar
     var jumlahYangBelumDibayar = dataAsuransi.length - jumlahYangSudahDibayar;
 
-    // chart donut
+    var registered = @json($registered);
+    var not_registered = @json($not_registered);
+    var belum_registrasi = @json($belum_registrasi);
+    var total_registrasi = registered + not_registered + belum_registrasi
+
+     // chart Registrasi
+    var optionsRegistrasi = {
+        labels: ['Registrasi', 'Tidak Registrasi', 'Belum Registrasi'],
+        series: [registered, not_registered, belum_registrasi],
+        chart: {
+            type: 'donut',
+            width: '100%',
+            height: 480,
+        },
+        legend: {
+            position: 'bottom'
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function (val, opts) {
+                return opts.w.config.series[opts.seriesIndex]
+            },
+        },
+
+        plotOptions: {
+            pie: {
+                donut: {
+                    labels: {
+                        show: true,
+                        name: {
+                            show: true,
+                            fontSize: '22px',
+                            fontFamily: 'Rubik',
+                            color: '#dfsda',
+                            offsetY: -10
+                        },
+                        value: {
+                            show: true,
+                            fontSize: '16px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            color: undefined,
+                            offsetY: 16,
+                            formatter: function (val) {
+                                return val
+                            }
+                        },
+                        total: {
+                            show: true,
+                            label: 'Total',
+                            color: '#373d3f',
+                            formatter: function (w) {
+                                return total_registrasi
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 340,
+                },
+            }
+        }]
+    };
+
+    var registrasi = new ApexCharts(document.querySelector(".registrasi"), optionsRegistrasi);
+    registrasi.render();
+
+
+    // chart Pembayaran Premi
+
+    var sudahBayar = @json($sudahBayar);
+    var belumBayar = @json($sudahBayar);
+    var total_premi = sudahBayar + belumBayar;
     var optionsPembayaranPremi = {
-        labels: ['Yang Belum dibayar', 'Yang Sudah dibayar'],
-        series: [jumlahYangBelumDibayar, jumlahYangSudahDibayar],
+        labels: ['Sudah', 'Belum'],
+        series: [sudahBayar, belumBayar],
         chart: {
             type: 'donut',
             width: '100%',
@@ -885,6 +962,49 @@
         legend: {
             position: 'bottom',
         },
+
+        dataLabels: {
+            enabled: true,
+            formatter: function (val, opts) {
+                return opts.w.config.series[opts.seriesIndex]
+            },
+        },
+
+        plotOptions: {
+            pie: {
+                donut: {
+                    labels: {
+                        show: true,
+                        name: {
+                            show: true,
+                            fontSize: '22px',
+                            fontFamily: 'Rubik',
+                            color: '#dfsda',
+                            offsetY: -10
+                        },
+                        value: {
+                            show: true,
+                            fontSize: '16px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            color: undefined,
+                            offsetY: 16,
+                            formatter: function (val) {
+                                return val
+                            }
+                        },
+                        total: {
+                            show: true,
+                            label: 'Total',
+                            color: '#373d3f',
+                            formatter: function (w) {
+                                return total_premi
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
         responsive: [{
             breakpoint: 480,
             options: {
@@ -900,50 +1020,50 @@
 
 
 
-    function renderChart(){
-        // line chart
-        var lineOptions = {
-            series: [
-                {
-                    name: "Total",
-                    data: dataTotalCabang,
-                },
-            ],
-            chart: {
-                type: "bar",
-                height: 350,
-                stacked: true,
-            },
-            colors: ["#DC3545"],
-            responsive: [
-                {
-                    breakpoint: 480,
-                    options: {
-                        legend: {
-                            position: "bottom",
-                            offsetX: -10,
-                            offsetY: 0,
-                        },
-                    },
-                },
-            ],
-            xaxis: {
-                categories: dataCabang,
-            },
-            fill: {
-                opacity: 1,
-            },
-            legend: {
-                position: "top",
-                offsetX: 0,
-                offsetY: 50,
-            },
-        };
+    // function renderChart(){
+    //     // line chart
+    //     var lineOptions = {
+    //         series: [
+    //             {
+    //                 name: "Total",
+    //                 data: dataTotalCabang,
+    //             },
+    //         ],
+    //         chart: {
+    //             type: "bar",
+    //             height: 350,
+    //             stacked: true,
+    //         },
+    //         colors: ["#DC3545"],
+    //         responsive: [
+    //             {
+    //                 breakpoint: 480,
+    //                 options: {
+    //                     legend: {
+    //                         position: "bottom",
+    //                         offsetX: -10,
+    //                         offsetY: 0,
+    //                     },
+    //                 },
+    //             },
+    //         ],
+    //         xaxis: {
+    //             categories: dataCabang,
+    //         },
+    //         fill: {
+    //             opacity: 1,
+    //         },
+    //         legend: {
+    //             position: "top",
+    //             offsetX: 0,
+    //             offsetY: 50,
+    //         },
+    //     };
 
-        var lineChart = document.querySelector(".line-chart");
-        var chart = new ApexCharts(lineChart, lineOptions);
-        chart.render();
-    }
+    //     var lineChart = document.querySelector(".line-chart");
+    //     var chart = new ApexCharts(lineChart, lineOptions);
+    //     chart.render();
+    // }
 
     $('#page_length').on('change', function() {
         $('#form_kkb').submit()
@@ -1008,38 +1128,97 @@
             }
         })
     });
-    var optionsPelaporanPelunasan = {
-        series: [{
-            name: "sales",
-            data: [
-            {
-                x: 'Total',
-                y: 43
-            },
-            ]
-        }],
-        chart: {
-            type: 'bar',
-            height: 500
-        },
-        xaxis: {
-            type: 'category',
-            labels: {},
-            group: {
-            style: {
-                fontSize: '20px',
-                fontWeight: 700
-            },
-            groups: [
-                { title: '2019', cols: 4 },
-                { title: '2020', cols: 4 }
-            ]
-            }
-        },
-    };
 
-        var pelaporanPelunasan = new ApexCharts(document.querySelector(".pelaporan-pelunasan"), optionsPelaporanPelunasan);
-        pelaporanPelunasan.render();
+
+        // var optionsPelaporanPelunasan = {
+        //     labels: ['Total'],
+        //     series: [50],
+        //     chart: {
+        //         type: 'donut',
+        //         width: '100%',
+        //         height: 480,
+        //     },
+        //     legend: {
+        //         position: 'bottom',
+        //     },
+        //     responsive: [{
+        //         breakpoint: 480,
+        //         options: {
+        //             chart: {
+        //                 width: 340,
+        //             },
+        //         },
+        //     }],
+        // };
+
+        // var pelaporanPelunasan = new ApexCharts(document.querySelector(".pelaporan-pelunasan"), optionsPelaporanPelunasan);
+        // pelaporanPelunasan.render();
+        var sudah_klaim = @json($total_sudah_klaim);
+        var belum_klaim = @json($total_belum_klaim);
+        var total_klaim = sudah_klaim + belum_klaim;
+        var optionsPengajuanKlaim = {
+            labels: ['Sudah', 'Belum (On Process)'],
+            series: [sudah_klaim, belum_klaim],
+            dataLabels: {
+                enabled: true,
+                formatter: function (val, opts) {
+                    return opts.w.config.series[opts.seriesIndex]
+                },
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        labels: {
+                            show: true,
+                            name: {
+                                show: true,
+                                fontSize: '22px',
+                                fontFamily: 'Rubik',
+                                color: '#dfsda',
+                                offsetY: -10
+                            },
+                            value: {
+                                show: true,
+                                fontSize: '16px',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                color: undefined,
+                                offsetY: 16,
+                                formatter: function (val) {
+                                    return val
+                                }
+                            },
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                color: '#373d3f',
+                                formatter: function (w) {
+                                    return total_klaim
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            chart: {
+                type: 'donut',
+                width: '100%',
+                height: 480,
+            },
+            legend: {
+                position: 'bottom',
+            },
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 340,
+                    },
+                },
+            }],
+        };
+
+        var pengajuanKlaim = new ApexCharts(document.querySelector(".pengajuan-klaim"), optionsPengajuanKlaim);
+        pengajuanKlaim.render();
 
     var tab_type = "@isset($_GET['tab_type']){{$_GET['tab_type']}}@endisset"
     if (tab_type == 'tab-kkb' || !tab_type)

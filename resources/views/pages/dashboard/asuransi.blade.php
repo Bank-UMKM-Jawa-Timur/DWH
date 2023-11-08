@@ -7,72 +7,11 @@
             <div class="head border-b p-2 font-lexend relative text-center">
                 <h2 class="font-semibold tracking-tighter">Registrasi</h2>
             </div>
-            <div class="p-2 space-y-2">
-                <div class="card border w-full p-5">
-                    <div class="body-card flex gap-5">
-                        <div class="bg-theme-primary px-5 text-white text-lg py-3 rounded-md">
-                            <div class="mt-1">
-                                @include('components.svg.tr-icon')
-                            </div>
-                        </div>
-                        <div class="head">
-                            <h2 class="text-lg font-semibold">Total Waiting </h2>
-                            <h2 class="font-semibold text-2xl">{{ $total_waiting }}</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="card border w-full p-5">
-                    <div class="body-card flex gap-5">
-                        <div class="bg-theme-primary px-5 py-3 text-white rounded-md">
-                            <div class="mt-1">
-                                @include('components.svg.tr-dibatalkan')
-                            </div>
-                        </div>
-                        <div class="head">
-                            <h2 class="text-lg font-semibold">Total Approval</h2>
-                            <h2 class="font-semibold text-2xl">{{ $total_approved }}</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="card border w-full p-5">
-                    <div class="body-card flex gap-5">
-                        <div class="bg-theme-primary px-5 py-3 text-white rounded-md">
-                            <div class="mt-1">
-                                @include('components.svg.tp-icon')
-                            </div>
-                        </div>
-                        <div class="head">
-                            <h2 class="text-lg font-semibold">Total Revisi</h2>
-                            <h2 class="font-semibold text-2xl">{{ $total_revisi }}</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="card border w-full p-5">
-                    <div class="body-card flex gap-5">
-                        <div class="bg-theme-primary text-white px-5 py-3 rounded-md">
-                            <div class="mt-1">
-                                @include('components.svg.tp-dibatalkan')
-                            </div>
-                        </div>
-                        <div class="head">
-                            <h2 class="text-lg font-semibold">Total Sended</h2>
-                            <h2 class="font-semibold text-2xl">{{ $total_sended }}</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="card border w-full p-5">
-                    <div class="body-card flex gap-5">
-                        <div class="bg-theme-primary px-5 text-white py-3 rounded-md">
-                            <div class  ="mt-1">
-                                @include('components.svg.jpp-icon')
-                            </div>
-                        </div>
-                        <div class="head">
-                            <h2 class="text-lg font-semibold">Total Canceled</h2>
-                            <h2 class="font-semibold text-2xl">{{$total_canceled}}</h2>
-                        </div>
-                    </div>
-                </div>
+            <div class="p-2 space-y-2 mt-5">
+                <div class="registrasi"></div>
+            </div>
+            <div class="p-5 flex justify-center">
+                <a href="{{route('dashboard.detail_registrasi')}}" class="px-5 py-2 bg-theme-primary rounded-md text-white">Detail</a>
             </div>
         </div>
         <div class="card w-full bg-white border rounded-md">
@@ -82,53 +21,30 @@
             <div class="p-2 space-y-2 mt-5">
                 <div class="pembayaran-permi"></div>
             </div>
+            <div class="p-5 flex justify-center">
+                <a href="#" class="px-5 py-2 bg-theme-primary rounded-md text-white">Detail</a>
+            </div>
         </div>
-        <div class="card w-full bg-white border rounded-md">
+        {{-- <div class="card w-full bg-white border rounded-md">
             <div class="head border-b p-2 font-lexend relative text-center">
                 <h2 class="font-semibold tracking-tighter">Pelaporan Pelunasan</h2>
             </div>
             <div class="p-2 space-y-2 mt-5">
                 <div class="pelaporan-pelunasan"></div>
             </div>
-        </div>
-    </div>
-    <div class="border p-3 mt-5">
-        <div class="head border p-2 font-lexend relative text-center">
-            <h2 class="font-semibold tracking-tighter">Pengajuan Klaim</h2>
-        </div>
-        <div class="w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 justify-center gap-5">
-            <div class="card bg-white w-full p-5 border">
-                <div class="flex justify-between gap-5">
-                    <h2 class="mt-3">Belum Klaim</h2>
-                    <div class="bg-[#FCF18F] p-3 rounded-full">
-                        @include('components.svg.clock')
-                    </div>
-                </div>
-                <div class="p-3">
-                    <h2 class="text-5xl font-bold">{{$belumKlaim}}</h2>
-                </div>
+            <div class="p-5 flex justify-center">
+                <button class="px-5 py-2 bg-theme-primary rounded-md text-white">Detail</button>
             </div>
-            <div class="card bg-white w-full p-5 border">
-                <div class="flex justify-between gap-5">
-                    <h2 class="mt-3">Yang dibatalkan</h2>
-                    <div class="bg-[#FFCED3] p-3 text-theme-primary rounded-full">
-                        @include('components.svg.tr-dibatalkan')
-                    </div>
-                </div>
-                <div class="p-3">
-                    <h2 class="text-5xl font-bold">{{$yangDibatalkan}}</h2>
-                </div>
+        </div> --}}
+        <div class="card w-full bg-white border rounded-md">
+            <div class="head border-b p-2 font-lexend relative text-center">
+                <h2 class="font-semibold tracking-tighter">Pengajuan Klaim</h2>
             </div>
-            <div class="card bg-white w-full p-5 border">
-                <div class="flex justify-between gap-5">
-                    <h2 class="mt-3">Sudah Klaim</h2>
-                    <div class="bg-[#CEF9CE] text-[#16DA12] p-3 rounded-full">
-                        @include('components.svg.check')
-                    </div>
-                </div>
-                <div class="p-3">
-                    <h2 class="text-5xl font-bold">{{$sudahKlaim}}</h2>
-                </div>
+            <div class="p-2 space-y-2 mt-5">
+                <div class="pengajuan-klaim"></div>
+            </div>
+            <div class="p-5 flex justify-center">
+                <a href="{{route('dashboard.detail_pengajuan_klaim')}}" class="px-5 py-2 bg-theme-primary rounded-md text-white">Detail</a>
             </div>
         </div>
     </div>
