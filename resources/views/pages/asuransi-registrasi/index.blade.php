@@ -108,15 +108,18 @@
                         <th>Aksi</th>
                     </tr>
                     <tbody>
+                        {{-- @php
+                            dd($data);
+                        @endphp --}}
                         @forelse ($data as $item)
                             @php
                                 $totalData = count($item['jenis_asuransi']);
                                 $totalDataTerproses = 0;
-
                                 foreach ($item['jenis_asuransi'] as $key => $value) {
                                     if ($value->asuransi) {
-                                        if ($value->asuransi->registered != null)
+                                        if ($value->asuransi->registered == 1 || $value->asuransi->registered == 0){
                                             $totalDataTerproses++;
+                                        }
                                     }
                                 }
                             @endphp
@@ -233,7 +236,7 @@
                                                                             @endif
                                                                         @endif
                                                                     @else
-                                                                        Tidak registrasi
+                                                                        Tidak Registrasi
                                                                     @endif
                                                                 @else
                                                                     -
@@ -418,8 +421,19 @@
                                                                             @else
                                                                                 -
                                                                             @endif
-                                                                        @else
+                                                                        @elseif ($registered == 0)
                                                                         -
+                                                                        @else
+                                                                            <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
+                                                                                <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
+                                                                                    Registrasi
+                                                                                </button>
+                                                                            </a>
+                                                                            <button class="px-4 py-2 bg-theme-primary/20 rounded text-theme-primary modal-tidak-register" data-modal-toggle="modalTidakRegister" data-modal-target="modalTidakRegister" data-id="{{$item['id']}}"
+                                                                                data-no_pk="{{$item['no_pk']}}" data-debitur="{{$item['nama']}}"
+                                                                                data-jenis_asuransi_id="{{$jenis->id}}" data-jenis_asuransi="{{$jenis->jenis}}">
+                                                                                Tidak Registrasi
+                                                                            </button>
                                                                         @endif
                                                                     @else
                                                                         @if ($role == 'Staf Analis Kredit')
