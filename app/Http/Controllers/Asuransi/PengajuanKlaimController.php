@@ -106,6 +106,31 @@ class PengajuanKlaimController extends Controller
         return view('pages.pengajuan-klaim.create', compact('dataNoRek'));
     }
 
+    public function addPengajuan($id, Request $request){
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+
+        $user_id = $token ? $user['id'] : $user->id;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        if ($role != 'Staf Analis Kredit') {
+            Alert::warning('Peringatan', 'Anda tidak memiliki akses.');
+            return back();
+        }
+
+        $dataNoRek = DB::table('asuransi')->orderBy('no_aplikasi')->where('id', $id)->get();
+        return view('pages.pengajuan-klaim.create', compact('dataNoRek'));
+    }
+
     public function store(Request $request)
     {
         ini_set('max_execution_time', 120);

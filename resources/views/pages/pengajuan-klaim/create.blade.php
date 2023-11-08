@@ -15,13 +15,13 @@
             @csrf
             {{-- form data 1 --}}
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                <input type="hidden" name="no_aplikasi" value="{{ $dataNoRek[0]->no_aplikasi }}">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Aplikasi<span class="text-theme-primary">*</span></label>
-                    <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border">
-                        <option selected>-- Pilih No Aplikasi ---</option>
+                    <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border" disabled>
+                        {{-- <option selected>-- Pilih No Aplikasi ---</option> --}}
                         @forelse ($dataNoRek as $key => $item)
-                            <option @if (old('no_aplikasi') == $item->no_aplikasi)
-                                selected @endif value="{{$item->no_aplikasi}}" data-key="{{$key}}">{{$item->no_aplikasi}} - {{$item->nama_debitur}} </option>
+                            <option selected value="{{$item->no_aplikasi}}" data-key="{{$key}}">{{$item->no_aplikasi}} - {{$item->nama_debitur}} </option>
                         @empty
                             <option>Data Belum Ada.</option>
                         @endforelse
@@ -151,6 +151,14 @@
 
 @push('extraScript')
 <script>
+    getNoRek();
+    function getNoRek(){
+        var key = $('#no_aplikasi').children("option:selected").data('key');
+        var data = @json($dataNoRek);
+
+        $('[name="no_rekening"]').val(data[key]['no_rek'])
+        $('[name="no_sp"]').val(data[key]['no_polis'])
+    }
     $('#no_aplikasi').select2();
     $('#form-reset').on('click', function(){
         $('#form-pengajuan-klaim')[0].reset();

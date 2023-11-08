@@ -95,8 +95,8 @@
         <ul class="menu-dropdown">
           <!-- add rule class active-dropdown-link for active navigation -->
           <a href="{{ route('asuransi.registrasi.index') }}">
-            <li class="dropdown-item-link {{ request()->is('asuransi/registrasi', 'asuransi/registrasi/*') ? 'active-dropdown-link' : '' }}">
-              Registrasi
+            <li class="dropdown-item-link {{ request()->is('asuransi/registrasi', 'asuransi/registrasi/*', 'asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+              List Asuransi
             </li>
           </a>
           <a href="{{ route('asuransi.pembayaran-premi.index') }}">
@@ -104,11 +104,11 @@
               Pembayaran Premi
             </li>
           </a>
-          <a href="{{ route('asuransi.pengajuan-klaim.index') }}">
+          {{-- <a href="{{ route('asuransi.pengajuan-klaim.index') }}">
             <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
             Pengajuan Klaim
             </li>
-          </a>
+          </a> --}}
         </ul>
       </div>
       <li class="item-link dropdown-toggle">

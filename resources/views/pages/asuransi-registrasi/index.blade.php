@@ -286,6 +286,53 @@
                                                                                 @endif
                                                                             @elseif(strtolower($status) == 'sended')
                                                                                 @if ($role == 'Staf Analis Kredit')
+                                                                                    @if ($is_paid == 1)
+                                                                                        @if ($jenis->pengajuan_klaim != null)
+                                                                                            @if ($jenis->pengajuan_klaim->status == 'waiting approval')
+                                                                                                -    
+                                                                                            @elseif ($jenis->pengajuan_klaim->status == 'approved')
+                                                                                                <form action="{{ route('asuransi.pengajuan-klaim.hit-endpoint', $jenis->pengajuan_klaim->id) }}" method="post">
+                                                                                                    @csrf
+                                                                                                    <a href="#">
+                                                                                                        <button type="submit" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn" id="btnKirim">
+                                                                                                            Kirim
+                                                                                                        </button>
+                                                                                                    </a>
+                                                                                                </form>
+                                                                                            @elseif ($jenis->pengajuan_klaim->status == 'revition')
+                                                                                                <a href="{{ route('asuransi.pengajuan-klaim.edit', $jenis->pengajuan_klaim->id) }}">
+                                                                                                    <button type="button" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                                        Edit
+                                                                                                    </button>
+                                                                                                </a>
+                                                                                            @elseif ($jenis->pengajuan_klaim->status == 'sended')
+                                                                                                <div class="dropdown">
+                                                                                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                                        Selengkapnya
+                                                                                                    </button>
+                                                                                                    <ul class="dropdown-menu">
+                                                                                                        <li class="">
+                                                                                                            <button type="button" id="btnCekStatus" class="item-dropdown">Cek Data Pengajuan Klaim</button>
+                                                                                                        </li>
+                                                                                                        <li class="item-dropdown">
+                                                                                                            <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
+                                                                                                                @csrf
+                                                                                                                <input type="hidden" name="id" value="{{ $item->id }}">
+                                                                                                                <input type="hidden" name="no_aplikasi" value="{{ $item->no_aplikasi }}">
+                                                                                                                <input type="hidden" name="no_rekening" value="{{ $item->no_rek }}">
+                                                                                                                <input type="hidden" name="no_polis" value="{{ $item->no_polis }}">
+                                                                                                                <button type="button" id="btnBatal">Pembatalan</button>
+                                                                                                            </form>
+                                                                                                        </li>
+                                                                                                    </ul>
+                                                                                                </div>
+                                                                                            @endif
+                                                                                        @else
+                                                                                            <a href="{{ route('asuransi.pengajuan-klaim.add', $jenis->asuransi->id) }}">
+                                                                                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn" type="button">Pengajuan klaim</button>
+                                                                                            </a>
+                                                                                        @endif
+                                                                                    @else
                                                                                     <div class="dropdown">
                                                                                         <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                                                                             Selengkapnya
@@ -317,6 +364,21 @@
                                                                                             @endif
                                                                                         </ul>
                                                                                     </div>
+                                                                                    @endif
+                                                                                @elseif($role == 'Penyelia Kredit')
+                                                                                    @if ($is_paid)
+                                                                                        @if ($jenis->pengajuan_klaim != null)
+                                                                                            @if ($jenis->pengajuan_klaim->status == 'waiting approval')
+                                                                                                <a href="{{ route('asuransi.pengajuan-klaim.review-penyelia', $jenis->pengajuan_klaim->id) }}">
+                                                                                                    <button type="button" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                                        Review
+                                                                                                    </button>
+                                                                                                </a>
+                                                                                            @else
+                                                                                                -
+                                                                                            @endif
+                                                                                        @endif
+                                                                                    @endif
                                                                                 @else
                                                                                     <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                                                                         Detail
