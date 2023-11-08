@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Master\PenggunaController;
-use App\Http\Controllers\Utils\PaginateController;
-use App\Models\Document;
-use App\Models\DocumentCategory;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Kredit;
-use App\Models\Notification;
 use App\Models\Target;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Pagination\Paginator;
+use App\Models\Document;
+use App\Models\Notification;
+use Illuminate\Http\Request;
+use App\Models\DocumentCategory;
 use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Controllers\Utils\PaginateController;
+use App\Http\Controllers\Master\PenggunaController;
 
 class DashboardController extends Controller
 {
@@ -169,6 +169,8 @@ class DashboardController extends Controller
             ->pluck('id')
             ->toArray();
 
+
+            // data new chartt pembayaran premi
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
             $role = '';
@@ -182,6 +184,36 @@ class DashboardController extends Controller
             }
 
             $user_id = $token ? $user['id'] : $user->id;
+
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
+
+            // $dataAsuransi = DB::table('asuransi')->get();
+            $dataPembayaranPremi = DB::table('pembayaran_premi_detail')->select('asuransi_id')->get();
+
+            $belumBayar = 0;
+            $sudahBayar = 0;
+
+            foreach ($dataAsuransi as $asuransi) {
+                $asuransiId = $asuransi->id;
+
+                $adaDiPremi = $dataPembayaranPremi->contains('asuransi_id', $asuransiId);
+
+                if (!$adaDiPremi) {
+                    $belumBayar++;
+                }
+                else {
+                    $sudahBayar++;
+                }
+            }
+
+            $this->param['sudahBayar'] = $sudahBayar;
+            $this->param['belumBayar'] = $belumBayar;
+
+
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
             $host = env('LOS_API_HOST');
             $headers = [
@@ -191,6 +223,7 @@ class DashboardController extends Controller
             $apiCabang = $host . '/kkb/get-cabang/';
             $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
             $responseCabang = json_decode($api_req->getBody(), true);
+
             $this->param['dataCabang'] = $responseCabang;
             if (!$token)
                 $user_id = 0; // <vendor></vendor>
