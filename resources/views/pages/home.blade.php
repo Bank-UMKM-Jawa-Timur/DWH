@@ -873,10 +873,36 @@
     //  data yang belum dibayar
     var jumlahYangBelumDibayar = dataAsuransi.length - jumlahYangSudahDibayar;
 
-    // chart donut
+     // chart Registrasi
+    var optionsRegistrasi = {
+        labels: ['Tidak Registrasi', 'Registrasi'],
+        series: [55, 70],
+        chart: {
+            type: 'donut',
+            width: '100%',
+            height: 480,
+        },
+        legend: {
+            position: 'bottom',
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 340,
+                },
+            },
+        }],
+    };
+
+    var registrasi = new ApexCharts(document.querySelector(".registrasi"), optionsRegistrasi);
+    registrasi.render();
+
+
+    // chart Pembayaran Premi
     var optionsPembayaranPremi = {
-        labels: ['Yang Belum dibayar', 'Yang Sudah dibayar'],
-        series: [jumlahYangBelumDibayar, jumlahYangSudahDibayar],
+        labels: ['Sudah', 'Belum'],
+        series: [55, 70],
         chart: {
             type: 'donut',
             width: '100%',
@@ -900,50 +926,50 @@
 
 
 
-    function renderChart(){
-        // line chart
-        var lineOptions = {
-            series: [
-                {
-                    name: "Total",
-                    data: dataTotalCabang,
-                },
-            ],
-            chart: {
-                type: "bar",
-                height: 350,
-                stacked: true,
-            },
-            colors: ["#DC3545"],
-            responsive: [
-                {
-                    breakpoint: 480,
-                    options: {
-                        legend: {
-                            position: "bottom",
-                            offsetX: -10,
-                            offsetY: 0,
-                        },
-                    },
-                },
-            ],
-            xaxis: {
-                categories: dataCabang,
-            },
-            fill: {
-                opacity: 1,
-            },
-            legend: {
-                position: "top",
-                offsetX: 0,
-                offsetY: 50,
-            },
-        };
+    // function renderChart(){
+    //     // line chart
+    //     var lineOptions = {
+    //         series: [
+    //             {
+    //                 name: "Total",
+    //                 data: dataTotalCabang,
+    //             },
+    //         ],
+    //         chart: {
+    //             type: "bar",
+    //             height: 350,
+    //             stacked: true,
+    //         },
+    //         colors: ["#DC3545"],
+    //         responsive: [
+    //             {
+    //                 breakpoint: 480,
+    //                 options: {
+    //                     legend: {
+    //                         position: "bottom",
+    //                         offsetX: -10,
+    //                         offsetY: 0,
+    //                     },
+    //                 },
+    //             },
+    //         ],
+    //         xaxis: {
+    //             categories: dataCabang,
+    //         },
+    //         fill: {
+    //             opacity: 1,
+    //         },
+    //         legend: {
+    //             position: "top",
+    //             offsetX: 0,
+    //             offsetY: 50,
+    //         },
+    //     };
 
-        var lineChart = document.querySelector(".line-chart");
-        var chart = new ApexCharts(lineChart, lineOptions);
-        chart.render();
-    }
+    //     var lineChart = document.querySelector(".line-chart");
+    //     var chart = new ApexCharts(lineChart, lineOptions);
+    //     chart.render();
+    // }
 
     $('#page_length').on('change', function() {
         $('#form_kkb').submit()
@@ -1008,38 +1034,55 @@
             }
         })
     });
-    var optionsPelaporanPelunasan = {
-        series: [{
-            name: "sales",
-            data: [
-            {
-                x: 'Total',
-                y: 43
-            },
-            ]
-        }],
-        chart: {
-            type: 'bar',
-            height: 500
-        },
-        xaxis: {
-            type: 'category',
-            labels: {},
-            group: {
-            style: {
-                fontSize: '20px',
-                fontWeight: 700
-            },
-            groups: [
-                { title: '2019', cols: 4 },
-                { title: '2020', cols: 4 }
-            ]
-            }
-        },
-    };
 
-        var pelaporanPelunasan = new ApexCharts(document.querySelector(".pelaporan-pelunasan"), optionsPelaporanPelunasan);
-        pelaporanPelunasan.render();
+
+        // var optionsPelaporanPelunasan = {
+        //     labels: ['Total'],
+        //     series: [50],
+        //     chart: {
+        //         type: 'donut',
+        //         width: '100%',
+        //         height: 480,
+        //     },
+        //     legend: {
+        //         position: 'bottom',
+        //     },
+        //     responsive: [{
+        //         breakpoint: 480,
+        //         options: {
+        //             chart: {
+        //                 width: 340,
+        //             },
+        //         },
+        //     }],
+        // };
+
+        // var pelaporanPelunasan = new ApexCharts(document.querySelector(".pelaporan-pelunasan"), optionsPelaporanPelunasan);
+        // pelaporanPelunasan.render();
+
+        var optionsPengajuanKlaim = {
+            labels: ['Sudah', 'Belum', 'On Process'],
+            series: [55, 70, 20],
+            chart: {
+                type: 'donut',
+                width: '100%',
+                height: 480,
+            },
+            legend: {
+                position: 'bottom',
+            },
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 340,
+                    },
+                },
+            }],
+        };
+
+        var pengajuanKlaim = new ApexCharts(document.querySelector(".pengajuan-klaim"), optionsPengajuanKlaim);
+        pengajuanKlaim.render();
 
     var tab_type = "@isset($_GET['tab_type']){{$_GET['tab_type']}}@endisset"
     if (tab_type == 'tab-kkb' || !tab_type)
