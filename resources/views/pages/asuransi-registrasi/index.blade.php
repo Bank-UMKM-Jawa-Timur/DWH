@@ -99,24 +99,37 @@
                         @if ($role_id != 2)
                             <th>Cabang</th>
                         @endif
-                        <th>Tanggal Pengajuan</th>
-                        <th>Nomor PK</th>
-                        <th>Jenis Kredit</th>
-                        <th>Plafond</th>
+                        <th>Jumlah Asuransi</th>
+                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                     <tbody>
                         @forelse ($data as $item)
+                            @php
+                                $totalData = count($item['jenis_asuransi']);
+                                $totalDataTerproses = 0;
+
+                                foreach ($item['jenis_asuransi'] as $key => $value) {
+                                    if ($value->asuransi->registered != null)
+                                        $totalDataTerproses++;
+                                }
+                            @endphp
                             <tr class="view cursor-pointer">
                                 <td>{{$loop->iteration}}</td>
                                 <td>{{$item['nama']}}</td>
                                 @if ($role_id != 2)
                                     <td>{{$item['cabang']}}</td>
                                 @endif
-                                <td>{{date('d-m-Y', strtotime($item['tanggal']))}}</td>
-                                <td>{{$item['no_pk']}}</td>
-                                <td>{{$item['skema_kredit']}}</td>
-                                <td>Rp {{number_format($item['jumlah_kredit'], 0, ',', '.')}}</td>
+                                <td>{{ $totalDataTerproses . '/' . $totalData }}</td>
+                                <td>
+                                    @if ($totalDataTerproses == 0)
+                                        {{ 'Open' }}
+                                    @elseif ($totalDataTerproses != 0 && $totalDataTerproses < $totalData)
+                                        {{ 'On Progress' }}
+                                    @elseif ($totalDataTerproses == $totalData)
+                                        {{ 'Close' }}
+                                    @endif
+                                </td>
                                 <td>
                                     <div class="flex gap-4 justify-center">
                                         @if(count($item['jenis_asuransi']) > 0)
@@ -146,7 +159,7 @@
                                                     <th>Nomor Polis</th>
                                                     <th>Tanggal Polis</th>
                                                     <th>Tanggal Rekam</th>
-                                                    <th>Status</th>
+                                                    <th>Status Asuransi</th>
                                                     <th>Aksi</th>
                                                 </thead>
                                                 <tbody>
