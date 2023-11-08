@@ -876,6 +876,7 @@
     var registered = @json($registered);
     var not_registered = @json($not_registered);
     var belum_registrasi = @json($belum_registrasi);
+    var total_registrasi = registered + not_registered + belum_registrasi
 
      // chart Registrasi
     var optionsRegistrasi = {
@@ -891,9 +892,9 @@
         },
         dataLabels: {
             enabled: true,
-            formatter: function (val) {
-                return parseInt(val)
-            }
+            formatter: function (val, opts) {
+                return opts.w.config.series[opts.seriesIndex]
+            },
         },
 
         plotOptions: {
@@ -923,7 +924,7 @@
                             label: 'Total',
                             color: '#373d3f',
                             formatter: function (w) {
-                                return total
+                                return total_registrasi
                             }
                         }
                     }
@@ -949,7 +950,7 @@
 
     var sudahBayar = @json($sudahBayar);
     var belumBayar = @json($sudahBayar);
-    var total = sudahBayar + belumBayar;
+    var total_premi = sudahBayar + belumBayar;
     var optionsPembayaranPremi = {
         labels: ['Sudah', 'Belum'],
         series: [sudahBayar, belumBayar],
@@ -996,7 +997,7 @@
                             label: 'Total',
                             color: '#373d3f',
                             formatter: function (w) {
-                                return total
+                                return total_premi
                             }
                         }
                     }
@@ -1154,9 +1155,50 @@
         // pelaporanPelunasan.render();
         var sudah_klaim = @json($total_sudah_klaim);
         var belum_klaim = @json($total_belum_klaim);
+        var total_klaim = sudah_klaim + belum_klaim;
         var optionsPengajuanKlaim = {
             labels: ['Sudah', 'Belum (On Process)'],
             series: [sudah_klaim, belum_klaim],
+            dataLabels: {
+                enabled: true,
+                formatter: function (val, opts) {
+                    return opts.w.config.series[opts.seriesIndex]
+                },
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        labels: {
+                            show: true,
+                            name: {
+                                show: true,
+                                fontSize: '22px',
+                                fontFamily: 'Rubik',
+                                color: '#dfsda',
+                                offsetY: -10
+                            },
+                            value: {
+                                show: true,
+                                fontSize: '16px',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                color: undefined,
+                                offsetY: 16,
+                                formatter: function (val) {
+                                    return val
+                                }
+                            },
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                color: '#373d3f',
+                                formatter: function (w) {
+                                    return total_klaim
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             chart: {
                 type: 'donut',
                 width: '100%',
