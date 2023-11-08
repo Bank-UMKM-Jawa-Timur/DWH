@@ -204,8 +204,8 @@ class PengajuanKlaimController extends Controller
             $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menambahkan pengajuan klaim.', $asuransi->id, 1);
 
             DB::commit();
-            Alert::success('Berhasil', 'Berhasil menambahkan pengajuan klaim.');
-            return redirect()->route('asuransi.pengajuan-klaim.index');
+            Alert::success('Berhasil', 'Berhasil melakukan pengajuan klaim.');
+            return redirect()->route('asuransi.registrasi.index');
         } catch (\Exception $e) {
             DB::rollBack();
             Alert::error(

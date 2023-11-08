@@ -220,7 +220,7 @@
                                                                             Sudah dibayar
                                                                         @else
                                                                             @if ($status == 'waiting approval')
-                                                                                Menunggu persutujuan
+                                                                                Menunggu persetujuan
                                                                             @elseif ($status == 'approved')
                                                                                 Disetujui
                                                                             @elseif ($status == 'revition')
@@ -351,42 +351,49 @@
                                                                                                 </div>
                                                                                             @endif
                                                                                         @else
-                                                                                            <a href="{{ route('asuransi.pengajuan-klaim.add', $jenis->asuransi->id) }}">
-                                                                                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn" type="button">Pengajuan klaim</button>
-                                                                                            </a>
+                                                                                            <div class="dropdown">
+                                                                                                <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                                    Selengkapnya
+                                                                                                </button>
+                                                                                                <ul class="dropdown-menu right-16">
+                                                                                                    @if (!$jenis->asuransi->is_paid)
+                                                                                                        <li class="">
+                                                                                                            <a class="item-dropdown modal-batal" href="#"
+                                                                                                                data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                                                                                data-id="{{$jenis->asuransi->id}}" data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}"
+                                                                                                                data-no_polis="{{$jenis->asuransi->no_polis}}">Pembatalan</a>
+                                                                                                        </li>
+                                                                                                    @endif
+                                                                                                    <li class="item-dropdown">
+                                                                                                        <form class="form-inquery" action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                                                                            <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
+                                                                                                            <input type="hidden" name="id_asuransi" value="{{$id_pengajuan}}">
+                                                                                                            <button type="submit">Cek(Inquery)</button>
+                                                                                                        </form>
+                                                                                                    </li>
+                                                                                                    @if ($jenis->asuransi->is_paid && !$jenis->asuransi->canceled_at)
+                                                                                                        <li class="">
+                                                                                                            <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                                                                                data-modal-target="modalPelunasan"  data-id="{{$jenis->asuransi->id}}"
+                                                                                                                data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek="{{$jenis->asuransi->no_rek}}"
+                                                                                                                data-no_polis="{{$jenis->asuransi->no_polis}}" data-refund="{{$jenis->asuransi->refund}}"
+                                                                                                                data-tgl_awal="{{$jenis->asuransi->tanggal_awal}}" data-tgl_akhir="{{$jenis->asuransi->tanggal_akhir}}">Pelunasan</a>
+                                                                                                        </li>
+                                                                                                        <li>
+                                                                                                            <a href="{{ route('asuransi.pengajuan-klaim.add', $jenis->asuransi->id) }}" class="item-dropdown">
+                                                                                                                Pengajuan klaim
+                                                                                                            </a>
+                                                                                                        </li>
+                                                                                                    @endif
+                                                                                                </ul>
+                                                                                            </div>
                                                                                         @endif
                                                                                     @else
-                                                                                    <div class="dropdown">
-                                                                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                                                            Selengkapnya
-                                                                                        </button>
-                                                                                        <ul class="dropdown-menu right-16">
-                                                                                            @if (!$jenis->asuransi->is_paid)
-                                                                                                <li class="">
-                                                                                                    <a class="item-dropdown modal-batal" href="#"
-                                                                                                        data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                                        data-id="{{$jenis->asuransi->id}}" data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}"
-                                                                                                        data-no_polis="{{$jenis->asuransi->no_polis}}">Pembatalan</a>
-                                                                                                </li>
-                                                                                            @endif
-                                                                                            <li class="">
-                                                                                                <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                                                                    <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
-                                                                                                    <input type="hidden" name="id_asuransi" value="{{$id_pengajuan}}">
-                                                                                                    <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
-                                                                                                </form>
-                                                                                            </li>
-                                                                                            @if ($jenis->asuransi->is_paid && !$jenis->asuransi->canceled_at)
-                                                                                                <li class="">
-                                                                                                    <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                                                                        data-modal-target="modalPelunasan"  data-id="{{$jenis->asuransi->id}}"
-                                                                                                        data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek="{{$jenis->asuransi->no_rek}}"
-                                                                                                        data-no_polis="{{$jenis->asuransi->no_polis}}" data-refund="{{$jenis->asuransi->refund}}"
-                                                                                                        data-tgl_awal="{{$jenis->asuransi->tanggal_awal}}" data-tgl_akhir="{{$jenis->asuransi->tanggal_akhir}}">Pelunasan</a>
-                                                                                                </li>
-                                                                                            @endif
-                                                                                        </ul>
-                                                                                    </div>
+                                                                                        <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                                                            <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
+                                                                                            <input type="hidden" name="id_asuransi" value="{{$id_pengajuan}}">
+                                                                                            <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
+                                                                                        </form>
                                                                                     @endif
                                                                                 @elseif($role == 'Penyelia Kredit')
                                                                                     @if ($is_paid)
@@ -582,6 +589,10 @@
                     Swal.close()
                 }
             })
+        })
+
+        $('.form-inquery').on('submit', function() {
+            $('#preload-data').removeClass('hidden')
         })
     </script>
 @endpush
