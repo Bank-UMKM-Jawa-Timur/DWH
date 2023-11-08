@@ -949,6 +949,7 @@
 
     var sudahBayar = @json($sudahBayar);
     var belumBayar = @json($sudahBayar);
+    var total = sudahBayar + belumBayar;
     var optionsPembayaranPremi = {
         labels: ['Sudah', 'Belum'],
         series: [sudahBayar, belumBayar],
@@ -963,9 +964,9 @@
 
         dataLabels: {
             enabled: true,
-            formatter: function (val) {
-                return parseInt(val)
-            }
+            formatter: function (val, opts) {
+                return opts.w.config.series[opts.seriesIndex]
+            },
         },
 
         plotOptions: {
