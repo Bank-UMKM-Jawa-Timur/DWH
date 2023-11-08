@@ -139,7 +139,8 @@ class DashboardController extends Controller
             $this->param['yangDibatalkan'] = DB::table('pengajuan_klaim')->where('status', 'canceled')->count();
             $this->param['sudahKlaim'] = DB::table('pengajuan_klaim')->where('stat_klaim', '3')->count();
 
-            $dataAsuransi = DB::table('asuransi')->get();
+            $dataAsuransi = DB::table('asuransi')->where('status', 'sended')->where('registered', 1)->get();
+
             $dataKlaim = DB::table('pengajuan_klaim')->select('asuransi_id')->get();
 
             $belumKlaim = 0;
@@ -192,27 +193,23 @@ class DashboardController extends Controller
 
 
             // $dataAsuransi = DB::table('asuransi')->get();
-            $dataPembayaranPremi = DB::table('pembayaran_premi_detail')->select('asuransi_id')->get();
-
             $belumBayar = 0;
             $sudahBayar = 0;
-
-            foreach ($dataAsuransi as $asuransi) {
-                $asuransiId = $asuransi->id;
-
-                $adaDiPremi = $dataPembayaranPremi->contains('asuransi_id', $asuransiId);
-
-                if (!$adaDiPremi) {
-                    $belumBayar++;
-                }
-                else {
-                    $sudahBayar++;
-                }
-            }
+            $sudahBayar = DB::table('asuransi')
+                                    ->select('id')
+                                    ->where('registered', 1)
+                                    ->where('status', 'sended')
+                                    ->where('is_paid', 1)
+                                    ->count();
+            $belumBayar = DB::table('asuransi')
+                                    ->select('id')
+                                    ->where('registered', 1)
+                                    ->where('status', 'sended')
+                                    ->where('is_paid', 0)
+                                    ->count();
 
             $this->param['sudahBayar'] = $sudahBayar;
             $this->param['belumBayar'] = $belumBayar;
-
 
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
             $host = env('LOS_API_HOST');
@@ -1070,7 +1067,7 @@ class DashboardController extends Controller
         return view('pages.detail.pengajuan-klaim', $this->param);
     }
 
-    public function detailPembayaranPremi(){
+    public function detailPembayaranPremi(Request $request) {
         $token = \Session::get(config('global.user_token_session'));
         $user = $token ? $this->getLoginSession() : Auth::user();
         $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
@@ -1080,13 +1077,14 @@ class DashboardController extends Controller
             if (is_array($user)) {
                 $role = $user['role'];
             }
-        } else {
+        }
+        else {
             $role = 'vendor';
         }
 
-        $sudahBayar = 0;
         $belumBayar = 0;
-        $data_pembayaran_premi = [];
+        $sudahBayar = 0;
+        $data_registrasi = [];
 
         $user_id = $token ? $user['id'] : $user->id;
 
@@ -1096,86 +1094,92 @@ class DashboardController extends Controller
         ];
 
         if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            $sudahBayar = DB::table('asuransi')
+                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                ->select('id')
+                                ->where('registered', 1)
+                                ->where('status', 'sended')
+                                ->where('is_paid', 1)
+                                ->where('asuransi.registered', 1)
+                                ->where('k.is_asuransi', true)
+                                ->where('k.kode_cabang', $user_cabang)
+                                ->count();
+            $belumBayar = DB::table('asuransi')
+                            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                            ->select('id')
+                            ->where('registered', 1)
+                            ->where('status', 'sended')
+                            ->where('is_paid', 0)
+                            ->where('asuransi.registered', 1)
+                            ->where('k.is_asuransi', true)
+                            ->where('k.kode_cabang', $user_cabang)
+                            ->count();
 
-            $dataSudahBayar = DB::table('asuransi')
-            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
-            ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-            ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
-            ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
-            ->select('asuransi.id')
-            ->where('asuransi.registered', 1)
-            ->where('k.is_asuransi', true)
-            ->where('asuransi.is_paid', true)
-            ->where('k.kode_cabang', $user_cabang)
-            ->count();
-
-            $dataBelumBayar = DB::table('asuransi')
-            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
-            ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-            ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
-            ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
-            ->select('asuransi.id')
-            ->where('asuransi.registered', 1)
-            ->where('k.is_asuransi', true)
-            ->where('asuransi.is_paid', false)
-            ->where('k.kode_cabang', $user_cabang)
-            ->count();
             // retrieve from api
             $apiURL = "$host/v1/get-list-pengajuan";
 
             try {
+                $user = $request->has('id_penyelia') ? $request->id_penyelia : 'all';
                 $response = Http::timeout(60)
-                    ->withHeaders($headers)
-                    ->withOptions(['verify' => false])
-                    ->get($apiURL, [
-                        'kode_cabang' => $user_cabang,
-                        'user' => 'all',
-                    ]);
+                                ->withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->get($apiURL, [
+                                    'kode_cabang' => $user_cabang,
+                                    'user' => $user,
+                                ]);
 
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
-
+                
                 if ($responseBody) {
-                    if (array_key_exists('data', $responseBody)) {
+                    if(array_key_exists('data', $responseBody)) {
                         if (array_key_exists('data', $responseBody['data'])) {
                             $data = $responseBody['data']['data'];
-                            $sudahBayar = 0;
-                            $belumBayar = 0;
+
                             foreach ($data as $key => $value) {
-                                $nip = $value['karyawan']['nip'];
-                                $nama = $value['karyawan']['nama'];
+                                $id = $value['id_penyelia'];
+                                $debitur = $value['nama'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
                                 // retrieve jenis_asuransi
-                                $asuransi = DB::table('asuransi')
-                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
-                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                                    ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
-                                    ->select(
-                                        'asuransi.is_paid',
-                                    )->where('k.pengajuan_id', $value['id']);
-                                $asuransi = $asuransi->orderBy('no_aplikasi')
-                                    ->get();
-                                // return $asuransi;
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
 
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $pembayaran = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->leftJoin('pembayaran_premi_detail AS pem', 'pem.asuransi_id', 'asuransi.id')
+                                                ->select(
+                                                    'asuransi.id',
+                                                    'asuransi.is_paid',
+                                                )
+                                                ->where('asuransi.status', 'sended')
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
 
-                                $totalAsurnasi = count($asuransi);
-
-                                foreach ($asuransi as $key => $value) {
-                                    if ($value->is_paid == 1) {
-                                        $sudahBayar++;
-                                    } else {
-                                        $belumBayar++;
-                                        $sudahBayar--;
+                                    $pembayaran = $pembayaran->groupBy('asuransi.no_pk')
+                                                        ->orderBy('asuransi.no_aplikasi')
+                                                        ->first();
+                                    $value2->pembayaran = $pembayaran;
+                                    if ($pembayaran) {
+                                        $d = [
+                                            'id' => $id,
+                                            'asuransi_id' => $pembayaran ? $pembayaran->id : null,
+                                            'nip' => $nip,
+                                            'nama' => $nama,
+                                            'debitur' => $debitur,
+                                            'is_paid' => $pembayaran ? $pembayaran->is_paid : null,
+                                        ];
+        
+                                        array_push($data_registrasi, $d);
                                     }
-                                    // return ['sudah bayar'=>$sudahBayar, 'belum bayar'=>$belumBayar];
-                                    $d = [
-                                        'nip' => $nip,
-                                        'nama' => $nama,
-                                        'total' => $totalAsurnasi,
-                                        'jmlh_sudah_bayar' => $sudahBayar,
-                                        'jmlh_belum_bayar' => $belumBayar,
-                                    ];
-                                    array_push($data_pembayaran_premi, $d);
                                 }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
                             }
                         }
                     }
@@ -1186,65 +1190,93 @@ class DashboardController extends Controller
             }
         } else {
             // Penyelia & staf
+            $sudahBayar = DB::table('asuransi')
+                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                ->select('id')
+                                ->where('registered', 1)
+                                ->where('status', 'sended')
+                                ->where('is_paid', 1)
+                                ->where('asuransi.registered', 1)
+                                ->where('k.is_asuransi', true)
+                                ->where('k.kode_cabang', $user_cabang)
+                                ->count();
+            $belumBayar = DB::table('asuransi')
+                            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                            ->select('id')
+                            ->where('registered', 1)
+                            ->where('status', 'sended')
+                            ->where('is_paid', 0)
+                            ->where('asuransi.registered', 1)
+                            ->where('k.is_asuransi', true)
+                            ->where('k.kode_cabang', $user_cabang)
+                            ->count();
             // retrieve from api
             $apiURL = "$host/v1/get-list-pengajuan";
 
             try {
                 $response = Http::timeout(60)
-                    ->withHeaders($headers)
-                    ->withOptions(['verify' => false])
-                    ->get($apiURL, [
-                        'kode_cabang' => $user_cabang,
-                        'user' => $user_id,
-                    ]);
+                                ->withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->get($apiURL, [
+                                    'kode_cabang' => $user_cabang,
+                                    'user' => $user_id,
+                                ]);
 
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
 
                 if ($responseBody) {
-                    if (array_key_exists('data', $responseBody)) {
+                    if(array_key_exists('data', $responseBody)) {
                         if (array_key_exists('data', $responseBody['data'])) {
                             $data = $responseBody['data']['data'];
 
-                            $sudahBayar = 0;
-                            $belumBayar = 0;
                             foreach ($data as $key => $value) {
-                                $nip = $value['karyawan']['nip'];
-                                $nama = $value['karyawan']['nama'];
+                                $id = $value['id_penyelia'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $role == 'Penyelia Kredit' || $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
+                                $debitur = $value['nama'];
                                 // retrieve jenis_asuransi
-                                $asuransi = DB::table('asuransi')
-                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
-                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
-                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
-                                    ->select(
-                                        'asuransi.is_paid',
-                                        )->where('k.pengajuan_id', $value['id']);
-                                $asuransi = $asuransi->orderBy('no_aplikasi')
-                                ->get();
-                                        // return $asuransi;
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
+                                $jml_asuransi = $jenis_asuransi ? count($jenis_asuransi) : 0;
+                                $jml_diproses = 0;
 
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $pembayaran = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->leftJoin('pembayaran_premi_detail AS pem', 'pem.asuransi_id', 'asuransi.id')
+                                                ->select(
+                                                    'asuransi.id',
+                                                    'asuransi.is_paid',
+                                                )
+                                                ->where('asuransi.status', 'sended')
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
 
-                                    $totalAsurnasi = count($asuransi);
-
-                                    foreach ($asuransi as $key => $value) {
-                                        if ($value->is_paid == 1) {
-                                            $sudahBayar ++;
-                                        }else{
-                                            $belumBayar ++;
-                                            $sudahBayar--;
-                                        }
-                                        // return ['sudah bayar'=>$sudahBayar, 'belum bayar'=>$belumBayar];
+                                    $pembayaran = $pembayaran->groupBy('asuransi.no_pk')
+                                                        ->orderBy('asuransi.no_aplikasi')
+                                                        ->first();
+                                    $value2->pembayaran = $pembayaran;
+                                    if ($pembayaran) {
                                         $d = [
+                                            'id' => $id,
+                                            'asuransi_id' => $pembayaran ? $pembayaran->id : null,
                                             'nip' => $nip,
                                             'nama' => $nama,
-                                            'total' => $totalAsurnasi,
-                                            'jmlh_sudah_bayar' => $sudahBayar,
-                                            'jmlh_belum_bayar' => $belumBayar,
+                                            'debitur' => $debitur,
+                                            'is_paid' => $pembayaran ? $pembayaran->is_paid : null,
                                         ];
-                                        array_push($data_pembayaran_premi, $d);
+        
+                                        array_push($data_registrasi, $d);
                                     }
+                                }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
                             }
-                                // return $data_pembayaran_premi;
                         }
                     }
                 } else {
@@ -1253,39 +1285,61 @@ class DashboardController extends Controller
                 // return $e->getMessage();
             }
         }
+        
+        $this->param['sudah_bayar'] = $sudahBayar;
+        $this->param['belum_bayar'] = $belumBayar;
+        $this->param['role'] = $role;
 
+        if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            $result = $request->has('staf') ? $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+        }
+        else {
+            if ($role == 'Staf Analis Kredit') {
+                $result = $this->group_by("debitur", $data_registrasi);
+            }
+            else {
+                $result = $request->has('staf') ?  $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+            }
+        }
 
-
-        $result = $this->group_by("nip", $data_pembayaran_premi);
-        // return $result;
         $finalResult = [];
         if ($result) {
-            $jmlh_belum_bayar = 0;
-            $jmlh_sudah_bayar = 0;
-            $chart_sudah_bayar = 0;
-            $chart_belum_bayar = 0;
             foreach ($result as $key => $value) {
-                // return ['totalsudah' => $jmlh_sudah_bayar += $value['jmlh_sudah_bayar']];
+                $dibayar = 0;
+                $belum_dibayar = 0;
                 for ($i=0; $i < count($value); $i++) {
-                    $jmlh_belum_bayar += $value[$i]['jmlh_belum_bayar'];
-                    $jmlh_sudah_bayar += $value[$i]['jmlh_sudah_bayar'];
-                    // $total == $value[$i]['total'];
+                    if ($value[$i]['is_paid'] == 1) {
+                        $dibayar++;
+                    }
+                    else {
+                        $belum_dibayar++;
+                    }
                 };
+
+                if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                    $nip = $request->has('id_penyelia') ? $value[0]['nip']  : $key;
+                }
+                else {
+                    if ($role == 'Staf Analis Kredit') {
+                        $nip = $value[0]['nip'];
+                    }
+                    else {
+                        $nip = $key;
+                    }
+                }
                 $final_d = [
-                    'nip' => $key,
+                    'id' => $value[0]['id'],
+                    'nip' => $nip,
                     'nama' => $value[0]['nama'],
-                    'jmlh_sudah_bayar' => $jmlh_sudah_bayar,
-                    'jmlh_belum_bayar' => $jmlh_belum_bayar,
-                    'total' => $value[0]['total'],
+                    'debitur' => $value[0]['debitur'],
+                    'dibayar' => $dibayar,
+                    'belum_dibayar' => $belum_dibayar,
                 ];
 
                 array_push($finalResult, $final_d);
-
-                $this->param['TsudahBayar'] = $chart_sudah_bayar += $jmlh_sudah_bayar;
-                $this->param['TbelumBayar'] = $chart_belum_bayar += $jmlh_belum_bayar;
             }
         }
-        // return $finalResult;
+        
         $this->param['result'] = $finalResult;
 
         return view('pages.detail.pembayaran-premi', $this->param);
