@@ -201,6 +201,7 @@ Route::middleware('auth_api')->group(function () {
     Route::prefix('dashboard')->group(function() {
         Route::get('/detail-registrasi', [DashboardController::class, 'detailRegistrasi'])->name('dashboard.detail_registrasi');
         Route::get('/detail-pengajuan-klaim', [DashboardController::class, 'detailPengajuanKlaim'])->name('dashboard.detail_pengajuan_klaim');
+        Route::get('/detail-pembayaran-premi', [DashboardController::class, 'detailPembayaranPremi'])->name('dashboard.detail_pembayaran_premi');
     });
 });
 

@@ -13,32 +13,11 @@
                     <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                         <div class="title-table lg:p-3 p-2 text-center">
                             <h2 class="font-bold text-lg text-theme-text tracking-tighter">
-                                Data Pembayaran Premi 
+                                Data Pembayaran Premi
                             </h2>
                         </div>
-                        <div class="table-action flex lg:justify-normal justify-center p-2 gap-2">
-                            <button class="px-6 py-2 bg-theme-primary/10 flex gap-3 rounded text-theme-primary">
-                                <span class="lg:mt-1.5 mt-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 16 16">
-                                        <path fill="currentColor" fill-rule="evenodd"
-                                            d="M5.905.28A8 8 0 0 1 14.5 3.335V1.75a.75.75 0 0 1 1.5 0V6h-4.25a.75.75 0 0 1 0-1.5h1.727a6.5 6.5 0 1 0 .526 5.994a.75.75 0 1 1 1.385.575A8 8 0 1 1 5.905.279Z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </span>
-                                <span class="lg:block hidden"> Reset </span>
-                            </button>
-                            <button id="form-toggle" class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white">
-                                <span class="lg:mt-1 mt-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24">
-                                        <path fill="none" stroke="currentColor" stroke-width="1.5"
-                                            d="M19 3H5c-1.414 0-2.121 0-2.56.412C2 3.824 2 4.488 2 5.815v.69c0 1.037 0 1.556.26 1.986c.26.43.733.698 1.682 1.232l2.913 1.64c.636.358.955.537 1.183.735c.474.411.766.895.898 1.49c.064.284.064.618.064 1.285v2.67c0 .909 0 1.364.252 1.718c.252.355.7.53 1.594.88c1.879.734 2.818 1.101 3.486.683c.668-.417.668-1.372.668-3.282v-2.67c0-.666 0-1 .064-1.285a2.68 2.68 0 0 1 .899-1.49c.227-.197.546-.376 1.182-.735l2.913-1.64c.948-.533 1.423-.8 1.682-1.23c.26-.43.26-.95.26-1.988v-.69c0-1.326 0-1.99-.44-2.402C21.122 3 20.415 3 19 3Z" />
-                                    </svg>
-                                </span>
-                                <span class="lg:block hidden"> Filter </span>
-                            </button>
-                        </div>
                     </div>
-                    <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
+                    {{-- <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
                         <div class="sorty pl-1 w-full">
                             <label for="" class="mr-3 text-sm text-neutral-400">show</label>
                             <select name="" class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
@@ -62,41 +41,37 @@
                                     class="p-2 rounded-md w-full outline-none text-[#BFBFBF]" autocomplete="off" />
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="tables mt-2">
                         <table class="table-auto w-full">
-                            <tr>
+                           <tr>
                                 <th>No.</th>
                                 <th>Nip</th>
                                 <th>Nama Penyelia</th>
-                                <th>Jumlah Asuransi</th>
-                                <th>Aksi</th>
+                                <th colspan="2">Pembayaran Premi</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>Sudah Bayar</th>
+                                <th>Belum Bayar</th>
                             </tr>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>1213145</td>
-                                    <td><a href="#" class="border-b border-black">Farhan</a></td>
-                                    <td>80</td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                Selangkapnya
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li class="">
-                                                    <a class="item-dropdown" href="#">Detail</a>
-                                                </li>
-                                                <li class="">
-                                                    <a class="item-dropdown" href="#">Hapus</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @forelse ($result as $item)
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>{{$item['nip']}}</td>
+                                        <td>{{$item['nama']}}</td>
+                                        <td>{{$item['jmlh_belum_bayar']}}</td>
+                                        <td>{{$item['jmlh_belum_bayar']}}</td>
+                                    </tr>
+                                @empty
+
+                                @endforelse
                         </table>
                     </div>
-                    <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+                    {{-- <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
                         <div>
                             <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
                         </div>
@@ -113,7 +88,7 @@
                                 <button class="btn-pagination">Next</button>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="chart-wrapper bg-white border rounded-md w-2/4 p-2">
