@@ -198,6 +198,9 @@ Route::middleware('auth_api')->group(function () {
 
     // Get Data For Charts
     Route::get('/get-data-charts', [DashboardController::class, 'getChartData'])->name('get-data-charts');
+    Route::prefix('dashboard')->group(function() {
+        Route::get('/detail-registrasi', [DashboardController::class, 'detailRegistrasi'])->name('dashboard.detail_registrasi');
+    });
 });
 
 

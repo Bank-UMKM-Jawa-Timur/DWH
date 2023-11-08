@@ -70,30 +70,31 @@
                                 <th>Nip</th>
                                 <th>Nama Penyelia</th>
                                 <th>Jumlah Asuransi</th>
-                                <th>Aksi</th>
+                                <th colspan="2">Registrasi</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>Sudah</th>
+                                <th>Belum</th>
                             </tr>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>1213145</td>
-                                    <td><a href="#" class="border-b border-black">Farhan</a></td>
-                                    <td>80</td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                Selangkapnya
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li class="">
-                                                    <a class="item-dropdown" href="#">Detail</a>
-                                                </li>
-                                                <li class="">
-                                                    <a class="item-dropdown" href="#">Hapus</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @forelse ($result as $item)
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>{{$item['nip']}}</td>
+                                        <td>{{$item['nama']}}</td>
+                                        <td>
+                                            <a href="#" class="border-b border-black">{{$item['jml_asuransi']}}</a>
+                                        </td>
+                                        <td>{{$item['jml_diproses']}}</td>
+                                        <td>{{($item['jml_asuransi'] - $item['jml_diproses'])}}</td>
+                                    </tr>
+                                @empty
+                                    
+                                @endforelse
                         </table>
                     </div>
                     <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
