@@ -200,12 +200,16 @@ class DashboardController extends Controller
             $registered = 0;
             $not_registered = 0;
             $belum_registrasi = 0;
+            // Klaim
+            $total_sudah_klaim = 0;
+            $total_belum_klaim = 0;
             $host = env('LOS_API_HOST');
             $headers = [
                 'token' => env('LOS_API_TOKEN')
             ];
 
             if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                // Registrasi
                 $registered = DB::table('asuransi')
                                 ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
                                 ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
@@ -288,6 +292,31 @@ class DashboardController extends Controller
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
+
+                // Klaim
+                $total_sudah_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->where('k.kode_cabang', $user_cabang)
+                                    ->whereRaw('asuransi.id IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
+
+                $total_belum_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->where('k.kode_cabang', $user_cabang)
+                                    ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
             } else {
                 // Penyelia & staf
                 // retrieve from api
@@ -384,11 +413,52 @@ class DashboardController extends Controller
                         array_push($finalResult, $final_d);
                     }
                 }
+
+                // Klaim
+                $total_sudah_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->when($role, function($query) use ($role, $user_id) {
+                                        if ($role == 'Staf Analis Kredit') {
+                                            $query->where('asuransi.user_id', $user_id);
+                                        }
+                                        else {
+                                            $query->where('asuransi.penyelia_id', $user_id);
+                                        }
+                                    })
+                                    ->whereRaw('asuransi.id IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
+
+                $total_belum_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->when($role, function($query) use ($role, $user_id) {
+                                        if ($role == 'Staf Analis Kredit') {
+                                            $query->where('asuransi.user_id', $user_id);
+                                        }
+                                        else {
+                                            $query->where('asuransi.penyelia_id', $user_id);
+                                        }
+                                    })
+                                    ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
             }
             $this->param['registered'] = $registered;
             $this->param['not_registered'] = $not_registered;
             $this->param['belum_registrasi'] = $belum_registrasi;
-            // dd($registered, $not_registered, $belum_registrasi);
+            $this->param['total_sudah_klaim'] = $total_sudah_klaim;
+            $this->param['total_belum_klaim'] = $total_belum_klaim;
+            // dd($total_sudah_klaim, $total_belum_klaim);
             return view('pages.home', $this->param);
         } catch (\Exception $e) {
             return $e->getMessage();

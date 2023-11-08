@@ -1105,10 +1105,11 @@
 
         // var pelaporanPelunasan = new ApexCharts(document.querySelector(".pelaporan-pelunasan"), optionsPelaporanPelunasan);
         // pelaporanPelunasan.render();
-
+        var sudah_klaim = @json($total_sudah_klaim);
+        var belum_klaim = @json($total_belum_klaim);
         var optionsPengajuanKlaim = {
-            labels: ['Sudah', 'Belum', 'On Process'],
-            series: [55, 70, 20],
+            labels: ['Sudah', 'Belum (On Process)'],
+            series: [sudah_klaim, belum_klaim],
             chart: {
                 type: 'donut',
                 width: '100%',
