@@ -136,14 +136,18 @@ class RegistrasiController extends Controller
                                 }
                                 $data[$key]['jenis_asuransi'] = $jenis_asuransi;
                                 foreach($data[$key]['jenis_asuransi'] as $keyAsuransi => $itemAsuransi){
-                                    if($itemAsuransi->asuransi->status != 'sended' && !$itemAsuransi->asuransi->is_paid)
+                                    if ($itemAsuransi->asuransi) {
+                                        if($itemAsuransi->asuransi->status != 'sended' && !$itemAsuransi->asuransi->is_paid)
+                                            $itemAsuransi->pengajuan_klaim = null;
+                                        else{
+                                            $dataKlaim = DB::table('pengajuan_klaim')
+                                                ->where('asuransi_id', $itemAsuransi->id)
+                                                ->first();
+        
+                                            $itemAsuransi->pengajuan_klaim = $dataKlaim ? $dataKlaim : null;
+                                        }
+                                    } else {
                                         $itemAsuransi->pengajuan_klaim = null;
-                                    else{
-                                        $dataKlaim = DB::table('pengajuan_klaim')
-                                            ->where('asuransi_id', $itemAsuransi->id)
-                                            ->first();
-    
-                                        $itemAsuransi->pengajuan_klaim = $dataKlaim ? $dataKlaim : null;
                                     }
                                 }
                             }
