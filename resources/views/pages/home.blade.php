@@ -946,9 +946,13 @@
 
 
     // chart Pembayaran Premi
+
+    var sudahBayar = @json($sudahBayar);
+    var belumBayar = @json($sudahBayar);
+    var total = sudahBayar + belumBayar;
     var optionsPembayaranPremi = {
         labels: ['Sudah', 'Belum'],
-        series: [55, 70],
+        series: [sudahBayar, belumBayar],
         chart: {
             type: 'donut',
             width: '100%',
@@ -957,6 +961,49 @@
         legend: {
             position: 'bottom',
         },
+
+        dataLabels: {
+            enabled: true,
+            formatter: function (val, opts) {
+                return opts.w.config.series[opts.seriesIndex]
+            },
+        },
+
+        plotOptions: {
+            pie: {
+                donut: {
+                    labels: {
+                        show: true,
+                        name: {
+                            show: true,
+                            fontSize: '22px',
+                            fontFamily: 'Rubik',
+                            color: '#dfsda',
+                            offsetY: -10
+                        },
+                        value: {
+                            show: true,
+                            fontSize: '16px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            color: undefined,
+                            offsetY: 16,
+                            formatter: function (val) {
+                                return val
+                            }
+                        },
+                        total: {
+                            show: true,
+                            label: 'Total',
+                            color: '#373d3f',
+                            formatter: function (w) {
+                                return total
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
         responsive: [{
             breakpoint: 480,
             options: {
