@@ -1157,7 +1157,7 @@
         var belum_klaim = @json($total_belum_klaim);
         var total_klaim = sudah_klaim + belum_klaim;
         var optionsPengajuanKlaim = {
-            labels: ['Sudah', 'Belum (On Process)'],
+            labels: ['Sudah', 'Belum'],
             series: [sudah_klaim, belum_klaim],
             dataLabels: {
                 enabled: true,
