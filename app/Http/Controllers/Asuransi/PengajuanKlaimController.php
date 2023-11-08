@@ -250,7 +250,7 @@ class PengajuanKlaimController extends Controller
                 $message = '';
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
-
+                    
                     $this->logActivity->store('Pengguna ' . $request->name . ' cek status pengajuan klaim');
 
                     DB::commit();
@@ -362,7 +362,7 @@ class PengajuanKlaimController extends Controller
                         $pengajuanKlaim->canceled_at = date('Y-m-d');
                         $pengajuanKlaim->canceled_by = $user_id;
                         $pengajuanKlaim->save();
-
+                        
                         $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pembatalan pengajuan klaim.', $data->asuransi_id, 1);
 
                         DB::commit();
@@ -441,7 +441,14 @@ class PengajuanKlaimController extends Controller
             if($pengajuanKlaim){
                 $pengajuanKlaim->status = 'approved';
                 $pengajuanKlaim->save();
-                $this->logActivity->store('Pengguna ' . $request->name . ' menyetujui pengajuan klaim.');
+
+                $data = PengajuanKlaim::find($id);
+                $user_name = \Session::get(config('global.user_name_session'));
+                $token = \Session::get(config('global.user_token_session'));
+                $user = $token ? $this->getLoginSession() : Auth::user();
+                $name = $token ? $user['data']['nip'] : $user->email;
+
+                $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menyetujui pengajuan klaim.', $data->asuransi_id, 1);
     
                 DB::commit();
     
@@ -474,7 +481,15 @@ class PengajuanKlaimController extends Controller
             $pengajuanKlaim = PengajuanKlaim::find($id);
             $pengajuanKlaim->status = 'revition';
             $pengajuanKlaim->save();
-            $this->logActivity->store('Pengguna ' . $request->name . ' mengembalikan pengajuan klaim ke staf.');
+
+            $data = PengajuanKlaim::find($id);
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+            
+            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' mengembalikan pengajuan klaim ke staf.', $data->asuransi_id, 1);
+
             DB::commit();
             
             return response()->json([
@@ -567,7 +582,12 @@ class PengajuanKlaimController extends Controller
             $dataPengajuanKlaim->status = 'waiting approval';
             $dataPengajuanKlaim->save();
 
-            $this->logActivity->store('Pengguna ' . $request->name . ' mengedit pengajuan klaim.');
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+            
+            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' mengedit pengajuan klaim.', $data->asuransi_id, 1);
             DB::commit();
 
             Alert::success('Berhasil', 'Berhasil mengedit pengajuan klaim.');
@@ -631,7 +651,14 @@ class PengajuanKlaimController extends Controller
                             $pengajuanKlaim = PengajuanKlaim::find($id);
                             $pengajuanKlaim->status = 'sended';
                             $pengajuanKlaim->save();
-                            $this->logActivity->store('Pengguna ' . $request->name . ' mengirim pengajuan klaim');
+
+                            $data = PengajuanKlaim::find($id);
+                            $user_name = \Session::get(config('global.user_name_session'));
+                            $token = \Session::get(config('global.user_token_session'));
+                            $user = $token ? $this->getLoginSession() : Auth::user();
+                            $name = $token ? $user['data']['nip'] : $user->email;
+                            
+                            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' mengirim pengajuan klaim.', $data->asuransi_id, 1);
 
                             DB::commit();
                             Alert::success('Berhasil', $message);

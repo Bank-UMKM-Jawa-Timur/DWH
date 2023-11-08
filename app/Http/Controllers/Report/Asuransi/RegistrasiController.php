@@ -310,8 +310,6 @@ class RegistrasiController extends Controller
         }
     }
 
-
-
     public function pelaporanPelunasan(Request $request){
     ini_set('max_execution_time', 120);
         try {
@@ -423,7 +421,6 @@ class RegistrasiController extends Controller
                 'no_polis',
             );
 
-
             // $data = DB::table('log_activities')
             // ->where('is_asuransi', true)
             // ->whereBetween('created_at', [$tAwal, $tAkhir]);
@@ -446,6 +443,7 @@ class RegistrasiController extends Controller
                 // ->whereBetween('created_at', [$tAwal, $tAkhir])
                 ->get();
             }
+
 
             // return $data;
             return view('pages.report.asuransi.registrasi.log-data', $data);
