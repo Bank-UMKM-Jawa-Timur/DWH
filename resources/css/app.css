@@ -24,6 +24,9 @@
     .modal-overlay {
         @apply bg-black/50 lg:p-10 p-0 w-full fixed h-screen z-30;
     }
+    .modal-overlay-full{
+        @apply bg-black/50  p-0  w-full fixed h-screen z-30;
+    }
     .modal {
         @apply bg-white rounded lg:max-w-3xl max-w-full mx-auto;
     }
@@ -31,6 +34,16 @@
         @apply p-3 font-semibold tracking-tighter border-b  flex justify-between;
     }
     .modal .modal-footer {
+        @apply p-3 font-semibold tracking-tighter border-t;
+    }
+    .modal-full {
+        @apply bg-white rounded lg:max-w-5xl mx-auto max-w-full;
+    }
+    .modal-full .modal-head {
+        @apply p-3 font-semibold tracking-tighter border-b flex justify-between;
+    }
+
+    .modal-full .modal-footer {
         @apply p-3 font-semibold tracking-tighter border-t;
     }
 

@@ -143,7 +143,7 @@ class RegistrasiController extends Controller
                                             $dataKlaim = DB::table('pengajuan_klaim')
                                                 ->where('asuransi_id', $itemAsuransi->id)
                                                 ->first();
-        
+
                                             $itemAsuransi->pengajuan_klaim = $dataKlaim ? $dataKlaim : null;
                                         }
                                     } else {
@@ -158,7 +158,6 @@ class RegistrasiController extends Controller
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
             }
-// dd($data);
             return view('pages.asuransi-registrasi.index', compact('data', 'role_id', 'role'));
         } catch (\Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
@@ -1091,7 +1090,7 @@ class RegistrasiController extends Controller
                                             $asuransi->done_at = date('Y-m-d');
                                             $asuransi->done_by = $user_id;
                                             $asuransi->save();
-                                            
+
                                             DB::table('pelaporan_pelunasan')->insert([
                                                 'asuransi_id' => $asuransi->id,
                                                 'user_id' => $user_id,
