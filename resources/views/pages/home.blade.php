@@ -873,26 +873,72 @@
     //  data yang belum dibayar
     var jumlahYangBelumDibayar = dataAsuransi.length - jumlahYangSudahDibayar;
 
+    var registered = @json($registered);
+    var not_registered = @json($not_registered);
+    var belum_registrasi = @json($belum_registrasi);
+
      // chart Registrasi
     var optionsRegistrasi = {
-        labels: ['Tidak Registrasi', 'Registrasi'],
-        series: [55, 70],
+        labels: ['Registrasi', 'Tidak Registrasi', 'Belum Registrasi'],
+        series: [registered, not_registered, belum_registrasi],
         chart: {
             type: 'donut',
             width: '100%',
             height: 480,
         },
         legend: {
-            position: 'bottom',
+            position: 'bottom'
         },
+        dataLabels: {
+            enabled: true,
+            formatter: function (val) {
+                return parseInt(val)
+            }
+        },
+
+        plotOptions: {
+            pie: {
+                donut: {
+                    labels: {
+                        show: true,
+                        name: {
+                            show: true,
+                            fontSize: '22px',
+                            fontFamily: 'Rubik',
+                            color: '#dfsda',
+                            offsetY: -10
+                        },
+                        value: {
+                            show: true,
+                            fontSize: '16px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            color: undefined,
+                            offsetY: 16,
+                            formatter: function (val) {
+                                return val
+                            }
+                        },
+                        total: {
+                            show: true,
+                            label: 'Total',
+                            color: '#373d3f',
+                            formatter: function (w) {
+                                return total
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
         responsive: [{
             breakpoint: 480,
             options: {
                 chart: {
                     width: 340,
                 },
-            },
-        }],
+            }
+        }]
     };
 
     var registrasi = new ApexCharts(document.querySelector(".registrasi"), optionsRegistrasi);
