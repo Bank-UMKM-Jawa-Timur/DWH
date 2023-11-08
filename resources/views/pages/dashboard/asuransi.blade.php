@@ -44,7 +44,7 @@
                 <div class="pengajuan-klaim"></div>
             </div>
             <div class="p-5 flex justify-center">
-                <a href="#" class="px-5 py-2 bg-theme-primary rounded-md text-white">Detail</a>
+                <a href="{{route('dashboard.detail_pengajuan_klaim')}}" class="px-5 py-2 bg-theme-primary rounded-md text-white">Detail</a>
             </div>
         </div>
     </div>
