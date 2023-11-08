@@ -710,14 +710,14 @@ class DashboardController extends Controller
         $this->param['role'] = $role;
 
         if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
-            $result = $request->has('id_penyelia') ? $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+            $result = $request->has('staf') ? $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
         }
         else {
             if ($role == 'Staf Analis Kredit') {
                 $result = $this->group_by("debitur", $data_registrasi);
             }
             else {
-                $result = $this->group_by("nip", $data_registrasi);
+                $result = $request->has('staf') ?  $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
             }
         }
 
