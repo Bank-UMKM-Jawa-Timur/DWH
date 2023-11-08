@@ -200,6 +200,7 @@ Route::middleware('auth_api')->group(function () {
     Route::get('/get-data-charts', [DashboardController::class, 'getChartData'])->name('get-data-charts');
     Route::prefix('dashboard')->group(function() {
         Route::get('/detail-registrasi', [DashboardController::class, 'detailRegistrasi'])->name('dashboard.detail_registrasi');
+        Route::get('/detail-pembayaran-premi', [DashboardController::class, 'detailPembayaranPremi'])->name('dashboard.detail_pembayaran_premi');
     });
 });
 

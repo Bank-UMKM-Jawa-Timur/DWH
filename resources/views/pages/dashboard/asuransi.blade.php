@@ -22,7 +22,7 @@
                 <div class="pembayaran-permi"></div>
             </div>
             <div class="p-5 flex justify-center">
-                <a href="#" class="px-5 py-2 bg-theme-primary rounded-md text-white">Detail</a>
+                <a href="{{route('dashboard.detail_pembayaran_premi')}}" class="px-5 py-2 bg-theme-primary rounded-md text-white">Detail</a>
             </div>
         </div>
         {{-- <div class="card w-full bg-white border rounded-md">
