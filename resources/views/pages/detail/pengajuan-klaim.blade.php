@@ -38,6 +38,9 @@
                                 @endif
                                 <th rowspan="2">Jumlah Asuransi</th>
                                 <th colspan="2">Status Klaim</th>
+                                @if (\Request::has('staf') || $role == 'Staf Analis Kredit')
+                                    <th rowspan="2">Status</th>
+                                @endif
                             </tr>
                             <tr>
                                 <th>Sudah</th>
@@ -83,6 +86,17 @@
                                         <td>{{$item['jml_asuransi']}}</td>
                                         <td>{{$item['jml_diproses']}}</td>
                                         <td>{{($item['jml_asuransi'] - $item['jml_diproses'])}}</td>
+                                        @if (\Request::has('staf') || $role == 'Staf Analis Kredit')
+                                            <td>
+                                                @if ($item['jml_diproses'] == 0)
+                                                    Open
+                                                @elseif ($item['jml_diproses'] > 0)
+                                                    Process
+                                                @else
+                                                    Close
+                                                @endif
+                                            </td>
+                                        @endif
                                     </tr>
                                 @empty
                                     <tr>
@@ -108,9 +122,12 @@
         var total_belum_klaim = @json($total_belum_klaim);
         var total_klaim = total_sudah_klaim + total_belum_klaim
 
+        console.log(total_sudah_klaim);
+        console.log(total_belum_klaim);
+
         // chart Registrasi
         var optionsRegistrasi = {
-            labels: ['Sudah', 'Belum (On Process)'],
+            labels: ['Sudah', 'Belum'],
             series: [total_sudah_klaim, total_belum_klaim],
             chart: {
                 type: 'donut',
