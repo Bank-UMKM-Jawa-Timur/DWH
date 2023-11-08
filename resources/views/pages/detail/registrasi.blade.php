@@ -21,16 +21,18 @@
                         <table class="table-auto w-full">
                             <tr>
                                 <th rowspan="2">No.</th>
-                                @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO' || $role == 'Penyelia Kredit')
-                                    <th rowspan="2">Nip</th>
+                                @if (!\Request::has('staf'))
+                                    @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO' || $role == 'Penyelia Kredit')
+                                        <th rowspan="2">Nip</th>
+                                    @endif
+                                    @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO')
+                                        <th rowspan="2">@if (\Request::has('id_penyelia'))Staf @else Penyelia @endif</th>
+                                    @elseif ($role == 'Penyelia Kredit')
+                                        <th rowspan="2">Staf</th>
+                                    @endif
                                 @endif
-                                @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO')
-                                    <th rowspan="2">@if (\Request::has('id_penyelia'))Staf @else Penyelia @endif</th>
-                                @elseif ($role == 'Penyelia Kredit')
-                                    <th rowspan="2">Staf</th>
-                                @endif
                                 @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO' || $role == 'Penyelia Kredit')
-                                    @if (\Request::has('id_penyelia'))
+                                    @if (\Request::has('id_penyelia') && \Request::has('staf'))
                                         <th rowspan="2">Debitur</th>
                                     @endif
                                 @else
@@ -38,7 +40,9 @@
                                 @endif
                                 <th rowspan="2">Jumlah Asuransi</th>
                                 <th colspan="2">Registrasi</th>
-                                <th rowspan="2">Status</th>
+                                @if (\Request::has('staf') || $role == 'Staf Analis Kredit')
+                                    <th rowspan="2">Status</th>
+                                @endif
                             </tr>
                             <tr>
                                 <th>Sudah</th>
@@ -48,51 +52,56 @@
                                 @forelse ($result as $item)
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
-                                        @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO' || $role == 'Penyelia Kredit')
-                                            <td>{{$item['nip']}}</td>
+                                        @if (!\Request::has('staf'))
+                                            @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO' || $role == 'Penyelia Kredit')
+                                                <td>{{$item['nip']}}</td>
+                                            @endif
+                                            @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO')
+                                                <td>
+                                                    @if (\Request::has('id_penyelia'))
+                                                        <a href="?id_penyelia={{$item['id']}}&staf=true" class="border-b border-black text-blue-500">
+                                                        {{$item['nama']}}</a>
+                                                    @else
+                                                        <a href="?id_penyelia={{$item['id']}}" class="border-b border-black text-blue-500">
+                                                        {{$item['nama']}}</a>
+                                                    @endif
+                                                </td>
+                                            @elseif ($role == 'Penyelia Kredit')
+                                                <td>
+                                                    @if (\Request::has('id_penyelia') && \Request::has('staf'))
+                                                        {{$item['nama']}}
+                                                    @else
+                                                        <a href="?id_penyelia={{$item['id']}}&staf=true" class="border-b border-black text-blue-500">
+                                                        {{$item['nama']}}</a>
+                                                    @endif
+                                                </td>
+                                            @endif
                                         @endif
                                         @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO')
-                                            <td>
-                                                @if (\Request::has('id_penyelia'))
-                                                    {{$item['nama']}}
-                                                @else
-                                                    <a href="?id_penyelia={{$item['id']}}" class="border-b border-black text-blue-500">
-                                                    {{$item['nama']}}</a>
-                                                @endif
-                                            </td>
-                                        @elseif ($role == 'Penyelia Kredit')
-                                            <td>
-                                                @if (\Request::has('id_penyelia'))
-                                                    {{$item['nama']}}
-                                                @else
-                                                    <a href="?id_penyelia={{$item['id']}}" class="border-b border-black text-blue-500">
-                                                    {{$item['nama']}}</a>
-                                                @endif
-                                            </td>
-                                        @endif
-                                        @if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO')
-                                            @if (\Request::has('id_penyelia'))
+                                            @if (\Request::has('id_penyelia') && \Request::has('staf'))
                                                 <td>{{$item['debitur']}}</td>
                                             @endif
                                         @elseif ($role == 'Staf Analis Kredit')
                                             <td>{{$item['debitur']}}</td>
                                         @elseif ($role == 'Penyelia Kredit')
-                                            @if (\Request::has('id_penyelia'))
+                                            @if (\Request::has('id_penyelia') && \Request::has('staf'))
                                                 <td>{{$item['debitur']}}</td>
                                             @endif
                                         @endif
                                         <td>{{$item['jml_asuransi']}}</td>
                                         <td>{{$item['jml_diproses']}}</td>
                                         <td>{{($item['jml_asuransi'] - $item['jml_diproses'])}}</td>
-                                        <td>
-                                            @if ($item['jml_diproses'] == 0)
-                                                Open
-                                            @elseif ($item['jml_diproses'] > 0)
-                                                Process
-                                            @else
-                                                Close
-                                            @endif
-                                        </td>
+                                        @if (\Request::has('staf') || $role == 'Staf Analis Kredit')
+                                            <td>
+                                                @if ($item['jml_diproses'] == 0)
+                                                    Open
+                                                @elseif ($item['jml_diproses'] > 0)
+                                                    Process
+                                                @else
+                                                    Close
+                                                @endif
+                                            </td>
+                                        @endif
                                     </tr>
                                 @empty
                                     <tr>
@@ -121,8 +130,8 @@
 
         // chart Registrasi
         var optionsRegistrasi = {
-            labels: ['Registrasi', 'Tidak Registrasi', 'Belum Registrasi'],
-            series: [registered, not_registered, belum_registrasi],
+            labels: ['Sudah', 'Belum'],
+            series: [(registered + not_registered), belum_registrasi],
             chart: {
                 type: 'donut',
                 width: '100%',
