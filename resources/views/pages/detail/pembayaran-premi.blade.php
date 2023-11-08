@@ -48,9 +48,11 @@
                                 <th>No.</th>
                                 <th>Nip</th>
                                 <th>Nama Penyelia</th>
+                                <th>Total Asuransi</th>
                                 <th colspan="2">Pembayaran Premi</th>
                             </tr>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -58,17 +60,32 @@
                                 <th>Belum Bayar</th>
                             </tr>
                             <tbody>
+                                @php
+                                    $total = 0;
+                                    $sudah_bayar = 0;
+                                    $belum_bayar = 0;
+                                @endphp
                                 @forelse ($result as $item)
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{$item['nip']}}</td>
                                         <td>{{$item['nama']}}</td>
-                                        <td>{{$item['jmlh_belum_bayar']}}</td>
+                                        <td>{{$item['total']}}</td>
+                                        <td>{{$item['jmlh_sudah_bayar']}}</td>
                                         <td>{{$item['jmlh_belum_bayar']}}</td>
                                     </tr>
+                                @php
+                                    $total += $item['total'];
+                                    $sudah_bayar += $item['jmlh_sudah_bayar'];
+                                    $belum_bayar += $item['jmlh_belum_bayar'];
+                                @endphp
                                 @empty
 
+                                <input type="hidden" name="total" value="{{$total}}">
+                                <input type="hidden" id="sudah_bayar" name="sudah_bayar" value="{{$sudah_bayar}}">
+                                <input type="hidden" id="belum_bayar" name="belum_bayar" value="{{$belum_bayar}}">
                                 @endforelse
+                            </tbody>
                         </table>
                     </div>
                     {{-- <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
@@ -102,9 +119,15 @@
 
 @push('extraScript')
     <script>
+        // chart
+        var countSudahBayar = $('#sudah_bayar').val();
+        console.log(countSudahBayar);
+        var sudahBayar = @json($TsudahBayar);
+        var belumBayar = @json($TbelumBayar);
+        var total = sudahBayar + belumBayar;
         var optionsPembayaranPremiDetail = {
             labels: ['Sudah', 'Belum'],
-            series: [55, 70],
+            series: [sudahBayar, belumBayar],
             chart: {
                 type: 'donut',
                 width: '100%',
@@ -112,6 +135,47 @@
             },
             legend: {
                 position: 'bottom',
+            },
+            dataLabels: {
+            enabled: true,
+                formatter: function (val, opts) {
+                    return opts.w.config.series[opts.seriesIndex]
+                },
+            },
+
+            plotOptions: {
+                pie: {
+                    donut: {
+                        labels: {
+                            show: true,
+                            name: {
+                                show: true,
+                                fontSize: '22px',
+                                fontFamily: 'Rubik',
+                                color: '#dfsda',
+                                offsetY: -10
+                            },
+                            value: {
+                                show: true,
+                                fontSize: '16px',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                color: undefined,
+                                offsetY: 16,
+                                formatter: function (val) {
+                                    return val
+                                }
+                            },
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                color: '#373d3f',
+                                formatter: function (w) {
+                                    return total
+                                }
+                            }
+                        }
+                    }
+                }
             },
             responsive: [{
                 breakpoint: 480,

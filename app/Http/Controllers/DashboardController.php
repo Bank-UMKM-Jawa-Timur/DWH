@@ -1151,25 +1151,31 @@ class DashboardController extends Controller
                                     ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
                                     ->select(
                                         'asuransi.is_paid',
-                                    );
+                                    )->where('k.pengajuan_id', $value['id']);
+                                $asuransi = $asuransi->orderBy('no_aplikasi')
+                                    ->get();
+                                // return $asuransi;
 
-                                $asuransi = $asuransi->groupBy('no_pk')
-                                    ->orderBy('no_aplikasi')
-                                    ->first();
-                                if ($asuransi->is_paid == 0) {
-                                    $belumBayar++;
-                                }
-                                else {
-                                    $sudahBayar++;
-                                }
-                                $d = [
-                                    'nip' => $nip,
-                                    'nama' => $nama,
-                                    'belum_bayar' => $belumBayar,
-                                    'sudah_bayar' => $sudahBayar,
-                                ];
 
-                                array_push($data_pembayaran_premi, $d);
+                                $totalAsurnasi = count($asuransi);
+
+                                foreach ($asuransi as $key => $value) {
+                                    if ($value->is_paid == 1) {
+                                        $sudahBayar++;
+                                    } else {
+                                        $belumBayar++;
+                                        $sudahBayar--;
+                                    }
+                                    // return ['sudah bayar'=>$sudahBayar, 'belum bayar'=>$belumBayar];
+                                    $d = [
+                                        'nip' => $nip,
+                                        'nama' => $nama,
+                                        'total' => $totalAsurnasi,
+                                        'jmlh_sudah_bayar' => $sudahBayar,
+                                        'jmlh_belum_bayar' => $belumBayar,
+                                    ];
+                                    array_push($data_pembayaran_premi, $d);
+                                }
                             }
                         }
                     }
@@ -1237,7 +1243,7 @@ class DashboardController extends Controller
                                         ];
                                         array_push($data_pembayaran_premi, $d);
                                     }
-                                }
+                            }
                                 // return $data_pembayaran_premi;
                         }
                     }
@@ -1256,6 +1262,8 @@ class DashboardController extends Controller
         if ($result) {
             $jmlh_belum_bayar = 0;
             $jmlh_sudah_bayar = 0;
+            $chart_sudah_bayar = 0;
+            $chart_belum_bayar = 0;
             foreach ($result as $key => $value) {
                 // return ['totalsudah' => $jmlh_sudah_bayar += $value['jmlh_sudah_bayar']];
                 for ($i=0; $i < count($value); $i++) {
@@ -1272,6 +1280,9 @@ class DashboardController extends Controller
                 ];
 
                 array_push($finalResult, $final_d);
+
+                $this->param['TsudahBayar'] = $chart_sudah_bayar += $jmlh_sudah_bayar;
+                $this->param['TbelumBayar'] = $chart_belum_bayar += $jmlh_belum_bayar;
             }
         }
         // return $finalResult;
