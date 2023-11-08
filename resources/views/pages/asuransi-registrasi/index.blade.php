@@ -135,7 +135,7 @@
                                     @if ($totalDataTerproses == 0)
                                         {{ 'Open' }}
                                     @elseif ($totalDataTerproses != 0 && $totalDataTerproses < $totalData)
-                                        {{ 'On Progress' }}
+                                        {{ 'Process' }}
                                     @elseif ($totalDataTerproses == $totalData)
                                         {{ 'Close' }}
                                     @endif
@@ -207,11 +207,12 @@
                                                             <td>{{$is_paid ? $no_polis : '-'}}</td>
                                                             <td>{{$is_paid ? $tgl_polis : '-'}}</td>
                                                             <td>
-                                                                @if ($registered == 1)
+                                                                {{-- @if ($registered == 1)
                                                                     {{$tgl_rekam}}
                                                                 @else
                                                                     -
-                                                                @endif
+                                                                @endif --}}
+                                                                {{ $is_paid == true ? $tgl_rekam : '-' }}
                                                             </td>
                                                             <td>
                                                                 @if ($jenis->asuransi)
