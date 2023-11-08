@@ -93,6 +93,18 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
     });
 
+    Route::prefix('asuransi-detail')->group(function () {
+        Route::get('/registrasi', function(){
+            return view('pages.detail.registrasi');
+        });
+        Route::get('/pembayaran-premi', function(){
+            return view('pages.detail.pembayaran-premi');
+        });
+        Route::get('/pengajuan-klaim', function(){
+            return view('pages.detail.pengajuan-klaim');
+        });
+    });
+
     Route::middleware('asuransi_permission')->prefix('asuransi')->name('asuransi.')->group(function() {
         Route::prefix('/registrasi')
             ->name('registrasi.')
