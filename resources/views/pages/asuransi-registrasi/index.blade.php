@@ -99,6 +99,10 @@
                         @if ($role_id != 2)
                             <th>Cabang</th>
                         @endif
+                        <th>Tanggal Pengajuan</th>
+                        <th>Nomor PK</th>
+                        <th>Jenis Kredit</th>
+                        <th>Plafond</th>
                         <th>Jumlah Asuransi</th>
                         <th>Status</th>
                         <th>Aksi</th>
@@ -122,6 +126,10 @@
                                 @if ($role_id != 2)
                                     <td>{{$item['cabang']}}</td>
                                 @endif
+                                <td>{{date('d-m-Y', strtotime($item['tanggal']))}}</td>
+                                <td>{{$item['no_pk']}}</td>
+                                <td>{{$item['skema_kredit']}}</td>
+                                <td>Rp {{number_format($item['jumlah_kredit'], 0, ',', '.')}}</td>
                                 <td>{{ $totalDataTerproses . '/' . $totalData }}</td>
                                 <td>
                                     @if ($totalDataTerproses == 0)

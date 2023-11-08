@@ -251,7 +251,7 @@ class PengajuanKlaimController extends Controller
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
                     
-                    $this->logActivity->store('Pengguna ' . $request->name . ' cek status pengajuan klaim');
+                    $this->logActivity->store('Pengguna ' . $request->name . ' cek status pengajuan klaim', Null, '0');
 
                     DB::commit();
                     return response()->json([
