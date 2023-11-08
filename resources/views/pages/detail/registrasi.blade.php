@@ -130,8 +130,8 @@
 
         // chart Registrasi
         var optionsRegistrasi = {
-            labels: ['Registrasi', 'Belum Registrasi'],
-            series: [registered, belum_registrasi],
+            labels: ['Sudah', 'Belum'],
+            series: [(registered + not_registered), belum_registrasi],
             chart: {
                 type: 'donut',
                 width: '100%',
