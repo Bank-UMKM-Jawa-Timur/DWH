@@ -414,7 +414,7 @@
                                                                                                 <li>
                                                                                                     <a class="item-dropdown modal-batal" href="#"
                                                                                                         data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                                        data-id="{{$jenis->id}}" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}"
+                                                                                                        data-id="{{$jenis->asuransi->id}}" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}"
                                                                                                         data-no_polis="{{ $jenis->asuransi->no_polis }}">Pembatalan
                                                                                                     </a>
                                                                                                     {{-- <form action="{{ route('asuransi.registrasi.batal') }}" method="post" enctype="multipart/form-data">
