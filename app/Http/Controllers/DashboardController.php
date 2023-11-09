@@ -359,6 +359,7 @@ class DashboardController extends Controller
                                     ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                     ->select('asuransi.id')
                                     ->where('asuransi.registered', 1)
+                                    ->where('asuransi.is_paid', 1)
                                     ->where('k.is_asuransi', true)
                                     ->when($role, function($query) use ($role, $user_id) {
                                         if ($role == 'Staf Analis Kredit') {
@@ -378,6 +379,7 @@ class DashboardController extends Controller
                                     ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                     ->select('asuransi.id')
                                     ->where('asuransi.registered', 1)
+                                    ->where('asuransi.is_paid', 1)
                                     ->where('k.is_asuransi', true)
                                     ->when($role, function($query) use ($role, $user_id) {
                                         if ($role == 'Staf Analis Kredit') {
