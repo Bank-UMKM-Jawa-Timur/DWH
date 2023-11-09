@@ -927,7 +927,7 @@ class RegistrasiController extends Controller
             $asuransi = Asuransi::find($request->id);
             if ($asuransi) {
                 if (!$asuransi->is_paid) {
-                    if ($asuransi->status == 'onprogress') {
+                    if ($asuransi->status == 'sended') {
                         $headers = [
                             "Accept" => "/",
                             "x-api-key" => config('global.eka_lloyd_token'),
@@ -941,7 +941,7 @@ class RegistrasiController extends Controller
                         ];
 
                         $host = config('global.eka_lloyd_host');
-                        $url = "$host/batal";
+                        $url = "$host/batal1";
 
                         $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
 

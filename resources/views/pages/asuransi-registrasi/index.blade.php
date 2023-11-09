@@ -393,11 +393,30 @@
                                                                                             </div>
                                                                                         @endif
                                                                                     @else
-                                                                                        <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                                                            <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
-                                                                                            <input type="hidden" name="id_asuransi" value="{{$id_pengajuan}}">
-                                                                                            <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
-                                                                                        </form>
+                                                                                        <div class="dropdown">
+                                                                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                                Selengkapnya
+                                                                                            </button>
+                                                                                            <ul class="dropdown-menu right-16">
+                                                                                                <li>
+                                                                                                    <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                                                                        <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
+                                                                                                        <input type="hidden" name="id_asuransi" value="{{$id_pengajuan}}">
+                                                                                                        <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
+                                                                                                    </form>
+
+                                                                                                </li>
+                                                                                                <li>
+                                                                                                    <form action="{{ route('asuransi.registrasi.batal') }}" method="post" enctype="multipart/form-data">
+                                                                                                        @csrf
+                                                                                                        <input type="hidden" name="id" value="{{$jenis->id}}">
+                                                                                                        <input type="hidden" name="no_aplikasi" value="{{ $jenis->asuransi->no_aplikasi }}">
+                                                                                                        <input type="hidden" name="no_polis" value="{{ $jenis->asuransi->no_polis }}">
+                                                                                                        <button class="item-dropdown w-full" type="submit">Pembatalan</button>
+                                                                                                    </form>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
                                                                                     @endif
                                                                                 @elseif($role == 'Penyelia Kredit')
                                                                                     @if ($is_paid)
