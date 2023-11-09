@@ -23,12 +23,6 @@
                     <small class="form-text text-red-600 error no-aplikasi-error"></small>
                 </div>
                 <div class="input-box space-y-3">
-                    <label for="" class="uppercase">No Rekeing</label>
-                    <input type="text" class="bg-disabled disabled-input p-2 w-full border"
-                        name="no_sp" id="modal_no_sp" readonly/>
-                    <small class="form-text text-red-600 error no-sp-error"></small>
-                </div>
-                <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Rekening</label>
                     <input type="text" class="bg-disabled disabled-input p-2 w-full border"
                         name="no_rek" id="modal_no_rek" readonly/>
