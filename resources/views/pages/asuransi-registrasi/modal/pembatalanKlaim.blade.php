@@ -45,7 +45,7 @@
                 <button type="button" data-dismiss-id="modalBatalKlaim" class="border px-7 py-3 text-black rounded">
                     Tutup
                 </button>
-                <button type="button" class="bg-theme-primary px-7 py-3 text-white rounded" id="btn-cancel">
+                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded" id="btn-cancel">
                     Simpan
                 </button>
             </div>
@@ -74,29 +74,6 @@
             $(`#${identifier} #modal_no_aplikasi`).val(no_aplikasi)
             $(`#${identifier} #modal_no_sp`).val(no_polis)
             $(`#${identifier} #modal_no_rek`).val(no_rek)
-        })
-
-        $('#btn-cancel').on('click', function(e) {
-            e.preventDefault()
-            const identifier = 'modalBatalKlaim'
-
-            var no_aplikasi = $('#modalBatalKlaim #modal_no_aplikasi').val()
-            var no_sp = $('#modalBatalKlaim #modal_no_sp').val()
-            if (no_aplikasi == '') {
-                $(`#${identifier} #no_aplikasi`).addClass('border-2 border-rose-600')
-                $(`#${identifier} .no-aplikasi-error`).html('Nomor aplikasi tidak boleh kosong')
-            }
-            else if (no_sp == '') {
-                $(`#${identifier} #no_sp`).addClass('border-2 border-rose-600')
-                $(`#${identifier} .no-sp-error`).html('Nomor sp tidak boleh kosong')
-            }
-            else {
-                $(`#${identifier} #modal_no_aplikasi`).removeClass('border-2 border-rose-600')
-                $(`#${identifier} .no-aplikasi-error`).html('')
-                $(`#${identifier} #modal_no_sp`).removeClass('border-2 border-rose-600')
-                $(`#${identifier} .no-sp-error`).html('')
-                $('#form-batal').submit()
-            }
         })
     </script>
 @endpush
