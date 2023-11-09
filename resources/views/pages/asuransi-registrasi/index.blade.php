@@ -342,14 +342,19 @@
                                                                                                             <button type="button" id="btnCekStatus" class="item-dropdown">Cek Data Pengajuan Klaim</button>
                                                                                                         </li>
                                                                                                         <li class="item-dropdown">
-                                                                                                            <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
+                                                                                                            <a class="item-dropdown modal-batal" href="#"
+                                                                                                                data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                                                                                data-id="{{ $item->id }}" data-no_aplikasi="{{ $item->no_aplikasi }}"
+                                                                                                                data-no_polis="{{ $item->no_polis }}">Pembatalan
+                                                                                                            </a>
+                                                                                                            {{-- <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
                                                                                                                 @csrf
                                                                                                                 <input type="hidden" name="id" value="{{ $item->id }}">
                                                                                                                 <input type="hidden" name="no_aplikasi" value="{{ $item->no_aplikasi }}">
                                                                                                                 <input type="hidden" name="no_rekening" value="{{ $item->no_rek }}">
                                                                                                                 <input type="hidden" name="no_polis" value="{{ $item->no_polis }}">
                                                                                                                 <button type="button" id="btnBatal">Pembatalan</button>
-                                                                                                            </form>
+                                                                                                            </form> --}}
                                                                                                         </li>
                                                                                                     </ul>
                                                                                                 </div>
@@ -407,13 +412,18 @@
 
                                                                                                 </li>
                                                                                                 <li>
-                                                                                                    <form action="{{ route('asuransi.registrasi.batal') }}" method="post" enctype="multipart/form-data">
+                                                                                                    <a class="item-dropdown modal-batal" href="#"
+                                                                                                        data-modal-toggle="modalBatal" data-modal-target="modalBatal"
+                                                                                                        data-id="{{$jenis->id}}" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}"
+                                                                                                        data-no_polis="{{ $jenis->asuransi->no_polis }}">Pembatalan
+                                                                                                    </a>
+                                                                                                    {{-- <form action="{{ route('asuransi.registrasi.batal') }}" method="post" enctype="multipart/form-data">
                                                                                                         @csrf
                                                                                                         <input type="hidden" name="id" value="{{$jenis->id}}">
                                                                                                         <input type="hidden" name="no_aplikasi" value="{{ $jenis->asuransi->no_aplikasi }}">
                                                                                                         <input type="hidden" name="no_polis" value="{{ $jenis->asuransi->no_polis }}">
                                                                                                         <button class="item-dropdown w-full" type="submit">Pembatalan</button>
-                                                                                                    </form>
+                                                                                                    </form> --}}
                                                                                                 </li>
                                                                                             </ul>
                                                                                         </div>
