@@ -10,6 +10,7 @@
     @include('pages.asuransi-registrasi.modal.canceled')
     <!-- Modal-Batal -->
     @include('pages.asuransi-registrasi.modal.batal')
+    @include('pages.asuransi-registrasi.modal.pembatalanKlaim')
     <!-- Modal-Pelunasan -->
     @include('pages.asuransi-registrasi.modal.pelunasan')
     <!-- Modal-Send -->
@@ -343,18 +344,18 @@
                                                                                                         </li>
                                                                                                         <li class="item-dropdown">
                                                                                                             <a class="item-dropdown modal-batal" href="#"
-                                                                                                                data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                                                data-id="{{ $item->id }}" data-no_aplikasi="{{ $item->no_aplikasi }}"
-                                                                                                                data-no_polis="{{ $item->no_polis }}">Pembatalan
+                                                                                                                data-modal-toggle="modalBatalKlaim" data-modal-target="modalBatalKlaim"
+                                                                                                                data-id="{{ $jenis->pengajuan_klaim->id }}" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}"
+                                                                                                                data-no_polis="{{ $jenis->asuransi->no_polis }}" data-no_rekening= {{$jenis->asuransi->no_rek}}>Pembatalan
                                                                                                             </a>
                                                                                                             {{-- <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
                                                                                                                 @csrf
-                                                                                                                <input type="hidden" name="id" value="{{ $item->id }}">
-                                                                                                                <input type="hidden" name="no_aplikasi" value="{{ $item->no_aplikasi }}">
-                                                                                                                <input type="hidden" name="no_rekening" value="{{ $item->no_rek }}">
-                                                                                                                <input type="hidden" name="no_polis" value="{{ $item->no_polis }}">
-                                                                                                                <button type="button" id="btnBatal">Pembatalan</button>
-                                                                                                            </form> --}}
+                                                                                                                <input type="hidden" name="id" value="{{ $jenis->pengajuan_klaim->id }}">
+                                                                                                                <input type="hidden" name="no_aplikasi" value="{{ $jenis->asuransi->no_aplikasi }}">
+                                                                                                                <input type="hidden" name="no_rekening" value="{{ $jenis->asuransi->no_rek }}">
+                                                                                                                <input type="hidden" name="no_polis" value="{{ $jenis->asuransi->no_polis }}">
+                                                                                                                <button type="submit" id="btnBatal">Pembatalan</button>
+                                                                                                            </form> --}}
                                                                                                         </li>
                                                                                                     </ul>
                                                                                                 </div>

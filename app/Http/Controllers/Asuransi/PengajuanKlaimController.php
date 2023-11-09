@@ -634,6 +634,8 @@ class PengajuanKlaimController extends Controller
                 'penyebab_klaim' => $data->penyebab_klaim,
             ];
 
+            // return $req;
+
             $host = config('global.eka_lloyd_host');
             $url = "$host/klaim";
             $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
@@ -653,6 +655,7 @@ class PengajuanKlaimController extends Controller
                             $pengajuanKlaim->save();
 
                             $data = PengajuanKlaim::find($id);
+
                             $user_name = \Session::get(config('global.user_name_session'));
                             $token = \Session::get(config('global.user_token_session'));
                             $user = $token ? $this->getLoginSession() : Auth::user();

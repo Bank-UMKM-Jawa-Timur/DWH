@@ -160,7 +160,7 @@
                             stroke-width="2" d="M5 12h14m-7-7v14" />
                         </svg>
                     </span>
-                    <span class="lg:block hidden"> Simpan  </span>
+                    <span class="lg:block hidden"> Approve  </span>
                 </button>
             <button type="button"
                 id="btnKembalikan"
