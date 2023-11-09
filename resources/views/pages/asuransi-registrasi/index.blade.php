@@ -340,7 +340,7 @@
                                                                                                     </button>
                                                                                                     <ul class="dropdown-menu">
                                                                                                         <li class="">
-                                                                                                            <button type="button" id="btnCekStatus" class="item-dropdown">Cek Data Pengajuan Klaim</button>
+                                                                                                            <button type="button" id="btnCekStatus" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}" class=" item-dropdown btnCekStatus">Cek Data Pengajuan Klaim</button>
                                                                                                         </li>
                                                                                                         <li class="">
                                                                                                             <a class="item-dropdown modal-batal-klaim" href="#"
@@ -640,9 +640,8 @@
             $('#preload-data').removeClass('hidden')
         })
 
-        $(".table-collapse").on("click", "#btnCekStatus", function(){
-            console.log('sdasdsdasdsd');
-        var noAplikasi = $(this).parents('tr').find("[name=row_no_aplikasi]").val();
+        $(".btnCekStatus").on("click", function(){
+        var noAplikasi = $(this).data('no_aplikasi');
         $.ajax({
             type: "POST",
             url: "{{ route('asuransi.pengajuan-klaim.cek-status') }}",
