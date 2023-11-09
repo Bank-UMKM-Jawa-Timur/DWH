@@ -269,6 +269,7 @@ class DashboardController extends Controller
                                     ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                     ->select('asuransi.id')
                                     ->where('asuransi.registered', 1)
+                                    ->where('asuransi.is_paid', 1)
                                     ->where('k.is_asuransi', true)
                                     ->where('k.kode_cabang', $user_cabang)
                                     ->whereRaw('asuransi.id IN (SELECT asuransi_id FROM pengajuan_klaim)')
@@ -281,6 +282,7 @@ class DashboardController extends Controller
                                     ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                     ->select('asuransi.id')
                                     ->where('asuransi.registered', 1)
+                                    ->where('asuransi.is_paid', 1)
                                     ->where('k.is_asuransi', true)
                                     ->where('k.kode_cabang', $user_cabang)
                                     ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
@@ -846,6 +848,7 @@ class DashboardController extends Controller
                                     ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                     ->select('asuransi.id')
                                     ->where('asuransi.registered', 1)
+                                    ->where('asuransi.is_paid', 1)
                                     ->where('k.is_asuransi', true)
                                     ->where('k.kode_cabang', $user_cabang)
                                     ->whereRaw('asuransi.id IN (SELECT asuransi_id FROM pengajuan_klaim)')
@@ -858,6 +861,7 @@ class DashboardController extends Controller
                                 ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                 ->select('asuransi.id')
                                 ->where('asuransi.registered', 1)
+                                ->where('asuransi.is_paid', 1)
                                 ->where('k.is_asuransi', true)
                                 ->where('k.kode_cabang', $user_cabang)
                                 ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
@@ -952,7 +956,8 @@ class DashboardController extends Controller
                                     ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                     ->select('asuransi.id')
                                     ->where('asuransi.registered', 1)
-                                    ->where('k.is_asuransi', true)
+                                    ->where('asuransi.is_paid', 1)
+                                    ->where('k.is_asuransi', 1)
                                     ->when($role, function($query) use ($role, $user_id) {
                                         if ($role == 'Staf Analis Kredit') {
                                             $query->where('asuransi.user_id', $user_id);
@@ -971,7 +976,8 @@ class DashboardController extends Controller
                                 ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
                                 ->select('asuransi.id')
                                 ->where('asuransi.registered', 1)
-                                ->where('k.is_asuransi', true)
+                                ->where('asuransi.is_paid', 1)
+                                ->where('k.is_asuransi', 1)
                                 ->when($role, function($query) use ($role, $user_id) {
                                     if ($role == 'Staf Analis Kredit') {
                                         $query->where('asuransi.user_id', $user_id);
@@ -983,6 +989,7 @@ class DashboardController extends Controller
                                 ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
                                 ->count();
             // retrieve from api
+            // dd($total_belum_klaim);
             $apiURL = "$host/v1/get-list-pengajuan";
 
             try {
