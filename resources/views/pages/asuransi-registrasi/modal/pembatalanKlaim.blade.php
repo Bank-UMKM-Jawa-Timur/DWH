@@ -1,4 +1,4 @@
-<div class="modal-overlay p-5 hidden" id="modalBatalKlaimKlaim">
+<div class="modal-overlay p-5 hidden" id="modalBatalKlaim">
     <div class="modal modal-tab">
         <div class="modal-head text-gray-500 text-lg">
             <div class="title-modal">
@@ -11,7 +11,8 @@
                 </svg>
             </button>
         </div>
-        <form id="form-batal" action="{{ route('asuransi.registrasi.batal') }}" method="post">
+        <form id="form-batal" action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post">
+            @csrf
             <div class="modal-body p-5">
                 <input type="hidden" name="_token" id="modal_token">
                 <input type="hidden" name="id" id="modal_id">
@@ -28,6 +29,12 @@
                     <small class="form-text text-red-600 error no-sp-error"></small>
                 </div>
                 <div class="input-box space-y-3">
+                    <label for="" class="uppercase">No Rekening</label>
+                    <input type="text" class="bg-disabled disabled-input p-2 w-full border"
+                        name="no_rek" id="modal_no_rek" readonly/>
+                    <small class="form-text text-red-600 error no-sp-error"></small>
+                </div>
+                <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Polis</label>
                     <input type="text" class="bg-disabled disabled-input p-2 w-full border"
                         name="no_sp" id="modal_no_sp" readonly/>
@@ -35,10 +42,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" data-dismiss-id="modalBatalKlaimKlaim" class="border px-7 py-3 text-black rounded">
+                <button type="button" data-dismiss-id="modalBatalKlaim" class="border px-7 py-3 text-black rounded">
                     Tutup
                 </button>
-                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded" id="btn-cancel">
+                <button type="button" class="bg-theme-primary px-7 py-3 text-white rounded" id="btn-cancel">
                     Simpan
                 </button>
             </div>
@@ -48,8 +55,8 @@
 
 @push('extraScript')
     <script>
-        $('.modal-batal').on('click', function() {
-            const identifier = 'modalBatalKlaimKlaim'
+        $('.modal-batal-klaim').on('click', function() {
+            const identifier = 'modalBatalKlaim'
             $(`#${identifier} #no_sp`).removeClass('border-2 border-rose-600')
             $(`#${identifier} .no-sp-error`).html('')
 
@@ -57,6 +64,7 @@
             const id = $(this).data('id');
             const no_aplikasi = $(this).data('no_aplikasi');
             const no_polis = $(this).data('no_polis');
+            const no_rek = $(this).data('no_rekening');
 
             $(`#${identifier}`).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
@@ -65,6 +73,7 @@
             $(`#${identifier} #modal_id`).val(id)
             $(`#${identifier} #modal_no_aplikasi`).val(no_aplikasi)
             $(`#${identifier} #modal_no_sp`).val(no_polis)
+            $(`#${identifier} #modal_no_rek`).val(no_rek)
         })
 
         $('#btn-cancel').on('click', function(e) {

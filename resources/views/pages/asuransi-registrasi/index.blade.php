@@ -342,8 +342,8 @@
                                                                                                         <li class="">
                                                                                                             <button type="button" id="btnCekStatus" class="item-dropdown">Cek Data Pengajuan Klaim</button>
                                                                                                         </li>
-                                                                                                        <li class="item-dropdown">
-                                                                                                            <a class="item-dropdown modal-batal" href="#"
+                                                                                                        <li class="">
+                                                                                                            <a class="item-dropdown modal-batal-klaim" href="#"
                                                                                                                 data-modal-toggle="modalBatalKlaim" data-modal-target="modalBatalKlaim"
                                                                                                                 data-id="{{ $jenis->pengajuan_klaim->id }}" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}"
                                                                                                                 data-no_polis="{{ $jenis->asuransi->no_polis }}" data-no_rekening= {{$jenis->asuransi->no_rek}}>Pembatalan
@@ -641,6 +641,7 @@
         })
 
         $(".table-collapse").on("click", "#btnCekStatus", function(){
+            console.log('sdasdsdasdsd');
         var noAplikasi = $(this).parents('tr').find("[name=row_no_aplikasi]").val();
         $.ajax({
             type: "POST",
