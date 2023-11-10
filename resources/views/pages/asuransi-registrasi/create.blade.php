@@ -365,7 +365,7 @@
                     alertWarning('Tidak bisa memilih jenis pertanggungan pokok, dikarenakan jumlah bulan lebih dari 60 bulan')
                     $('[name="jenis_pertanggungan"]').focus()
                     $('#jenis_pertanggungan').val("");
-                    code++
+                    cod++
                 }
             }
             if (jenis == '01')
@@ -376,7 +376,7 @@
                 jenis = '';
 
 
-            if (jenis != '' && code == 0) {
+            if (jenis != '' && cod == 0) {
                 $.ajax({
                     url: "{{ route('asuransi.registrasi.rate_premi') }}",
                     type: "GET",
