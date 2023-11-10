@@ -39,7 +39,7 @@
                 <button type="button" data-dismiss-id="modalBatalKlaim" class="border px-7 py-3 text-black rounded">
                     Tutup
                 </button>
-                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded" id="btn-cancel">
+                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded" id="btn-cancel-klaim">
                     Simpan
                 </button>
             </div>
@@ -68,6 +68,11 @@
             $(`#${identifier} #modal_no_aplikasi`).val(no_aplikasi)
             $(`#${identifier} #modal_no_sp`).val(no_polis)
             $(`#${identifier} #modal_no_rek`).val(no_rek)
+        })
+
+        $('#btn-cancel-klaim').on('click', function() {
+            console.log('asdasdasdasdasd');
+            $('#preload-data').removeClass('hidden')
         })
     </script>
 @endpush

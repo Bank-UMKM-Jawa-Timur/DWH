@@ -17,6 +17,8 @@
     @include('pages.asuransi-registrasi.modal.send')
     <!-- Modal-Tidak Registrasi -->
     @include('pages.asuransi-registrasi.modal.tidak-registrasi')
+    <!-- Modal Loading -->
+    @include('pages.asuransi-registrasi.modal.loading')
 @endsection
 @section('content')
     <div class="head-pages">
