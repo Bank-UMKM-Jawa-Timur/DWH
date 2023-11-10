@@ -316,10 +316,10 @@
 
         $("#perusahaan").on("change", function(){
             var value = $(this).val();
-            if(value == 1){
+            if(value == 2){
                 Swal.fire({
                     icon: 'error',
-                    message: 'Coming soon'
+                    tittle: 'Coming soon'
                 });
 
                 $("#perusahaan").val('').trigger('change');
