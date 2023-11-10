@@ -71,7 +71,6 @@
         })
 
         $('#btn-cancel-klaim').on('click', function() {
-            console.log('asdasdasdasdasd');
             $('#preload-data').removeClass('hidden')
         })
     </script>
