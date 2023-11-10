@@ -322,7 +322,7 @@
                 });
 
                 $("#perusahaan").val('').trigger('change');
-            } 
+            }
         })
 
         $('#form-reset').on('click', function() {
@@ -362,7 +362,7 @@
 
             if (masa_asuransi > 60) {
                 if (jenis == '01') {
-                    alertWarning('Tidak bisa memilih jenis pertanggungan pokok, dikarenakan jumlah bulan lebiih dari 60 bulan')
+                    alertWarning('Tidak bisa memilih jenis pertanggungan pokok, dikarenakan jumlah bulan lebih dari 60 bulan')
                     $('[name="jenis_pertanggungan"]').focus()
                     $('#jenis_pertanggungan').val("");
                     code++
