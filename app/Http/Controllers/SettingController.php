@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
+use App\Models\AppConfiguration;
 use App\Models\User;
 use App\Models\Vendor;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class SettingController extends Controller
 {
@@ -28,14 +32,8 @@ class SettingController extends Controller
     {
         $param['title'] = 'Setting';
         $param['pageTitle'] = 'Setting';
-        $page_length = $request->page_length ? $request->page_length : 5;
-
-        $searchQuery = $request->query('query');
-        $searchBy = $request->query('search_by');
-
-        $data = $this->list($page_length, $searchQuery, $searchBy);
+        $data = AppConfiguration::first();
         $param['data'] = $data;
-        $param['page_length'] = $page_length;
 
         return view('pages.setting.index', $param);
     }
@@ -100,7 +98,67 @@ class SettingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            "pusher_app_id" => "required",
+            "pusher_app_key" => "required",
+            "pusher_app_secret" => "required",
+            "pusher_cluster" => "required",
+            "los_host" => "required",
+            "los_api_host" => "required",
+            "los_asset_url" => "required",
+            "bio_interface_api_host" => "required",
+            "collection_api_host" => "required",
+            "microsoft_graph_client_id" => "required",
+            "microsoft_graph_client_secret" => "required",
+            "microsoft_graph_tenant_id" => "required"
+        ], [
+            'required' => ':attribute harus diisi.',
+        ], [
+            "pusher_app_id" => "Pusher App ID",
+            "pusher_app_key" => "Pusher App Key",
+            "pusher_app_secret" => "Pusher App Secret",
+            "pusher_cluster" => "Pusher Cluster",
+            "los_host" => "LOS Host",
+            "los_api_host" => "LOS API Host",
+            "los_asset_url" => "LOS Asset URL",
+            "bio_interface_api_host" => "Bio Interface API Host",
+            "collection_api_host" => "Collection API Host",
+            "microsoft_graph_client_id" => "Microsoft Graph Client ID",
+            "microsoft_graph_client_secret" => "Microsoft Graph Client Secret",
+            "microsoft_graph_tenant_id" => "Microsoft Graph Tenant ID"
+        ]);
+
+        try{
+            DB::beginTransaction();
+
+            $data = AppConfiguration::first();
+            $data->pusher_app_id = $request->pusher_app_id;
+            $data->pusher_app_key = $request->pusher_app_key;
+            $data->pusher_app_secret = $request->pusher_app_secret;
+            $data->pusher_cluster = $request->pusher_cluster;
+            $data->los_host = $request->los_host;
+            $data->los_api_host = $request->los_api_host;
+            $data->los_asset_url = $request->los_asset_url;
+            $data->bio_interface_api_host = $request->bio_interface_api_host;
+            $data->collection_api_host = $request->collection_api_host;
+            $data->microsoft_graph_client_id = $request->microsoft_graph_client_id;
+            $data->microsoft_graph_client_secret = $request->microsoft_graph_client_secret;
+            $data->microsoft_graph_tenant_id = $request->microsoft_graph_tenant_id;
+            $data->updated_at = now();
+            $data->save();
+
+            DB::commit();
+
+            Alert::success('Berhasil', 'Berhasil mengubah setting.');
+        } catch(Exception $e){
+            DB::rollBack();
+            Alert::error('Gagal', $e->getMessage());
+        } catch(QueryException $e){
+            DB::rollBack();
+            Alert::error('Gagal', $e->getMessage());
+        } finally {
+            return back();
+        }
     }
 
     /**
