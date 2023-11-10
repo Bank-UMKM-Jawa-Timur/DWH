@@ -103,7 +103,6 @@
                                 class="text-theme-primary">*</span></label>
                         <input type="number" class="disabled-input bg-disabled p-2 w-full border " id="jumlah_bulan"
                             name="jumlah_bulan" value="{{$pengajuan['tenor_yang_diminta']}}" readonly />
-                        <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Kredit<span class="text-theme-primary">*</span>
@@ -336,6 +335,7 @@
         })
 
         $('#jenis_pertanggungan').on('change', function() {
+            var cod = 0;
             var masa_asuransi = $('#jumlah_bulan').val()
             if (masa_asuransi == '') {
                 alertWarning('Harap pilih data pengajuan terlebih dahulu')
@@ -347,6 +347,15 @@
             }
             let premi;
             var jenis = $(this).val()
+
+            if (masa_asuransi > 60) {
+                if (jenis == '01') {
+                    alertWarning('Tidak bisa memilih jenis pertanggungan pokok, dikarenakan jumlah bulan lebiih dari 60 bulan')
+                    $('[name="jenis_pertanggungan"]').focus()
+                    $('#jenis_pertanggungan').val("");
+                    code++
+                }
+            }
             if (jenis == '01')
                 jenis = 'plafon'
             else if (jenis == '02')
@@ -355,7 +364,7 @@
                 jenis = '';
 
 
-            if (jenis != '') {
+            if (jenis != '' && code == 0) {
                 $.ajax({
                     url: "{{ route('asuransi.registrasi.rate_premi') }}",
                     type: "GET",
@@ -596,6 +605,8 @@
                 iconColor: '#DC3545',
                 confirmButtonText: 'Ya',
                 confirmButtonColor: '#DC3545'
+            }).then((result) => {
+                return result.isConfirmed;
             })
         }
     </script>
