@@ -313,6 +313,18 @@
 
         var urlPost = "{{config('global.eka_lloyd_host')}}";
 
+        $("#perusahaan").on("change", function(){
+            var value = $(this).val();
+            if(value == 2){
+                Swal.fire({
+                    icon: 'error',
+                    tittle: 'Coming soon'
+                });
+
+                $("#perusahaan").val('').trigger('change');
+            } 
+        })
+
         $('#form-reset').on('click', function() {
             $('#form-asuransi-registrasi')[0].reset();
             if ($('#form-asuransi-registrasi .datepicker')[0]) {
