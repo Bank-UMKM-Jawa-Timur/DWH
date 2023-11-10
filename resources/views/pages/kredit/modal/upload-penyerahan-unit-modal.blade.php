@@ -10,9 +10,10 @@
             </button>
         </div>
         <form id="modal-tgl-penyerahan" enctype="multipart/form-data">
-            @csrf
+            <input type="hidden" name="_token" id="_token">
             <input type="hidden" name="id_kkb" id="id_kkb">
             <div class="modal-body">
+                <p class="uppercase appearance-none" id="kategori_data"></p>
                 <div class="input-box space-y-3">
                     <div class="p-5 space-y-4">
                         <label for="" class="uppercase">Tanggal Pengiriman</label>
@@ -51,12 +52,13 @@
                 icon: 'success',
             }).then((result) => {
                 $("#modalUploadBuktiPenyerahanUnit").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
-                
-                refreshTable()
+                //$('#preload-data').removeClass("hidden")
+
+                //refreshTable()
+                location.reload();
             })
         }
-        
+
         function UploadBuktiPenyerahanUnitErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
@@ -66,22 +68,13 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    
-                    refreshTable()
+                    //$('#preload-data').removeClass("hidden")
+
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
-
-        /*$(".toggle-modal").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            const id = $(this).data('id_kkb');
-
-            $('#modalUploadBuktiPenyerahanUnit #id_kkb').val(id)
-        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");

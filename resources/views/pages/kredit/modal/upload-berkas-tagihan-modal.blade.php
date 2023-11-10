@@ -10,7 +10,7 @@
             </button>
         </div>
         <form id="modal-tagihan" enctype="multipart/form-data">
-            @csrf
+            <input type="hidden" name="_token" id="_token">
             <input type="hidden" name="id_kkb" id="id_kkb">
             <div class="modal-body">
                 <div class="input-box space-y-3">
@@ -43,9 +43,10 @@
                 icon: 'success',
             }).then((result) => {
                 $("#modalUploadBerkasTagihan").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
+                //$('#preload-data').removeClass("hidden")
                 
-                refreshTable()
+                //refreshTable()
+                location.reload();
             })
         }
         
@@ -58,22 +59,13 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
+                    //$('#preload-data').removeClass("hidden")
                     
-                    refreshTable()
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
-
-        /*$(".toggle-modal-upload-bukti-pembayaran").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            var id = $(this).data('id_kkb');
-
-            $("#modal-bukti-pembayaran").find('#id_kkb').val(id);
-        });*/
 
         $('#modal-tagihan').on("submit", function(e) {
             Swal.fire({

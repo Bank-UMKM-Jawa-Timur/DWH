@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Master\PenggunaController;
-use App\Models\Document;
-use App\Models\DocumentCategory;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Kredit;
-use App\Models\Notification;
 use App\Models\Target;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Pagination\Paginator;
+use App\Models\Document;
+use App\Models\Notification;
+use Illuminate\Http\Request;
+use App\Models\DocumentCategory;
 use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Controllers\Utils\PaginateController;
+use App\Http\Controllers\Master\PenggunaController;
 
 class DashboardController extends Controller
 {
@@ -39,12 +40,17 @@ class DashboardController extends Controller
          * upload/{id_pengajuan}/pk/{filename}
          */
         try {
+            $tanggalAwal = date('Y') . '-' . date('m') . '-01';
+            $hari_ini = now();
+            $tAwal = date("Y-m-d", strtotime($request->tAwal));
+            $tAkhir = date("Y-m-d", strtotime($request->tAkhir));
             $total_target = 0;
             $target = Target::select('id', 'nominal', 'total_unit')->where('is_active', 1)->first();
             $this->param['target'] = $target;
 
             $data_realisasi = [];
             $total_terealisasi = 0;
+
 
             $all_data = Kredit::select(
                 \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
@@ -62,6 +68,28 @@ class DashboardController extends Controller
                 ->whereNotNull('kredits.pengajuan_id')
                 ->whereNull('kredits.imported_data_id')
                 ->get();
+
+            $dataDashboard = Kredit::select(
+                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+            )
+                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                ->groupBy([
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.imported_data_id',
+                    'kredits.kode_cabang',
+                    'kkb.id_tenor_imbal_jasa',
+                    'kkb.id',
+                    'kkb.tgl_ketersediaan_unit',
+                ]);
+                // card kkb
+                $this->param['kkbProses'] = $dataDashboard->having('status', 'in progress')->count();
+                $this->param['kkbSelesai'] = $dataDashboard->having('status', 'done')->count();
+                $this->param['kkbBulanIni'] = $dataDashboard->whereBetween('kkb.tgl_ketersediaan_unit', [$tanggalAwal, $hari_ini])->count();
+                $this->param['kkbImported'] = $dataDashboard->where('kredits.imported_data_id', '!=', null )->count();
+
+
             foreach ($all_data as $key => $value) {
                 if ($value->status == 'done')
                     $total_terealisasi++;
@@ -77,6 +105,10 @@ class DashboardController extends Controller
                 ->join('notification_templates AS temp', 'temp.id', 'notifications.template_id')
                 ->where('u.id', \Session::get(config('global.user_id_session')))
                 ->where('notifications.read', 0)
+                ->whereBetween('notifications.created_at', [$tanggalAwal, $hari_ini])
+                ->when($tAwal && $tAkhir, function ($query) use ($tAwal, $tAkhir) {
+                    return $query->whereBetween('notifications.created_at', [$tAwal, $tAkhir]);
+                })
                 ->orderBy('notifications.created_at', 'DESC')
                 ->get();
             $this->param['notification'] = $notification;
@@ -93,340 +125,66 @@ class DashboardController extends Controller
             $tab_type = $request->get('tab_type');
             $temp_page = $request->page;
 
+            // data registrasi
+            $this->param['total_waiting'] = DB::table('asuransi')->where('status', 'waiting approval')->count();
+            $this->param['total_approved'] = DB::table('asuransi')
+            ->where('status', 'approved')->count();
+            $this->param['total_revisi'] = DB::table('asuransi')
+            ->where('status', 'revition')
+            ->count();
+            $this->param['total_sended'] = DB::table('asuransi')->where('status', 'sended')->count();
+            $this->param['total_canceled'] = DB::table('asuransi')->where('status', 'canceled')->count();
+
+            // data klaim
+            $this->param['yangDibatalkan'] = DB::table('pengajuan_klaim')->where('status', 'canceled')->count();
+            $this->param['sudahKlaim'] = DB::table('pengajuan_klaim')->where('stat_klaim', '3')->count();
+
+            $dataAsuransi = DB::table('asuransi')->where('status', 'sended')->where('registered', 1)->get();
+
+            $dataKlaim = DB::table('pengajuan_klaim')->select('asuransi_id')->get();
+
+            $belumKlaim = 0;
+
+            foreach ($dataAsuransi as $asuransi) {
+                $asuransiId = $asuransi->id;
+
+                $adaDiKlaim = $dataKlaim->contains('asuransi_id', $asuransiId);
+
+                if (!$adaDiKlaim) {
+                    $belumKlaim++;
+                }
+            }
+
+            $this->param['belumKlaim'] = $belumKlaim;
+
+            // data chart premi
+            $this->param['dataYangSudahDibayar'] = DB::table('pembayaran_premi_detail')
+            ->select('asuransi_id')
+            ->distinct()
+            ->pluck('asuransi_id')
+            ->toArray();
+
+            $this->param['dataAsuransiChart'] = DB::table('asuransi')
+            ->select('id')
+            ->pluck('id')
+            ->toArray();
+
+
+            // data new chartt pembayaran premi
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
+            $role_id = \Session::get(config('global.role_id_session'));
+            $role = '';
+            if ($user) {
+                if (is_array($user)) {
+                    $role = $user['role'];
+                }
+            }
+            else {
+                $role = 'vendor';
+            }
 
             $user_id = $token ? $user['id'] : $user->id;
-            if (!$token)
-                $user_id = 0; // vendor
-
-            $data = Kredit::select(
-                'kredits.id',
-                'kredits.pengajuan_id',
-                'kredits.kode_cabang',
-                'kkb.id AS kkb_id',
-                'kkb.tgl_ketersediaan_unit',
-                'kkb.id_tenor_imbal_jasa',
-                \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
-                \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-                \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
-            )
-                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
-                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
-                ->groupBy([
-                    'kredits.id',
-                    'kredits.pengajuan_id',
-                    'kredits.kode_cabang',
-                    'kkb.id_tenor_imbal_jasa',
-                    'kkb.id',
-                    'kkb.tgl_ketersediaan_unit',
-                ])
-                ->whereNotNull('kredits.pengajuan_id')
-                ->whereNull('kredits.imported_data_id')
-                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
-                })
-                ->when($request->cabang, function ($query, $cbg) {
-                    return $query->where('kredits.kode_cabang', $cbg);
-                })
-                ->orderBy('total_file_uploaded')
-                ->orderBy('total_file_confirmed');
-
-            if (\Session::get(config('global.role_id_session')) == 2) {
-                $data->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? \Session::get(config('global.user_kode_cabang_session')) : Auth::user()->kode_cabang);
-            }
-
-            // set page number
-            if ($tab_type != 'tab-kkb')
-                $request->merge(['page' => 1]);
-            else
-                $request->merge(['page' => $temp_page]);
-
-            if (is_numeric($page_length)) {
-                if ($tab_type == 'tab-kkb')
-                    $data = $data->paginate($page_length);
-                else
-                    $data = $data->paginate($page_length);
-            } else
-                $data = $data->get();
-
-            foreach ($data as $key => $value) {
-                // retrieve from api
-                $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
-
-                try {
-                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-
-                    $statusCode = $response->status();
-                    $responseBody = json_decode($response->getBody(), true);
-                    // input file path
-                    if ($responseBody) {
-                        if (array_key_exists('sppk', $responseBody))
-                            $responseBody['sppk'] = "/upload/$value->pengajuan_id/sppk/" . $responseBody['sppk'];
-                        if (array_key_exists('po', $responseBody))
-                            $responseBody['po'] = "/upload/$value->pengajuan_id/po/" . $responseBody['po'];
-                        if (array_key_exists('pk', $responseBody))
-                            $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
-                    }
-
-                    // insert response to object
-                    if ($user_id != 0) {
-                        if ($responseBody) {
-                            if (array_key_exists('message', $responseBody)) {
-                                if ($responseBody['message'] == 'Data not found') {
-                                    // unset($data[$key]);
-                                }
-                            }
-                            if (array_key_exists('id_pengajuan', $responseBody)) {
-                                $value->detail = $responseBody;
-                            }
-                        }
-                    } else {
-                        $value->detail = $responseBody;
-                    }
-                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    // return $e->getMessage();
-                }
-                $invoice = Document::where('kredit_id', $value->id)
-                    ->where('document_category_id', 7)
-                    ->first();
-
-                $buktiPembayaran = Document::where('kredit_id', $value->id)
-                    ->where('document_category_id', 1)
-                    ->first();
-
-                $penyerahanUnit = Document::where('kredit_id', $value->id)
-                    ->where('document_category_id', 2)
-                    ->first();
-
-                $stnk = Document::where('kredit_id', $value->id)
-                    ->where('document_category_id', 3)
-                    ->first();
-
-                $polis = Document::where('kredit_id', $value->id)
-                    ->where('document_category_id', 4)
-                    ->first();
-
-                $bpkb = Document::where('kredit_id', $value->id)
-                    ->where('document_category_id', 5)
-                    ->first();
-
-                $imbalJasa = Document::where('kredit_id', $value->id)
-                    ->where('document_category_id', 6)
-                    ->first();
-
-                $setImbalJasa = DB::table('tenor_imbal_jasas')->find($value->id_tenor_imbal_jasa);
-
-                $value->invoice = $invoice;
-                $value->bukti_pembayaran = $buktiPembayaran;
-                $value->penyerahan_unit = $penyerahanUnit;
-                $value->stnk = $stnk;
-                $value->bpkb = $bpkb;
-                $value->polis = $polis;
-                $value->imbal_jasa = $imbalJasa;
-                $value->set_imbal_jasa = $setImbalJasa;
-
-                usleep(500 * 1000); // sleep for 0.5 millisec
-            }
-
-            $data_array = [];
-            if ($request->status != null) {
-                foreach ($data as $rows) {
-                    if ($rows->status == $request->status) {
-                        array_push($data_array, $rows);
-                    }
-                }
-                $this->param['data'] = $this->paginate($data_array);
-            } else {
-                $this->param['data'] = $data;
-            }
-
-            // Search query
-            $search_q = strtolower($request->get('query'));
-            if ($search_q) {
-                foreach ($data as $key => $value) {
-                    $exists = 0;
-                    if ($value->detail) {
-                        if ($value->detail['nama']) {
-                            if (str_contains(strtolower($value->detail['nama']), $search_q)) {
-                                $exists++;
-                            }
-                        }
-                        if ($value->detail['no_po']) {
-                            if (str_contains(strtolower($value->detail['no_po']), $search_q)) {
-                                $exists++;
-                            }
-                        }
-                    }
-                    if ($exists == 0)
-                        unset($data[$key]); // remove data
-                }
-            }
-
-            $this->param['data'] = $data;
-
-            // imported data
-            $imported = DB::table('imported_data AS import')
-                ->select(
-                    'import.name',
-                    'import.tgl_po',
-                    'import.tgl_realisasi',
-                    'kredits.id',
-                    'kredits.pengajuan_id',
-                    'kredits.imported_data_id',
-                    'kredits.kode_cabang',
-                    'kkb.id AS kkb_id',
-                    'kkb.user_id',
-                    'kkb.tgl_ketersediaan_unit',
-                    'kkb.id_tenor_imbal_jasa',
-                    'kkb.nominal_realisasi',
-                    'kkb.nominal_dp',
-                    'kkb.nominal_imbal_jasa',
-                    'kkb.nominal_pembayaran_imbal_jasa',
-                    'po.merk',
-                    'po.tipe',
-                    'po.tahun_kendaraan',
-                    'po.warna',
-                    'po.keterangan',
-                    'po.jumlah',
-                    'po.harga',
-                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
-                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
-                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
-                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
-                )
-                ->join('kredits', 'kredits.imported_data_id', 'import.id')
-                ->join('kkb', 'kkb.kredit_id', 'kredits.id')
-                ->join('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
-                ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
-                ->groupBy([
-                    'kredits.id',
-                    'kredits.imported_data_id',
-                    'kredits.kode_cabang',
-                    'kkb.id_tenor_imbal_jasa',
-                    'kkb.id',
-                    'kkb.tgl_ketersediaan_unit',
-                    'po.merk',
-                    'po.tipe',
-                    'po.tahun_kendaraan',
-                    'po.warna',
-                    'po.keterangan',
-                    'po.jumlah',
-                    'po.harga',
-                ])
-                ->when($request->tAwal && $request->tAkhir, function ($query) use ($request) {
-                    return $query->whereBetween('kkb.tgl_ketersediaan_unit', [date('y-m-d', strtotime($request->tAwal)), date('y-m-d', strtotime($request->tAkhir))]);
-                })
-                ->when($request->cabang, function ($query, $cbg) {
-                    return $query->where('kredits.kode_cabang', $cbg);
-                })
-                ->orderBy('total_file_uploaded')
-                ->orderBy('total_file_confirmed');
-
-            if ($this->param['role_id'] == 2) {
-                $imported = $imported->whereNull('kredits.pengajuan_id')
-                    ->whereNotNull('kredits.imported_data_id')
-                    ->whereNull('kkb.user_id')
-                    ->orWhere('kkb.user_id', $user_id)
-                    ->whereNull('kredits.pengajuan_id')
-                    ->whereNotNull('kredits.imported_data_id');
-            }
-
-            // set page number
-            if ($tab_type != 'tab-import-kkb')
-                $request->merge(['page' => 1]);
-            else
-                $request->merge(['page' => $temp_page]);
-
-            if (is_numeric($page_length_import)) {
-                if ($tab_type == 'tab-import-kkb')
-                    $imported = $imported->paginate($page_length_import);
-                else
-                    $imported = $imported->paginate(5);
-            } else
-                $imported = $imported->get();
-
-            // dd(DB::getQueryLog());
-            foreach ($imported as $key => $value) {
-                // retrieve cabang from api
-                $value->cabang = 'undifined';
-                $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
-
-                try {
-                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-
-                    $statusCode = $response->status();
-                    $responseBody = json_decode($response->getBody(), true);
-                    // input file path
-                    if ($responseBody) {
-                        if (array_key_exists('cabang', $responseBody))
-                            $value->cabang = $responseBody['cabang'];
-                    }
-                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    // return $e->getMessage();
-                }
-
-                // retrieve documents
-                $buktiPembayaran = DB::table('documents AS d')
-                    ->where('kredit_id', $value->id)
-                    ->where('document_category_id', 1)
-                    ->first();
-
-                $invoice = DB::table('documents AS d')
-                    ->where('kredit_id', $value->id)
-                    ->where('document_category_id', 7)
-                    ->first();
-
-                $penyerahanUnit = DB::table('documents AS d')
-                    ->where('kredit_id', $value->id)
-                    ->where('document_category_id', 2)
-                    ->first();
-
-                $stnk = DB::table('documents AS d')
-                    ->where('kredit_id', $value->id)
-                    ->where('document_category_id', 3)
-                    ->first();
-
-                $bpkb = DB::table('documents AS d')
-                    ->where('kredit_id', $value->id)
-                    ->where('document_category_id', 5)
-                    ->first();
-
-                $polis = DB::table('documents AS d')
-                    ->where('kredit_id', $value->id)
-                    ->where('document_category_id', 4)
-                    ->first();
-
-                $imbalJasa = DB::table('documents AS d')
-                    ->where('kredit_id', $value->id)
-                    ->where('document_category_id', 6)
-                    ->first();
-
-                $value->bukti_pembayaran = $buktiPembayaran;
-                $value->invoice = $invoice;
-                $value->penyerahan_unit = $penyerahanUnit;
-                $value->stnk = $stnk;
-                $value->bpkb = $bpkb;
-                $value->polis = $polis;
-                $value->imbal_jasa = $imbalJasa;
-
-                usleep(500 * 1000); // sleep for 0.5 millisec
-            }
-
-            $this->param['imported'] = $imported;
-
-
 
             $host = env('LOS_API_HOST');
             $headers = [
@@ -434,34 +192,352 @@ class DashboardController extends Controller
             ];
 
 
+            // $dataAsuransi = DB::table('asuransi')->get();
+            $belumBayar = 0;
+            $sudahBayar = 0;
+            $sudahBayar = DB::table('asuransi')
+                                    ->select('id')
+                                    ->where('registered', 1)
+                                    ->where('status', 'sended')
+                                    ->where('is_paid', 1)
+                                    ->count();
+            $belumBayar = DB::table('asuransi')
+                                    ->select('id')
+                                    ->where('registered', 1)
+                                    ->where('status', 'sended')
+                                    ->where('is_paid', 0)
+                                    ->count();
+
+            $this->param['sudahBayar'] = $sudahBayar;
+            $this->param['belumBayar'] = $belumBayar;
+
+            $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
+
             $apiCabang = $host . '/kkb/get-cabang/';
             $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
             $responseCabang = json_decode($api_req->getBody(), true);
 
-            $arr_data = [];
+            $this->param['dataCabang'] = $responseCabang;
+            if (!$token)
+                $user_id = 0;
 
-            if ($responseCabang) {
-                // for ($i = 0; $i < count($responseCabang); $i++) {
-                foreach ($responseCabang as $key => $value) {
-                    $kode_cabang = $value['kode_cabang'];
-                    $cabang = $value['cabang'];
-                    $dataChart = DB::table('documents')->select(
-                        'k.id',
-                        // DB::raw("IFNULL((SELECT COUNT(id) FROM documents where kredits.kode_cabang = $kode_cabang), 0) as cabang"),
-                    )
-                    ->leftJoin('kredits AS k', 'documents.kredit_id', 'k.id')
-                    ->where('k.kode_cabang',  $kode_cabang)
-                    ->groupBy('k.id')
-                    ->count();
-                    $d = [
-                        'kode_cabang' => $kode_cabang,
-                        'cabang' => $cabang,
-                        'data' => $dataChart,
-                    ];
+            // Dashboard Asuransi
+            // Registrasi
+            $registered = 0;
+            $not_registered = 0;
+            $belum_registrasi = 0;
+            $belum_klaim = 0;
+            // Klaim
+            $total_sudah_klaim = 0;
+            $total_belum_klaim = 0;
+            $host = env('LOS_API_HOST');
+            $headers = [
+                'token' => env('LOS_API_TOKEN')
+            ];
 
-                    array_push($arr_data, $d);
+            if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                // Registrasi
+                $registered = DB::table('asuransi')
+                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                ->select('asuransi.id')
+                                ->where('asuransi.registered', 1)
+                                ->where('k.is_asuransi', true)
+                                ->where('k.kode_cabang', $user_cabang)
+                                ->count();
+
+                $not_registered = DB::table('asuransi')
+                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                ->select('asuransi.id')
+                                ->where('asuransi.registered', 0)
+                                ->where('k.is_asuransi', true)
+                                ->where('k.kode_cabang', $user_cabang)
+                                ->count();
+
+                // Klaim
+                $total_sudah_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->where('k.kode_cabang', $user_cabang)
+                                    ->whereRaw('asuransi.id IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
+
+                $total_belum_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->where('k.kode_cabang', $user_cabang)
+                                    ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
+
+                // retrieve from api
+                $apiURL = "$host/v1/get-list-pengajuan";
+
+                try {
+                    $response = Http::timeout(60)
+                                    ->withHeaders($headers)
+                                    ->withOptions(['verify' => false])
+                                    ->get($apiURL, [
+                                        'kode_cabang' => $user_cabang,
+                                        'user' => 'all',
+                                    ]);
+
+                    $statusCode = $response->status();
+                    $responseBody = json_decode($response->getBody(), true);
+
+                    if ($responseBody) {
+                        if(array_key_exists('data', $responseBody)) {
+                            if (array_key_exists('data', $responseBody['data'])) {
+                                $data = $responseBody['data']['data'];
+
+                                foreach ($data as $key => $value) {
+                                    // retrieve jenis_asuransi
+                                    $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                        ->select('id', 'jenis')
+                                                        ->where('jenis_kredit', $value['skema_kredit'])
+                                                        ->orderBy('jenis')
+                                                        ->get();
+
+                                    foreach ($jenis_asuransi as $key2 => $value2) {
+                                        // retrieve asuransi data
+                                        $asuransi = DB::table('asuransi')
+                                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                    ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                    ->select(
+                                                        'asuransi.registered',
+                                                    )
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id);
+
+                                        if ($request->has('dari') && $request->has('sampai')) {
+                                            $tAwal = date('Y-m-d', strtotime($request->get('tAwal')));
+                                            $tAkhir = date('Y-m-d', strtotime($request->get('tAkhir')));
+                                            $asuransi = $asuransi->orWhereBetween('asuransi.created_at', [$tAwal, $tAkhir])
+                                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
+                                        }
+
+                                        $asuransi = $asuransi->groupBy('no_pk')
+                                                            ->orderBy('no_aplikasi')
+                                                            ->first();
+                                        if (!$asuransi) {
+                                            $belum_registrasi++;
+                                        }
+                                        $value2->asuransi = $asuransi;
+                                    }
+                                    $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                                }
+                            }
+                        }
+                    } else {
+                    }
+                } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                    // return $e->getMessage();
                 }
+            } else {
+
+                // Penyelia & staf
+                $total_sudah_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->when($role, function($query) use ($role, $user_id) {
+                                        if ($role == 'Staf Analis Kredit') {
+                                            $query->where('asuransi.user_id', $user_id);
+                                        }
+                                        else {
+                                            $query->where('asuransi.penyelia_id', $user_id);
+                                        }
+                                    })
+                                    ->whereRaw('asuransi.id IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
+
+            $total_belum_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->when($role, function($query) use ($role, $user_id) {
+                                        if ($role == 'Staf Analis Kredit') {
+                                            $query->where('asuransi.user_id', $user_id);
+                                        }
+                                        else {
+                                            $query->where('asuransi.penyelia_id', $user_id);
+                                        }
+                                    })
+                                    ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
+
+                
+                // retrieve from api
+                $data_registrasi = [];
+                $apiURL = "$host/v1/get-list-pengajuan";
+
+                try {
+                    $response = Http::timeout(60)
+                                    ->withHeaders($headers)
+                                    ->withOptions(['verify' => false])
+                                    ->get($apiURL, [
+                                        'kode_cabang' => $user_cabang,
+                                        'user' => $user_id,
+                                    ]);
+
+                    $statusCode = $response->status();
+                    $responseBody = json_decode($response->getBody(), true);
+
+                    if ($responseBody) {
+                        if(array_key_exists('data', $responseBody)) {
+                            if (array_key_exists('data', $responseBody['data'])) {
+                                $data = $responseBody['data']['data'];
+
+                                foreach ($data as $key => $value) {
+                                    $nip = $value['karyawan']['nip'];
+                                    $nama = $value['karyawan']['nama'];
+                                    // retrieve jenis_asuransi
+                                    $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                        ->select('id', 'jenis')
+                                                        ->where('jenis_kredit', $value['skema_kredit'])
+                                                        ->orderBy('jenis')
+                                                        ->get();
+                                    $jml_asuransi = $jenis_asuransi ? count($jenis_asuransi) : 0;
+                                    $jml_diproses = 0;
+
+                                    foreach ($jenis_asuransi as $key2 => $value2) {
+                                        // retrieve asuransi data
+                                        $asuransi = DB::table('asuransi')
+                                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                    ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                    // ->join('pengajuan_klaim AS klaim', 'klaim.asuransi_id', 'asuransi.id')
+                                                    ->select(
+                                                        'asuransi.registered','asuransi.*'
+                                                    )
+                                                    ->where('asuransi.jenis_asuransi_id', $value2->id);
+
+                                        $asuransi = $asuransi->groupBy('no_pk')
+                                                            ->orderBy('no_aplikasi')
+                                                            ->first();
+                                        if (!$asuransi) {
+                                            // $belum_klaim++;
+                                            $belum_registrasi++;
+                                        }
+                                        else {
+                                            $jml_diproses += $jml_diproses;
+                                            $registered += $asuransi->registered ? 1 : 0;
+                                            $not_registered += $asuransi->registered ? 0 : 1;
+                                        }
+                                        $value2->asuransi = $asuransi;
+                                    }
+                                    $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                                    $d = [
+                                        'nip' => $nip,
+                                        'nama' => $nama,
+                                        'jml_asuransi' => $jml_asuransi,
+                                        'jml_diproses' => $jml_diproses,
+                                    ];
+
+                                    array_push($data_registrasi, $d);
+                                }
+                            }
+                        }
+                    } else {
+                    }
+                } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                    // return $e->getMessage();
+                }
+
+                // $result = $this->group_by("nip", $data_registrasi);
+                // $finalResult = [];
+                // if ($result) {
+                //     foreach ($result as $key => $value) {
+                //         $jml_asuransi = 0;
+                //         $jml_diproses = 0;
+                //         for ($i=0; $i < count($value); $i++) {
+                //             $jml_asuransi += $value[$i]['jml_asuransi'];
+                //             $jml_diproses += $value[$i]['jml_diproses'];
+                //         };
+                //         $final_d = [
+                //             'nip' => $key,
+                //             'nama' => $value[0]['nama'],
+                //             'jml_asuransi' => $jml_asuransi,
+                //             'jml_diproses' => $jml_diproses,
+                //         ];
+
+                //         array_push($finalResult, $final_d);
+
+                //         $total_sudah_klaim += $jml_diproses;
+                //         $total_belum_klaim += $jml_asuransi - $total_sudah_klaim;
+                //     }
+                // }
+
+                $this->param['role'] = $role;
+                if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                    $result = $request->has('id_penyelia') ? $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+                }
+                else {
+                    if ($role == 'Staf Analis Kredit') {
+                        $result = $this->group_by("debitur", $data_registrasi);
+                    }
+                    else {
+                        $result = $this->group_by("nip", $data_registrasi);
+                    }
+                }
+                
+                $finalResult = [];
+                foreach ($result as $key => $value) {
+                    $jml_asuransi = 0;
+                    $jml_diproses = 0;
+                    for ($i=0; $i < count($value); $i++) { 
+                        $jml_asuransi += $value[$i]['jml_asuransi'];
+                        $jml_diproses += $value[$i]['jml_diproses'];
+                    };
+
+                    if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                        $nip = $request->has('id_penyelia') ? $value[0]['nip']  : $key;
+                    }
+                    else {
+                        if ($role == 'Staf Analis Kredit') {
+                            $nip = $value[0]['nip'];
+                        }
+                        else {
+                            $nip = $key;
+                        }
+                    }
+                    
+                    $total_sudah_klaim += $jml_diproses;
+                    $total_belum_klaim += $jml_asuransi - $total_sudah_klaim;
+                    
+                }
+                
+
             }
+            $this->param['registered'] = $registered;
+            $this->param['not_registered'] = $not_registered;
+            $this->param['belum_registrasi'] = $belum_registrasi;
+            $this->param['total_sudah_klaim'] = $total_sudah_klaim;
+            $this->param['total_belum_klaim'] = $total_belum_klaim;
 
             return view('pages.home', $this->param);
         } catch (\Exception $e) {
@@ -470,6 +546,974 @@ class DashboardController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             return back()->withError('Terjadi kesalahan pada database');
         }
+    }
+
+    public function detailRegistrasi(Request $request) {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+        $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        $registered = 0;
+        $not_registered = 0;
+        $belum_registrasi = 0;
+        $data_registrasi = [];
+
+        $user_id = $token ? $user['id'] : $user->id;
+
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+
+        if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            // Registrasi
+            $registered = DB::table('asuransi')
+                            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                            ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                            ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                            ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                            ->select('asuransi.id')
+                            ->where('asuransi.registered', 1)
+                            ->where('k.is_asuransi', true)
+                            ->where('k.kode_cabang', $user_cabang)
+                            ->count();
+
+            $not_registered = DB::table('asuransi')
+                            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                            ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                            ->select('asuransi.id')
+                            ->where('asuransi.registered', 0)
+                            ->where('k.is_asuransi', true)
+                            ->where('k.kode_cabang', $user_cabang)
+                            ->count();
+            // retrieve from api
+            $apiURL = "$host/v1/get-list-pengajuan";
+
+            try {
+                $user = $request->has('id_penyelia') ? $request->id_penyelia : 'all';
+                $response = Http::timeout(60)
+                                ->withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->get($apiURL, [
+                                    'kode_cabang' => $user_cabang,
+                                    'user' => $user,
+                                ]);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+                
+                if ($responseBody) {
+                    if(array_key_exists('data', $responseBody)) {
+                        if (array_key_exists('data', $responseBody['data'])) {
+                            $data = $responseBody['data']['data'];
+
+                            foreach ($data as $key => $value) {
+                                $id = $value['id_penyelia'];
+                                $debitur = $value['nama'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
+                                // retrieve jenis_asuransi
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
+                                $jml_asuransi = $jenis_asuransi ? count($jenis_asuransi) : 0;
+                                $jml_diproses = 0;
+
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $asuransi = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->select(
+                                                    'asuransi.registered',
+                                                )
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
+
+                                    $asuransi = $asuransi->groupBy('no_pk')
+                                                        ->orderBy('no_aplikasi')
+                                                        ->first();
+                                    if (!$asuransi) {
+                                        $belum_registrasi++;
+                                    } else {
+                                        $jml_diproses++;
+                                    }
+                                    $value2->asuransi = $asuransi;
+                                }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                                $d = [
+                                    'id' => $id,
+                                    'nip' => $nip,
+                                    'nama' => $nama,
+                                    'debitur' => $debitur,
+                                    'jml_asuransi' => $jml_asuransi,
+                                    'jml_diproses' => $jml_diproses,
+                                ];
+
+                                array_push($data_registrasi, $d);
+                            }
+                        }
+                    }
+                } else {
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
+        } else {
+            // Penyelia & staf
+            // retrieve from api
+            $apiURL = "$host/v1/get-list-pengajuan";
+
+            try {
+                $response = Http::timeout(60)
+                                ->withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->get($apiURL, [
+                                    'kode_cabang' => $user_cabang,
+                                    'user' => $user_id,
+                                ]);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+
+                if ($responseBody) {
+                    if(array_key_exists('data', $responseBody)) {
+                        if (array_key_exists('data', $responseBody['data'])) {
+                            $data = $responseBody['data']['data'];
+
+                            foreach ($data as $key => $value) {
+                                $id = $value['id_penyelia'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $role == 'Penyelia Kredit' || $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
+                                $debitur = $value['nama'];
+                                // retrieve jenis_asuransi
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
+                                $jml_asuransi = $jenis_asuransi ? count($jenis_asuransi) : 0;
+                                $jml_diproses = 0;
+
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $asuransi = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->select(
+                                                    'asuransi.registered',
+                                                )
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
+
+                                    $asuransi = $asuransi->groupBy('no_pk')
+                                                        ->orderBy('no_aplikasi')
+                                                        ->first();
+                                    if (!$asuransi) {
+                                        $belum_registrasi++;
+                                    }
+                                    else {
+                                        $jml_diproses++;
+                                        $registered += $asuransi->registered ? 1 : 0;
+                                        $not_registered += $asuransi->registered ? 0 : 1;
+                                    }
+                                    $value2->asuransi = $asuransi;
+                                }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                                $d = [
+                                    'id' => $id,
+                                    'nip' => $nip,
+                                    'nama' => $nama,
+                                    'debitur' => $debitur,
+                                    'jml_asuransi' => $jml_asuransi,
+                                    'jml_diproses' => $jml_diproses,
+                                ];
+
+                                array_push($data_registrasi, $d);
+                            }
+                        }
+                    }
+                } else {
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
+        }
+        $this->param['registered'] = $registered;
+        $this->param['not_registered'] = $not_registered;
+        $this->param['belum_registrasi'] = $belum_registrasi;
+        $this->param['role'] = $role;
+
+        if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            $result = $request->has('staf') ? $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+        }
+        else {
+            if ($role == 'Staf Analis Kredit') {
+                $result = $this->group_by("debitur", $data_registrasi);
+            }
+            else {
+                $result = $request->has('staf') ?  $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+            }
+        }
+
+        $finalResult = [];
+        if ($result) {
+            foreach ($result as $key => $value) {
+                $jml_asuransi = 0;
+                $jml_diproses = 0;
+                for ($i=0; $i < count($value); $i++) {
+                    $jml_asuransi += $value[$i]['jml_asuransi'];
+                    $jml_diproses += $value[$i]['jml_diproses'];
+                };
+
+                if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                    $nip = $request->has('id_penyelia') ? $value[0]['nip']  : $key;
+                }
+                else {
+                    if ($role == 'Staf Analis Kredit') {
+                        $nip = $value[0]['nip'];
+                    }
+                    else {
+                        $nip = $key;
+                    }
+                }
+                $final_d = [
+                    'id' => $value[0]['id'],
+                    'nip' => $nip,
+                    'nama' => $value[0]['nama'],
+                    'debitur' => $value[0]['debitur'],
+                    'jml_asuransi' => $jml_asuransi,
+                    'jml_diproses' => $jml_diproses,
+                ];
+
+                array_push($finalResult, $final_d);
+            }
+        }
+        
+        $this->param['result'] = $finalResult;
+
+        return view('pages.detail.registrasi', $this->param);
+    }
+
+    public function detailPengajuanKlaim(Request $request) {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+        $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        $registered = 0;
+        $not_registered = 0;
+        $belum_klaim = 0;
+        $data_registrasi = [];
+
+        $user_id = $token ? $user['id'] : $user->id;
+
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+        $total_sudah_klaim = 0;
+        $total_belum_klaim = 0;
+        
+        if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            $total_sudah_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->where('k.kode_cabang', $user_cabang)
+                                    ->whereRaw('asuransi.id IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
+
+            $total_belum_klaim = DB::table('asuransi')
+                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                ->select('asuransi.id')
+                                ->where('asuransi.registered', 1)
+                                ->where('k.is_asuransi', true)
+                                ->where('k.kode_cabang', $user_cabang)
+                                ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                ->count();
+            // retrieve from api
+            $apiURL = "$host/v1/get-list-pengajuan";
+
+            try {
+                $user = $request->has('id_penyelia') ? $request->id_penyelia : 'all';
+                $response = Http::timeout(60)
+                                ->withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->get($apiURL, [
+                                    'kode_cabang' => $user_cabang,
+                                    'user' => $user,
+                                ]);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+                
+                if ($responseBody) {
+                    if(array_key_exists('data', $responseBody)) {
+                        if (array_key_exists('data', $responseBody['data'])) {
+                            $data = $responseBody['data']['data'];
+
+                            foreach ($data as $key => $value) {
+                                $id = $value['id_penyelia'];
+                                $debitur = $value['nama'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
+                                // retrieve jenis_asuransi
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
+                                $jml_asuransi = $jenis_asuransi ? count($jenis_asuransi) : 0;
+                                $jml_diproses = 0;
+                                $klaim_status = [];
+
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $asuransi = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->join('pengajuan_klaim AS klaim', 'klaim.asuransi_id', 'asuransi.id')
+                                                ->select(
+                                                    'klaim.stat_klaim',
+                                                )
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
+
+                                    $asuransi = $asuransi->groupBy('no_pk')
+                                                        ->orderBy('no_aplikasi')
+                                                        ->first();
+                                    if (!$asuransi) {
+                                        $belum_klaim++;
+                                    } else {
+                                        array_push($klaim_status, $asuransi->stat_klaim);
+                                        $jml_diproses++;
+                                    }
+                                    $value2->asuransi = $asuransi;
+                                }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                                $d = [
+                                    'id' => $id,
+                                    'nip' => $nip,
+                                    'nama' => $nama,
+                                    'debitur' => $debitur,
+                                    'jml_asuransi' => $jml_asuransi,
+                                    'jml_diproses' => $jml_diproses,
+                                    'klaim' => $klaim_status,
+                                ];
+
+                                if ($request->has('id_penyelia') && $asuransi) {
+                                    array_push($data_registrasi, $d);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
+        } else {
+            // Penyelia & staf
+            $total_sudah_klaim = DB::table('asuransi')
+                                    ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                    ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                    ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                    ->select('asuransi.id')
+                                    ->where('asuransi.registered', 1)
+                                    ->where('k.is_asuransi', true)
+                                    ->when($role, function($query) use ($role, $user_id) {
+                                        if ($role == 'Staf Analis Kredit') {
+                                            $query->where('asuransi.user_id', $user_id);
+                                        }
+                                        else {
+                                            $query->where('asuransi.penyelia_id', $user_id);
+                                        }
+                                    })
+                                    ->whereRaw('asuransi.id IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                    ->count();
+
+            $total_belum_klaim = DB::table('asuransi')
+                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                                ->select('asuransi.id')
+                                ->where('asuransi.registered', 1)
+                                ->where('k.is_asuransi', true)
+                                ->when($role, function($query) use ($role, $user_id) {
+                                    if ($role == 'Staf Analis Kredit') {
+                                        $query->where('asuransi.user_id', $user_id);
+                                    }
+                                    else {
+                                        $query->where('asuransi.penyelia_id', $user_id);
+                                    }
+                                })
+                                ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
+                                ->count();
+            // retrieve from api
+            $apiURL = "$host/v1/get-list-pengajuan";
+
+            try {
+                $response = Http::timeout(60)
+                                ->withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->get($apiURL, [
+                                    'kode_cabang' => $user_cabang,
+                                    'user' => $user_id,
+                                ]);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+
+                if ($responseBody) {
+                    if(array_key_exists('data', $responseBody)) {
+                        if (array_key_exists('data', $responseBody['data'])) {
+                            $data = $responseBody['data']['data'];
+
+                            foreach ($data as $key => $value) {
+                                $id = $value['id_penyelia'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $role == 'Penyelia Kredit' || $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
+                                $debitur = $value['nama'];
+                                // retrieve jenis_asuransi
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
+                                $jml_asuransi = $jenis_asuransi ? count($jenis_asuransi) : 0;
+                                $jml_diproses = 0;
+                                $klaim_status = [];
+
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $asuransi = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->join('pengajuan_klaim AS klaim', 'klaim.asuransi_id', 'asuransi.id')
+                                                ->select(
+                                                    'klaim.stat_klaim','asuransi.*'
+                                                )
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
+
+                                    $asuransi = $asuransi->groupBy('no_pk')
+                                                        ->orderBy('no_aplikasi')
+                                                        ->first();                  
+
+                                    if (!$asuransi) {
+                                        $belum_klaim++;
+                                    }
+                                    else {
+                                        array_push($klaim_status, $asuransi->stat_klaim);
+                                        $jml_diproses++;
+                                        $registered += $asuransi->registered ? 1 : 0;
+                                        $not_registered += $asuransi->registered ? 0 : 1;
+                                    }
+                                    $value2->asuransi = $asuransi;
+                                }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                                $d = [
+                                    'id' => $id,
+                                    'nip' => $nip,
+                                    'nama' => $nama,
+                                    'debitur' => $debitur,
+                                    'jml_asuransi' => $jml_asuransi,
+                                    'jml_diproses' => $jml_diproses,
+                                    'klaim' => $klaim_status,
+                                ];
+
+                                array_push($data_registrasi, $d);
+                            }
+                        }
+                    }
+                } else {
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
+        }
+
+        $this->param['role'] = $role;
+        if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            $result = $request->has('id_penyelia') ? $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+        }
+        else {
+            if ($role == 'Staf Analis Kredit') {
+                $result = $this->group_by("debitur", $data_registrasi);
+            }
+            else {
+                $result = $this->group_by("nip", $data_registrasi);
+            }
+        }
+        
+        $finalResult = [];
+        if ($result) {
+            foreach ($result as $key => $value) {
+                $jml_asuransi = 0;
+                $jml_diproses = 0;
+                for ($i=0; $i < count($value); $i++) { 
+                    $jml_asuransi += $value[$i]['jml_asuransi'];
+                    $jml_diproses += $value[$i]['jml_diproses'];
+                };
+
+                if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                    $nip = $request->has('id_penyelia') ? $value[0]['nip']  : $key;
+                }
+                else {
+                    if ($role == 'Staf Analis Kredit') {
+                        $nip = $value[0]['nip'];
+                    }
+                    else {
+                        $nip = $key;
+                    }
+                }
+
+                $final_d = [
+                    'id' => $value[0]['id'],
+                    'nip' => $nip,
+                    'nama' => $value[0]['nama'],
+                    'debitur' => $value[0]['debitur'],
+                    'jml_asuransi' => $jml_asuransi,
+                    'jml_diproses' => $jml_diproses,
+                ];
+
+                array_push($finalResult, $final_d);
+                
+                $total_sudah_klaim += $jml_diproses - $jml_diproses;
+                $total_belum_klaim += $jml_asuransi - $jml_diproses;
+            }
+
+
+            $this->param['total_sudah_klaim'] = $total_sudah_klaim;
+            $this->param['total_belum_klaim'] = $total_belum_klaim;
+        }
+
+        
+        // dd($finalResult);
+        $this->param['result'] = $finalResult;
+        // return $finalResult;
+        return view('pages.detail.pengajuan-klaim', $this->param);
+    }
+
+    public function detailPembayaranPremi(Request $request) {
+        $token = \Session::get(config('global.user_token_session'));
+        $user = $token ? $this->getLoginSession() : Auth::user();
+        $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
+        $role_id = \Session::get(config('global.role_id_session'));
+        $role = '';
+        if ($user) {
+            if (is_array($user)) {
+                $role = $user['role'];
+            }
+        }
+        else {
+            $role = 'vendor';
+        }
+
+        $belumBayar = 0;
+        $sudahBayar = 0;
+        $data_registrasi = [];
+
+        $user_id = $token ? $user['id'] : $user->id;
+
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+
+        if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            $sudahBayar = DB::table('asuransi')
+                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                ->select('id')
+                                ->where('registered', 1)
+                                ->where('status', 'sended')
+                                ->where('is_paid', 1)
+                                ->where('asuransi.registered', 1)
+                                ->where('k.is_asuransi', true)
+                                ->where('k.kode_cabang', $user_cabang)
+                                ->count();
+            $belumBayar = DB::table('asuransi')
+                            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                            ->select('id')
+                            ->where('registered', 1)
+                            ->where('status', 'sended')
+                            ->where('is_paid', 0)
+                            ->where('asuransi.registered', 1)
+                            ->where('k.is_asuransi', true)
+                            ->where('k.kode_cabang', $user_cabang)
+                            ->count();
+
+            // retrieve from api
+            $apiURL = "$host/v1/get-list-pengajuan";
+
+            try {
+                $user = $request->has('id_penyelia') ? $request->id_penyelia : 'all';
+                $response = Http::timeout(60)
+                                ->withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->get($apiURL, [
+                                    'kode_cabang' => $user_cabang,
+                                    'user' => $user,
+                                ]);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+                
+                if ($responseBody) {
+                    if(array_key_exists('data', $responseBody)) {
+                        if (array_key_exists('data', $responseBody['data'])) {
+                            $data = $responseBody['data']['data'];
+
+                            foreach ($data as $key => $value) {
+                                $id = $value['id_penyelia'];
+                                $debitur = $value['nama'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
+                                // retrieve jenis_asuransi
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
+
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $pembayaran = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->leftJoin('pembayaran_premi_detail AS pem', 'pem.asuransi_id', 'asuransi.id')
+                                                ->select(
+                                                    'asuransi.id',
+                                                    'asuransi.is_paid',
+                                                )
+                                                ->where('asuransi.status', 'sended')
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
+
+                                    $pembayaran = $pembayaran->groupBy('asuransi.no_pk')
+                                                        ->orderBy('asuransi.no_aplikasi')
+                                                        ->first();
+                                    $value2->pembayaran = $pembayaran;
+                                    if ($pembayaran) {
+                                        $d = [
+                                            'id' => $id,
+                                            'asuransi_id' => $pembayaran ? $pembayaran->id : null,
+                                            'nip' => $nip,
+                                            'nama' => $nama,
+                                            'debitur' => $debitur,
+                                            'is_paid' => $pembayaran ? $pembayaran->is_paid : null,
+                                        ];
+        
+                                        array_push($data_registrasi, $d);
+                                    }
+                                }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                            }
+                        }
+                    }
+                } else {
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
+        } else {
+            // Penyelia & staf
+            $sudahBayar = DB::table('asuransi')
+                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                ->select('id')
+                                ->where('registered', 1)
+                                ->where('status', 'sended')
+                                ->where('is_paid', 1)
+                                ->where('asuransi.registered', 1)
+                                ->where('k.is_asuransi', true)
+                                ->where('k.kode_cabang', $user_cabang)
+                                ->count();
+            $belumBayar = DB::table('asuransi')
+                            ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                            ->select('id')
+                            ->where('registered', 1)
+                            ->where('status', 'sended')
+                            ->where('is_paid', 0)
+                            ->where('asuransi.registered', 1)
+                            ->where('k.is_asuransi', true)
+                            ->where('k.kode_cabang', $user_cabang)
+                            ->count();
+            // retrieve from api
+            $apiURL = "$host/v1/get-list-pengajuan";
+
+            try {
+                $response = Http::timeout(60)
+                                ->withHeaders($headers)
+                                ->withOptions(['verify' => false])
+                                ->get($apiURL, [
+                                    'kode_cabang' => $user_cabang,
+                                    'user' => $user_id,
+                                ]);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+
+                if ($responseBody) {
+                    if(array_key_exists('data', $responseBody)) {
+                        if (array_key_exists('data', $responseBody['data'])) {
+                            $data = $responseBody['data']['data'];
+
+                            foreach ($data as $key => $value) {
+                                $id = $value['id_penyelia'];
+                                $nip = $request->has('id_penyelia') ? $value['staf']['nip'] : $value['karyawan']['nip'];
+                                $nama = $role == 'Penyelia Kredit' || $request->has('id_penyelia') ? $value['staf']['nama'] : $value['karyawan']['nama'];
+                                $debitur = $value['nama'];
+                                // retrieve jenis_asuransi
+                                $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                                    ->select('id', 'jenis')
+                                                    ->where('jenis_kredit', $value['skema_kredit'])
+                                                    ->orderBy('jenis')
+                                                    ->get();
+                                $jml_asuransi = $jenis_asuransi ? count($jenis_asuransi) : 0;
+                                $jml_diproses = 0;
+
+                                foreach ($jenis_asuransi as $key2 => $value2) {
+                                    // retrieve asuransi data
+                                    $pembayaran = DB::table('asuransi')
+                                                ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                                                ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                                                ->leftJoin('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                                                ->leftJoin('pembayaran_premi_detail AS pem', 'pem.asuransi_id', 'asuransi.id')
+                                                ->select(
+                                                    'asuransi.id',
+                                                    'asuransi.is_paid',
+                                                )
+                                                ->where('asuransi.status', 'sended')
+                                                ->where('asuransi.jenis_asuransi_id', $value2->id);
+
+                                    $pembayaran = $pembayaran->groupBy('asuransi.no_pk')
+                                                        ->orderBy('asuransi.no_aplikasi')
+                                                        ->first();
+                                    $value2->pembayaran = $pembayaran;
+                                    if ($pembayaran) {
+                                        $d = [
+                                            'id' => $id,
+                                            'asuransi_id' => $pembayaran ? $pembayaran->id : null,
+                                            'nip' => $nip,
+                                            'nama' => $nama,
+                                            'debitur' => $debitur,
+                                            'is_paid' => $pembayaran ? $pembayaran->is_paid : null,
+                                        ];
+        
+                                        array_push($data_registrasi, $d);
+                                    }
+                                }
+                                $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                            }
+                        }
+                    }
+                } else {
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // return $e->getMessage();
+            }
+        }
+        
+        $this->param['sudah_bayar'] = $sudahBayar;
+        $this->param['belum_bayar'] = $belumBayar;
+        $this->param['role'] = $role;
+
+        if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+            $result = $request->has('staf') ? $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+        }
+        else {
+            if ($role == 'Staf Analis Kredit') {
+                $result = $this->group_by("debitur", $data_registrasi);
+            }
+            else {
+                $result = $request->has('staf') ?  $this->group_by("debitur", $data_registrasi) : $this->group_by("nip", $data_registrasi);
+            }
+        }
+
+        $finalResult = [];
+        if ($result) {
+            foreach ($result as $key => $value) {
+                $dibayar = 0;
+                $belum_dibayar = 0;
+                for ($i=0; $i < count($value); $i++) {
+                    if ($value[$i]['is_paid'] == 1) {
+                        $dibayar++;
+                    }
+                    else {
+                        $belum_dibayar++;
+                    }
+                };
+
+                if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
+                    $nip = $request->has('id_penyelia') ? $value[0]['nip']  : $key;
+                }
+                else {
+                    if ($role == 'Staf Analis Kredit') {
+                        $nip = $value[0]['nip'];
+                    }
+                    else {
+                        $nip = $key;
+                    }
+                }
+                $final_d = [
+                    'id' => $value[0]['id'],
+                    'nip' => $nip,
+                    'nama' => $value[0]['nama'],
+                    'debitur' => $value[0]['debitur'],
+                    'dibayar' => $dibayar,
+                    'belum_dibayar' => $belum_dibayar,
+                ];
+
+                array_push($finalResult, $final_d);
+            }
+        }
+        
+        // return $finalResult;
+        $this->param['result'] = $finalResult;
+
+        return view('pages.detail.pembayaran-premi', $this->param);
+    }
+
+    function group_by($key, $data) {
+        $result = array();
+
+        foreach($data as $val) {
+            if(array_key_exists($key, $val)){
+                $result[$val[$key]][] = $val;
+            }else{
+                $result[""][] = $val;
+            }
+        }
+
+        return $result;
+    }
+
+    public function loadKreditById($pengajuan_id)
+    {
+        $data = Kredit::select(
+            'kredits.id',
+            \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
+            'kredits.pengajuan_id',
+            'kredits.imported_data_id',
+            'kredits.kode_cabang',
+            'kkb.id AS kkb_id',
+            'kkb.tgl_ketersediaan_unit',
+            'kkb.id_tenor_imbal_jasa',
+            'kkb.nominal_realisasi',
+            'kkb.nominal_dp',
+            'kkb.nominal_imbal_jasa',
+            'kkb.nominal_pembayaran_imbal_jasa',
+            'import.name',
+            'import.tgl_po',
+            'import.tgl_realisasi',
+            'po.merk',
+            'po.tipe',
+            'po.tahun_kendaraan',
+            'po.warna',
+            'po.keterangan',
+            'po.jumlah',
+            'po.harga',
+            \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+            \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+            \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+            \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+        )
+            ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+            ->leftJoin('imported_data AS import', 'import.id', 'kredits.imported_data_id')
+            ->leftJoin('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
+            ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+            ->groupBy([
+                'kredits.id',
+                'kredits.pengajuan_id',
+                'kredits.imported_data_id',
+                'kredits.kode_cabang',
+                'kkb.id_tenor_imbal_jasa',
+                'kkb.id',
+                'kkb.tgl_ketersediaan_unit',
+                'po.merk',
+                'po.tipe',
+                'po.tahun_kendaraan',
+                'po.warna',
+                'po.keterangan',
+                'po.jumlah',
+                'po.harga',
+            ])
+            ->where('kredits.pengajuan_id', $pengajuan_id)
+            ->first();
+
+        if ($data) {
+            $invoice = Document::where('kredit_id', $data->id)
+                ->where('document_category_id', 7)
+                ->first();
+
+            $buktiPembayaran = Document::where('kredit_id', $data->id)
+                ->where('document_category_id', 1)
+                ->first();
+
+            $penyerahanUnit = Document::where('kredit_id', $data->id)
+                ->where('document_category_id', 2)
+                ->first();
+
+            $stnk = Document::where('kredit_id', $data->id)
+                ->where('document_category_id', 3)
+                ->first();
+
+            $polis = Document::where('kredit_id', $data->id)
+                ->where('document_category_id', 4)
+                ->first();
+
+            $bpkb = Document::where('kredit_id', $data->id)
+                ->where('document_category_id', 5)
+                ->first();
+
+            $imbalJasa = Document::where('kredit_id', $data->id)
+                ->where('document_category_id', 6)
+                ->first();
+
+            $setImbalJasa = DB::table('tenor_imbal_jasas')->find($data->id_tenor_imbal_jasa);
+
+            $data->invoice = $invoice;
+            $data->bukti_pembayaran = $buktiPembayaran;
+            $data->penyerahan_unit = $penyerahanUnit;
+            $data->stnk = $stnk;
+            $data->bpkb = $bpkb;
+            $data->polis = $polis;
+            $data->imbal_jasa = $imbalJasa;
+            $data->set_imbal_jasa = $setImbalJasa;
+        }
+
+        return $data;
     }
 
     public function paginate($items, $perPage = 5, $page = null, $options = [])
@@ -492,5 +1536,128 @@ class DashboardController extends Controller
             ->first();
 
         return $user ? $user->role_name : '';
+    }
+
+    public function getChartData()
+    {
+        $tanggalAwal = date('Y') . '-' . date('m') . '-01';
+        $hari_ini = now();
+        $tAwal = date("Y-m-d", strtotime(Request()->tAwal));
+        $tAkhir = date("Y-m-d", strtotime(Request()->tAkhir));
+        $host = env('LOS_API_HOST');
+        $headers = [
+            'token' => env('LOS_API_TOKEN')
+        ];
+
+        $apiCabang = $host . '/kkb/get-cabang/';
+        $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+        $responseCabang = json_decode($api_req->getBody(), true);
+        $dataCharts = [];
+
+        if ($responseCabang) {
+            // for ($i = 0; $i < count($responseCabang); $i++) {
+            foreach ($responseCabang as $key => $value) {
+                $kode_cabang = $value['kode_cabang'];
+                $cabang = $value['cabang'];
+                $dataKredits = Kredit::select(
+                    'kredits.id',
+                    'kredits.pengajuan_id',
+                    'kredits.kode_cabang',
+                    'kkb.id AS kkb_id',
+                    'kkb.tgl_ketersediaan_unit',
+                    'kkb.id_tenor_imbal_jasa',
+                    \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                    \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                    \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                    \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                )
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                    ])
+                    ->whereNotNull('kredits.pengajuan_id')
+                    ->whereBetween('kkb.updated_at', [$tanggalAwal, $hari_ini])
+                    ->when($tAwal && $tAkhir, function ($query) use ($tAwal, $tAkhir) {
+                        return $query->whereBetween('kkb.updated_at', [$tAwal, $tAkhir]);
+                    })
+                    ->whereNull('kredits.imported_data_id')
+                    ->having("status", 'done')
+                    ->where('kode_cabang', $kode_cabang)
+                    ->count();
+                $dataImported = DB::table('imported_data AS import')
+                    ->select(
+                        'import.name',
+                        'import.tgl_po',
+                        'import.tgl_realisasi',
+                        'kredits.id',
+                        'kredits.pengajuan_id',
+                        'kredits.imported_data_id',
+                        'kredits.kode_cabang',
+                        'kkb.id AS kkb_id',
+                        'kkb.user_id',
+                        'kkb.tgl_ketersediaan_unit',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.nominal_realisasi',
+                        'kkb.nominal_dp',
+                        'kkb.nominal_imbal_jasa',
+                        'kkb.nominal_pembayaran_imbal_jasa',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
+                        \DB::raw("(SELECT COUNT(id) FROM document_categories) AS total_doc_requirement"),
+                        \DB::raw('COALESCE(COUNT(d.id), 0) AS total_file_uploaded'),
+                        \DB::raw('CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) AS total_file_confirmed'),
+                        \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
+                    )
+                    ->join('kredits', 'kredits.imported_data_id', 'import.id')
+                    ->join('kkb', 'kkb.kredit_id', 'kredits.id')
+                    ->join('data_po AS po', 'po.imported_data_id', 'kredits.imported_data_id')
+                    ->leftJoin('documents AS d', 'd.kredit_id', 'kredits.id')
+                    ->having("status", 'done')
+                    ->where('kode_cabang', $kode_cabang)
+                    ->groupBy([
+                        'kredits.id',
+                        'kredits.imported_data_id',
+                        'kredits.kode_cabang',
+                        'kkb.id_tenor_imbal_jasa',
+                        'kkb.id',
+                        'kkb.tgl_ketersediaan_unit',
+                        'po.merk',
+                        'po.tipe',
+                        'po.tahun_kendaraan',
+                        'po.warna',
+                        'po.keterangan',
+                        'po.jumlah',
+                        'po.harga',
+                    ])
+                    ->count();
+
+                $dataCabang = [
+                    'kode_cabang' => $kode_cabang,
+                    'cabang' => $cabang,
+                    'total' => intval($dataKredits),
+                ];
+
+                array_push($dataCharts, $dataCabang);
+            }
+
+            return response()->json([
+                'data' => $dataCharts
+            ]);
+        } else {
+            return response()->json([
+                'data' => null
+            ]);
+        }
     }
 }

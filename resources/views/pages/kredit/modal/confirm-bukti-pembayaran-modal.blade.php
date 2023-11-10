@@ -14,6 +14,11 @@
                 <div class="gap-5 space-y-5">
                     <div class="flex gap-5 w-full mt-0">
                         <div class="input-box w-full space-y-3">
+                            <p class="uppercase appearance-none" id="kategori_data"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 w-full mt-0">
+                        <div class="input-box w-full space-y-3">
                             <label for="" class="uppercase appearance-none">Tanggal Upload</label>
                             <input type="text" disabled class="p-2 w-full border" id="confirm_tanggal_pembayaran"  />
                         </div>
@@ -28,16 +33,18 @@
             </div>
         </div>
         <div class="modal-footer">
-            <form id="confirm-form-vendor">
-                <input type="hidden" name="confirm_id" id="confirm_id">
-                <input type="hidden" name="confirm_id_category" id="confirm_id_category">
-                <button type="button" data-dismiss-id="modalConfirmBuktiPembayaran" class="border px-7 py-3 text-black rounded">
-                    Tidak
-                </button>
-                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
-                    Ya
-                </button>
-            </form>
+            @if ($role_id == 3)
+                <form id="confirm-form-vendor">
+                    <input type="hidden" name="confirm_id" id="confirm_id">
+                    <input type="hidden" name="confirm_id_category" id="confirm_id_category">
+                    <button type="button" data-dismiss-id="modalConfirmBuktiPembayaran" class="border px-7 py-3 text-black rounded">
+                        Tidak
+                    </button>
+                    <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
+                        Ya
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
 </div>
@@ -53,12 +60,13 @@
             }).then((result) => {
                 console.log('then')
                 $("#modalConfirmBuktiPembayaran").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
-                
-                refreshTable()
+                //$('#preload-data').removeClass("hidden")
+
+                //refreshTable()
+                location.reload();
             })
         }
-        
+
         function ConfirmPembayaranErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
@@ -68,37 +76,13 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    
-                    refreshTable()
+                    //$('#preload-data').removeClass("hidden")
+
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
-
-        /*$(".toggle-modal-confirm-bukti-pembayaran").on("click", function () {
-            const targetId = $(this).data("target-id");
-            $("#" + targetId).removeClass("hidden");
-            $(".layout-overlay-edit-form").removeClass("hidden");
-
-            const confirm_id = $(this).data('id-doc')
-            const is_confirm = $(this).data('confirm')
-            const confirm_category_id = $(this).data('id-category')
-            const file = $(this).data('file');
-            const status = $(this).data('confirm') ? 'Sudah dikonfirmasi oleh vendor.' :
-                'Menunggu konfirmasi dari vendor.';
-            const tanggal = $(this).data('tanggal');
-            var path_file = "{{ asset('storage') }}" + "/dokumentasi-bukti-pembayaran/" + file + "#navpanes=0";
-
-            $('#confirm_bukti_pembayaran_img').attr('src', path_file)
-            $('#confirm_tanggal_pembayaran').val(tanggal)
-            $('#status_confirm').val(status)
-            $('#confirm_id').val(confirm_id)
-            $('#confirm_id_category').val(confirm_category_id)
-
-            if (is_confirm) {
-                $('#modalConfirmBuktiPembayaran .modal-footer').css('display', 'none')
-            }
-        });*/
 
         $("[data-dismiss-id]").on("click", function () {
             const dismissId = $(this).data("dismiss-id");
@@ -129,6 +113,9 @@
                             ConfirmPembayaranErrorMessage(data.message)
                         }
                     }
+                },
+                error: function(e) {
+                    ConfirmPembayaranErrorMessage(e)
                 }
             })
         })

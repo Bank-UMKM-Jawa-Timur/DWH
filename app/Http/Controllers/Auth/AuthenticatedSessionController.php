@@ -56,6 +56,7 @@ class AuthenticatedSessionController extends Controller
                                 ->post($apiURL, [
                                     'email' => $request->input_type,
                                     'password' => $request->password,
+                                    'project' => 'dashboard_kkb'
                                 ]);
                 $responseBody = json_decode($response->getBody(), true);
                 // return $responseBody;
@@ -69,7 +70,10 @@ class AuthenticatedSessionController extends Controller
                                 if ($responseBody['role'] == 'Administrator') {
                                     $role_id = 4;
                                 }
-                                else if ($responseBody['role'] == 'Kredit Umum') {
+                                // else if ($responseBody['role'] == 'Kredit Umum') {
+                                //     $role_id = 1;
+                                // }
+                                else if ($responseBody['role'] == 'Pemasaran' || $responseBody['role'] == 'Kredit Umum') {
                                     $role_id = 1;
                                 }
                                 else {
@@ -149,7 +153,7 @@ class AuthenticatedSessionController extends Controller
                         else
                             return back()->withError($responseBody['message']);
                     }
-                    else 
+                    else
                         return back()->withError('Terjadi kesalahan 1');
                 }
                 else {

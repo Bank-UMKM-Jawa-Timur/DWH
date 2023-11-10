@@ -9,7 +9,7 @@
         <button class="mt-2 ml-3 toggle-fullscreen">
             <span class="unfullscreen hidden">
                 @include('components.svg.unfullscreen')
-            
+
             </span>
             <span class="fullscreen">
                 @include('components.svg.fullscreen')
@@ -87,10 +87,17 @@
                     <img src="https://ui-avatars.com/api/?name={{$name}}" class="rounded-full" alt="" srcset="">
                 </button>
                 <div>
-                    <h2 class="text-theme-text font-semibold">
-                        {{$name}}
-                    </h2>
-                    <p class="text-gray-400">{{$sub_name}}</p>
+                    @if ($user)
+                        <h2 class="text-theme-text font-semibold">
+                            {{$name}}
+                        </h2>
+                        <p class="text-gray-400">{{$sub_name}}</p>
+                    @else
+                        <p class="text-theme-text font-semibold">{{$sub_name}}</p>
+                        <h2 class="text-gray-400">
+                            {{$name}}
+                        </h2>
+                    @endif
                 </div>
             </div>
             @php

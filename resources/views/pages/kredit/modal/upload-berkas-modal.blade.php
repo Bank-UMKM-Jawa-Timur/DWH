@@ -18,8 +18,8 @@
         </div>
 
         <form id="modal-berkas">
+            <input type="hidden" name="_token" id="_token">
             <input type="hidden" name="id_kkb" id="id_kkb">
-            @csrf
             <div class="modal-body">
                 <div class="overflow-x-auto">
                     <ul class="flex tab-wrapping w-full mt-5 border-b-2 p-[6px]">
@@ -168,7 +168,7 @@
                 title: 'Berhasil',
                 icon: 'success',
             }).then((result) => {
-                
+                location.reload();
             })
         }
         
@@ -181,9 +181,10 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
+                    //$('#preload-data').removeClass("hidden")
                     
-                    refreshTable()
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
@@ -191,9 +192,9 @@
         $("#btn-close-modal").on("click", function () {
             $("#modalUploadBerkas").addClass("hidden");
             $(".layout-overlay-edit-form").addClass("hidden");
-            $('#preload-data').removeClass("hidden")
+            //$('#preload-data').removeClass("hidden")
             
-            refreshTable()
+            //refreshTable()
             //const dismissId = $(this).data("dismiss-id");
             //$("#modalUploadBerkas").addClass("hidden");
         });
@@ -447,13 +448,15 @@
                     } else {
                         if (data.status == 'success') {
                             Swal.fire({
-                showConfirmButton: false,
-                timer: 3000,
-                closeOnClickOutside: true,
+                                showConfirmButton: false,
+                                timer: 3000,
+                                closeOnClickOutside: true,
                                 title: 'Berhasil',
                                 icon: 'success',
                                 timer: 3000,
                                 closeOnClickOutside: false
+                            }).then((result) => {
+                                location.reload();
                             });
 
                             if (type == 'stnk')
@@ -464,16 +467,18 @@
                                 $('#btn-confirm-polis').addClass('hidden')
                         } else {
                             Swal.fire({
-                showConfirmButton: false,
-                timer: 3000,
-                closeOnClickOutside: true,
+                                showConfirmButton: false,
+                                timer: 3000,
+                                closeOnClickOutside: true,
                                 title: 'Gagal',
                                 icon: 'error',
                                 text: data.message,
                                 closeOnClickOutside: false
+                            }).then((result) => {
+                                location.reload();
                             });
                         }
-                        refreshTable()
+                        //refreshTable()
                     }
                 },
                 error: function(e) {
@@ -481,15 +486,17 @@
 
                     console.log(e)
                     Swal.fire({
-                showConfirmButton: false,
-                timer: 3000,
-                closeOnClickOutside: true,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    closeOnClickOutside: true,
                         title: 'Terjadi kesalahan',
                         icon: 'error',
                         text: e,
                         closeOnClickOutside: false
+                    }).then((result) => {
+                        location.reload();
                     });
-                    refreshTable()
+                    //refreshTable()
                 }
             })
         }

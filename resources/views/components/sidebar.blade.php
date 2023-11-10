@@ -63,8 +63,155 @@
           <div>KKB</div>
         </a>
       </li>
+      @if (\Session::get(config('global.role_id_session')) != 3)
+      <li class="item-link dropdown-toggle {{ request()->is('asuransi/registrasi', 'asuransi/registrasi/*', 'asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*', 'asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*', 'asuransi/pelaporan-pelunasan', 'asuransi/pelaporan-pelunasan/*') ? 'active-link' : '' }}">
+        <div class="relative">
+          <a
+            href="#"
+            class="nav-link relative"
+          >
+            <span>
+              @include('components.svg.insurance')
+            </span>
+            <div>Asuransi</div>
+          </a>
+          <span class="dropdown-arrow absolute right-2 bottom-2.5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M12 15.121a.997.997 0 0 1-.707-.293L7.05 10.586a1 1 0 0 1 1.414-1.414L12 12.707l3.536-3.535a1 1 0 0 1 1.414 1.414l-4.243 4.242a.997.997 0 0 1-.707.293Z"
+              />
+            </svg>
+          </span>
+        </div>
+      </li>
+      <!-- dropdown -->
+      <div class="dropdown-menu-link  {{ request()->is('asuransi/registrasi', 'asuransi/registrasi/*', 'asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*', 'asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*','asuransi/pelaporan-pelunasan', 'asuransi/pelaporan-pelunasan/*') ? 'show' : 'hidden' }}">
+        <ul class="menu-dropdown">
+          <!-- add rule class active-dropdown-link for active navigation -->
+          <a href="{{ route('asuransi.registrasi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('asuransi/registrasi', 'asuransi/registrasi/*', 'asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+              List Asuransi
+            </li>
+          </a>
+          <a href="{{ route('asuransi.pembayaran-premi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('asuransi/pembayaran-premi', 'asuransi/pembayaran-premi/*') ? 'active-dropdown-link' : '' }}">
+              Pembayaran Premi
+            </li>
+          </a>
+          {{-- <a href="{{ route('asuransi.pengajuan-klaim.index') }}">
+            <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+            Pengajuan Klaim
+            </li>
+          </a> --}}
+        </ul>
+      </div>
+      <li class="item-link dropdown-toggle">
+        <div class="relative">
+          <a
+            href="#"
+            class="nav-link relative"
+          >
+            <span>
+              @include('components.svg.insurance')
+            </span>
+            <div>Laporan</div>
+          </a>
+          <span class="dropdown-arrow absolute right-2 bottom-2.5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M12 15.121a.997.997 0 0 1-.707-.293L7.05 10.586a1 1 0 0 1 1.414-1.414L12 12.707l3.536-3.535a1 1 0 0 1 1.414 1.414l-4.243 4.242a.997.997 0 0 1-.707.293Z"
+              />
+            </svg>
+          </span>
+        </div>
+      </li>
+      <div class="dropdown-menu-link {{ request()->is('asuransi/report/*') ? 'show' : 'hidden' }}">
+        <ul class="menu-dropdown">
+          {{--  <a href="{{ route('asuransi.pembayaran-premi.index') }}">
+            <li class="dropdown-item-link">
+              KKB
+            </li>
+          </a>  --}}
+          <li class="item-link dropdown-toggle">
+            <div class="relative">
+              <a
+                href="#"
+                class="nav-link relative"
+              >
+                <div>Asuransi</div>
+              </a>
+              <span class="dropdown-arrow absolute right-2 bottom-2.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M12 15.121a.997.997 0 0 1-.707-.293L7.05 10.586a1 1 0 0 1 1.414-1.414L12 12.707l3.536-3.535a1 1 0 0 1 1.414 1.414l-4.243 4.242a.997.997 0 0 1-.707.293Z"
+                  />
+                </svg>
+              </span>
+            </div>
+          </li>
+          <div class="dropdown-menu-link {{ request()->is('asuransi/report/*') ? 'show' : 'hidden' }}">
+            <ul class="menu-dropdown">
+              <!-- add rule class active-dropdown-link for active navigation -->
+              <a href="{{route('asuransi.report.registrasi.registrasi')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/registrasi/registrasi') ? 'active-dropdown-link' : '' }}">
+                  Registrasi
+                </li>
+              </a>
+              <a href="{{route('asuransi.report.registrasi.pembatalan')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/registrasi/pembatalan') ? 'active-dropdown-link' : '' }}">
+                  Pembatalan Registrasi
+                </li>
+              </a>
+              <a href="{{route('asuransi.report.pembayaran')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+                  Pembayaran Premi
+                </li>
+              </a>
+              <a href="#">
+                <li class="dropdown-item-link {{ request()->is('asuransi/pengajuan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+                  Pengajuan Klaim
+                </li>
+              </a>
+              <a href="{{ route('asuransi.report.pengajuan.pembatalan-klaim') }}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/pengajuan/pembatalan-klaim', 'asuransi/pengajuan-klaim/*') ? 'active-dropdown-link' : '' }}">
+                  Pembatalan Klaim
+                </li>
+              </a>
+              <a href="{{route('asuransi.report.registrasi.pelaporan-pelunasan')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi.report.registrasi.pelaporan-pelunasan') ? 'active-dropdown-link' : '' }}">
+                  Pelaporan Pelunasan
+                </li>
+              </a>
+              <a href="{{route('asuransi.report.registrasi.log-data')}}">
+                <li class="dropdown-item-link {{ request()->is('asuransi/report/registrasi/log-data') ? 'active-dropdown-link' : '' }}">
+                  Log Data
+                </li>
+              </a>
+            </ul>
+          </div>
+        </ul>
+      </div>
+      @endif
       @if (\Session::get(config('global.role_id_session')) == 4)
-      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'active-link' : '' }}">
+      <li class="item-link dropdown-toggle {{ request()->is('master/template-notifikasi', 'master/template-notifikasi*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', /*'master/pengguna',*/ 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*') ? 'active-link' : '' }}">
         <div class="relative">
           <a
             href="#"
@@ -103,7 +250,7 @@
         </div>
       </li>
       <!-- dropdown -->
-      <div class="dropdown-menu-link  {{ request()->is('master/template-notifikasi', 'master/template-notifikasi/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa', 'master/imbal-jasa/*') ? 'show' : 'hidden' }}">
+      <div class="dropdown-menu-link  {{ request()->is('master/template-notifikasi', 'master/template-notifikasi/*', 'master/vendor', 'master/vendor/*', 'master/role', 'master/role/*', 'master/pengguna', 'master/pengguna/*', 'master/kategori-dokumen', 'master/kategori-dokumen/*', 'master/imbal-jasa', 'master/imbal-jasa/*', 'master/perusahaan-asuransi', 'master/perusahaan-asuransi/*', 'master/jenis-asuransi', 'master/jenis-asuransi/*') ? 'show' : 'hidden' }}">
         <ul class="menu-dropdown">
           <!-- add rule class active-dropdown-link for active navigation -->
           <a href="{{ route('role.index') }}">
@@ -136,6 +283,16 @@
               Template notifikasi
             </li>
           </a>
+          <a href="{{ route('perusahaan-asuransi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/perusahaan-asuransi') ? 'active-dropdown-link' : '' }}">
+              Perusahaan Asuransi
+            </li>
+          </a>
+          <a href="{{ route('jenis-asuransi.index') }}">
+            <li class="dropdown-item-link {{ request()->is('master/jenis-asuransi') ? 'active-dropdown-link' : '' }}">
+              Jenis Asuransi
+            </li>
+          </a>
           {{--  <a href="{{ route('dictionary.index') }}">
             <li class="dropdown-item-link {{ request()->is('master/dictionary') ? 'active-dropdown-link' : '' }}">
               Dictionary
@@ -166,28 +323,6 @@
         </a>
       </li>
       @endif
-      @if (\Session::get(config('global.role_id_session')) == 1 || \Session::get(config('global.role_id_session')) == 4)
-      <li class="item-link hidden">
-        <a
-          href="/laporan"
-          class="nav-link relative"
-        >
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon-nav"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M11 2.05v3.02a7.002 7.002 0 1 0 5.192 12.536l2.137 2.137A9.958 9.958 0 0 1 12 22C6.477 22 2 17.523 2 12c0-5.185 3.947-9.449 9-9.95ZM21.95 13a9.954 9.954 0 0 1-2.207 5.328l-2.137-2.136A6.964 6.964 0 0 0 18.93 13h3.022ZM13.002 2.05a10.004 10.004 0 0 1 8.95 8.95H18.93a7.005 7.005 0 0 0-5.928-5.929V2.049Z"
-              />
-            </svg>
-          </span>
-          <div>Laporan</div>
-        </a>
-      </li>
-      @endif
       @if (\Session::get(config('global.role_id_session')) == 4)
       <li class="item-link {{ request()->is('target') ? 'active-link' : '' }}">
         <a
@@ -209,29 +344,6 @@
           <div>Target</div>
         </a>
       </li>
-      {{--  <li class="item-link {{ request()->is('collection') ? 'active-link' : '' }}">
-        <a
-          href="{{ route('collection.index') }}"
-          class="nav-link relative"
-        >
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon-nav"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-width="1.5"
-                d="m15.578 3.382l2 1.05c2.151 1.129 3.227 1.693 3.825 2.708C22 8.154 22 9.417 22 11.94v.117c0 2.525 0 3.788-.597 4.802c-.598 1.015-1.674 1.58-3.825 2.709l-2 1.049C13.822 21.539 12.944 22 12 22s-1.822-.46-3.578-1.382l-2-1.05c-2.151-1.129-3.227-1.693-3.825-2.708C2 15.846 2 14.583 2 12.06v-.117c0-2.525 0-3.788.597-4.802c.598-1.015 1.674-1.58 3.825-2.708l2-1.05C10.178 2.461 11.056 2 12 2s1.822.46 3.578 1.382ZM21 7.5l-4 2M12 12L3 7.5m9 4.5v9.5m0-9.5l4.5-2.25l.5-.25m0 0V13m0-3.5l-9.5-5"
-              />
-            </svg>
-          </span>
-          <div>Collection</div>
-        </a>
-      </li>  --}}
       @endif
       <li class="item-link {{ request()->is('notifikasi') ? 'active-link' : '' }}">
         <a
@@ -280,5 +392,30 @@
         </a>
       </li>
 
+      @if (\Session::get(config('global.role_id_session')) != 3)
+        <li class="item-link {{ request()->is('notifikasi') ? 'active-link' : '' }}">
+          <a
+            href="{{ route('notification.index') }}"
+            class="nav-link relative"
+          >
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon-nav"
+                viewBox="0 0 14 14"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M7 .5a4.29 4.29 0 0 1 4.29 4.29c0 4.77 1.74 5.71 2.21 5.71H.5c.48 0 2.21-.95 2.21-5.71A4.29 4.29 0 0 1 7 .5ZM5.5 12.33a1.55 1.55 0 0 0 3 0"
+                />
+              </svg>
+            </span>
+            <div>Notifikasi</div>
+          </a>
+        </li>
+      @endif
     </ul>
   </aside>

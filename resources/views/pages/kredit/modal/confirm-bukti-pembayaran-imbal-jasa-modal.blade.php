@@ -19,6 +19,11 @@
             <input type="hidden" name="id_cat" id="id_cat">
             <div class="modal-body">
                 <div class="gap-5 space-y-5 p-5">
+                    <div class="flex gap-5 w-full mt-0">
+                        <div class="input-box w-full space-y-3">
+                            <p class="uppercase appearance-none" id="kategori_data"></p>
+                        </div>
+                    </div>
                     <div class="flex gap-8">
                         <div class="input-box w-full space-y-3">
                             <label for="" class="uppercase appearance-none">Tanggal Upload</label>
@@ -36,9 +41,15 @@
                     </div>
                     <div class="space-y-3">
                         <label for="" class="uppercase appearance-none">Bukti Imbal Jasa</label>
-                        <div class="h-[528px] w-full bg-gray-100">
+                        <div class="content-bukti-imbal-jasa h-[528px] w-full bg-gray-100">
                             <iframe src="" frameborder="0" class="w-full h-[528px]" id="preview_imbal_jasa"
                                 style="width: 100%;"></iframe>
+                        </div>
+                        <div class="alert-bukti-imbal-jasa hidden text-center">
+                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                            <p class="font-semibold tracking-tighter text-theme-text">
+                                    File Bukti Imbal Jasa Tidak ada di server.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -67,12 +78,13 @@
             }).then((result) => {
                 console.log('then')
                 $("#modalConfirmImbalJasa").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
-                
-                refreshTable()
+                //$('#preload-data').removeClass("hidden")
+
+                //refreshTable()
+                location.reload();
             })
         }
-        
+
         function ConfirmImbalJasaErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
@@ -82,9 +94,10 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
-                    
-                    refreshTable()
+                    //$('#preload-data').removeClass("hidden")
+
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }

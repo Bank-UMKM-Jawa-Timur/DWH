@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Alert;
+use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 
 class ImportKKBController extends Controller
@@ -47,6 +47,22 @@ class ImportKKBController extends Controller
         return view('pages.import_kkb.index', $params);
     }
 
+    private function dateFormat($arr) {
+        for ($i=0; $i < count($arr); $i++) { 
+            if (strtolower($arr[$i]) == 'belum') {
+                $arr[$i] = '-';
+            }
+            else if (strtolower($arr[$i]) == 'sudah') {
+                $arr[$i] = '-';
+            }
+            else {
+                $arr[$i] = date('Y-m-d', strtotime($arr[$i]));
+            }
+        }
+
+        return $arr;
+    }
+
     public function store(Request $request) {
         try {
             DB::beginTransaction();
@@ -65,6 +81,9 @@ class ImportKKBController extends Controller
             $req_kode_cabang = $request->kode_cabang;
             $req_nama_debitur = $request->nama_debitur;
             $req_tgl_po = $request->tgl_po;
+            if ($req_tgl_po) {
+                $req_tgl_po = $this->dateFormat($req_tgl_po);
+            }
             $req_merk_kendaraan = $request->merk_kendaraan;
             $req_tipe_kendaraan = $request->tipe_kendaraan;
             $req_tahun_kendaraan = $request->tahun_kendaraan;
@@ -76,14 +95,35 @@ class ImportKKBController extends Controller
             $req_nominal_imbal_jasa = $request->nominal_imbal_jasa;
             $req_nominal_dp = $request->nominal_dp;
             $req_tgl_realisasi = $request->tgl_realisasi;
+            if ($req_tgl_realisasi) {
+                $req_tgl_realisasi = $this->dateFormat($req_tgl_realisasi);
+            }
             $req_tgl_pelunasan = $request->tgl_pelunasan;
+            if ($req_tgl_pelunasan) {
+                $req_tgl_pelunasan = $this->dateFormat($req_tgl_pelunasan);
+            }
             $req_tgl_penyerahan_unit = $request->tgl_penyerahan_unit;
+            if ($req_tgl_penyerahan_unit) {
+                $req_tgl_penyerahan_unit = $this->dateFormat($req_tgl_penyerahan_unit);
+            }
             $req_tgl_penyerahan_stnk = $request->tgl_penyerahan_stnk;
+            if ($req_tgl_penyerahan_stnk) {
+                $req_tgl_penyerahan_stnk = $this->dateFormat($req_tgl_penyerahan_stnk);
+            }
             $req_tgl_penyerahan_bpkb = $request->tgl_penyerahan_bpkb;
+            if ($req_tgl_penyerahan_bpkb) {
+                $req_tgl_penyerahan_bpkb = $this->dateFormat($req_tgl_penyerahan_bpkb);
+            }
             $req_tgl_penyerahan_polis = $request->tgl_penyerahan_polis;
+            if ($req_tgl_penyerahan_polis) {
+                $req_tgl_penyerahan_polis = $this->dateFormat($req_tgl_penyerahan_polis);
+            }
             $req_bpkb_via_bjsc = $request->bpkb_via_bjsc;
             $req_polis_via_bjsc = $request->polis_via_bjsc;
             $req_tgl_pembayaran_imbal_jasa = $request->tgl_pembayaran_imbal_jasa;
+            if ($req_tgl_pembayaran_imbal_jasa) {
+                $req_tgl_pembayaran_imbal_jasa = $this->dateFormat($req_tgl_pembayaran_imbal_jasa);
+            }
             $req_nominal_pembayaran_imbal_jasa = $request->nominal_pembayaran_imbal_jasa;
             $req_keterangan = $request->keterangan;
             $current_time = date('Y-m-d H:i:s');
@@ -162,7 +202,6 @@ class ImportKKBController extends Controller
 
                 // Bukti Pembayaran
                 $create_bukti_pembayaran = false;
-                $req_tgl_realisasi[$i] = strtolower($req_tgl_realisasi[$i]) == 'belum' || strtolower($req_tgl_realisasi[$i]) == 'sudah' ? '-' : $req_tgl_realisasi[$i];
                 if ($req_tgl_realisasi[$i] != '-') {
                     $tgl_bukti_pembayaran = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_realisasi[$i])));
                     if ($req_tgl_realisasi[$i] != '-') {
@@ -180,7 +219,6 @@ class ImportKKBController extends Controller
 
                 // Penyerahan Unit
                 $create_penyerahan_unit = false;
-                $req_tgl_penyerahan_unit[$i] = strtolower($req_tgl_penyerahan_unit[$i]) == 'belum' || strtolower($req_tgl_penyerahan_unit[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_unit[$i];
                 if ($req_tgl_penyerahan_unit[$i] != '-') {
                     $tgl_penyerahan_unit = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_unit[$i])));
                     if ($req_tgl_penyerahan_unit[$i] != '-') {
@@ -198,7 +236,6 @@ class ImportKKBController extends Controller
 
                 // Penyerahan STNK
                 $create_penyerahan_stnk = false;
-                $req_tgl_penyerahan_stnk[$i] = strtolower($req_tgl_penyerahan_stnk[$i]) == 'belum' || strtolower($req_tgl_penyerahan_stnk[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_stnk[$i];
                 if ($req_tgl_penyerahan_stnk[$i] != '-') {
                     $tgl_penyerahan_stnk = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_stnk[$i])));
                     if ($req_tgl_penyerahan_stnk[$i] != '-'
@@ -218,7 +255,6 @@ class ImportKKBController extends Controller
 
                 // Penyerahan BPKB
                 $create_penyerahan_bpkb = false;
-                $req_tgl_penyerahan_bpkb[$i] = strtolower($req_tgl_penyerahan_bpkb[$i]) == 'belum' || strtolower($req_tgl_penyerahan_bpkb[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_bpkb[$i];
                 if ($req_tgl_penyerahan_bpkb[$i] != '-') {
                     $tgl_penyerahan_bpkb = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_bpkb[$i])));
                     if ($req_tgl_penyerahan_bpkb[$i] != '-'
@@ -238,7 +274,6 @@ class ImportKKBController extends Controller
 
                 // Penyerahan Polis
                 $create_penyerahan_polis = false;
-                $req_tgl_penyerahan_polis[$i] = strtolower($req_tgl_penyerahan_polis[$i]) == 'belum' || strtolower($req_tgl_penyerahan_polis[$i]) == 'sudah' ? '-' : $req_tgl_penyerahan_polis[$i];
                 if ($req_tgl_penyerahan_polis[$i] != '-') {
                     $tgl_penyerahan_polis = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_penyerahan_polis[$i])));
                     if ($req_tgl_penyerahan_polis[$i] != '-'
@@ -258,7 +293,6 @@ class ImportKKBController extends Controller
 
                 // Pembayaran Imbal Jasa
                 $create_pembayaran_imbal_jasa = false;
-                $req_tgl_pembayaran_imbal_jasa[$i] = strtolower($req_tgl_pembayaran_imbal_jasa[$i]) == 'belum' || strtolower($req_tgl_pembayaran_imbal_jasa[$i]) == 'sudah' ? '-' : $req_tgl_pembayaran_imbal_jasa[$i];
                 if ($req_tgl_pembayaran_imbal_jasa[$i] != '-') {
                     $tgl_pembayaran_imbal_jasa = date('Y-m-d', strtotime(str_replace('/', '-', $req_tgl_pembayaran_imbal_jasa[$i])));
                     $create_pembayaran_imbal_jasa = DB::table('documents')->insert([

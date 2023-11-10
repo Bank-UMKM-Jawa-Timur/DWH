@@ -14,6 +14,11 @@
                 <div class="gap-5 space-y-5">
                     <div class="flex gap-5 w-full mt-0">
                         <div class="input-box w-full space-y-3">
+                            <p class="uppercase appearance-none" id="kategori_data"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 w-full mt-0">
+                        <div class="input-box w-full space-y-3">
                             <label for="" class="uppercase appearance-none">Tanggal</label>
                             <input type="text" disabled class="p-2 w-full border" id="tanggal_pembayaran"  />
                         </div>
@@ -25,8 +30,14 @@
 
                     <div class="space-y-3">
                         <label for="" class="uppercase appearance-none">Bukti Pembayaran</label>
-                        <div class="h-[528px] w-full bg-gray-100">
+                        <div class="content-bukti-pembayaran h-[528px] w-full bg-gray-100">
                             <iframe id="bukti_pembayaran_img" src="" class="mt-2" width="100%" height="500"></iframe>
+                        </div>
+                        <div class="alert-bukti-pembayaran hidden text-center">
+                            <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""class="max-w-sm mx-auto" />
+                            <p class="font-semibold tracking-tighter text-theme-text">
+                                    File Bukti Bukti Pembayaran Tidak ada di server.
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -43,9 +43,10 @@
             }).then((result) => {
                 console.log('then')
                 $("#modalAturKetersedian").addClass("hidden");
-                $('#preload-data').removeClass("hidden")
+                //$('#preload-data').removeClass("hidden")
                 
-                refreshTable()
+                //refreshTable()
+                location.reload();
             })
         }
         
@@ -58,9 +59,10 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#preload-data').removeClass("hidden")
+                    //$('#preload-data').removeClass("hidden")
                     
-                    refreshTable()
+                    //refreshTable()
+                    location.reload();
                 }
             })
         }
@@ -97,6 +99,7 @@
                 },
                 success: function(data) {
                     Swal.close()
+                    console.log(data)
                     if (Array.isArray(data.error)) {
                         //AturErrorMessage(req_date, data.error[0])
                     } else {
