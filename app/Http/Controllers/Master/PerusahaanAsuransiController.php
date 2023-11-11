@@ -160,10 +160,6 @@ class PerusahaanAsuransiController extends Controller
     {
         //
     }
-    public function form(){
-        dd('s');
-        return view('pages.perusahaan_asuransi.form-asuransi');
-    }
 
     /**
      * Update the specified resource in storage.
@@ -277,5 +273,10 @@ class PerusahaanAsuransiController extends Controller
 
             return response()->json($response);
         }
+    }
+
+    public function form()
+    {
+        return view('pages.perusahaan_asuransi.form-asuransi');
     }
 }

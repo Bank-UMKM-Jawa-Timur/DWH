@@ -92,7 +92,7 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/imbal-jasa', ImbalJasaController::class);
         Route::resource('/dictionary', DictionaryController::class);
         Route::resource('/perusahaan-asuransi', PerusahaanAsuransiController::class);
-        Route::get('/perusahaan-asuransi/form', [PerusahaanAsuransiController::class, 'form'])->name('perusahaan_asuransi.form');
+        Route::get('/perusahaan-asuransi-form', [PerusahaanAsuransiController::class, 'form'])->name('perusahaan_asuransi.form');
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
         Route::get('/mst_form_system_asuransi', function(){
             return view('pages.mst_form_system_asuransi.index');
