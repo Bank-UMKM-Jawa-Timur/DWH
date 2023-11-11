@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('mst_form_item_asuransi', function (Blueprint $table) {
-            $table->text('have_default_value')->change();
+            $table->text('have_default_value')->nullable()->change();
             $table->enum('only_accept', ['text', 'alpha', 'alphanumeric', 'numeric'])->after('sequence');
             $table->dropForeign('mst_form_asuransi_perusahaan_id_foreign');
             $table->dropColumn('perusahaan_id');
