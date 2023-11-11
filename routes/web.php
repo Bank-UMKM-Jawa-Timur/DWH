@@ -46,6 +46,8 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+
+
 Route::get('/login', function () {
     return view('auth.login');
 });
@@ -90,7 +92,14 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/imbal-jasa', ImbalJasaController::class);
         Route::resource('/dictionary', DictionaryController::class);
         Route::resource('/perusahaan-asuransi', PerusahaanAsuransiController::class);
+        Route::get('/perusahaan-asuransi-form', [PerusahaanAsuransiController::class, 'form'])->name('perusahaan_asuransi.form');
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
+        Route::get('/mst_form_system_asuransi', function(){
+            return view('pages.mst_form_system_asuransi.index');
+        })->name('mst_form_system_asuransi.index');
+        Route::get('/mst_form_system_asuransi/create', function(){
+            return view('pages.mst_form_system_asuransi.create');
+        })->name('mst_form_system_asuransi/create');
     });
 
     Route::prefix('asuransi-detail')->group(function () {
@@ -104,6 +113,7 @@ Route::middleware('auth_api')->group(function () {
             return view('pages.detail.pengajuan-klaim');
         });
     });
+
 
     Route::middleware('asuransi_permission')->prefix('asuransi')->name('asuransi.')->group(function() {
         Route::prefix('/registrasi')

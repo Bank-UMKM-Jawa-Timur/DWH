@@ -94,6 +94,9 @@
                                         data-id="{{ $item->id }}"
                                         data-name="{{ $item->name }}">Hapus</a>
                                     </li>
+                                    <li class="">
+                                        <a href="{{route('perusahaan_asuransi.form')}}" class="item-dropdown">Form</a>
+                                    </li>
                                 </ul>
                             </div>
                         </td>
@@ -147,7 +150,7 @@
         $(`#${targetId} #edit-nama`).val(data_nama)
         $(`#${targetId} #edit-telp`).val(data_telp)
         $(`#${targetId} #edit-alamat`).val(data_alamat)
-        
+
         $("#" + targetId).removeClass("hidden");
         $(".layout-form").addClass("layout-form-collapse");
         if (targetId.slice(0, 5) !== "modal") {
@@ -162,7 +165,7 @@
             $(".layout-overlay-form").addClass("hidden");
         }
     });
-    
+
     $("#simpanButton").on('click', function(e) {
         e.preventDefault();
         const req_nama = document.getElementById('add-nama')
