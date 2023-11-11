@@ -46,31 +46,6 @@
             >entries</label
           >
         </div>
-        <div class="search-table lg:w-96 w-full">
-          <div
-            class="input-search text-[#BFBFBF] rounded-md border flex gap-2"
-          >
-            <span class="mt-2 ml-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z"
-                />
-              </svg>
-            </span>
-            <input
-              type="search"
-              placeholder="Search"
-              class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-              autocomplete="off"
-            />
-          </div>
-        </div>
       </div>
       <div class="tables mt-2">
         <table class="table-hak-akses table-auto w-full">
@@ -122,17 +97,7 @@
           <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
         </div>
         <div>
-          <div class="pagination">
-            <button class="btn-pagination">Previous</button>
-            <button class="btn-pagination is-active">1</button>
-            <button class="btn-pagination">2</button>
-            <button class="btn-pagination">3</button>
-            <button class="btn-pagination">4</button>
-            <button class="btn-pagination">5</button>
-            <button class="btn-pagination">...</button>
-            <button class="btn-pagination">100</button>
-            <button class="btn-pagination">Next</button>
-          </div>
+
         </div>
       </div>
     </div>
