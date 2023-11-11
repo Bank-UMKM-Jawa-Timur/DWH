@@ -94,6 +94,9 @@
                                         data-id="{{ $item->id }}"
                                         data-name="{{ $item->name }}">Hapus</a>
                                     </li>
+                                    <li class="">
+                                        <a href="#" class="item-dropdown">Form</a>
+                                    </li>
                                 </ul>
                             </div>
                         </td>
