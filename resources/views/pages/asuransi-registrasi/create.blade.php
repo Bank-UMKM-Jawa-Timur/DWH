@@ -183,7 +183,7 @@
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis PERTANGGUNGAN<span
                                 class="text-theme-primary">*</span> </label>
-                        <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border">
+                        <select name="jenis_pertanggungan" id="jenis_pertanggungan" class="w-full p-2 border" onchange="jenisPertanggungan(this.value)">
                             <option selected value="">-- Pilih Jenis Pertanggungan ---</option>
                             <option @if (old('jenis_pertanggungan') == '01') selected @endif value="01">Pokok</option>
                             <option @if (old('jenis_pertanggungan') == '02') selected @endif value="02">Sisa Kredit</option>
@@ -346,7 +346,7 @@
             }
         })
 
-        $('#jenis_pertanggungan').on('change', function() {
+        /*$('#jenis_pertanggungan').on('change', function() {
             var cod = 0;
             var masa_asuransi = $('#jumlah_bulan').val()
             if (masa_asuransi == '') {
@@ -409,7 +409,71 @@
                     }
                 })
             }
-        })
+        })*/
+        function jenisPertanggungan(jenis) {
+            var cod = 0;
+            var masa_asuransi = $('#jumlah_bulan').val()
+            if (masa_asuransi == '') {
+                alertWarning('Harap pilih data pengajuan terlebih dahulu')
+            }
+            var plafon_kredit = $('#plafon_kredit').val()
+            if (plafon_kredit != '') {
+                plafon_kredit = plafon_kredit.replaceAll('.', '')
+                plafon_kredit = parseInt(plafon_kredit)
+            }
+            let premi;
+            //var jenis = $(this).val()
+
+            if (masa_asuransi > 60) {
+                if (jenis == '01') {
+                    alertWarning('Tidak bisa memilih jenis pertanggungan pokok, dikarenakan jumlah bulan lebih dari 60 bulan')
+                    $('[name="jenis_pertanggungan"]').focus()
+                    $('#jenis_pertanggungan').val("");
+                    cod++
+                }
+            }
+            if (jenis == '01')
+                jenis = 'plafon'
+            else if (jenis == '02')
+                jenis = 'bade'
+            else
+                jenis = '';
+
+
+            if (jenis != '' && cod == 0) {
+                $.ajax({
+                    url: "{{ route('asuransi.registrasi.rate_premi') }}",
+                    type: "GET",
+                    accept: "Application/json",
+                    data: {
+                        'jenis': jenis,
+                        'masa_asuransi': masa_asuransi,
+                    },
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            if (response.data) {
+                                var rate = parseFloat(response.data.rate)
+                                premi = Math.round(plafon_kredit * (rate / 1000))
+                                premi = formatRupiah(premi.toString())
+                                $('#premi').val(premi)
+                                $('#rate_premi').val(rate)
+                                $('#tarif').val(rate)
+                                hitungPremiDisetor()
+                            } else {
+                                alertWarning('Rate premi tidak ditemukan')
+                            }
+                        } else {
+                            console.log(response.message)
+                            alertWarning('Terjadi  kesalahan saat mengambil rate premi')
+                        }
+                    },
+                    error: function(response) {
+                        console.log(response)
+                        alertWarning('Terjadi kesalahan saat mengambil rate premi')
+                    }
+                })
+            }
+        }
 
         $("#simpan-asuransi").on("click", function(e) {
             e.preventDefault();
