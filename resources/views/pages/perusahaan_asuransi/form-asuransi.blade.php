@@ -1,4 +1,9 @@
 @extends('layout.master')
+@section('modal')
+
+@include('pages.perusahaan_asuransi.modal.detail-item')
+
+@endsection 
 @section('content')
 <div class="head-pages">
     <p class="text-sm">Master</p>
@@ -13,39 +18,20 @@
       <div
         class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between"
       >
-        <div class="title-table lg:p-3 p-2 text-center">
+        <div class="title-table lg:p-3 p-2 text-left">
           <h2
             class="font-bold text-lg text-theme-text tracking-tighter"
           >
-           Data Form Asuransi
+            Item asuransi 
           </h2>
+          <span>
+            <p class="text-sm text-gray-500">Pilih item yang digunakan untuk form asuransi <b>Ekalloyd</b>.</p>
+          </span>
         </div>
       </div>
       <div
         class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2"
       >
-        <div class="sorty pl-1 w-full">
-          <label
-            for=""
-            class="mr-3 text-sm text-neutral-400"
-            >show</label
-          >
-          <select
-            name=""
-            class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-            id=""
-          >
-            <option value="">5</option>
-            <option value="">10</option>
-            <option value="">15</option>
-            <option value="">20</option>
-          </select>
-          <label
-            for=""
-            class="ml-3 text-sm text-neutral-400"
-            >entries</label
-          >
-        </div>
       </div>
       <div class="tables mt-2">
         <table class="table-hak-akses table-auto w-full">
@@ -73,8 +59,23 @@
           <tbody>
             <tr>
               <td>1</td>
-              <td>No Rekening</td>
+              <td><a  href="#" data-target-id="modal-detail-asuransi" class="toggle-modal underline">No Rekening</a></td>
               <td>Text</td>
+
+              <td>
+                <input
+                  checked
+                  id="checked-checkbox"
+                  type="checkbox"
+                  value=""
+                  class="w-5 h-5 accent-current text-theme-primary bg-gray-100 border-gray-300 rounded focus:ring-theme-primary focus:ring-2"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><a  href="#" data-target-id="modal-detail-asuransi" class="toggle-modal underline">Jenis Pengajuan</a></td>
+              <td>Select</td>
 
               <td>
                 <input
@@ -93,12 +94,7 @@
       <div
         class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between"
       >
-        <div>
-          <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-        </div>
-        <div>
 
-        </div>
       </div>
     </div>
   </div>
