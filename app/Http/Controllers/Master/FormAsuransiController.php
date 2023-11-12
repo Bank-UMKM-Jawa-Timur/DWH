@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Models\MstFormAsuransi;
 use App\Models\MstFormItemAsuransi;
+use App\Models\MstPerusahaanAsuransi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ItemAsuransiController extends Controller
+class FormAsuransiController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +18,8 @@ class ItemAsuransiController extends Controller
      */
     public function index(Request $request)
     {
-        $param['title'] = 'Master List Item';
-        $param['pageTitle'] = 'Master List Item';
+        $param['title'] = 'Master List Form Asuransi';
+        $param['pageTitle'] = 'Master List Form Asuransi';
         $page_length = $request->page_length ? $request->page_length : 5;
 
         $searchQuery = $request->query('query');
@@ -26,26 +28,30 @@ class ItemAsuransiController extends Controller
         $data = $this->list($page_length, $searchQuery, $searchBy);
         $param['data'] = $data;
         $param['page_length'] = $page_length;
+        $param['data_perusahaan'] = MstPerusahaanAsuransi::select('id','nama')->orderBy('id', 'ASC')->get();
+        $param['data_item'] = MstFormItemAsuransi::select('id','label')->orderBy('id', 'ASC')->get();
 
-        return view('pages.mst_form_system_asuransi.index', $param);
+        return view('pages.mst_form_asuransi.index', $param);
     }
 
     public function list($page_length =5, $searchQuery, $searchBy)
     {
-        $data = MstFormItemAsuransi::orderBy('label');
+        $data = MstFormAsuransi::with(['perusahaanAsuransi','itemAsuransi'])->orderBy('id', 'ASC');
         if ($searchQuery && $searchBy === 'field') {
             $data->where(function ($q) use ($searchQuery) {
-                $q->where('label', 'like', '%' . $searchQuery . '%')
-                ->orWhere('level', 'like', '%' . $searchQuery . '%')
-                ->orWhere('parent_id', 'like', '%' . $searchQuery . '%')
-                ->orWhere('type', 'like', '%' . $searchQuery . '%')
-                ->orWhere('sequence', 'like', '%' . $searchQuery . '%')
-                ->orWhere('only_accept', 'like', '%' . $searchQuery . '%');
+                $q->where('perusahaanAsuransi.nama', 'like', '%' . $searchQuery . '%')
+                ->orWhere('itemAsuransi.label', 'like', '%' . $searchQuery . '%')
+                ->orWhere('itemAsuransi.level', 'like', '%' . $searchQuery . '%')
+                ->orWhere('itemAsuransi.type', 'like', '%' . $searchQuery . '%')
+                ->orWhere('itemAsuransi.formula', 'like', '%' . $searchQuery . '%')
+                ->orWhere('itemAsuransi.sequence', 'like', '%' . $searchQuery . '%')
+                ->orWhere('itemAsuransi.only_accept', 'like', '%' . $searchQuery . '%');
             });
         }
 
         if (is_numeric($page_length))
             $data = $data->paginate($page_length);
+            // $data = $data->paginate($page_length)->withQueryString();
         else
             $data = $data->get();
         return $data;
@@ -58,10 +64,7 @@ class ItemAsuransiController extends Controller
      */
     public function create()
     {
-        $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
-        // $data = response()->json(['result' => $dataField]);
-
-        return view('pages.mst_form_system_asuransi.create', compact(['dataField']));
+        //
     }
 
     /**
@@ -76,18 +79,14 @@ class ItemAsuransiController extends Controller
         $message = '';
 
         $validator = Validator::make($request->all(), [
-            'label' => 'required',
-            'level' => 'required',
-            'sequence' => 'required',
-            'only_accept' => 'required',
+            'perusahaan_id' => 'required',
+            'form_item_asuransi_id' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
             'unique' => ':attribute telah digunakan.',
         ], [
-            'label' => 'Label',
-            'level' => 'Level',
-            'sequence' => 'Sequence',
-            'only_accept' => 'Only Accept',
+            'perusahaan_id' => 'Perusahaan Asuransi',
+            'form_item_asuransi_id' => 'Item Asuransi',
         ]);
 
         if ($validator->fails()) {
@@ -97,21 +96,10 @@ class ItemAsuransiController extends Controller
         }
 
         try {
-            $newItem =  new MstFormItemAsuransi();
-            $newItem->label = $request->label;
-            $newItem->level = $request->level;
-            $newItem->parent_id = $request->parent_id;
-            $newItem->type = $request->type;
-            $newItem->formula = $request->formula;
-            $newItem->sequence = $request->sequence;
-            $newItem->only_accept = $request->only_accept;
-            $newItem->have_default_value = '';
-            $newItem->rupiah = $request->rupiah;
-            $newItem->readonly = $request->readonly;
-            $newItem->hidden = $request->hidden;
-            $newItem->disabled = $request->disabled;
-            $newItem->required = $request->required;
-            $newItem->save();
+            $newAsuransi =  new MstFormAsuransi();
+            $newAsuransi->perusahaan_id = $request->perusahaan_id;
+            $newAsuransi->form_item_asuransi_id = $request->form_item_asuransi_id;
+            $newAsuransi->save();
 
 
             $status = 'success';
@@ -140,6 +128,7 @@ class ItemAsuransiController extends Controller
      */
     public function show($id)
     {
+        //
     }
 
     /**

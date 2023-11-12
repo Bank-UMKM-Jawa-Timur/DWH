@@ -167,18 +167,18 @@
 
         const req_formula = document.getElementById('add-formula');
 
-        console.log("label : " + req_label.value);
-        console.log("level : " + req_level.value);
-        console.log("parent : " + req_parent_id.value);
-        console.log("type : " + req_type_input.value);
-        console.log("sequence : " + req_sequence.value);
-        console.log("rupiah : " + req_rupiah.value);
-        console.log("read only : " + req_readonly.value);
-        console.log("hidden : " + req_hidden.value);
-        console.log("disabled : " + req_disabled.value);
-        console.log("required : " + req_type_required.value);
-        console.log("only : " + req_only_accept.value);
-        console.log("parent : " + req_parent_id.value);
+        // console.log("label : " + req_label.value);
+        // console.log("level : " + req_level.value);
+        // console.log("parent : " + req_parent_id.value);
+        // console.log("type : " + req_type_input.value);
+        // console.log("sequence : " + req_sequence.value);
+        // console.log("rupiah : " + req_rupiah.value);
+        // console.log("read only : " + req_readonly.value);
+        // console.log("hidden : " + req_hidden.value);
+        // console.log("disabled : " + req_disabled.value);
+        // console.log("required : " + req_type_required.value);
+        // console.log("only : " + req_only_accept.value);
+        // console.log("parent : " + req_parent_id.value);
 
         $.ajax({
             type: "POST",
@@ -200,7 +200,7 @@
                 required: req_type_required.value,
             },
             success: function(data) {
-                //console.log(data)
+                console.log(data)
                 if (Array.isArray(data.error)) {
                     for (var i = 0; i < data.error.length; i++) {
                         var message = data.error[i];

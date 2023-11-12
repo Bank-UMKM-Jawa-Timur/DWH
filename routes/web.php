@@ -9,6 +9,7 @@ use App\Http\Controllers\KreditController;
 use App\Http\Controllers\LogActivitesController;
 use App\Http\Controllers\Master\DictionaryController;
 use App\Http\Controllers\Master\DocumenCategoryController;
+use App\Http\Controllers\Master\FormAsuransiController;
 use App\Http\Controllers\Master\ImbalJasaController;
 use App\Http\Controllers\Master\ItemAsuransiController;
 use App\Http\Controllers\Master\JenisAsuransiController;
@@ -96,6 +97,7 @@ Route::middleware('auth_api')->group(function () {
         Route::get('/perusahaan-asuransi-form', [PerusahaanAsuransiController::class, 'form'])->name('perusahaan_asuransi.form');
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
         Route::resource('/mst_form_system_asuransi', ItemAsuransiController::class);
+        Route::resource('/mst_form_asuransi', FormAsuransiController::class);
         // Route::get('/mst_form_system_asuransi/create', function(){
         //     return view('pages.mst_form_system_asuransi.create');
         // })->name('mst_form_system_asuransi/create');
