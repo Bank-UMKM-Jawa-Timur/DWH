@@ -25,6 +25,7 @@ class ItemAsuransiController extends Controller
 
         $data = $this->list($page_length, $searchQuery, $searchBy);
         $param['data'] = $data;
+        $param['page_length'] = $page_length;
 
         return view('pages.mst_form_system_asuransi.index', $param);
     }
@@ -122,7 +123,7 @@ class ItemAsuransiController extends Controller
             $newItem->formula = $request->formula;
             $newItem->sequence = $request->sequence;
             $newItem->only_accept = $request->only_accept;
-            // $newItem->have_default_value = $request->have_default_value;
+            $newItem->have_default_value = '';
             $newItem->rupiah = $request->rupiah;
             $newItem->readonly = $request->readonly;
             $newItem->hidden = $request->hidden;

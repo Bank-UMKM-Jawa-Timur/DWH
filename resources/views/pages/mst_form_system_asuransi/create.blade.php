@@ -31,8 +31,13 @@
                 </select>
             </div>
             <div class="input-box space-y-3">
+                {{-- @php
+                    $dataField = \App\Models\MstFormItemAsuransi::orderBy('id', 'ASC')->get();
+                @endphp --}}
                 <label for="" class="uppercase">Parent<span class="text-theme-primary">*</span></label>
                 <select name="add-parent_id" class="w-full p-2 border" id="add-parent_id">
+                    {{-- <option value="1">No Rekening</option>
+                    <option value="2">Jenis Asuransi</option> --}}
                     @foreach ($dataField as $item)
                         <option value="{{ $item->id }}">{{ $item->label }}</option>  
                     @endforeach
@@ -128,7 +133,7 @@
 @endsection
 @push('extraScript')
   <script>
-    // change value checkbox to 1 or 0
+    // change checkbox value to 1 or 0
     $('#add-rupiah').on('change', function(){
         $('#add-rupiah-value').val(this.checked ? 1 : 0);
     });
@@ -161,6 +166,19 @@
         const req_type_required = document.getElementById('add-type_require-value');
 
         const req_formula = document.getElementById('add-formula');
+
+        console.log("label : " + req_label.value);
+        console.log("level : " + req_level.value);
+        console.log("parent : " + req_parent_id.value);
+        console.log("type : " + req_type_input.value);
+        console.log("sequence : " + req_sequence.value);
+        console.log("rupiah : " + req_rupiah.value);
+        console.log("read only : " + req_readonly.value);
+        console.log("hidden : " + req_hidden.value);
+        console.log("disabled : " + req_disabled.value);
+        console.log("required : " + req_type_required.value);
+        console.log("only : " + req_only_accept.value);
+        console.log("parent : " + req_parent_id.value);
 
         $.ajax({
             type: "POST",
