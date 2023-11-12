@@ -110,7 +110,7 @@ class DocumenCategoryController extends Controller
             $newVendor->name = $request->name;
             $newVendor->save();
 
-            $this->logActivity->store("Membuat data dokumen kategori $request->name.");
+            $this->logActivity->store("Membuat data dokumen kategori $request->name.", '', '0');
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';

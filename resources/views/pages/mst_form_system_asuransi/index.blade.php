@@ -23,6 +23,8 @@
         <div
           class="table-action flex lg:justify-normal justify-center p-2 gap-2"
         >
+
+        <a href="{{ route('mst_form_system_asuransi.create') }}">
           <button
             id="form-toggle"
             class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white"
@@ -46,58 +48,38 @@
             </span>
             <span class="lg:block hidden"> Tambah </span>
           </button>
+        </a>
         </div>
       </div>
       <div
         class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2"
       >
-        <div class="sorty pl-1 w-full">
-          <label
-            for=""
-            class="mr-3 text-sm text-neutral-400"
-            >show</label
-          >
-          <select
-            name=""
-            class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
-            id=""
-          >
-            <option value="">5</option>
-            <option value="">10</option>
-            <option value="">15</option>
-            <option value="">20</option>
-          </select>
-          <label
-            for=""
-            class="ml-3 text-sm text-neutral-400"
-            >entries</label
-          >
+          <div class="sorty pl-1 w-full">
+            <form id="form" action="" method="GET">
+                <label for="" class="mr-3 text-sm text-neutral-400">show</label>
+                <select class="border px-4 py-1.5 cursor-pointer rounded appearance-none text-center"
+                name="page_length" id="page_length">
+                    <option value="5" {{ Request::get('page_length') == '5' ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ Request::get('page_length') == '10' ? 'selected' : '' }}>10</option>
+                    <option value="15" {{ Request::get('page_length') == '15' ? 'selected' : '' }}>15</option>
+                    <option value="20" {{ Request::get('page_length') == '20' ? 'selected' : '' }}>20</option>
+                    <option value="all" {{ Request::get('page_length') == 'all' ? 'selected' : '' }}>All</option>
+                </select>
+                <label for="" class="ml-3 text-sm text-neutral-400">entries</label>
+            </form>
         </div>
         <div class="search-table lg:w-96 w-full">
-          <div
-            class="input-search text-[#BFBFBF] rounded-md border flex gap-2"
-          >
-            <span class="mt-2 ml-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z"
-                />
-              </svg>
-            </span>
-            <input
-              type="search"
-              placeholder="Search"
-              class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
-              autocomplete="off"
-            />
-          </div>
-        </div>
+          <form action="{{ route('mst_form_system_asuransi.index') }}" method="GET">
+              <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
+                  <span class="mt-2 ml-3">
+                      @include('components.svg.search')
+                  </span>
+                      <input type="hidden" name="search_by" value="field">
+                      <input type="search" placeholder="Search" class="p-2 rounded-md w-full outline-none text-[#BFBFBF]"
+                          name="query" value="{{ old('query', Request()->query('query')) }}" autocomplete="off" />
+              </div>
+          </form>
+      </div>
       </div>
       <div class="tables mt-2">
         <table class="table-auto w-full">
@@ -112,45 +94,41 @@
             <th>Aksi</th>
           </tr>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Field data</td>
-              <td>2</td>
-              <td>No Rekening</td>
-              <td>Text</td>
-              <td>-</td>
-              <td>Text</td>
-              <td>
-                <div class="dropdown">
-                  <button
-                    class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn"
-                  >
-                    Detail
-                  </button>
-                </div>
-              </td>
-            </tr>
+            @forelse ($data as $item)
+              <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $item->label }}</td>
+                <td>{{ $item->level }}</td>
+                <td>{{ $item->parent_id ? $item->parent_id : "-" }}</td>
+                <td>{{ $item->type ? $item->type : "-" }}</td>
+                <td>{{ $item->sequence ? $item->sequence : "-" }}</td>
+                <td>{{ $item->only_accept }}</td>
+                <td>
+                  <div class="dropdown">
+                    <button
+                      class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                      Detail
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            @empty
+              <tr>
+                  <td colspan="8">
+                      <span class="text-danger">Maaf data belum tersedia.</span>
+                  </td>
+              </tr>
+            @endforelse
           </tbody>
         </table>
       </div>
-      <div
-        class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between"
-      >
-        <div>
-          <p class="mt-3 text-sm">Menampilkan 1 - 5 dari 100 Data</p>
-        </div>
-        <div>
-          <div class="pagination">
-            <button class="btn-pagination">Previous</button>
-            <button class="btn-pagination is-active">1</button>
-            <button class="btn-pagination">2</button>
-            <button class="btn-pagination">3</button>
-            <button class="btn-pagination">4</button>
-            <button class="btn-pagination">5</button>
-            <button class="btn-pagination">...</button>
-            <button class="btn-pagination">100</button>
-            <button class="btn-pagination">Next</button>
-          </div>
+      <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
+        <div class="w-full">
+            <div class="pagination">
+                @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    {{ $data->links('pagination::tailwind') }}
+                @endif
+            </div>
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ use App\Http\Controllers\LogActivitesController;
 use App\Http\Controllers\Master\DictionaryController;
 use App\Http\Controllers\Master\DocumenCategoryController;
 use App\Http\Controllers\Master\ImbalJasaController;
+use App\Http\Controllers\Master\ItemAsuransiController;
 use App\Http\Controllers\Master\JenisAsuransiController;
 use App\Http\Controllers\Master\NotificationTemplateController;
 use App\Http\Controllers\Master\PenggunaController;
@@ -94,12 +95,10 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/perusahaan-asuransi', PerusahaanAsuransiController::class);
         Route::get('/perusahaan-asuransi-form', [PerusahaanAsuransiController::class, 'form'])->name('perusahaan_asuransi.form');
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
-        Route::get('/mst_form_system_asuransi', function(){
-            return view('pages.mst_form_system_asuransi.index');
-        })->name('mst_form_system_asuransi.index');
-        Route::get('/mst_form_system_asuransi/create', function(){
-            return view('pages.mst_form_system_asuransi.create');
-        })->name('mst_form_system_asuransi/create');
+        Route::resource('/mst_form_system_asuransi', ItemAsuransiController::class);
+        // Route::get('/mst_form_system_asuransi/create', function(){
+        //     return view('pages.mst_form_system_asuransi.create');
+        // })->name('mst_form_system_asuransi/create');
     });
 
     Route::prefix('asuransi-detail')->group(function () {
