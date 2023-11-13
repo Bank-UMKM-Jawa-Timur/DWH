@@ -88,26 +88,26 @@ class ItemAsuransiController extends Controller
         $message = '';
         $url = null;
 
-        // $validator = Validator::make($request->all(), [
-        //     'label' => 'required',
-        //     'level' => 'required',
-        //     'sequence' => 'required',
-        //     'only_accept' => 'required',
-        // ], [
-        //     'required' => ':attribute harus diisi.',
-        //     'unique' => ':attribute telah digunakan.',
-        // ], [
-        //     'label' => 'Label',
-        //     'level' => 'Level',
-        //     'sequence' => 'Sequence',
-        //     'only_accept' => 'Only Accept',
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'label' => 'required',
+            'level' => 'required',
+            'sequence' => 'required',
+            'only_accept' => 'required',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'unique' => ':attribute telah digunakan.',
+        ], [
+            'label' => 'Label',
+            'level' => 'Level',
+            'sequence' => 'Sequence',
+            'only_accept' => 'Only Accept',
+        ]);
 
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'error' => $validator->errors()->all()
-        //     ]);
-        // }
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
 
         DB::beginTransaction();
         try {
@@ -220,8 +220,11 @@ class ItemAsuransiController extends Controller
             $data = MstFormItemAsuransi::find($id);
             $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
             if($data) {
-                // dd($data);
-                return view('pages.mst-item-asuransi.edit', compact(['data', 'dataField']));
+                $itemValue = DB::table('mst_option_values')
+                                ->select('id', 'form_asuransi_id', 'value', 'display_value')
+                                ->where('form_asuransi_id', $data->id)
+                                ->get();
+                return view('pages.mst-item-asuransi.edit', compact(['data', 'dataField', 'itemValue']));
             } else{
                 Alert::error('Gagal', 'Data tidak ditemukan');
                 return back();
@@ -246,6 +249,7 @@ class ItemAsuransiController extends Controller
     {
         $status = '';
         $message = '';
+        $url = route('mst-item-asuransi.index');
 
         $validator = Validator::make($request->all(), [
             'label' => 'required',
@@ -270,6 +274,8 @@ class ItemAsuransiController extends Controller
 
         DB::beginTransaction();
         try{
+            $temp_type = $request->type;
+
             $updated = MstFormItemAsuransi::find($id);
             $updated->label = $request->label;
             $updated->level = $request->level;
@@ -286,20 +292,96 @@ class ItemAsuransiController extends Controller
             $updated->updated_at = now();
             $updated->save();
 
+            $item_id = $request->item_id;
+            $item_val = $request->item_val;
+            $item_display_val = $request->item_display_val;
+
+
+            if (($temp_type == 'option' || $temp_type == 'radio') && ($request->type != 'option' && $request->type != 'radio')) {
+                DB::table('mst_option_values')
+                                ->where('form_asuransi_id', $id)
+                                ->delete();
+            }
+
+            if ($request->type == 'option' || $request->type == 'radio') {
+                if (is_array($item_id) && is_array($item_val) && is_array($item_display_val)) {
+                    if (count($item_id) == count($item_val) &&
+                        count($item_id) && count($item_display_val) &&
+                        count($item_val) == count($item_display_val)) {
+                        /**
+                         * 1. Get old items
+                         * 2. If old item doesn't in new item then delete the item
+                         */
+                        $oldItemId = DB::table('mst_option_values')
+                                        ->where('form_asuransi_id', $id)
+                                        ->pluck('id');
+
+                        for ($i=0; $i < count($oldItemId); $i++) {
+                            if (!in_array($oldItemId[$i], $item_id)) {
+                                // Delete old item
+                                DB::table('mst_option_values')->where('id', $oldItemId[$i])->delete();
+                            }
+                        }
+
+                        // Loop for new item or old item
+                        for ($i = 0; $i < count($item_id); $i++) {
+                            if ($item_id[$i] != 0) {
+                                // Data lama
+                                DB::table('mst_option_values')
+                                    ->where('id', $item_id[$i])
+                                    ->update([
+                                        'form_asuransi_id' => $id,
+                                        'value' => $item_val[$i],
+                                        'display_value' => $item_display_val[$i],
+                                        'updated_at' => date('Y-m-d H:i:s'),
+                                    ]);
+                            }
+                            else {
+                                // Data baru
+                                DB::table('mst_option_values')->insert([
+                                    'form_asuransi_id' => $id,
+                                    'value' => $item_val[$i],
+                                    'display_value' => $item_display_val[$i],
+                                    'created_at' => date('Y-m-d H:i:s'),
+                                    'updated_at' => date('Y-m-d H:i:s'),
+                                ]);
+                            }
+                        }
+                    }
+                    else {
+                        DB::rollBack();
+                        $status = 'failed';
+                        $message = 'Harap lengkapi kolom pada tabel item.';
+                        throw new Exception("Kolom item tidak lengkap");
+                    }
+                }
+            }
+
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
+            $this->logActivity->store('Pengguna ' . $user_name . '(' . $name . ')' . ' memperbarui data Item Form Asuransi.','',1);
+
             DB::commit();
 
             $status = 'success';
             $message = 'Berhasil mengubah data';
         } catch (Exception $e){
+            DB::rollBack();
             $status = 'failed';
             $message = $e->getMessage();
         } catch (QueryException $e){
+            DB::rollBack();
             $status = 'failed';
             $message = $e->getMessage();
-        } finally{
+        }
+        finally{
             return response()->json([
                 'status' => $status,
-                'message' => $message
+                'message' => $message,
+                'url' => $url
             ]);
         }
     }

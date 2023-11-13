@@ -31,7 +31,7 @@
                 </select>
             </div>
             <div class="input-box space-y-3 hidden" id="parent">
-                <label for="" class="uppercase">Parent<span class="text-theme-primary">*</span></label>
+                <label for="" class="uppercase">Induk<span class="text-theme-primary">*</span></label>
                 <select name="add-parent_id" class="w-full p-2 border" id="add-parent_id">
                     <option value="" selected>-- Pilih Parent --</option>
                     @foreach ($dataField as $item)
@@ -44,12 +44,10 @@
                 <input type="number" class=" p-2 w-full border" id="add-sequence" name="add-sequence" />
                 <small class="form-text text-red-600 error"></small>
             </div>
-        </div>
-        {{-- form data 1 --}}
-        <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Tipe input<span class="text-theme-primary">*</span></label>
                 <select name="add-type_input" class="w-full p-2 border" id="add-type_input">
+                    <option value="">-- Pilih Tipe Input --</option>
                     <option value="text">Teks</option>
                     <option value="number">Angka</option>
                     <option value="option">Opsi</option>
@@ -89,13 +87,11 @@
                         </td>
                         <td class="flex justify-center">
                             <button class="btn-plus-item py-2 bg-green-500 px-5 rounded border text-sm text-white">+</button>
-                            <button class="btn-minus-item py-2 text-white rounded border-theme-primary px-5  border text-lg bg-theme-primary ">-</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        {{-- form data 1 --}}
         <div class="lg:grid-cols-3 max-w-lg md:grid-cols-2 grid-cols-1 grid gap-5 justify-end">
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
@@ -135,13 +131,13 @@
         </div>
         <div class="flex gap-5 mt-8 w-full">
             <div class="input-box space-y-3 w-full">
-                <label for="" class="uppercase">Field FORMULA<span class="text-theme-primary">*</span></label>
-                <input type="text" class="p-2 w-full border bg-neutral-100" id="add-formula" name="formula" placeholder="Preview formula total = (field - field)" readonly/>
+                <label for="" class="uppercase">Rumus</label>
+                <input type="text" class="p-2 w-full border bg-neutral-100" id="add-formula" name="formula" placeholder="Preview rumus total = (field - field)" readonly/>
                 <small class="form-text text-red-600 error"></small>
             </div>
             <div class="mt-9 w-2/4">
                 <button data-target-id="modal-formula" class="px-8 py-2 rounded toggle-modal bg-theme-primary text-white ">
-                    Create Formula
+                    Rumus
                 </button>
             </div>
         </div>
@@ -232,6 +228,7 @@
         }
 
         $('#btnSimpan').on('click', function (e) {
+            $('#preload-data').removeClass('hidden')
             e.preventDefault()
             const token = generateCsrfToken()
             const req_label = document.getElementById('add-label');
@@ -267,7 +264,6 @@
                     formula: req_formula.value,
                     sequence: req_sequence.value,
                     only_accept: req_only_accept.value,
-                    // have_default_value:
                     rupiah: req_rupiah.value,
                     readonly: req_readonly.value,
                     hidden: req_hidden.value,
@@ -295,7 +291,7 @@
                                 closeOnClickOutside: false
                             }).then(() => {
                                 setTimeout(function() {
-                                    location.reload();
+                                    window.location = data.url
                                 }, 3000);
                             });
                         } else {
