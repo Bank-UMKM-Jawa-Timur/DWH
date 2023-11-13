@@ -34,6 +34,18 @@
                     <small class="form-text text-red-600 error"></small>
                 </div>
                 <div class="input-box space-y-3 mt-3">
+                    <label for="" class="uppercase">Tanggal Awal Kredit</label>
+                    <input type="text" class="disabled-input bg-disabled p-2 w-full border "
+                        id="modal_tgl_awal" name="tgl_awal" readonly/>
+                    <small class="form-text text-red-600 error"></small>
+                </div>
+                <div class="input-box space-y-3 mt-3">
+                    <label for="" class="uppercase">Tanggal Akhir Kredit</label>
+                    <input type="text" class="disabled-input bg-disabled p-2 w-full border "
+                        id="modal_tgl_akhir" name="tgl_akhir" readonly/>
+                    <small class="form-text text-red-600 error"></small>
+                </div>
+                <div class="input-box space-y-3 mt-3">
                     <label for="" class="uppercase">Refund</label>
                     <input type="text" class="rupiah p-2 w-full border "
                         id="modal_refund" name="refund"/>
@@ -41,8 +53,6 @@
                 </div>
                 <div class="input-box space-y-3 mt-3">
                     <label for="" class="uppercase">Tanggal Pelunasan<span class="text-theme-primary">*</span></label>
-                    <input type="hidden" id="modal_tgl_awal" name="tgl_awal">
-                    <input type="hidden" id="modal_tgl_akhir" name="tgl_akhir">
                     <div class="flex border justify-center tgl-pelunasan-box">
                         <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
                         <input type="text" class="datepicker p-2 w-full border" id="modal_tgl_lunas" name="tgl_lunas" />
@@ -92,6 +102,7 @@
             //$(`#${identifier} #modal_refund`).val(refund)
             $(`#${identifier} #modal_tgl_awal`).val(tgl_awal)
             $(`#${identifier} #modal_tgl_akhir`).val(tgl_akhir)
+            $('#modal_tgl_lunas').val('dd-mm-yyyy')
         })
         
         function monthDiff(date1, date2) {
@@ -110,29 +121,62 @@
             var date = tgl_lunas.split('-');
             const tgl_lunas_formatted = `${date[2]}-${date[1]}-${date[0]}`;
             const tgl_awal = $('#modal_tgl_awal').val();
+            var date_awal = tgl_awal.split('-')
+            const tgl_awal_formatted = `${date_awal[2]}-${date_awal[1]}-${date_awal[0]}`;
             const tgl_akhir = $('#modal_tgl_akhir').val();
+            var date_akhir = tgl_akhir.split('-')
+            const tgl_akhir_formatted = `${date_akhir[2]}-${date_akhir[1]}-${date_akhir[0]}`;
 
             var date_lunas = new Date(tgl_lunas_formatted);
-            var date_awal = new Date(tgl_awal);
-            var date_akhir = new Date(tgl_akhir);
+            var date_awal = new Date(tgl_awal_formatted);
+            var date_akhir = new Date(tgl_akhir_formatted);
 
             var date_dif_awal_akhir = monthDiff(date_awal, date_akhir);
             var date_dif_lunas_akhir = monthDiff(date_awal, date_lunas);
+            var sisa_jangka_waktu = date_dif_awal_akhir - date_dif_lunas_akhir
 
-            $(`#modalPelunasan #modal_sisa_jangka_waktu`).val(`${date_dif_lunas_akhir} bulan`);
+            if (date_lunas > date_akhir) {
+                Swal.fire({
+                    tittle: 'Warning!',
+                    html: 'Tanggal pelunasan tidak boleh lebih dari tanggal akhir kredit',
+                    icon: 'warning',
+                    iconColor: '#DC3545',
+                    confirmButtonText: 'Ya',
+                    confirmButtonColor: '#DC3545'
+                })
+                $('#modal_tgl_lunas').val('dd-mm-yyyy')
+                $('#modal_sisa_jangka_waktu').val('')
+            } else if (date_lunas < date_awal) {
+                Swal.fire({
+                    tittle: 'Warning!',
+                    html: 'Tanggal pelunasan tidak boleh kurang dari tanggal akhir kredit',
+                    icon: 'warning',
+                    iconColor: '#DC3545',
+                    confirmButtonText: 'Ya',
+                    confirmButtonColor: '#DC3545'
+                })
+                $('#modal_tgl_lunas').val('dd-mm-yyyy')
+                $('#modal_sisa_jangka_waktu').val('')
+            } else {
+                $(`#modalPelunasan #modal_sisa_jangka_waktu`).val(`${sisa_jangka_waktu} bulan`);
+            }
         });
 
         $('#btn-submit').on('click', function(e) {
             e.preventDefault()
+            $('#preload-data').removeClass('hidden')
+            
             const identifier = 'modalPelunasan'
 
             var tgl_lunas = $('#modal_tgl_lunas').val()
             if (tgl_lunas != 'dd/mm/yyyy') {
+                $('#preload-data').addClass('hidden')
                 $(`#${identifier} .tgl-pelunasan-box`).removeClass('border-2 border-rose-600')
                 $(`#${identifier} .tgl-lunas-error`).html('')
                 $('#form-pelunasan').submit()
             }
             else {
+                $('#preload-data').addClass('hidden')
                 $(`#${identifier} .tgl-pelunasan-box`).addClass('border-2 border-rose-600')
                 $(`#${identifier} .tgl-lunas-error`).html('Harap pilih tanggal lunas')
             }

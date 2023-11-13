@@ -311,12 +311,7 @@
                 <div class="flex gap-5">
                     <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
                         id="review-asuransi">
-                        <span class="lg:mt-0 mt-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
-                                <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                    stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14" />
-                            </svg>
-                        </span>
+                        <iconify-icon icon="tabler:check" class="mt-1"></iconify-icon>
                         <span class="lg:block hidden"> Approve </span>
                     </button>
                     <button type="button" id="btn-back-staf"

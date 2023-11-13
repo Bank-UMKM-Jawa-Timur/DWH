@@ -219,7 +219,11 @@
                                                                 @if ($jenis->asuransi)
                                                                     @if ($registered == 1)
                                                                         @if ($is_paid == 1)
-                                                                            Sudah dibayar
+                                                                            @if ($status == 'done')
+                                                                                Sudah dilunasi
+                                                                            @else
+                                                                                Sudah dibayar
+                                                                            @endif
                                                                         @else
                                                                             @if ($status == 'waiting approval')
                                                                                 Menunggu persetujuan
@@ -261,43 +265,6 @@
                                                                                         data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek={{$jenis->asuransi->no_rek}} data-debitur="{{$item['nama']}}" data-tgl_pengajuan="{{$item['tanggal']}}" data-jenis_kredit="{{$jenis->jenis}}" data-premi="{{$jenis->asuransi->premi}}" data-tarif="{{$jenis->asuransi->tarif}}" data-fee="{{$jenis->asuransi->handling_fee}}" data-premi_disetor={{$jenis->asuransi->premi_disetor}}>
                                                                                         Registrasi
                                                                                     </button>
-                                                                                @elseif(strtolower($status) == 'revition')
-                                                                                    <a href="{{route('asuransi.registrasi.edit', $id_pengajuan)}}" class="px-4 py-2  bg-orange-400/20 rounded text-orange-500">
-                                                                                        Edit
-                                                                                    </a>
-                                                                                @elseif(strtolower($status) == 'sended')
-                                                                                    @if ($role == 'Staf Analisa Kredit')
-                                                                                        <div class="dropdown">
-                                                                                            <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                                                                Selengkapnya
-                                                                                            </button>
-                                                                                            <ul class="dropdown-menu right-16">
-                                                                                                <li class="">
-                                                                                                    <a class="item-dropdown modal-batal" href="#"
-                                                                                                        data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                                        data-id="" data-no_aplikasi=""
-                                                                                                        data-no_polis="">Pembatalan</a>
-                                                                                                </li>
-                                                                                                <li class="">
-                                                                                                    <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
-                                                                                                        <input type="hidden" name="no_aplikasi" value="">
-                                                                                                        <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
-                                                                                                    </form>
-                                                                                                </li>
-                                                                                                <li class="">
-                                                                                                    <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                                                                        data-modal-target="modalPelunasan"  data-id=""
-                                                                                                        data-no_aplikasi="" data-no_rek=""
-                                                                                                        data-no_polis="" data-refund=""
-                                                                                                        data-tgl_awal="" data-tgl_akhir="">Pelunasan</a>
-                                                                                                </li>
-                                                                                            </ul>
-                                                                                        </div>
-                                                                                    @else
-                                                                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                                                                                            Detail
-                                                                                        </button>
-                                                                                    @endif
                                                                                 @else
                                                                                     -
                                                                                 @endif
@@ -309,18 +276,18 @@
                                                                                 @else
                                                                                     -
                                                                                 @endif
-                                                                            @elseif(strtolower($status) == 'sended')
+                                                                            @elseif(strtolower($status) == 'sended' || strtolower($status) == 'done')
                                                                                 @if ($role == 'Staf Analis Kredit')
                                                                                     @if ($is_paid == 1)
                                                                                         @if ($jenis->pengajuan_klaim != null)
                                                                                             @if ($jenis->pengajuan_klaim->status == 'waiting approval')
-                                                                                                -
+                                                                                                menunggu approval pengajuan klaim
                                                                                             @elseif ($jenis->pengajuan_klaim->status == 'approved')
-                                                                                                <form action="{{ route('asuransi.pengajuan-klaim.hit-endpoint', $jenis->pengajuan_klaim->id) }}" method="post">
+                                                                                                <form class="form-send-klaim" action="{{ route('asuransi.pengajuan-klaim.hit-endpoint', $jenis->pengajuan_klaim->id) }}" method="post">
                                                                                                     @csrf
                                                                                                     <a href="#">
-                                                                                                        <button type="submit" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn" id="btnKirim">
-                                                                                                            Kirim
+                                                                                                        <button type="submit" class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn btn-send-klaim" id="btnKirim">
+                                                                                                            Kirim Pengajuan Klaim
                                                                                                         </button>
                                                                                                     </a>
                                                                                                 </form>
@@ -343,16 +310,8 @@
                                                                                                             <a class="item-dropdown modal-batal-klaim" href="#"
                                                                                                                 data-modal-toggle="modalBatalKlaim" data-modal-target="modalBatalKlaim"
                                                                                                                 data-id="{{ $jenis->pengajuan_klaim->id }}" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}"
-                                                                                                                data-no_polis="{{ $jenis->asuransi->no_polis }}" data-no_rekening= {{$jenis->asuransi->no_rek}}>Pembatalan
+                                                                                                                data-no_polis="{{ $jenis->asuransi->no_polis }}" data-no_rekening= {{$jenis->asuransi->no_rek}}>Pembatalan Klaim
                                                                                                             </a>
-                                                                                                            {{-- <form action="{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}" method="post" enctype="multipart/form-data">
-                                                                                                                @csrf
-                                                                                                                <input type="hidden" name="id" value="{{ $jenis->pengajuan_klaim->id }}">
-                                                                                                                <input type="hidden" name="no_aplikasi" value="{{ $jenis->asuransi->no_aplikasi }}">
-                                                                                                                <input type="hidden" name="no_rekening" value="{{ $jenis->asuransi->no_rek }}">
-                                                                                                                <input type="hidden" name="no_polis" value="{{ $jenis->asuransi->no_polis }}">
-                                                                                                                <button type="submit" id="btnBatal">Pembatalan</button>
-                                                                                                            </form> --}}
                                                                                                         </li>
                                                                                                     </ul>
                                                                                                 </div>
@@ -379,13 +338,15 @@
                                                                                                         </form>
                                                                                                     </li>
                                                                                                     @if ($jenis->asuransi->is_paid && !$jenis->asuransi->canceled_at)
-                                                                                                        <li class="">
-                                                                                                            <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
-                                                                                                                data-modal-target="modalPelunasan"  data-id="{{$jenis->asuransi->id}}"
-                                                                                                                data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek="{{$jenis->asuransi->no_rek}}"
-                                                                                                                data-no_polis="{{$jenis->asuransi->no_polis}}" data-refund="{{$jenis->asuransi->refund}}"
-                                                                                                                data-tgl_awal="{{$jenis->asuransi->tanggal_awal}}" data-tgl_akhir="{{$jenis->asuransi->tanggal_akhir}}">Pelunasan</a>
-                                                                                                        </li>
+                                                                                                        @if (!$jenis->pelunasan)
+                                                                                                            <li class="">
+                                                                                                                <a class="item-dropdown modal-pelunasan" href="#" data-modal-toggle="modalPelunasan"
+                                                                                                                    data-modal-target="modalPelunasan"  data-id="{{$jenis->asuransi->id}}"
+                                                                                                                    data-no_aplikasi="{{$jenis->asuransi->no_aplikasi}}" data-no_rek="{{$jenis->asuransi->no_rek}}"
+                                                                                                                    data-no_polis="{{$jenis->asuransi->no_polis}}" data-refund="{{$jenis->asuransi->refund}}"
+                                                                                                                    data-tgl_awal="{{date('d-m-Y', strtotime($jenis->asuransi->tanggal_awal))}}" data-tgl_akhir="{{date('d-m-Y', strtotime($jenis->asuransi->tanggal_akhir))}}">Pelunasan</a>
+                                                                                                            </li>
+                                                                                                        @endif
                                                                                                         <li>
                                                                                                             <a href="{{ route('asuransi.pengajuan-klaim.add', $jenis->asuransi->id) }}" class="item-dropdown">
                                                                                                                 Pengajuan klaim
@@ -402,7 +363,7 @@
                                                                                             </button>
                                                                                             <ul class="dropdown-menu right-16">
                                                                                                 <li>
-                                                                                                    <form action="{{route('asuransi.registrasi.inquery')}}" method="get">
+                                                                                                    <form class="form-inquery" action="{{route('asuransi.registrasi.inquery')}}" method="get">
                                                                                                         <input type="hidden" name="no_aplikasi" value="{{$jenis->asuransi->no_aplikasi}}">
                                                                                                         <input type="hidden" name="id_asuransi" value="{{$id_pengajuan}}">
                                                                                                         <button class="item-dropdown w-full" type="submit">Cek(Inquery)</button>
@@ -412,16 +373,9 @@
                                                                                                 <li>
                                                                                                     <a class="item-dropdown modal-batal" href="#"
                                                                                                         data-modal-toggle="modalBatal" data-modal-target="modalBatal"
-                                                                                                        data-id="{{$jenis->id}}" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}"
+                                                                                                        data-id="{{$jenis->asuransi->id}}" data-no_aplikasi="{{ $jenis->asuransi->no_aplikasi }}"
                                                                                                         data-no_polis="{{ $jenis->asuransi->no_polis }}">Pembatalan
                                                                                                     </a>
-                                                                                                    {{-- <form action="{{ route('asuransi.registrasi.batal') }}" method="post" enctype="multipart/form-data">
-                                                                                                        @csrf
-                                                                                                        <input type="hidden" name="id" value="{{$jenis->id}}">
-                                                                                                        <input type="hidden" name="no_aplikasi" value="{{ $jenis->asuransi->no_aplikasi }}">
-                                                                                                        <input type="hidden" name="no_polis" value="{{ $jenis->asuransi->no_polis }}">
-                                                                                                        <button class="item-dropdown w-full" type="submit">Pembatalan</button>
-                                                                                                    </form> --}}
                                                                                                 </li>
                                                                                             </ul>
                                                                                         </div>
@@ -441,15 +395,16 @@
                                                                                         @endif
                                                                                     @endif
                                                                                 @else
-                                                                                    <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                                    -
+                                                                                    {{--  <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                                                                         Detail
-                                                                                    </button>
+                                                                                    </button>  --}}
                                                                                 @endif
                                                                             @else
                                                                                 -
                                                                             @endif
                                                                         @elseif ($registered == 0)
-                                                                        -
+                                                                            -
                                                                         @else
                                                                             <a href="{{route('asuransi.registrasi.create')}}?id={{$id_pengajuan}}&jenis_asuransi={{$jenis->id}}">
                                                                                 <button class="px-4 py-2 bg-blue-500/20 rounded text-blue-500">
@@ -545,7 +500,7 @@
             e.stopPropagation();
         })
 
-        function CanceledModalSuccessMessage(message) {
+        function AsuransiModalSuccessMessage(message) {
             Swal.fire({
                 showConfirmButton: true,
                 timer: 3000,
@@ -561,7 +516,7 @@
                 location.reload();
             })
         }
-        function CanceledModalErrorMessage(message) {
+        function AsuransiModalErrorMessage(message) {
             Swal.fire({
                 showConfirmButton: false,
                 timer: 3000,
@@ -638,95 +593,104 @@
         })
 
         $(".btnCekStatus").on("click", function(){
-        var noAplikasi = $(this).data('no_aplikasi');
-        $.ajax({
-            type: "POST",
-            url: "{{ route('asuransi.pengajuan-klaim.cek-status') }}",
-            data: {
-                _token: "{{ csrf_token() }}",
-                no_aplikasi: noAplikasi
-            },
-            success: function(res){
-                if(res.status == "Berhasil"){
+            var statKlaim = ["Sedang diproses", "Disetujui dan sedang menunggu pembayaran", "Disetujui dan telah dibayarkan", "Dokumen belum lengkap", "Premi belum dibayar", "Ditolak", "Data tidak ditemukan"]
+            
+            var noAplikasi = $(this).data('no_aplikasi');
+            $('#preload-data').removeClass('hidden')
+            $.ajax({
+                type: "POST",
+                url: "{{ route('asuransi.pengajuan-klaim.cek-status') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    no_aplikasi: noAplikasi
+                },
+                success: function(res){
+                    if(res.status == "Berhasil"){
+                        $('#preload-data').addClass('hidden')
+                        Swal.fire({
+                            // icon: 'success',
+                            // title: 'Berhasil',
+                            html: `
+                                <table style="text-align: left !important;" class="w-full">
+                                    <tr>
+                                        <td><strong>No. Rekening</strong></td>
+                                        <td>${res.response.no_rekening}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>No. Aplikasi</strong></td>
+                                        <td>${res.response.no_aplikasi}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status Klaim</strong></td>
+                                        <td>${statKlaim[parseInt(res.response.stat_klaim) + 1]}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Keterangan</strong></td>
+                                        <td>${res.response.keterangan}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Nilai Persetujuan</strong></td>
+                                        <td>${res.response.nilai_persetujuan}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tanggal klaim</strong></td>
+                                        <td>${res.response.tgl_klaim}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>No. Polis</strong></td>
+                                        <td>${res.response.no_sp}</td>
+                                    </tr>
+                                </table>
+                            `
+                        })
+                    } else {
+                        $('#preload-data').addClass('hidden')
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: res.message,
+                        })
+                    }
+                }
+            })
+        })
+
+        $(".table-collapse").on("click", "#btnBatal", function(){
+            var parent = $(this).parent();
+            var id = parent.find("[name=id]").val()
+            var no_aplikasi = parent.find("[name=no_aplikasi]").val()
+            var no_rekening = parent.find("[name=no_rekening]").val()
+            var no_polis = parent.find("[name=no_polis]").val()
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: id,
+                    no_aplikasi: no_aplikasi,
+                    no_rekening: no_rekening,
+                    no_polis: no_polis
+                },
+                success: function(res){
                     Swal.fire({
-                        // icon: 'success',
-                        // title: 'Berhasil',
-                        html: `
-                            <table style="text-align: left !important;" class="w-full">
-                                <tr>
-                                    <td><strong>No. Rekening</strong></td>
-                                    <td>${res.response.no_rekening}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>No. Aplikasi</strong></td>
-                                    <td>${res.response.no_aplikasi}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Status Klaim</strong></td>
-                                    <td>${statKlaim[parseInt(res.response.stat_klaim) + 1]}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Keterangan</strong></td>
-                                    <td>${res.response.keterangan}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Nilai Persetujuan</strong></td>
-                                    <td>${res.response.nilai_persetujuan}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Tanggal klaim</strong></td>
-                                    <td>${res.response.tgl_klaim}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>No. Polis</strong></td>
-                                    <td>${res.response.no_sp}</td>
-                                </tr>
-                            </table>
-                        `
-                    })
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
+                        icon: (res.status == "Berhasil") ? "success" : "error",
+                        title: res.status,
                         text: res.message,
                     })
+                },
+                error: function(res){
+                    Swal.fire({
+                        icon: "error",
+                        title: "Terjadi kesalahan",
+                        text: res.message
+                    });
                 }
-            }
+            })
         })
-    })
 
-    $(".table-collapse").on("click", "#btnBatal", function(){
-        var parent = $(this).parent();
-        var id = parent.find("[name=id]").val()
-        var no_aplikasi = parent.find("[name=no_aplikasi]").val()
-        var no_rekening = parent.find("[name=no_rekening]").val()
-        var no_polis = parent.find("[name=no_polis]").val()
-
-        $.ajax({
-            type: "POST",
-            url: "{{ route('asuransi.pengajuan-klaim.pembatalan-klaim') }}",
-            data: {
-                _token: "{{ csrf_token() }}",
-                id: id,
-                no_aplikasi: no_aplikasi,
-                no_rekening: no_rekening,
-                no_polis: no_polis
-            },
-            success: function(res){
-                Swal.fire({
-                    icon: (res.status == "Berhasil") ? "success" : "error",
-                    title: res.status,
-                    text: res.message,
-                })
-            },
-            error: function(res){
-                Swal.fire({
-                    icon: "error",
-                    title: "Terjadi kesalahan",
-                    text: res.message
-                });
-            }
+        $('.btn-send-klaim').on('click', function() {
+            $('#preload-data').removeClass('hidden')
         })
-    })
     </script>
 @endpush

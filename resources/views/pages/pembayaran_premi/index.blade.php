@@ -82,9 +82,9 @@
                                             </span>
                                             <span id="text_collapse" class="collapse-text">Sembunyikan</span>
                                         </button>
-                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                        {{--  <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                             Detail
-                                        </button>
+                                        </button>  --}}
                                     </div>
                                 </td>
                             </tr>
@@ -136,9 +136,9 @@
                                                                             Inquery
                                                                         </button>
                                                                     @else
-                                                                        <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
+                                                                        {{--  <button class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                                                                             Detail
-                                                                        </button>
+                                                                        </button>  --}}
                                                                     @endif
                                                                 </td>
                                                             </tr>

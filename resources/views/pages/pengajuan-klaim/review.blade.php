@@ -72,7 +72,7 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">No Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" value="{{ $data->no_sp3 }}" name="no_sp3" readonly/>
+                    <input type="text" class="disabled-input bg-disabled p-2 w-full border" id="" value="{{ $data->no_sp3 }}" name="no_sp3" readonly/>
                     <div class="errorSpan hidden" id="errorNoSurat">
                         <p id="errorText">No Surat Peringatan Ke 3 Belum Di Isi.</p>
                     </div>
@@ -81,7 +81,8 @@
                     <label for="" class="uppercase">Tanggal Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
                     <div class="flex border justify-center ">
                         <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
-                        <input type="text" class="p-2 w-full" id="" value="{{ date_format(date_create($data->tgl_sp3), 'd-m-Y') }}" name="tgl_sp3" readonly/>
+                        <input type="text" class="disabled-input bg-disabled p-2 w-full" id=""
+                            value="{{ date_format(date_create($data->tgl_sp3), 'd-m-Y') }}" name="tgl_sp3" readonly/>
                     </div>
                     <div class="errorSpan hidden" id="errorTglSurat">
                         <p id="errorText">Tanggal Surat Peringatan Ke 3 Belum Di Isi.</p>
@@ -89,7 +90,7 @@
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Tunggakan Pokok<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah disabled-input p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_pokok)}}" name="tunggakan_pokok" readonly>
+                    <input type="text" class="rupiah disabled-input bg-disabled p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_pokok)}}" name="tunggakan_pokok" readonly>
                     <div class="errorSpan hidden" id="errorTnggakanPokok">
                         <p id="errorText">Tunggakan Pokok Belum Di Isi.</p>
                     </div>
@@ -99,21 +100,21 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggakan Bunga<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_bunga)}}" name="tunggakan_bunga" readonly/>
+                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_bunga)}}" name="tunggakan_bunga" readonly/>
                     @error('tunggakan_bunga')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggakan Denda<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_denda)}}" name="tunggakan_denda" readonly/>
+                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_denda)}}" name="tunggakan_denda" readonly/>
                     @error('tunggakan_denda')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Pengikatan<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah p-2 w-full border" id="" value="{{formatRupiah($data->nilai_pengikatan)}}" name="nilai_pengikatan" readonly/>
+                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{formatRupiah($data->nilai_pengikatan)}}" name="nilai_pengikatan" readonly/>
                     @error('nilai_pengikatan')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
@@ -124,7 +125,7 @@
 
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Tuntunan Klaim<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah p-2 w-full border" id="" value="{{formatRupiah($data->nilai_tuntutan_klaim)}}" name="nilai_tuntutan_klaim" readonly/>
+                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{formatRupiah($data->nilai_tuntutan_klaim)}}" name="nilai_tuntutan_klaim" readonly/>
                     @error('nilai_tuntutan_klaim')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
@@ -138,7 +139,7 @@
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Jenis Agunan / Kode Jenis Anggunan<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="p-2 w-full border" id="" value="{{$data->kode_agunan}}" name="jenis_agunan" readonly/>
+                    <input type="text" class="disabled-input bg-disabled p-2 w-full border" id="" value="{{$data->kode_agunan}}" name="jenis_agunan" readonly/>
                     @error('jenis_agunan')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
@@ -154,12 +155,7 @@
             </div>
             <div class="flex gap-5">
                 <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit" id="simpan">
-                    <span class="lg:mt-0 mt-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
-                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2" d="M5 12h14m-7-7v14" />
-                        </svg>
-                    </span>
+                    <iconify-icon icon="tabler:check" class="mt-1"></iconify-icon>
                     <span class="lg:block hidden"> Approve  </span>
                 </button>
             <button type="button"
