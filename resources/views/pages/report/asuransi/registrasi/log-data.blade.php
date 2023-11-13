@@ -24,39 +24,40 @@
                     </div>
                 </div>
                 <div class="px-3 mb-5">
-                    <div class="lg:grid-cols-4 w-full md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
-                        <div class="input-box-calendar space-y-3 col-span-1">
-                            <label for="" class="uppercase">Dari<span class="text-theme-primary">*</span></label>
-                            <input type="text" class="datepicker p-2 w-full border" id="dari"
-                                name="dari" value="@if(\Request::has('dari')) {{\Request::get('dari')}} @endif" required/>
-                            <small class="form-text text-red-600 error dari-error"></small>
-                        </div>
-                        <div class="input-box-calendar space-y-3 col-span-1">
-                            <label for="" class="uppercase">Sampai<span class="text-theme-primary">*</span></label>
-                            <input type="text" class="datepicker p-2 w-full border" id="sampai"
-                                name="sampai" value="{{old('sampai')}}" required/>
-                            <small class="form-text text-red-600 error sampai-error"></small>
-                        </div>
-                        <div class="flex space-y-8 col-span-1">
-                            <label for="" class="uppercase"><span class="text-theme-primary"></span></label>
-                            <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="button"
-                                id="btn-show">
-                                <span class="lg:block hidden"> Tampilkan </span>
-                            </button>
+                    <div class="lg:grid-cols-2 w-full md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                        <div class="col-span-1">
+                            <div class="flex gap-5 w-full">
+                                <div class="input-box space-y-3  w-full">
+                                    <label for="" class="uppercase">Nomor Aplikasi<span class="text-theme-primary">*</span></label>
+                                    <select name="no_aplikasi" id="no_aplikasi" class="w-full p-2 border" required>
+                                        <option value="" selected>-- Pilih No Aplikasi ---</option>
+                                        @foreach ($noAplikasi as $item)
+                                            <option @if (old('no_aplikasi') == $item->no_aplikasi)
+                                                selected @endif value="{{$item->no_aplikasi}}" @if(\Request::has('no_aplikasi')) selected @endif>
+                                                {{$item->no_aplikasi}} - {{$item->nama_debitur}}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="flex space-y-8 col-span-1">
+                                    <label for="" class="uppercase"><span class="text-theme-primary"></span></label>
+                                    <button class="px-6 py-3 bg-theme-primary flex gap-3 rounded text-white" id="btn-show">
+                                        <span class="lg:block hidden"> Tampilkan </span>
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="form-text text-red-600 error no-aplikasi-error"></small>
                         </div>
                     </div>
                 </div>
             </div>
-            @if (\Request::has('dari') && \Request::has('sampai'))
+            @if (\Request::has('no_aplikasi'))
                 <div class="table-wrapper bg-white border rounded-md w-full p-2 mt-5">
                     <div class="table-accessiblity lg:flex text-center lg:space-y-0 space-y-5 justify-between">
                         <div class="title-table lg:p-3 p-2 text-left">
                             <h2 class="font-bold text-lg text-theme-text tracking-tighter">
                                 Log Data Asuransi
                             </h2>
-                            @if (\Request::get('tAwal') && \Request::get('tAkhir'))
-                                <p class="text-gray-600 text-sm">Menampilkan data mulai tanggal <b>{{date('d-m-Y', strtotime(\Request::get('tAwal')))}}</b> s/d <b>{{date('d-m-Y', strtotime(\Request::get('tAkhir')))}}</b>.</p>
-                            @endif
                         </div>
                     </div>
                     <div class="lg:flex lg:space-y-0 space-y-5 lg:text-left text-center justify-between mt-2 p-2">
@@ -97,100 +98,20 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>NO Aplikasi</th>
-                                    <th>Nama Debitur</th>
-                                    <th>No Rekening</th>
-                                    <th>No Polis</th>
-                                    <th></th>
+                                    <th>Aktivitas</th>
+                                    <th>Waktu</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                    function formatTanggalLocal($date)
-                                    {
-                                        $days = [
-                                            'Sunday' => 'Minggu',
-                                            'Monday' => 'Senin',
-                                            'Tuesday' => 'Selasa',
-                                            'Wednesday' => 'Rabu',
-                                            'Thursday' => 'Kamis',
-                                            'Friday' => 'Jumat',
-                                            'Saturday' => 'Sabtu',
-                                        ];
-
-                                        $months = [
-                                            'January' => 'Januari',
-                                            'February' => 'Februari',
-                                            'March' => 'Maret',
-                                            'April' => 'April',
-                                            'May' => 'Mei',
-                                            'June' => 'Juni',
-                                            'July' => 'Juli',
-                                            'August' => 'Agustus',
-                                            'September' => 'September',
-                                            'October' => 'Oktober',
-                                            'November' => 'November',
-                                            'December' => 'Desember',
-                                        ];
-
-                                        $carbonDate = \Carbon\Carbon::parse($date);
-                                        $dayName = $carbonDate->format('l');
-                                        $monthName = $carbonDate->format('F');
-
-                                        return $carbonDate->format('H:i, ') . $days[$dayName] . ', ' . $carbonDate->format('d') . ' ' . $months[$monthName] . ' ' . $carbonDate->format('Y');
-                                    }
-                                ?>
                                 @forelse ($data as $item)
-                                    <tr class="view cursor-pointer">
+                                    <tr>
                                         <td>{{$loop->iteration}}</td>
-                                        <td>{{$item->no_aplikasi}}</td>
-                                        <td>{{$item->nama_debitur}}</td>
-                                        <td>{{$item->no_rek}}</td>
-                                        <td>{{$item->no_polis}}</td>
-                                        <td>
-                                            <div class="flex gap-4 justify-center">
-                                                {{-- @if(count($item['jenis_asuransi']) > 0) --}}
-                                                    <button class="flex gap-2 hover:bg-slate-50 border px-3 py-2">
-                                                        <span class="caret-icon transform">
-                                                            @include('components.svg.caret')
-                                                        </span>
-                                                        <span id="text_collapse" class="collapse-text">Sembunyikan Log Activity</span>
-                                                    </button>
-                                                {{-- @else
-                                                    <span class="caret-icon transform"></span>
-                                                @endif --}}
-                                            </div>
-                                        </td>
-                                        {{-- <td>{{ formatTanggalLocal($item->created_at) }}</td> --}}
-                                    </tr>
-                                    <tr class="collapse-table">
-                                        <td class="bg-theme-primary/5"></td>
-                                        <td colspan="8" class="p-0">
-                                            <div class="bg-theme-primary/5">
-                                                <div>
-                                                    <table class="table-collapse">
-                                                        <thead>
-                                                            <th>#</th>
-                                                            <th>aktivitas</th>
-                                                            <th>tanggal</th>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach ($item->activity as $log)
-                                                                <tr>
-                                                                    <td>{{$loop->iteration}}</td>
-                                                                    <td>{{$log->content}}</td>
-                                                                    <td>{{ formatTanggalLocal($log->created_at) }}</td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <td>{{$item->content}}</td>
+                                        <td>{{date('d-m-Y H:i:s', strtotime($item->created_at))}}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3">Belum ada data.</td>
+                                        <td colspan="3">Belum ada aktifitas.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -211,67 +132,24 @@
     </div>
 @endsection
 @push('extraScript')
-    {{--  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>  --}}
     <script>
+        $('#no_aplikasi').select2()
+
         $('#page_length').on('change', function() {
             $('#form-report').submit()
-        })
-        $("table .view").on("click", function(e) {
-            const $collapseTable = $(this).next(".collapse-table");
-            $collapseTable.toggleClass("hidden");
-
-            const $textCollapse = $(this).find('#text_collapse');
-
-            if ($collapseTable.hasClass('hidden')) {
-                $textCollapse.text("Tampilkan Log Activity");
-            } else {
-                $textCollapse.text("Sembunyikan Log Activity");
-            }
-        });
-
-        $('.datepicker').val('dd-mm-yyyy');
-        $('#cabang').select2()
-        $('#nip').select2()
-
-        $('#cabang').on('change', function() {
-            $('#preload-data').removeClass('hidden')
-            const kode_cabang = $(this).val()
-            if (kode_cabang != '') {
-                $.ajax({
-                    url: `{{url('/get-staf-by-cabang')}}/${kode_cabang}`,
-                    method: "GET",
-                    success: function(response) {
-                        if (Array.isArray(response)) {
-                            $('#nip').empty()
-                            $('#nip').append(`<option value="all" selected>-- Semua nip ---</option>`)
-                            for (var i=0; i < response.length; i++) {
-                                $('#nip').append(`<option value="${response[i]['id']}" selected>${response[i]['nip']} - ${response[i]['detail']['nama']}</option>`)
-                            }
-                            $('#preload-data').addClass('hidden')
-                        }
-                    },
-                    error: function(e) {
-                        $('#preload-data').addClass('hidden')
-                        console.log(e)
-                    }
-                })
-            }
         })
 
         $('#btn-show').on('click', function(e) {
             e.preventDefault()
-            var dari = $('#dari').val()
-            var sampai = $('#sampai').val()
+            var no_aplikasi = $('#no_aplikasi').val()
 
-            if (dari != 'dd-mm-yyyy' && sampai != 'dd-mm-yyyy') {
+            if (no_aplikasi != '') {
                 $('#form-report').submit()
             }
             else {
                 var msg = 'Harap pilih tanggal terlebih dahulu.'
-                $('.dari-error').html(msg)
-                $('.sampai-error').html(msg)
-                $('#dari').addClass('border-red-500')
-                $('#sampai').addClass('border-red-500')
+                $('.no-aplikasi-error').html(msg)
+                $('#no_aplikasi').addClass('border-red-500')
             }
         })
 
@@ -281,15 +159,17 @@
               return false;    //<---- Add this line
             }
         });
+
+        // Adjust pagination url
+        var btn_pagination = $(`.pagination`).find('a')
+        var page_url = window.location.href
+        $(`.pagination`).find('a').each(function(i, obj) {
+            if (page_url.includes('no_aplikasi')) {
+                btn_pagination[i].href += `&no_aplikasi=${$('#no_aplikasi').val()}`
+            }
+            if (page_url.includes('q')) {
+                btn_pagination[i].href += `&q=${$('#q').val()}`
+            }
+        })
     </script>
-    @if(\Request::has('dari'))
-        <script>
-            $('#dari').val("{{\Request::get('dari')}}")
-        </script>
-    @endif
-    @if(\Request::has('sampai'))
-        <script>
-            $('#sampai').val("{{\Request::get('sampai')}}")
-        </script>
-    @endif
 @endpush
