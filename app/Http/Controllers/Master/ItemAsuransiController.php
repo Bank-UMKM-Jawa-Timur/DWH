@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Models\MstFormItemAsuransi;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ItemAsuransiController extends Controller
 {
@@ -150,7 +154,23 @@ class ItemAsuransiController extends Controller
      */
     public function edit($id)
     {
-        //
+        try{
+            $data = MstFormItemAsuransi::find($id);
+            $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
+            if($data) {
+                // dd($data);
+                return view('pages.mst_form_system_asuransi.edit', compact(['data', 'dataField']));
+            } else{
+                Alert::error('Gagal', 'Data tidak ditemukan');
+                return back();
+            }
+        } catch(Exception $e){
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        } catch(QueryException $e){
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
     }
 
     /**
@@ -162,7 +182,65 @@ class ItemAsuransiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $status = '';
+        $message = '';
+
+        $validator = Validator::make($request->all(), [
+            'label' => 'required',
+            'level' => 'required',
+            'sequence' => 'required',
+            'only_accept' => 'required',
+        ], [
+            'required' => ':attribute harus diisi.',
+            'unique' => ':attribute telah digunakan.',
+        ], [
+            'label' => 'Label',
+            'level' => 'Level',
+            'sequence' => 'Sequence',
+            'only_accept' => 'Only Accept',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+
+        DB::beginTransaction();
+        try{
+            $updated = MstFormItemAsuransi::find($id);
+            $updated->label = $request->label;
+            $updated->level = $request->level;
+            $updated->parent_id = $request->parent_id;
+            $updated->type = $request->type;
+            $updated->formula = $request->formula;
+            $updated->sequence = $request->sequence;
+            $updated->only_accept = $request->only_accept;
+            $updated->have_default_value = '';
+            $updated->rupiah = $request->rupiah;
+            $updated->readonly = $request->readonly;
+            $updated->hidden = $request->hidden;
+            $updated->disabled = $request->disabled;
+            $updated->required = $request->required;
+            $updated->updated_at = now();
+            $updated->save();
+
+            DB::commit();
+
+            $status = 'success';
+            $message = 'Berhasil mengubah data';
+        } catch (Exception $e){
+            $status = 'failed';
+            $message = $e->getMessage();
+        } catch (QueryException $e){
+            $status = 'failed';
+            $message = $e->getMessage();
+        } finally{
+            return response()->json([
+                'status' => $status,
+                'message' => $message
+            ]);
+        }
     }
 
     /**

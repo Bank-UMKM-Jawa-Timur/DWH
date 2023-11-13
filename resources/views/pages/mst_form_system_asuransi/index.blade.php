@@ -107,8 +107,18 @@
                   <div class="dropdown">
                     <button
                       class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                      Detail
+                      Selengkapnya
                     </button>
+                    <ul class="dropdown-menu right-16">
+                      <li>
+                        <a href="" class="item-dropdown">
+                          Detail
+                        </a>
+                        <a href="{{ route('mst_form_system_asuransi.edit', $item->id) }}" class="item-dropdown">
+                          Edit
+                        </a>
+                      </li>
+                    </ul>
                   </div>
                 </td>
               </tr>
