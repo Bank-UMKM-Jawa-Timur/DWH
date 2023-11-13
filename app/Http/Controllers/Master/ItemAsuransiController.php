@@ -3,17 +3,25 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use App\Models\MstFormItemAsuransi;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ItemAsuransiController extends Controller
 {
+
     private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -118,6 +126,12 @@ class ItemAsuransiController extends Controller
             $newItem->required = $request->required;
             $newItem->save();
 
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
+            $this->logActivity->store('Pengguna ' . $user_name . '(' . $name . ')' . ' Menambahkan data Item Form Asuransi.','',1);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';

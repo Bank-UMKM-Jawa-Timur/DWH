@@ -114,6 +114,23 @@
                       class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
                       Detail
                     </button>
+                    <ul class="dropdown-menu right-16">
+                      <li>
+                        {{-- <a href="{{ route('mst_form_system_asuransi.show', $item->id) }}" class="item-dropdown">
+                          Detail
+                        </a> --}}
+                        <a href="" class="item-dropdown">
+                          Detail
+                        </a>
+                        <a href="" class="item-dropdown">
+                          Edit
+                        </a>
+                        <a data-id="{{ $item->id }}"
+                          class="item-dropdown btn-delete-form-asuransi">
+                          Delete
+                        </a>
+                      </li>
+                    </ul>
                   </div>
                 </td>
               </tr>
@@ -192,6 +209,38 @@
       }
     });
   })
+
+  $('.btn-delete-form-asuransi').on('click', function(e) {
+        const data_id = $(this).data('id')
+        Swal.fire({
+            title: 'Konfirmasi',
+            html: 'Anda yakin akan menghapus data ini?',
+            icon: 'question',
+            iconColor: '#DC3545',
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            cancelButtonText: `Batal`,
+            confirmButtonColor: '#DC3545'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('mst_form_asuransi.destroy', ['mst_form_asuransi' => $item->id]) }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'DELETE',
+                    },
+                    success: function(data) {
+                        if (data.status == 'success') {
+                            SuccessMessage(data.message);
+                        } else {
+                            ErrorMessage(data.message)
+                        }
+                    }
+                });
+            }
+        })
+    })
 
   function showError(input, message) {
         // console.log(message);

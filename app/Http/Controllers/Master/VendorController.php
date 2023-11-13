@@ -135,7 +135,7 @@ class VendorController extends Controller
             $newUser->password = \Hash::make('12345678');
             $newUser->save();
 
-            $this->logActivity->store("Membuat data vendor $request->name.");
+            $this->logActivity->store("Membuat data vendor $request->name.",'',0);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -253,7 +253,7 @@ class VendorController extends Controller
             if ($currentVendor) {
                 $currentVendor->delete();
                 User::where('vendor_id', $id)->delete();
-                $this->logActivity->store("Menghapus data vendor '$currentName'.");
+                $this->logActivity->store("Menghapus data vendor '$currentName'.", '', '0');
 
                 $status = 'success';
                 $message = 'Berhasil menghapus data.';
