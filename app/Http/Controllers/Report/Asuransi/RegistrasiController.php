@@ -399,54 +399,44 @@ class RegistrasiController extends Controller
         }
     }
     public function logData(Request $request){
-    ini_set('max_execution_time', 120);
+        ini_set('max_execution_time', 120);
         try {
-            $tAwal = date('Y-m-d', strtotime($request->get('dari')));
-            $tAkhir = $request->get('sampai');
-            $hari_ini = now();
-
-            // if (empty($tAkhir)) {
-            //     $tAkhir = $hari_ini;
-            // } else {
-                $tAkhir = date('Y-m-d', strtotime($tAkhir));
-            // }
-
             $page_length = $request->page_length ? $request->page_length : 5;
-            $data = DB::table('asuransi')
-            ->select(
-                'id',
-                'no_aplikasi',
-                'nama_debitur',
-                'no_rek',
-                'no_polis',
-            );
+            $noAplikasi = DB::table('asuransi')->select('asuransi.no_aplikasi', 'asuransi.nama_debitur','jenis.jenis')
+                                    ->join('mst_jenis_asuransi as jenis', 'asuransi.jenis_asuransi_id', 'jenis.id')
+                                    ->groupBy('no_aplikasi')
+                                    ->get();
 
-            // $data = DB::table('log_activities')
-            // ->where('is_asuransi', true)
-            // ->whereBetween('created_at', [$tAwal, $tAkhir]);
-            if ($request->has('q')) {
-                $q = $request->get('q');
-                $data = $data->where('no_aplikasi', 'LIKE', "%$q%")
-                ->orWhere('nama_debitur','LIKE', "%$q%");
+            $data = null;
+
+            if ($request->has('no_aplikasi')) {
+                $data = DB::table('asuransi AS a')
+                        ->select(
+                            'l.id',
+                            'l.asuransi_id',
+                            'a.no_aplikasi',
+                            'a.nama_debitur',
+                            'a.no_rek',
+                            'a.no_polis',
+                            'l.content',
+                            'l.created_at'
+                        )
+                        ->join('log_activities AS l', 'l.asuransi_id', 'a.id')
+                        ->where('a.no_aplikasi', $request->no_aplikasi)
+                        ->when($request->get('q'), function($query) use ($request) {
+                            $q = $request->get('q');
+                            $query->where('l.content', 'LIKE', "%$q%")
+                                ->orWhere('l.created_at', 'LIKE', "%$q%");
+                        });
+
+                if (is_numeric($page_length)) {
+                    $data = $data->paginate($page_length);
+                } else {
+                    $data = $data->get();
+                }
             }
 
-            if (is_numeric($page_length)) {
-                $data = $data->orderBy('created_at', 'DESC')->paginate($page_length);
-            } else {
-                $data = $data->orderBy('created_at', 'DESC')->get();
-            }
-
-            foreach ($data as $key => $value) {
-               $value->activity = DB::table('log_activities')
-               ->where('asuransi_id', $value->id)
-               ->where('is_asuransi', true)
-                // ->whereBetween('created_at', [$tAwal, $tAkhir])
-                ->get();
-            }
-
-
-            // return $data;
-            return view('pages.report.asuransi.registrasi.log-data', $data);
+            return view('pages.report.asuransi.registrasi.log-data', compact('data', 'noAplikasi'));
         } catch (Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
             return back();

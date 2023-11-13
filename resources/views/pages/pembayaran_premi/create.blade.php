@@ -151,6 +151,7 @@
 @push('extraScript')
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        $('#no_aplikasi').select2()
         document.addEventListener('DOMContentLoaded', function() {
             var form = document.getElementById('FormId');
             var btnLeft = document.getElementById('btnLeftForm');

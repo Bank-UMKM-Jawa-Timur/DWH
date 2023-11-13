@@ -102,6 +102,7 @@ class RegistrasiController extends Controller
                                                         $query->where('asuransi.user_id', $user_id);
                                                     }
                                                 })
+                                                ->where('asuransi.status', '!=', 'canceled')
                                                 ->where('asuransi.jenis_asuransi_id', $value2->id);
 
                                     if ($request->has('q')) {
@@ -143,10 +144,18 @@ class RegistrasiController extends Controller
                                         else{
                                             $dataKlaim = DB::table('pengajuan_klaim')
                                                 ->where('asuransi_id', $itemAsuransi->asuransi->id)
+                                                ->where('status', '!=', 'canceled')
                                                 ->first();
                                             $itemAsuransi->pengajuan_klaim = $dataKlaim ? $dataKlaim : null;
                                         }
+
+                                        $pelaporanPelunasan = DB::table('pelaporan_pelunasan')
+                                                                ->select('id', 'tanggal', 'refund', 'sisa_jkw', 'user_id')
+                                                                ->where('asuransi_id', $itemAsuransi->asuransi->id)
+                                                                ->first();
+                                        $itemAsuransi->pelunasan = $pelaporanPelunasan;
                                     } else {
+                                        $itemAsuransi->pelunasan = null;
                                         $itemAsuransi->pengajuan_klaim = null;
                                     }
                                 }
@@ -158,7 +167,7 @@ class RegistrasiController extends Controller
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
             }
-            // return $data;
+            
             return view('pages.asuransi-registrasi.index', compact('data', 'role_id', 'role'));
         } catch (\Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
@@ -848,7 +857,7 @@ class RegistrasiController extends Controller
             ];
             $host = config('global.eka_lloyd_host');
             $url = "$host/query1";
-            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
+            $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             // return $response;
             $statusCode = $response->status();
             if ($statusCode == 200) {
@@ -926,6 +935,7 @@ class RegistrasiController extends Controller
             $user = $token ? $this->getLoginSession() : Auth::user();
             $name = $token ? $user['data']['nip'] : $user->email;
             $asuransi = Asuransi::find($request->id);
+
             if ($asuransi) {
                 if (!$asuransi->is_paid) {
                     if ($asuransi->status == 'sended') {
@@ -1049,7 +1059,7 @@ class RegistrasiController extends Controller
 
             if ($asuransi) {
                 if ($asuransi->is_paid) {
-                    if ($asuransi->status == 'onprogress') {
+                    if ($asuransi->status == 'sended') {
                         $headers = [
                             "Accept" => "/",
                             "x-api-key" => config('global.eka_lloyd_token'),
@@ -1073,7 +1083,7 @@ class RegistrasiController extends Controller
                         $host = config('global.eka_lloyd_host');
                         $url = "$host/lunas";
 
-                        $response = Http::timeout(5)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
+                        $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
                         $statusCode = $response->status();
 
                         if($statusCode == 200){
@@ -1115,7 +1125,38 @@ class RegistrasiController extends Controller
                                             break;
                                         case '02':
                                             $keterangan = $responseBody['keterangan'];
-                                            Alert::error('Gagal', $keterangan);
+                                            if (str_contains($keterangan, 'sudah pernah dilunasi')) {
+                                                $exists = DB::table('pelaporan_pelunasan')
+                                                            ->select('id')
+                                                            ->where('asuransi_id', $asuransi->id)
+                                                            ->first();
+
+                                                if (!$exists) {
+                                                    $asuransi->status = 'done';
+                                                    $asuransi->done_at = date('Y-m-d');
+                                                    $asuransi->done_by = $user_id;
+                                                    $asuransi->save();
+
+                                                    DB::table('pelaporan_pelunasan')->insert([
+                                                        'asuransi_id' => $asuransi->id,
+                                                        'user_id' => $user_id,
+                                                        'tanggal' => date('Y-m-d'),
+                                                        'refund' => $refund,
+                                                        'sisa_jkw' => $jkw,
+                                                        'created_at' => $current_time,
+                                                        'updated_at' => $current_time,
+                                                    ]);
+    
+                                                    $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pelunasan registrasi asuransi.', $request->id, 1);
+    
+                                                    DB::commit();
+                                                }
+
+                                                Alert::warning('Peringatan', $keterangan);
+                                            }
+                                            else {
+                                                Alert::error('Gagal', $keterangan);
+                                            }
                                             return redirect()->route('asuransi.registrasi.index');
                                             break;
                                         case '04':

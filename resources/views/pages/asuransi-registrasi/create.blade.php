@@ -81,7 +81,7 @@
                         <label for="" class="uppercase">Tanggal Awal Kredit<span
                                 class="text-theme-primary">*</span></label>
                         <input type="text" name="tanggal_awal_kredit" id="tanggal_awal_kredit"
-                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($pengajuan['tanggal']))}}" readonly />
+                            class="disabled-input bg-disabled p-2 w-full border" value="{{date('d-m-Y', strtotime($pengajuan['tgl_cetak_pk']))}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
                     <div class="input-box-calendar space-y-3">
@@ -318,7 +318,7 @@
             if(value == 2){
                 Swal.fire({
                     icon: 'error',
-                    tittle: 'Coming soon'
+                    title: 'Coming soon'
                 });
 
                 $("#perusahaan").val('').trigger('change');

@@ -61,11 +61,8 @@
             $(`#${identifier} #modal_no_sp`).val(no_polis)
         })
 
-        $('#btn-cancel').on('click', function() {
-            $('#preload-data').removeClass('hidden')
-        })
-
         $('#btn-cancel').on('click', function(e) {
+            $('#preload-data').removeClass('hidden')
             e.preventDefault()
             const identifier = 'modalBatal'
 

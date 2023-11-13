@@ -356,6 +356,7 @@ class PengajuanKlaimController extends Controller
                         $pengajuanKlaim = PengajuanKlaim::find($request->id);
                         $pengajuanKlaim->canceled_at = date('Y-m-d');
                         $pengajuanKlaim->canceled_by = $user_id;
+                        $pengajuanKlaim->status = 'canceled';
                         $pengajuanKlaim->save();
 
                         $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pembatalan pengajuan klaim.', $data->asuransi_id, 1);
@@ -400,6 +401,7 @@ class PengajuanKlaimController extends Controller
                 ->first();
             $data['pendapat'] = PendapatPengajuanKlaim::where('pengajuan_klaim_id', $id)
                 ->get();
+
             if($data['data']){
                 return view('pages.pengajuan-klaim.review', $data);
             } else{
@@ -435,7 +437,7 @@ class PengajuanKlaimController extends Controller
                 DB::commit();
 
                 Alert::success('Berhasil', 'Berhasil melakukan review pengajuan klaim');
-                return redirect()->route('asuransi.pengajuan-klaim.index');
+                return redirect()->route('asuransi.registrasi.index');
             } else{
                 Alert::error('Gagal', 'Data tidak ditemukan');
                 return back();
