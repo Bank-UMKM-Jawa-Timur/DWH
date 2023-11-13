@@ -163,7 +163,7 @@
                             </tr>
                             <tr class="collapse-table">
                                 <td class="bg-theme-primary/5"></td>
-                                <td colspan="8" class="p-0">
+                                <td colspan="{{$role_id != 2 ? 9 : 8 }}" class="p-0">
                                     <div class="bg-theme-primary/5">
                                         <div>
                                             <table class="table-collapse">
@@ -213,11 +213,6 @@
                                                             <td>{{$is_paid ? $no_polis : '-'}}</td>
                                                             <td>{{$is_paid ? $tgl_polis : '-'}}</td>
                                                             <td>
-                                                                {{-- @if ($registered == 1)
-                                                                    {{$tgl_rekam}}
-                                                                @else
-                                                                    -
-                                                                @endif --}}
                                                                 {{ $is_paid == true ? $tgl_rekam : '-' }}
                                                             </td>
                                                             <td>

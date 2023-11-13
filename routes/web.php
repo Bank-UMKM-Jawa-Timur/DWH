@@ -173,7 +173,7 @@ Route::middleware('auth_api')->group(function () {
                 ->name('pengajuan.')
                 ->controller(AsuransiPengajuanKlaimController::class)
                 ->group(function() {
-                    Route::get('/pembatalan-klaim', 'pembatalanKlaim')->name('pembatalan-klaim');
+                    Route::get('/pembatalan-klaim', 'pembatalan')->name('pembatalan-klaim');
                 });
             });
     });

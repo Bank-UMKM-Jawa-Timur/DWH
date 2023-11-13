@@ -82,6 +82,8 @@
                                             @if (\Request::has('id_penyelia'))
                                                 <td>{{$item['debitur']}}</td>
                                             @endif
+                                        @else
+                                        <td>{{$item['debitur']}}</td>
                                         @endif
                                         <td>{{$item['jml_asuransi']}}</td>
                                         <td>{{$item['jml_diproses']}}</td>
@@ -127,7 +129,7 @@
 
         // chart Registrasi
         var optionsRegistrasi = {
-            labels: ['Sudah', 'Belum'],
+            labels: ['Sudah', 'Belum (On Process)'],
             series: [total_sudah_klaim, total_belum_klaim],
             chart: {
                 type: 'donut',
