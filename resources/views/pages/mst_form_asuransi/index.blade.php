@@ -112,7 +112,7 @@
                   <div class="dropdown">
                     <button
                       class="px-4 py-2 bg-theme-btn/10 rounded text-theme-btn">
-                      Detail
+                      Selengkapnya
                     </button>
                     <ul class="dropdown-menu right-16">
                       <li>
@@ -172,7 +172,7 @@
       }
   });
 
-  $('#simpanButton').on('click', function (e) { 
+  $('#simpanButton').on('click', function (e) {
     e.preventDefault()
     const req_perusahaan_id = document.getElementById('add-perusahaan_id');
     const req_form_item_id = document.getElementById('add-form_item_asuransi_id');
@@ -225,7 +225,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('mst_form_asuransi.destroy', ['mst_form_asuransi' => $item->id]) }}",
+                    url: "{{ url('/master/mst_form_asuransi') }}/"+data_id,
                     data: {
                         _token: "{{ csrf_token() }}",
                         _method: 'DELETE',
