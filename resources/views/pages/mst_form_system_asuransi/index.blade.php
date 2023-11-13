@@ -117,6 +117,10 @@
                         <a href="{{ route('mst_form_system_asuransi.edit', $item->id) }}" class="item-dropdown">
                           Edit
                         </a>
+                       <a class="item-dropdown btn-delete"
+                            href="#"
+                            data-id="{{ $item->id }}"
+                            data-label="{{ $item->label }}">Hapus</a>
                       </li>
                     </ul>
                   </div>
@@ -150,5 +154,35 @@
   $('#page_length').on('change', function() {
     $('#form').submit()
   })
+
+  $('.btn-delete').on('click', function(e) {
+        const data_id = $(this).data('id')
+        console.log(data_id);
+        Swal.fire({
+            title: 'Konfirmasi',
+            html: 'Anda yakin akan menghapus data ini?',
+            icon: 'question',
+            iconColor: '#DC3545',
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            cancelButtonText: `Batal`,
+            confirmButtonColor: '#DC3545'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/master/mst_form_system_asuransi') }}/"+data_id,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: 'DELETE',
+                    },
+                    success: function(data) {
+                        console.log(data)
+                        SuccessMessage(data.message);
+                    }
+                });
+            }
+        })
+    })
 </script>
 @endpush

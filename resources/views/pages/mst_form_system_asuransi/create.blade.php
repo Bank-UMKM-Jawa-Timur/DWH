@@ -30,16 +30,12 @@
                     <option value="2">2</option>
                 </select>
             </div>
-            <div class="input-box space-y-3">
-                {{-- @php
-                    $dataField = \App\Models\MstFormItemAsuransi::orderBy('id', 'ASC')->get();
-                @endphp --}}
+            <div class="input-box space-y-3 hidden" id="parent">
                 <label for="" class="uppercase">Parent<span class="text-theme-primary">*</span></label>
                 <select name="add-parent_id" class="w-full p-2 border" id="add-parent_id">
-                    {{-- <option value="1">No Rekening</option>
-                    <option value="2">Jenis Asuransi</option> --}}
+                    <option value="" selected>-- Pilih Parent --</option>
                     @foreach ($dataField as $item)
-                        <option value="{{ $item->id }}">{{ $item->label }}</option>  
+                        <option value="{{ $item->id }}">{{ $item->label }}</option>
                     @endforeach
                 </select>
             </div>
@@ -150,7 +146,17 @@
         $('#add-type_require-value').val(this.checked ? 1 : 0);
     });
 
-    $('#btnSimpan').on('click', function (e) { 
+    $('#add-level').on('change', function(){
+        var level = document.getElementById('add-level');
+        if (level.value == 2 ) {
+            $('#parent').removeClass('hidden');
+        }
+        else {
+            $('#parent').addClass('hidden');
+        }
+    })
+
+    $('#btnSimpan').on('click', function (e) {
         e.preventDefault()
         const req_label = document.getElementById('add-label');
         const req_level = document.getElementById('add-level');
@@ -192,7 +198,7 @@
                 formula: req_formula.value,
                 sequence: req_sequence.value,
                 only_accept: req_only_accept.value,
-                // have_default_value: 
+                // have_default_value:
                 rupiah: req_rupiah.value,
                 readonly: req_readonly.value,
                 hidden: req_hidden.value,
