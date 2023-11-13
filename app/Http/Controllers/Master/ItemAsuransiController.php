@@ -144,6 +144,23 @@ class ItemAsuransiController extends Controller
      */
     public function show($id)
     {
+        try{
+            $data = MstFormItemAsuransi::find($id);
+            $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
+            if($data) {
+                // dd($data);
+                return view('pages.mst_form_system_asuransi.detail', compact(['data', 'dataField']));
+            } else{
+                Alert::error('Gagal', 'Data tidak ditemukan');
+                return back();
+            }
+        } catch(Exception $e){
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        } catch(QueryException $e){
+            Alert::error('Gagal', $e->getMessage());
+            return back();
+        }
     }
 
     /**
