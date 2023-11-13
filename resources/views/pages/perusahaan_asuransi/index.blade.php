@@ -95,7 +95,7 @@
                                         data-name="{{ $item->name }}">Hapus</a>
                                     </li>
                                     <li class="">
-                                        <a href="{{route('perusahaan_asuransi.form')}}" class="item-dropdown">Form</a>
+                                        <a href="{{ route('perusahaan_asuransi.form', ['id' => $item->id]) }}" class="item-dropdown">Form</a>
                                     </li>
                                 </ul>
                             </div>

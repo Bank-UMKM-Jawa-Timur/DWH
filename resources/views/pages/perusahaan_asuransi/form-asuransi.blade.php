@@ -57,10 +57,11 @@
             </th>
           </tr>
           <tbody>
+            @forelse ($data as $item)
             <tr>
-              <td>1</td>
-              <td><a  href="#" data-target-id="modal-detail-asuransi" class="toggle-modal underline">No Rekening</a></td>
-              <td>Text</td>
+              <td>{{ $loop->iteration }}</td>
+              <td><a  href="#" data-target-id="modal-detail-asuransi" class="toggle-modal underline">{{ $item->itemAsuransi->label }}</a></td>
+              <td>{{ $item->itemAsuransi->type }}</td>
 
               <td>
                 <input
@@ -72,22 +73,9 @@
                 />
               </td>
             </tr>
-            <tr>
-              <td>2</td>
-              <td><a  href="#" data-target-id="modal-detail-asuransi" class="toggle-modal underline">Jenis Pengajuan</a></td>
-              <td>Select</td>
-
-              <td>
-                <input
-                  checked
-                  id="checked-checkbox"
-                  type="checkbox"
-                  value=""
-                  class="w-5 h-5 accent-current text-theme-primary bg-gray-100 border-gray-300 rounded focus:ring-theme-primary focus:ring-2"
-                />
-              </td>
-            </tr>
-
+            @empty
+                <p>Kosong</p>
+            @endforelse
           </tbody>
         </table>
       </div>

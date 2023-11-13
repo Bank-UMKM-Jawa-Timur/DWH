@@ -94,7 +94,7 @@ Route::middleware('auth_api')->group(function () {
         Route::resource('/imbal-jasa', ImbalJasaController::class);
         Route::resource('/dictionary', DictionaryController::class);
         Route::resource('/perusahaan-asuransi', PerusahaanAsuransiController::class);
-        Route::get('/perusahaan-asuransi-form', [PerusahaanAsuransiController::class, 'form'])->name('perusahaan_asuransi.form');
+        Route::get('/perusahaan-asuransi-form/${id}', [PerusahaanAsuransiController::class, 'form'])->name('perusahaan_asuransi.form');
         Route::resource('/jenis-asuransi', JenisAsuransiController::class);
         Route::resource('/mst_form_system_asuransi', ItemAsuransiController::class);
         Route::resource('/mst_form_asuransi', FormAsuransiController::class);

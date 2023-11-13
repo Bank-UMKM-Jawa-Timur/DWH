@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Models\MstFormAsuransi;
 use App\Models\PerusahaanAsuransi;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -275,8 +276,11 @@ class PerusahaanAsuransiController extends Controller
         }
     }
 
-    public function form()
+    public function form($id)
     {
-        return view('pages.perusahaan_asuransi.form-asuransi');
+        $data = MstFormAsuransi::with(['perusahaanAsuransi','itemAsuransi'])
+        ->where('perusahaan_id', $id)
+        ->get();
+        return view('pages.perusahaan_asuransi.form-asuransi', compact('data'));
     }
 }
