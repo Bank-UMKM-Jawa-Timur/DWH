@@ -38,9 +38,9 @@
                             <label for="" class="uppercase">Cabang</label> 
                             <select name="cabang" id="cabang" class="w-full p-2 border" required>
                                 <option value="all" selected>-- Semua cabang ---</option>
-                                {{-- @foreach ($cabang as $item)
+                                @foreach ($cabang as $item)
                                     <option value="{{$item['kode_cabang']}}" @if(\Request::has('cabang')){{$item['kode_cabang'] == \Request::get('cabang') ? 'selected' : ''}}@endif>{{$item['kode_cabang']}} - {{$item['cabang']}}</option>
-                                @endforeach --}}
+                                @endforeach
                             </select>
                             <small class="form-text text-red-600 error"></small>
                         </div>
@@ -59,6 +59,18 @@
                                         @endforeach
                                     @endif
                                 @endif
+                            </select>
+                            <small class="form-text text-red-600 error"></small>
+                        </div>
+                        <div class="input-box space-y-3 col-span-1">
+                            <label for="" class="uppercase">Status</label> 
+                            <select name="status" id="status" class="w-full p-2 border" required>
+                                <option value="all" selected>--- Semua Status ---</option>
+                                <option value="">waiting approval</option>
+                                <option value="">approved</option>
+                                <option value="">revition</option>
+                                <option value="">sended</option>
+                                <option value="">canceled</option>
                             </select>
                             <small class="form-text text-red-600 error"></small>
                         </div>
