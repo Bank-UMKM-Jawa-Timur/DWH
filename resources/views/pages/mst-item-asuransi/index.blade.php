@@ -1,9 +1,6 @@
 @extends('layout.master')
 @section('modal')
-<!-- Modal-tambah -->
-@include('pages.mst_form_asuransi.modal.create')
-<!-- Modal-edit -->
-{{-- @include('pages.jenis_asuransi.modal.edit') --}}
+@include('pages.mst-item-asuransi.modal.formula')
 @endsection
 @section('content')
 <div class="head-pages">
@@ -11,7 +8,7 @@
     <h2
       class="text-2xl font-bold text-theme-primary tracking-tighter"
     >
-      Master List Form Asuransi
+      Master List item
     </h2>
   </div>
   <div class="body-pages">
@@ -23,15 +20,17 @@
           <h2
             class="font-bold text-lg text-theme-text tracking-tighter"
           >
-             Data Master List Form Asuransi
+             Data Master List item
           </h2>
         </div>
         <div
           class="table-action flex lg:justify-normal justify-center p-2 gap-2"
         >
+
+        <a href="{{ route('mst-item-asuransi.create') }}">
           <button
             id="form-toggle"
-            class="add-modal-form-asuransi px-6 py-2 bg-theme-primary flex gap-3 rounded text-white"
+            class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white"
           >
             <span class="lg:mt-0 mt-0">
               <svg
@@ -52,6 +51,7 @@
             </span>
             <span class="lg:block hidden"> Tambah </span>
           </button>
+        </a>
         </div>
       </div>
       <div
@@ -72,7 +72,7 @@
             </form>
         </div>
         <div class="search-table lg:w-96 w-full">
-          <form action="{{ route('mst_form_asuransi.index') }}" method="GET">
+          <form action="{{ route('mst-item-asuransi.index') }}" method="GET">
               <div class="input-search text-[#BFBFBF] rounded-md border flex gap-2">
                   <span class="mt-2 ml-3">
                       @include('components.svg.search')
@@ -88,11 +88,10 @@
         <table class="table-auto w-full">
           <tr>
             <th>No.</th>
-            <th>Nama</th>
             <th>Label</th>
             <th>Level</th>
-            <th>Type</th>
-            <th>Formula</th>
+            <th>Parent</th>
+            <th>Type input</th>
             <th>Sequence</th>
             <th>Only Accept</th>
             <th>Aksi</th>
@@ -101,13 +100,12 @@
             @forelse ($data as $item)
               <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->perusahaanAsuransi->nama }}</td>
-                <td>{{ $item->itemAsuransi->label }}</td>
-                <td>{{ $item->itemAsuransi->level }}</td>
-                <td>{{ $item->itemAsuransi->type }}</td>
-                <td>{{ $item->itemAsuransi->formula ? $item->itemAsuransi->formula : "-" }}</td>
-                <td>{{ $item->itemAsuransi->sequence }}</td>
-                <td>{{ $item->itemAsuransi->only_accept }}</td>
+                <td>{{ $item->label }}</td>
+                <td>{{ $item->level }}</td>
+                <td>{{ $item->parent_id ? $item->parent_id : "-" }}</td>
+                <td>{{ $item->type ? $item->type : "-" }}</td>
+                <td>{{ $item->sequence ? $item->sequence : "-" }}</td>
+                <td>{{ $item->only_accept }}</td>
                 <td>
                   <div class="dropdown">
                     <button
@@ -116,19 +114,18 @@
                     </button>
                     <ul class="dropdown-menu right-16">
                       <li>
-                        {{-- <a href="{{ route('mst_form_system_asuransi.show', $item->id) }}" class="item-dropdown">
-                          Detail
-                        </a> --}}
-                        <a href="" class="item-dropdown">
-                          Detail
+                        @if ($item->formula)
+                        <a href="#" id="formula" data-label="{{$item->label}}" data-formula="{{$item->formula}}" class="item-dropdown">
+                          Formula
                         </a>
-                        <a href="" class="item-dropdown">
+                        @endif
+                        <a href="{{ route('mst-item-asuransi.edit', $item->id) }}" class="item-dropdown">
                           Edit
                         </a>
-                        <a data-id="{{ $item->id }}"
-                          class="item-dropdown btn-delete-form-asuransi">
-                          Delete
-                        </a>
+                       <a class="item-dropdown btn-delete"
+                            href="#"
+                            data-id="{{ $item->id }}"
+                            data-label="{{ $item->label }}">Hapus</a>
                       </li>
                     </ul>
                   </div>
@@ -136,7 +133,7 @@
               </tr>
             @empty
               <tr>
-                  <td colspan="9">
+                  <td colspan="8">
                       <span class="text-danger">Maaf data belum tersedia.</span>
                   </td>
               </tr>
@@ -163,55 +160,13 @@
     $('#form').submit()
   })
 
-  $(".add-modal-form-asuransi").on("click", function () {
-      var targetId = 'add-form-asuransi';
-      $("#" + targetId).removeClass("hidden");
-      form.addClass("layout-form-collapse");
-      if (targetId.slice(0, 5) !== "modal") {
-          $(".layout-overlay-form").removeClass("hidden");
-      }
-  });
+  $('#formula').on('click', function() {
+    $('#modal-formula').removeClass('hidden');
+    })
 
-  $('#simpanButton').on('click', function (e) {
-    e.preventDefault()
-    const req_perusahaan_id = document.getElementById('add-perusahaan_id');
-    const req_form_item_id = document.getElementById('add-form_item_asuransi_id');
-
-    console.log(req_perusahaan_id.value);
-    console.log(req_form_item_id.value);
-
-    $.ajax({
-      type: "POST",
-      url: "{{ route('mst_form_asuransi.store') }}",
-      data: {
-          _token: "{{ csrf_token() }}",
-          perusahaan_id: req_perusahaan_id.value,
-          form_item_asuransi_id: req_form_item_id.value,
-      },
-      success: function(data) {
-          //console.log(data)
-          if (Array.isArray(data.error)) {
-              for (var i = 0; i < data.error.length; i++) {
-                  var message = data.error[i];
-                  console.log(message);
-                  if (message.toLowerCase().includes('Perusahaan Asuransi'))
-                      showError(req_perusahaan_id, message)
-                  if (message.toLowerCase().includes('Item Asuransi'))
-                      showError(req_form_item_id, message)
-              }
-          } else {
-              if (data.status == 'success') {
-                  SuccessMessage(data.message);
-              } else {
-                  ErrorMessage(data.message)
-              }
-          }
-      }
-    });
-  })
-
-  $('.btn-delete-form-asuransi').on('click', function(e) {
+  $('.btn-delete').on('click', function(e) {
         const data_id = $(this).data('id')
+        console.log(data_id);
         Swal.fire({
             title: 'Konfirmasi',
             html: 'Anda yakin akan menghapus data ini?',
@@ -225,31 +180,18 @@
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: "{{ url('/master/mst_form_asuransi') }}/"+data_id,
+                    url: "{{ url('/master/mst-item-asuransi') }}/"+data_id,
                     data: {
                         _token: "{{ csrf_token() }}",
                         _method: 'DELETE',
                     },
                     success: function(data) {
-                        if (data.status == 'success') {
-                            SuccessMessage(data.message);
-                        } else {
-                            ErrorMessage(data.message)
-                        }
+                        console.log(data)
+                        SuccessMessage(data.message);
                     }
                 });
             }
         })
     })
-
-  function showError(input, message) {
-        // console.log(message);
-        const formGroup = input.parentElement;
-        const errorSpan = formGroup.querySelector('.error');
-
-        formGroup.classList.add('has-error');
-        errorSpan.innerText = message;
-        input.focus();
-    }
 </script>
 @endpush

@@ -34,7 +34,7 @@
       >
       </div>
       <div class="tables mt-2">
-        <form action="{{route('perusahaan_asuransi.form-post')}}" method="POST">
+        <form action="{{route('perusahaan_asuransi.form-post', $perusahaan->id)}}" method="POST">
         @csrf
             <table class="table-hak-akses table-auto w-full">
               <tr>
@@ -50,7 +50,7 @@
                       class="w-5 h-5 accent-current text-theme-primary bg-gray-100 border-gray-300 rounded focus:ring-theme-primary focus:ring-2"
                     />
                     <label
-                      for="checked-checkbox"
+                      for="check_all"
                       class="ml-2 text-sm font-medium"
                       >Pilih Semua</label
                     >

@@ -2,7 +2,7 @@
 
 @section('modal')
 
-@include('pages.mst_form_system_asuransi.modal.create')
+@include('pages.mst-item-asuransi.modal.create')
 
 @endsection
 
@@ -20,26 +20,23 @@
         <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Label<span class="text-theme-primary">*</span></label>
-                <input type="text" class=" p-2 w-full border" id="add-label" name="label" value="{{ $data->label }}" disabled/>
+                <input type="text" class=" p-2 w-full border" id="add-label" name="label" value="{{ $data->label }}" />
                 <small class="form-text text-red-600 error"></small>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Level<span class="text-theme-primary">*</span></label>
-                <select name="add-level" class="w-full p-2 border" id="add-level" disabled>
-                    <option value="">Tidak Ada Level </option>
+                <select name="add-level" class="w-full p-2 border" id="add-level">
+                    <option value="">-- Pilih Level --</option>
                     <option value="1" {{ $data->level == 1 ? 'selected' : '' }}>1</option>
                     <option value="2" {{ $data->level == 2 ? 'selected' : '' }}>2</option>
                 </select>
             </div>
-            <div class="input-box space-y-3">
-                {{-- @php
-                    $dataField = \App\Models\MstFormItemAsuransi::orderBy('id', 'ASC')->get();
-                @endphp --}}
+            <div class="input-box space-y-3 {{$data->level == 1 ? 'hidden' : ''}}" id="parent">
                 <label for="" class="uppercase">Parent<span class="text-theme-primary">*</span></label>
-                <select name="add-parent_id" class="w-full p-2 border" id="add-parent_id" disabled>
-                    <option value="">Tidak Ada Parent </option>
+                <select name="add-parent_id" class="w-full p-2 border" id="add-parent_id">
+                    <option value="">-- Pilih Parent --</option>
                     @foreach ($dataField as $item)
-                        <option value="{{ $item->id }}" @if($data->parent_id != null) {{ $data->parent_id == $item->id ? 'selected' : '' }} @endif >{{ $item->label }}</option>  
+                        <option value="{{ $item->id }}" @if($data->parent_id != null) {{ $data->parent_id == $item->id ? 'selected' : '' }} @endif >{{ $item->label }}</option>
                     @endforeach
                 </select>
             </div>
@@ -48,8 +45,8 @@
         <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Type input<span class="text-theme-primary">*</span></label>
-                <select name="add-type_input" class="w-full p-2 border" id="add-type_input" disabled>
-                    <option value="">Tidak Ada Type Input </option>
+                <select name="add-type_input" class="w-full p-2 border" id="add-type_input">
+                    <option value="">-- Pilih Type Input --</option>
                     <option value="text" {{ $data->type == 'text' ? 'selected' : '' }}>Text</option>
                     <option value="number" {{ $data->type == 'number' ? 'selected' : '' }}>Number</option>
                     <option value="option" {{ $data->type == 'option' ? 'selected' : '' }}>Option</option>
@@ -61,13 +58,13 @@
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Sequence<span class="text-theme-primary">*</span></label>
-                <input type="number" class=" p-2 w-full border" id="add-sequence" name="add-sequence" value="{{ $data?->sequence ?? '' }}" disabled/>
+                <input type="number" class=" p-2 w-full border" id="add-sequence" name="add-sequence" value="{{ $data?->sequence ?? '' }}" />
                 <small class="form-text text-red-600 error"></small>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Only Accept<span class="text-theme-primary">*</span></label>
-                <select name="add-only_accept" class="w-full p-2 border" id="add-only_accept" disabled>
-                    <option value="" {{ $data->only_accept == null ? 'selected' : '' }}>Tidak Ada Only Accept </option>
+                <select name="add-only_accept" class="w-full p-2 border" id="add-only_accept">
+                    <option value="" {{ $data->only_accept == null ? 'selected' : '' }}>-- Pilih Only Accept --</option>
                     <option value="text" {{ $data->only_accept == 'text' ? 'selected' : '' }}>Text</option>
                     <option value="alpha" {{ $data->only_accept == 'alpha' ? 'selected' : '' }}>Alpha</option>
                     <option value="alphanumeric" {{ $data->only_accept == 'aplphanumeric' ? 'selected' : '' }}>Alphanumeric</option>
@@ -80,35 +77,35 @@
         <div class="lg:grid-cols-3 max-w-lg md:grid-cols-2 grid-cols-1 grid gap-5 justify-end">
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="{{ $data->rupiah }}" name="add-rupiah" id="add-rupiah" class="accent-theme-primary" @checked($data->rupiah) disabled>
+                    <input type="checkbox" value="{{ $data->rupiah }}" name="add-rupiah" id="add-rupiah" class="accent-theme-primary" @checked($data->rupiah)>
                     <input type="hidden" value="{{ $data->rupiah }}" id="add-rupiah-value" name="add-rupiah-value" />
                     <label for="rupiah">Rupiah</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="{{ $data->readonly }}" name="add-readonly" id="add-readonly" class="accent-theme-primary" @checked($data->readonly) disabled>
+                    <input type="checkbox" value="{{ $data->readonly }}" name="add-readonly" id="add-readonly" class="accent-theme-primary" @checked($data->readonly)>
                     <input type="hidden" value="{{ $data->readonly }}" id="add-readonly-value" name="add-readonly-value" />
                     <label for="readonly">Read Only</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="{{ $data->hidden }}" name="add-hidden" id="add-hidden" class="accent-theme-primary" @checked($data->hidden) disabled>
+                    <input type="checkbox" value="{{ $data->hidden }}" name="add-hidden" id="add-hidden" class="accent-theme-primary" @checked($data->hidden)>
                     <input type="hidden" value="{{ $data->hidden }}" id="add-hidden-value" name="add-hidden-value" />
                     <label for="hidden">Hidden</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="{{ $data->disabled }}" name="add-disabled" id="add-disabled" class="accent-theme-primary" @checked($data->disabled) disabled>
+                    <input type="checkbox" value="{{ $data->disabled }}" name="add-disabled" id="add-disabled" class="accent-theme-primary" @checked($data->disabled)>
                     <input type="hidden" value="{{ $data->disabled }}" id="add-disabled-value" name="add-disabled-value" />
                     <label for="disabled">Disabled</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="{{ $data->required }}" name="add-type_require" id="add-type_require" class="accent-theme-primary" @checked($data->required) disabled>
+                    <input type="checkbox" value="{{ $data->required }}" name="add-type_require" id="add-type_require" class="accent-theme-primary" @checked($data->required)>
                     <input type="hidden" value="{{ $data->required }}" id="add-type_require-value" name="add-type_require-value" />
                     <label for="require">Required</label>
                 </div>
@@ -117,9 +114,17 @@
         <div class="flex gap-5 mt-8 w-full">
             <div class="input-box space-y-3 w-full">
                 <label for="" class="uppercase">Field FORMULA<span class="text-theme-primary">*</span></label>
-                <input type="text" class="p-2 w-full border bg-neutral-100" id="add-formula" name="formula" placeholder="Preview formula total = (field - field)" value="{{ $data->formula ?? '-' }}" readonly/>
+                <input type="text" class="p-2 w-full border bg-neutral-100" id="add-formula" name="formula" placeholder="Preview formula total = (field - field)" value="{{ $data->formula }}" readonly/>
                 <small class="form-text text-red-600 error"></small>
             </div>
+            <div class="mt-9 w-2/4">
+                <button data-target-id="modal-formula" class="px-8 py-2 rounded toggle-modal bg-theme-primary text-white ">
+                    Edit Formula
+                </button>
+            </div>
+        </div>
+        <div class="">
+            <button id="btnSimpan" class="bg-theme-primary px-8 py-2 text-white rounded-md">Simpan</button>
         </div>
         </div>
 
@@ -150,7 +155,18 @@
         $('#add-type_require-value').val(this.checked ? 1 : 0);
     });
 
-    $('#btnSimpan').on('click', function (e) { 
+    $('#add-level').on('change', function(){
+        var level = document.getElementById('add-level');
+        console.log(level.value);
+        if (level.value == 2 ) {
+            $('#parent').removeClass('hidden');
+        }
+        else {
+            $('#parent').addClass('hidden');
+        }
+    })
+
+    $('#btnSimpan').on('click', function (e) {
         e.preventDefault()
         const req_label = document.getElementById('add-label');
         const req_level = document.getElementById('add-level');
@@ -182,7 +198,7 @@
 
         $.ajax({
             type: "POST",
-            url: "{{ route('mst_form_system_asuransi.update', $data->id) }}",
+            url: "{{ route('mst-item-asuransi.update', $data->id) }}",
             data: {
                 _method: 'PUT',
                 _token: "{{ csrf_token() }}",
@@ -193,7 +209,7 @@
                 formula: req_formula.value,
                 sequence: req_sequence.value,
                 only_accept: req_only_accept.value,
-                // have_default_value: 
+                // have_default_value:
                 rupiah: req_rupiah.value,
                 readonly: req_readonly.value,
                 hidden: req_hidden.value,

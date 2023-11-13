@@ -93,30 +93,28 @@
 
     function SuccessMessage(message) {
         Swal.fire({
-        title: 'Berhasil',
-        icon: 'success',
-        timer: 3000,
-        closeOnClickOutside: false
+            title: 'Berhasil',
+            html: message,
+            icon: 'success',
+            closeOnClickOutside: false
         }).then(() => {
-            location.reload();
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
         });
-        setTimeout(function() {
-            location.reload();
-        }, 3000);
     }
 
     function ErrorMessage(message) {
         Swal.fire({
-        title: 'Gagal',
-        icon: 'error',
-        timer: 3000,
-        closeOnClickOutside: false
+            title: 'Gagal',
+            html: message,
+            icon: 'error',
+            closeOnClickOutside: false
         }).then(() => {
-            location.reload();
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
         });
-        setTimeout(function() {
-            location.reload();
-        }, 3000);
     }
 
     function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {

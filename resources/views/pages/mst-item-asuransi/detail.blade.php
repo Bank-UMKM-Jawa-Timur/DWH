@@ -2,7 +2,7 @@
 
 @section('modal')
 
-@include('pages.mst_form_system_asuransi.modal.create')
+@include('pages.mst-item-asuransi.modal.create')
 
 @endsection
 
@@ -20,22 +20,26 @@
         <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Label<span class="text-theme-primary">*</span></label>
-                <input type="text" class=" p-2 w-full border" id="add-label" name="label" />
+                <input type="text" class=" p-2 w-full border" id="add-label" name="label" value="{{ $data->label }}" disabled/>
                 <small class="form-text text-red-600 error"></small>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Level<span class="text-theme-primary">*</span></label>
-                <select name="add-level" class="w-full p-2 border" id="add-level">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
+                <select name="add-level" class="w-full p-2 border" id="add-level" disabled>
+                    <option value="">Tidak Ada Level </option>
+                    <option value="1" {{ $data->level == 1 ? 'selected' : '' }}>1</option>
+                    <option value="2" {{ $data->level == 2 ? 'selected' : '' }}>2</option>
                 </select>
             </div>
-            <div class="input-box space-y-3 hidden" id="parent">
+            <div class="input-box space-y-3">
+                {{-- @php
+                    $dataField = \App\Models\MstFormItemAsuransi::orderBy('id', 'ASC')->get();
+                @endphp --}}
                 <label for="" class="uppercase">Parent<span class="text-theme-primary">*</span></label>
-                <select name="add-parent_id" class="w-full p-2 border" id="add-parent_id">
-                    <option value="" selected>-- Pilih Parent --</option>
+                <select name="add-parent_id" class="w-full p-2 border" id="add-parent_id" disabled>
+                    <option value="">Tidak Ada Parent </option>
                     @foreach ($dataField as $item)
-                        <option value="{{ $item->id }}">{{ $item->label }}</option>
+                        <option value="{{ $item->id }}" @if($data->parent_id != null) {{ $data->parent_id == $item->id ? 'selected' : '' }} @endif >{{ $item->label }}</option>  
                     @endforeach
                 </select>
             </div>
@@ -44,65 +48,68 @@
         <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Type input<span class="text-theme-primary">*</span></label>
-                <select name="add-type_input" class="w-full p-2 border" id="add-type_input">
-                    <option value="text">Text</option>
-                    <option value="number">Number</option>
-                    <option value="option">Option</option>
-                    <option value="radio">Radio</option>
-                    <option value="file">File</option>
-                    <option value="email">Email</option>
-                    <option value="password">Password</option>
+                <select name="add-type_input" class="w-full p-2 border" id="add-type_input" disabled>
+                    <option value="">Tidak Ada Type Input </option>
+                    <option value="text" {{ $data->type == 'text' ? 'selected' : '' }}>Text</option>
+                    <option value="number" {{ $data->type == 'number' ? 'selected' : '' }}>Number</option>
+                    <option value="option" {{ $data->type == 'option' ? 'selected' : '' }}>Option</option>
+                    <option value="radio" {{ $data->type == 'radio' ? 'selected' : '' }}>Radio</option>
+                    <option value="file" {{ $data->type == 'file' ? 'selected' : '' }}>File</option>
+                    <option value="email" {{ $data->type == 'email' ? 'selected' : '' }}>Email</option>
+                    <option value="password" {{ $data->type == 'password' ? 'selected' : '' }}>Password</option>
                 </select>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Sequence<span class="text-theme-primary">*</span></label>
-                <input type="number" class=" p-2 w-full border" id="add-sequence" name="add-sequence" />
+                <input type="number" class=" p-2 w-full border" id="add-sequence" name="add-sequence" value="{{ $data?->sequence ?? '' }}" disabled/>
                 <small class="form-text text-red-600 error"></small>
             </div>
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Only Accept<span class="text-theme-primary">*</span></label>
-                <select name="add-only_accept" class="w-full p-2 border" id="add-only_accept">
-                    <option value="text">Text</option>
-                    <option value="alpha">Alpha</option>
-                    <option value="alphanumeric">Alphanumeric</option>
-                    <option value="numeric">Numeric</option>
+                <select name="add-only_accept" class="w-full p-2 border" id="add-only_accept" disabled>
+                    <option value="" {{ $data->only_accept == null ? 'selected' : '' }}>Tidak Ada Only Accept </option>
+                    <option value="text" {{ $data->only_accept == 'text' ? 'selected' : '' }}>Text</option>
+                    <option value="alpha" {{ $data->only_accept == 'alpha' ? 'selected' : '' }}>Alpha</option>
+                    <option value="alphanumeric" {{ $data->only_accept == 'aplphanumeric' ? 'selected' : '' }}>Alphanumeric</option>
+                    <option value="numeric" {{ $data->only_accept == 'numeric' ? 'selected' : '' }}>Numeric</option>
                 </select>
             </div>
         </div>
         {{-- form data 1 --}}
+        @method('PUT')
         <div class="lg:grid-cols-3 max-w-lg md:grid-cols-2 grid-cols-1 grid gap-5 justify-end">
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-rupiah" id="add-rupiah" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-rupiah-value" name="add-rupiah-value" />
+                    <input type="checkbox" value="{{ $data->rupiah }}" name="add-rupiah" id="add-rupiah" class="accent-theme-primary" @checked($data->rupiah) disabled>
+                    <input type="hidden" value="{{ $data->rupiah }}" id="add-rupiah-value" name="add-rupiah-value" />
                     <label for="rupiah">Rupiah</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-readonly" id="add-readonly" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-readonly-value" name="add-readonly-value" />
+                    <input type="checkbox" value="{{ $data->readonly }}" name="add-readonly" id="add-readonly" class="accent-theme-primary" @checked($data->readonly) disabled>
+                    <input type="hidden" value="{{ $data->readonly }}" id="add-readonly-value" name="add-readonly-value" />
                     <label for="readonly">Read Only</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-hidden" id="add-hidden" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-hidden-value" name="add-hidden-value" />
+                    <input type="checkbox" value="{{ $data->hidden }}" name="add-hidden" id="add-hidden" class="accent-theme-primary" @checked($data->hidden) disabled>
+                    <input type="hidden" value="{{ $data->hidden }}" id="add-hidden-value" name="add-hidden-value" />
                     <label for="hidden">Hidden</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-disabled" id="add-disabled" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-disabled-value" name="add-disabled-value" />
+                    <input type="checkbox" value="{{ $data->disabled }}" name="add-disabled" id="add-disabled" class="accent-theme-primary" @checked($data->disabled) disabled>
+                    <input type="hidden" value="{{ $data->disabled }}" id="add-disabled-value" name="add-disabled-value" />
                     <label for="disabled">Disabled</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-type_require" id="add-type_require" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-type_require-value" name="add-type_require-value" />
+                    <input type="checkbox" value="{{ $data->required }}" name="add-type_require" id="add-type_require" class="accent-theme-primary" @checked($data->required) disabled>
+                    <input type="hidden" value="{{ $data->required }}" id="add-type_require-value" name="add-type_require-value" />
                     <label for="require">Required</label>
                 </div>
             </div>
@@ -110,17 +117,9 @@
         <div class="flex gap-5 mt-8 w-full">
             <div class="input-box space-y-3 w-full">
                 <label for="" class="uppercase">Field FORMULA<span class="text-theme-primary">*</span></label>
-                <input type="text" class="p-2 w-full border bg-neutral-100" id="add-formula" name="formula" placeholder="Preview formula total = (field - field)" readonly/>
+                <input type="text" class="p-2 w-full border bg-neutral-100" id="add-formula" name="formula" placeholder="Preview formula total = (field - field)" value="{{ $data->formula ?? '-' }}" readonly/>
                 <small class="form-text text-red-600 error"></small>
             </div>
-            <div class="mt-9 w-2/4">
-                <button data-target-id="modal-formula" class="px-8 py-2 rounded toggle-modal bg-theme-primary text-white ">
-                    Create Formula
-                </button>
-            </div>
-        </div>
-        <div class="">
-            <button id="btnSimpan" class="bg-theme-primary px-8 py-2 text-white rounded-md">Simpan</button>
         </div>
         </div>
 
@@ -129,6 +128,11 @@
 @endsection
 @push('extraScript')
   <script>
+    $("#add-parent_id").select2();
+    $("#add-type_input").select2();
+    $("#add-only_accept").select2();
+    $("#add-level").select2();
+
     // change checkbox value to 1 or 0
     $('#add-rupiah').on('change', function(){
         $('#add-rupiah-value').val(this.checked ? 1 : 0);
@@ -146,17 +150,7 @@
         $('#add-type_require-value').val(this.checked ? 1 : 0);
     });
 
-    $('#add-level').on('change', function(){
-        var level = document.getElementById('add-level');
-        if (level.value == 2 ) {
-            $('#parent').removeClass('hidden');
-        }
-        else {
-            $('#parent').addClass('hidden');
-        }
-    })
-
-    $('#btnSimpan').on('click', function (e) {
+    $('#btnSimpan').on('click', function (e) { 
         e.preventDefault()
         const req_label = document.getElementById('add-label');
         const req_level = document.getElementById('add-level');
@@ -188,8 +182,9 @@
 
         $.ajax({
             type: "POST",
-            url: "{{ route('mst_form_system_asuransi.store') }}",
+            url: "{{ route('mst-item-asuransi.update', $data->id) }}",
             data: {
+                _method: 'PUT',
                 _token: "{{ csrf_token() }}",
                 label: req_label.value,
                 level: req_level.value,
@@ -198,7 +193,7 @@
                 formula: req_formula.value,
                 sequence: req_sequence.value,
                 only_accept: req_only_accept.value,
-                // have_default_value:
+                // have_default_value: 
                 rupiah: req_rupiah.value,
                 readonly: req_readonly.value,
                 hidden: req_hidden.value,
@@ -223,6 +218,9 @@
                         ErrorMessage(data.message)
                     }
                 }
+            },
+            error: function(res){
+                console.log(res);
             }
         });
      })

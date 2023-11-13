@@ -278,8 +278,9 @@ class PerusahaanAsuransiController extends Controller
 
     public function form($id)
     {
-        $perusahaan = PerusahaanAsuransi::select('nama')->where('id',$id)->first();
+        $perusahaan = PerusahaanAsuransi::select('id', 'nama')->where('id',$id)->first();
         $data = DB::table('mst_form_item_asuransi')->get();
+        
         return view('pages.perusahaan_asuransi.form-asuransi', compact('data', 'perusahaan'));
     }
 }

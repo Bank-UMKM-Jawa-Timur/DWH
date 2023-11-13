@@ -140,7 +140,7 @@
             </div>
             <h2>Halaman Tidak Ditemukan</h2>
             <p>Halaman yang Anda cari mungkin telah dihapus jika namanya diubah atau untuk sementara tidak tersedia.</p>
-            <a href="{{ URL::previous() }}">Kembali</a>
+            <a href="{{ route('dashboard') }}">Kembali</a>
         </div>
     </div>
 

@@ -474,41 +474,6 @@
             }
         })
 
-            // var data = {
-            //     "nobukti_pembayaran": "0002",
-            //     "tgl_bayar": "2017-08-07",
-            //     "total_premi": 472500,
-            //     "rincian_bayar": [
-            //         {
-            //             "premi": 472500,
-            //             "no_rek": "10060572000001",
-            //             "no_aplikasi": "BWj5FFUZfG",
-            //             "no_pk": "PK\/0085\/73\/SH\/0817-0820",
-            //             "no_polis": "045912120817012100",
-            //             "periode_bayar": "1",
-            //             "total_periode": "10"
-            //         }
-            //     ]
-            // }
-        $('#btn-simpan').on('click', function(){
-            // $.ajax({
-            //     url: 'http://sandbox-umkm.ekalloyd.id:8387/bayar',
-            //     type: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'X-API-Key': 'elj-bprjatim-123',
-            //         'Accept': 'application/json'
-            //     },
-            //     data: JSON.stringify(data),
-            //     success: function(response) {
-            //         console.log('Berhasil', response);
-            //     },
-            //     error: function(error) {
-            //         console.error('Gagal', error);
-            //     }
-            // });
-        });
-
         function alertError(message) {
             Swal.fire({
                 title: 'Error',

@@ -40,7 +40,7 @@ class ItemAsuransiController extends Controller
         $param['data'] = $data;
         $param['page_length'] = $page_length;
 
-        return view('pages.mst_form_system_asuransi.index', $param);
+        return view('pages.mst-item-asuransi.index', $param);
     }
 
     public function list($page_length =5, $searchQuery, $searchBy)
@@ -72,9 +72,8 @@ class ItemAsuransiController extends Controller
     public function create()
     {
         $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
-        // $data = response()->json(['result' => $dataField]);
 
-        return view('pages.mst_form_system_asuransi.create', compact(['dataField']));
+        return view('pages.mst-item-asuransi.create', compact(['dataField']));
     }
 
     /**
@@ -87,28 +86,30 @@ class ItemAsuransiController extends Controller
     {
         $status = '';
         $message = '';
+        $url = null;
 
-        $validator = Validator::make($request->all(), [
-            'label' => 'required',
-            'level' => 'required',
-            'sequence' => 'required',
-            'only_accept' => 'required',
-        ], [
-            'required' => ':attribute harus diisi.',
-            'unique' => ':attribute telah digunakan.',
-        ], [
-            'label' => 'Label',
-            'level' => 'Level',
-            'sequence' => 'Sequence',
-            'only_accept' => 'Only Accept',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'label' => 'required',
+        //     'level' => 'required',
+        //     'sequence' => 'required',
+        //     'only_accept' => 'required',
+        // ], [
+        //     'required' => ':attribute harus diisi.',
+        //     'unique' => ':attribute telah digunakan.',
+        // ], [
+        //     'label' => 'Label',
+        //     'level' => 'Level',
+        //     'sequence' => 'Sequence',
+        //     'only_accept' => 'Only Accept',
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => $validator->errors()->all()
-            ]);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'error' => $validator->errors()->all()
+        //     ]);
+        // }
 
+        DB::beginTransaction();
         try {
             $newItem =  new MstFormItemAsuransi();
             $newItem->label = $request->label;
@@ -118,13 +119,35 @@ class ItemAsuransiController extends Controller
             $newItem->formula = $request->formula;
             $newItem->sequence = $request->sequence;
             $newItem->only_accept = $request->only_accept;
-            $newItem->have_default_value = '';
             $newItem->rupiah = $request->rupiah;
             $newItem->readonly = $request->readonly;
             $newItem->hidden = $request->hidden;
             $newItem->disabled = $request->disabled;
             $newItem->required = $request->required;
             $newItem->save();
+
+            $item_val = $request->item_val;
+            $item_display_val = $request->item_display_val;
+
+            if ($request->type == 'option' || $request->type == 'radio') {
+                if (count($item_val) == count($item_display_val)) {
+                    for ($i=0; $i < count($item_val); $i++) { 
+                        DB::table('mst_option_values')->insert([
+                            'form_asuransi_id' => $newItem->id,
+                            'value' => $item_val[$i],
+                            'display_value' => $item_display_val[$i],
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ]);
+                    }
+                }
+                else {
+                    DB::rollBack();
+                    $status = 'failed';
+                    $message = 'Harap lengkapi kolom pada tabel item.';
+                    throw new Exception("Kolom item tidak lengkap");
+                }
+            }
 
             $user_name = \Session::get(config('global.user_name_session'));
             $token = \Session::get(config('global.user_token_session'));
@@ -133,19 +156,25 @@ class ItemAsuransiController extends Controller
 
             $this->logActivity->store('Pengguna ' . $user_name . '(' . $name . ')' . ' Menambahkan data Item Form Asuransi.','',1);
 
+            DB::commit();
             $status = 'success';
             $message = 'Berhasil menyimpan data';
-            return redirect()->route('mst_form_asuransi.index');
+            $url = redirect()->route('mst-item-asuransi.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $status = 'failed';
-            $message = 'Terjadi kesalahan';
+            $message = 'Terjadi kesalahan. '.$e->getMessage();
+            $url = redirect()->back();
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
             $status = 'failed';
-            $message = 'Terjadi kesalahan pada database';
+            $message = 'Terjadi kesalahan pada database. '.$e->getMessage();
+            $url = redirect()->back();
         } finally {
             $response = [
                 'status' => $status,
                 'message' => $message,
+                'url' => $url,
             ];
 
             return response()->json($response);
@@ -165,7 +194,7 @@ class ItemAsuransiController extends Controller
             $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
             if($data) {
                 // dd($data);
-                return view('pages.mst_form_system_asuransi.detail', compact(['data', 'dataField']));
+                return view('pages.mst-item-asuransi.detail', compact(['data', 'dataField']));
             } else{
                 Alert::error('Gagal', 'Data tidak ditemukan');
                 return back();
@@ -192,7 +221,7 @@ class ItemAsuransiController extends Controller
             $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
             if($data) {
                 // dd($data);
-                return view('pages.mst_form_system_asuransi.edit', compact(['data', 'dataField']));
+                return view('pages.mst-item-asuransi.edit', compact(['data', 'dataField']));
             } else{
                 Alert::error('Gagal', 'Data tidak ditemukan');
                 return back();
@@ -249,7 +278,6 @@ class ItemAsuransiController extends Controller
             $updated->formula = $request->formula;
             $updated->sequence = $request->sequence;
             $updated->only_accept = $request->only_accept;
-            $updated->have_default_value = '';
             $updated->rupiah = $request->rupiah;
             $updated->readonly = $request->readonly;
             $updated->hidden = $request->hidden;
