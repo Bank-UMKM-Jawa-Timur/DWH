@@ -111,7 +111,7 @@
                     </button>
                     <ul class="dropdown-menu right-16">
                       <li>
-                        <a href="" class="item-dropdown">
+                        <a href="{{ route('mst_form_system_asuransi.show', $item->id) }}" class="item-dropdown">
                           Detail
                         </a>
                         <a href="{{ route('mst_form_system_asuransi.edit', $item->id) }}" class="item-dropdown">

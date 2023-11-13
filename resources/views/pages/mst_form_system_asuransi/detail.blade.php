@@ -26,7 +26,7 @@
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Level<span class="text-theme-primary">*</span></label>
                 <select name="add-level" class="w-full p-2 border" id="add-level" disabled>
-                    <option value="">-- Pilih Level --</option>
+                    <option value="">Tidak Ada Level </option>
                     <option value="1" {{ $data->level == 1 ? 'selected' : '' }}>1</option>
                     <option value="2" {{ $data->level == 2 ? 'selected' : '' }}>2</option>
                 </select>
@@ -37,7 +37,7 @@
                 @endphp --}}
                 <label for="" class="uppercase">Parent<span class="text-theme-primary">*</span></label>
                 <select name="add-parent_id" class="w-full p-2 border" id="add-parent_id" disabled>
-                    <option value="">-- Pilih Parent --</option>
+                    <option value="">Tidak Ada Parent </option>
                     @foreach ($dataField as $item)
                         <option value="{{ $item->id }}" @if($data->parent_id != null) {{ $data->parent_id == $item->id ? 'selected' : '' }} @endif >{{ $item->label }}</option>  
                     @endforeach
@@ -49,7 +49,7 @@
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Type input<span class="text-theme-primary">*</span></label>
                 <select name="add-type_input" class="w-full p-2 border" id="add-type_input" disabled>
-                    <option value="">-- Pilih Type Input --</option>
+                    <option value="">Tidak Ada Type Input </option>
                     <option value="text" {{ $data->type == 'text' ? 'selected' : '' }}>Text</option>
                     <option value="number" {{ $data->type == 'number' ? 'selected' : '' }}>Number</option>
                     <option value="option" {{ $data->type == 'option' ? 'selected' : '' }}>Option</option>
@@ -67,7 +67,7 @@
             <div class="input-box space-y-3">
                 <label for="" class="uppercase">Only Accept<span class="text-theme-primary">*</span></label>
                 <select name="add-only_accept" class="w-full p-2 border" id="add-only_accept" disabled>
-                    <option value="" {{ $data->only_accept == null ? 'selected' : '' }}>-- Pilih Only Accept --</option>
+                    <option value="" {{ $data->only_accept == null ? 'selected' : '' }}>Tidak Ada Only Accept </option>
                     <option value="text" {{ $data->only_accept == 'text' ? 'selected' : '' }}>Text</option>
                     <option value="alpha" {{ $data->only_accept == 'alpha' ? 'selected' : '' }}>Alpha</option>
                     <option value="alphanumeric" {{ $data->only_accept == 'aplphanumeric' ? 'selected' : '' }}>Alphanumeric</option>
