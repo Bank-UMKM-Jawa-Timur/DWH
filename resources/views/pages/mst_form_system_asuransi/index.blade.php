@@ -1,4 +1,7 @@
 @extends('layout.master')
+@section('modal')
+@include('pages.mst_form_system_asuransi.modal.formula')
+@endsection
 @section('content')
 <div class="head-pages">
     <p class="text-sm">Asuransi</p>
@@ -111,9 +114,11 @@
                     </button>
                     <ul class="dropdown-menu right-16">
                       <li>
-                        <a href="" class="item-dropdown">
-                          Detail
+                        @if ($item->formula)
+                        <a href="#" id="formula" data-label="{{$item->label}}" data-formula="{{$item->formula}}" class="item-dropdown">
+                          Formula
                         </a>
+                        @endif
                         <a href="{{ route('mst_form_system_asuransi.edit', $item->id) }}" class="item-dropdown">
                           Edit
                         </a>
@@ -154,6 +159,10 @@
   $('#page_length').on('change', function() {
     $('#form').submit()
   })
+
+  $('#formula').on('click', function() {
+    $('#modal-formula').removeClass('hidden');
+    })
 
   $('.btn-delete').on('click', function(e) {
         const data_id = $(this).data('id')
