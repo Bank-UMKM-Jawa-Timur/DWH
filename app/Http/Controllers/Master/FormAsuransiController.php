@@ -3,14 +3,25 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LogActivitesController;
 use App\Models\MstFormAsuransi;
 use App\Models\MstFormItemAsuransi;
 use App\Models\MstPerusahaanAsuransi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class FormAsuransiController extends Controller
 {
+
+    private $logActivity;
+
+    function __construct()
+    {
+        $this->logActivity = new LogActivitesController;
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -36,22 +47,24 @@ class FormAsuransiController extends Controller
 
     public function list($page_length =5, $searchQuery, $searchBy)
     {
-        $data = MstFormAsuransi::with(['perusahaanAsuransi','itemAsuransi'])->orderBy('id', 'ASC');
+        $data = MstFormAsuransi::select('mst_form_asuransi.*', 'p.nama')
+                ->join('mst_perusahaan_asuransi AS p','mst_form_asuransi.perusahaan_id','=','p.id')
+                ->join('mst_form_item_asuransi AS i','mst_form_asuransi.form_item_asuransi_id','=','i.id')
+                ->orderBy('id');
         if ($searchQuery && $searchBy === 'field') {
             $data->where(function ($q) use ($searchQuery) {
-                $q->where('perusahaanAsuransi.nama', 'like', '%' . $searchQuery . '%')
-                ->orWhere('itemAsuransi.label', 'like', '%' . $searchQuery . '%')
-                ->orWhere('itemAsuransi.level', 'like', '%' . $searchQuery . '%')
-                ->orWhere('itemAsuransi.type', 'like', '%' . $searchQuery . '%')
-                ->orWhere('itemAsuransi.formula', 'like', '%' . $searchQuery . '%')
-                ->orWhere('itemAsuransi.sequence', 'like', '%' . $searchQuery . '%')
-                ->orWhere('itemAsuransi.only_accept', 'like', '%' . $searchQuery . '%');
+                $q->where('p.nama', 'like', '%' . $searchQuery . '%')
+                ->orWhere('i.label', 'like', '%' . $searchQuery . '%')
+                ->orWhere('i.level', 'like', '%' . $searchQuery . '%')
+                ->orWhere('i.type', 'like', '%' . $searchQuery . '%')
+                ->orWhere('i.formula', 'like', '%' . $searchQuery . '%')
+                ->orWhere('i.sequence', 'like', '%' . $searchQuery . '%')
+                ->orWhere('i.only_accept', 'like', '%' . $searchQuery . '%');
             });
         }
 
         if (is_numeric($page_length))
             $data = $data->paginate($page_length);
-            // $data = $data->paginate($page_length)->withQueryString();
         else
             $data = $data->get();
         return $data;
@@ -101,6 +114,12 @@ class FormAsuransiController extends Controller
             $newAsuransi->form_item_asuransi_id = $request->form_item_asuransi_id;
             $newAsuransi->save();
 
+            $user_name = \Session::get(config('global.user_name_session'));
+            $token = \Session::get(config('global.user_token_session'));
+            $user = $token ? $this->getLoginSession() : Auth::user();
+            $name = $token ? $user['data']['nip'] : $user->email;
+
+            $this->logActivity->store('Pengguna ' . $user_name . '(' . $name . ')' . ' Menambahkan data Form Asuransi.','',1);
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
@@ -162,6 +181,48 @@ class FormAsuransiController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $status = '';
+        $message = '';
+
+        try {
+            DB::beginTransaction();
+
+            $currentFormAsuransi = MstFormAsuransi::with(['perusahaanAsuransi','itemAsuransi'])->findOrFail($id);
+            $currentJenisNama = $currentFormAsuransi->perusahaanAsuransi->nama;
+            $currentJenisLabel = $currentFormAsuransi->itemAsuransi->label;
+            if ($currentFormAsuransi) {
+                $currentFormAsuransi->delete();
+
+                $user_name = \Session::get(config('global.user_name_session'));
+                $token = \Session::get(config('global.user_token_session'));
+                $user = $token ? $this->getLoginSession() : Auth::user();
+                $name = $token ? $user['data']['nip'] : $user->email;
+
+                $this->logActivity->store('Pengguna ' . $user_name . '(' . $name . ')' . " Menghapus data Form Asuransi '$currentJenisNama' Label '$currentJenisLabel'.", '', 1);
+
+                $status = 'success';
+                $message = 'Berhasil menghapus data.';
+            } else {
+                $status = 'error';
+                $message = 'Data tidak ditemukan.';
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $status = 'error';
+            $message = 'Terjadi kesalahan.';
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $status = 'error';
+            $message = 'Terjadi kesalahan pada database.';
+        } finally {
+            DB::commit();
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
+        }
     }
 }
