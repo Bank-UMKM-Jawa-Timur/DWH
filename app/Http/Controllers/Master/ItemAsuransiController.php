@@ -13,6 +13,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class ItemAsuransiController extends Controller
 {
+    private $logActivity;
     /**
      * Display a listing of the resource.
      *
@@ -36,7 +37,7 @@ class ItemAsuransiController extends Controller
 
     public function list($page_length =5, $searchQuery, $searchBy)
     {
-        $data = MstFormItemAsuransi::orderBy('label');
+        $data = MstFormItemAsuransi::orderBy('sequence', 'ASC');
         if ($searchQuery && $searchBy === 'field') {
             $data->where(function ($q) use ($searchQuery) {
                 $q->where('label', 'like', '%' . $searchQuery . '%')
@@ -120,6 +121,7 @@ class ItemAsuransiController extends Controller
 
             $status = 'success';
             $message = 'Berhasil menyimpan data';
+            return redirect()->route('mst_form_asuransi.index');
         } catch (\Exception $e) {
             $status = 'failed';
             $message = 'Terjadi kesalahan';
@@ -268,6 +270,38 @@ class ItemAsuransiController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $status = '';
+        $message = '';
+
+        try {
+            DB::beginTransaction();
+
+            $currentItemAsuransi = MstFormItemAsuransi::findOrFail($id);
+            if ($currentItemAsuransi) {
+                $currentItemAsuransi->delete();
+
+                $status = 'success';
+                $message = 'Berhasil menghapus data.';
+            } else {
+                $status = 'error';
+                $message = 'Data tidak ditemukan.';
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $status = 'error';
+            $message = 'Terjadi kesalahan.';
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $status = 'error';
+            $message = 'Terjadi kesalahan pada database.';
+        } finally {
+            DB::commit();
+            $response = [
+                'status' => $status,
+                'message' => $message,
+            ];
+
+            return response()->json($response);
+        }
     }
 }
