@@ -131,6 +131,9 @@
             $(`#${identifier} #modal_premi_disetor`).val(formatPremiDisetor)
         })
 
+        $('#btn-send').on('click', function() {
+            $('#preload-data').removeClass('hidden')
+        })
 
         function formatRupiah(angka) {
             var reverse = angka.toString().split('').reverse().join('');

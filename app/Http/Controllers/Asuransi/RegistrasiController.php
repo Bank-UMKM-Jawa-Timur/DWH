@@ -135,15 +135,15 @@ class RegistrasiController extends Controller
                                     $value2->asuransi = $asuransi;
                                 }
                                 $data[$key]['jenis_asuransi'] = $jenis_asuransi;
+                                // return $data[$key]['jenis_asuransi'];
                                 foreach($data[$key]['jenis_asuransi'] as $keyAsuransi => $itemAsuransi){
                                     if ($itemAsuransi->asuransi) {
                                         if($itemAsuransi->asuransi->status != 'sended' && !$itemAsuransi->asuransi->is_paid)
                                             $itemAsuransi->pengajuan_klaim = null;
                                         else{
                                             $dataKlaim = DB::table('pengajuan_klaim')
-                                                ->where('asuransi_id', $itemAsuransi->id)
+                                                ->where('asuransi_id', $itemAsuransi->asuransi->id)
                                                 ->first();
-
                                             $itemAsuransi->pengajuan_klaim = $dataKlaim ? $dataKlaim : null;
                                         }
                                     } else {
@@ -158,6 +158,7 @@ class RegistrasiController extends Controller
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
             }
+            // return $data;
             return view('pages.asuransi-registrasi.index', compact('data', 'role_id', 'role'));
         } catch (\Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
@@ -927,7 +928,7 @@ class RegistrasiController extends Controller
             $asuransi = Asuransi::find($request->id);
             if ($asuransi) {
                 if (!$asuransi->is_paid) {
-                    if ($asuransi->status == 'onprogress') {
+                    if ($asuransi->status == 'sended') {
                         $headers = [
                             "Accept" => "/",
                             "x-api-key" => config('global.eka_lloyd_token'),
@@ -941,7 +942,7 @@ class RegistrasiController extends Controller
                         ];
 
                         $host = config('global.eka_lloyd_host');
-                        $url = "$host/batal";
+                        $url = "$host/batal1";
 
                         $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $body);
 

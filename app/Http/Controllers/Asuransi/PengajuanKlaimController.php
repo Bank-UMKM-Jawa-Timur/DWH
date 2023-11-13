@@ -250,7 +250,7 @@ class PengajuanKlaimController extends Controller
                 $message = '';
                 if ($status == "00") {
                     $message = $responseBody['keterangan'];
-                    
+
                     $this->logActivity->store('Pengguna ' . $request->name . ' cek status pengajuan klaim', Null, '0');
 
                     DB::commit();
@@ -303,9 +303,10 @@ class PengajuanKlaimController extends Controller
 
         $req = [
             'no_aplikasi' => $request->no_aplikasi,
-            'no_rekening' => $request->no_rekening,
-            'no_sp' => $request->no_polis,
+            'no_rekening' => $request->no_rek,
+            'no_sp' => $request->no_sp,
         ];
+
 
         DB::beginTransaction();
         try{
@@ -325,34 +326,28 @@ class PengajuanKlaimController extends Controller
             $name = $token ? $user['data']['nip'] : $user->email;
 
             $host = config('global.eka_lloyd_host');
-            $url = "$host/batal";
+            $url = "$host/batal2";
             $response = Http::withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
             $statusCode = $response->status();
             if ($statusCode == 200) {
                 $responseBody = json_decode($response->getBody(), true);
-                $code = $responseBody['code'];
+                $code = $responseBody['status'];
                 $message = '';
                 switch($code){
                     case '01':
                         $message = $responseBody['keterangan'];
-                        return response()->json([
-                            'status' => 'Gagal',
-                            'message' => $message
-                        ]);
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('asuransi.registrasi.index');
                         break;
                     case '02':
                         $message = $responseBody['keterangan'];
-                        return response()->json([
-                            'status' => 'Gagal',
-                            'message' => $message
-                        ]);
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('asuransi.registrasi.index');
                         break;
                     case '03':
                         $message = $responseBody['keterangan'];
-                        return response()->json([
-                            'status' => 'Gagal',
-                            'message' => $message
-                        ]);
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('asuransi.registrasi.index');
                         break;
                     case '05':
                         $message = $responseBody['keterangan'];
@@ -362,49 +357,36 @@ class PengajuanKlaimController extends Controller
                         $pengajuanKlaim->canceled_at = date('Y-m-d');
                         $pengajuanKlaim->canceled_by = $user_id;
                         $pengajuanKlaim->save();
-                        
+
                         $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pembatalan pengajuan klaim.', $data->asuransi_id, 1);
 
                         DB::commit();
-                        return response()->json([
-                            'status' => 'Berhasil',
-                            'message' => $message
-                        ]);
+                        Alert::success('Berhasil', $message);
+                        return redirect()->route('asuransi.registrasi.index');
                         break;
                     case '06':
                         $message = $responseBody['keterangan'];
-                        return response()->json([
-                            'status' => 'Gagal',
-                            'message' => $message
-                        ]);
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('asuransi.registrasi.index');
                         break;
                     case '48':
                         $message = $responseBody['keterangan'];
-                        return response()->json([
-                            'status' => 'Gagal',
-                            'message' => $message
-                        ]);
+                        Alert::error('Gagal', $message);
+                        return redirect()->route('asuransi.registrasi.index');
                         break;
-                    default :
-                        return response()->json([
-                            'status' => 'Gagal',
-                            'message' => 'Terjadi Kesalahan'
-                        ]);
+                    default:
+                        Alert::error('Gagal', 'Terjadi kesalahan');
                         return back();
                 }
             }
             else {
-                return response()->json([
-                    'status' => 'Gagal',
-                    'message' => 'Terjadi Kesalahan'
-                ]);
+                Alert::error('Gagal', 'Terjadi kesalahan');
+                return back();
             }
         } catch(\Exception $e){
             DB::rollBack();
-            return response()->json([
-                'status' => 'Gagal',
-                'message' => $e->getMessage()
-            ]);
+            Alert::error('Gagal', $e->getMessage());
+            return back();
         }
     }
 
@@ -449,9 +431,9 @@ class PengajuanKlaimController extends Controller
                 $name = $token ? $user['data']['nip'] : $user->email;
 
                 $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menyetujui pengajuan klaim.', $data->asuransi_id, 1);
-    
+
                 DB::commit();
-    
+
                 Alert::success('Berhasil', 'Berhasil melakukan review pengajuan klaim');
                 return redirect()->route('asuransi.pengajuan-klaim.index');
             } else{
@@ -477,7 +459,7 @@ class PengajuanKlaimController extends Controller
                 'pendapat' => $request->pendapat,
                 'created_at' => now()
             ]);
-            
+
             $pengajuanKlaim = PengajuanKlaim::find($id);
             $pengajuanKlaim->status = 'revition';
             $pengajuanKlaim->save();
@@ -487,11 +469,11 @@ class PengajuanKlaimController extends Controller
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
             $name = $token ? $user['data']['nip'] : $user->email;
-            
+
             $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' mengembalikan pengajuan klaim ke staf.', $data->asuransi_id, 1);
 
             DB::commit();
-            
+
             return response()->json([
                 'status' => 'Berhasil',
                 'message' => 'Berhasil mengembalikan posisi ke staf'
@@ -521,7 +503,7 @@ class PengajuanKlaimController extends Controller
                 ->first();
             $data['pendapat'] = PendapatPengajuanKlaim::where('pengajuan_klaim_id', $id)
                 ->get();
-    
+
             if($data['data']){
                 return view('pages.pengajuan-klaim.edit', $data);
             } else{
@@ -586,7 +568,7 @@ class PengajuanKlaimController extends Controller
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
             $name = $token ? $user['data']['nip'] : $user->email;
-            
+
             $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' mengedit pengajuan klaim.', $data->asuransi_id, 1);
             DB::commit();
 
@@ -634,6 +616,8 @@ class PengajuanKlaimController extends Controller
                 'penyebab_klaim' => $data->penyebab_klaim,
             ];
 
+            // return $req;
+
             $host = config('global.eka_lloyd_host');
             $url = "$host/klaim";
             $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->post($url, $req);
@@ -653,11 +637,12 @@ class PengajuanKlaimController extends Controller
                             $pengajuanKlaim->save();
 
                             $data = PengajuanKlaim::find($id);
+
                             $user_name = \Session::get(config('global.user_name_session'));
                             $token = \Session::get(config('global.user_token_session'));
                             $user = $token ? $this->getLoginSession() : Auth::user();
                             $name = $token ? $user['data']['nip'] : $user->email;
-                            
+
                             $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' mengirim pengajuan klaim.', $data->asuransi_id, 1);
 
                             DB::commit();

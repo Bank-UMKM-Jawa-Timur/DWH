@@ -54,7 +54,7 @@
                     <label for="" class="uppercase">Tanggal Surat Peringatan Ke 3<span class="text-theme-primary">*</span></label>
                     <div class="flex border justify-center ">
                         <div class="flex justify-center p-2 "><span>@include('components.svg.calendar')</span></div>
-                        <input type="text" class="datepicker p-2 w-full" value="dd/mm/yyyy" id="" value="{{old('tgl_sp3')}}" name="tgl_sp3"/>
+                        <input type="text" class="p-2 w-full" value="{{date('d-m-Y')}}" id="" value="{{old('tgl_sp3')}}" name="tgl_sp3" readonly/>
                     </div>
                     <div class="errorSpan hidden" id="errorTglSurat">
                         <p id="errorText">Tanggal Surat Peringatan Ke 3 Belum Di Isi.</p>
@@ -162,9 +162,9 @@
     $('#no_aplikasi').select2();
     $('#form-reset').on('click', function(){
         $('#form-pengajuan-klaim')[0].reset();
-        if($('#form-pengajuan-klaim .datepicker')[0]){
-            $('.datepicker').val('dd/mm/yyyy');
-        }
+        // if($('#form-pengajuan-klaim .datepicker')[0]){
+        //     $('.datepicker').val('dd/mm/yyyy');
+        // }
     })
 
     $('#no_aplikasi').on('change', function(){
