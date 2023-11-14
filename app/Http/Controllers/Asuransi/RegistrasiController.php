@@ -167,7 +167,7 @@ class RegistrasiController extends Controller
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
             }
-            
+
             return view('pages.asuransi-registrasi.index', compact('data', 'role_id', 'role'));
         } catch (\Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
@@ -1146,9 +1146,9 @@ class RegistrasiController extends Controller
                                                         'created_at' => $current_time,
                                                         'updated_at' => $current_time,
                                                     ]);
-    
+
                                                     $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pelunasan registrasi asuransi.', $request->id, 1);
-    
+
                                                     DB::commit();
                                                 }
 

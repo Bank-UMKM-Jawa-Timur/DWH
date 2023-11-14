@@ -270,6 +270,7 @@ class RoleController extends Controller
             $actions = Action::select('id', 'name')->orderBy('id')->get();
             foreach ($actions as $key => $value) {
                 $permission = Permission::select('id')->where('role_id', $request->role_id)->where('action_id', $value->id)->first();
+
                 if (array_key_exists($value->id, $request->check)) {
                     if (!$permission) {
                         // Set a new permission

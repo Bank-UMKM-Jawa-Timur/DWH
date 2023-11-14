@@ -15,7 +15,7 @@
             <table id="formula" class="tables w-full">
                 <thead>
                     <tr>
-                        <th colspan="3"><h2 class="text-lg">Atribut No Rekening</h2></th>
+                        <th colspan="3"><h2 class="judul-modal text-lg"></h2></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,7 +27,7 @@
                             :
                         </td>
                         <td>
-                            <b>No rekening</b>
+                            <b class="label"></b>
                         </td>
                     </tr>
                     <tr>
@@ -38,7 +38,7 @@
                             :
                         </td>
                         <td>
-                            <b>2</b>
+                            <b class="level"></b>
                         </td>
                     </tr>
                     <tr>
@@ -49,7 +49,7 @@
                             :
                         </td>
                         <td>
-                            <b>2</b>
+                            <b class="induk">2</b>
                         </td>
                     </tr>
                     <tr>
@@ -60,7 +60,7 @@
                             :
                         </td>
                         <td>
-                            <b>text</b>
+                            <b class="type"></b>
                         </td>
                     </tr>
                     <tr>
@@ -71,7 +71,7 @@
                             :
                         </td>
                         <td>
-                            <b>1</b>
+                            <b class="urutan"></b>
                         </td>
                     </tr>
                     <tr>
@@ -82,7 +82,7 @@
                             :
                         </td>
                         <td>
-                            <b>Alfabet & angka</b>
+                            <b class="hanya"></b>
                         </td>
                     </tr>
                     <tr>
@@ -93,7 +93,7 @@
                             :
                         </td>
                         <td>
-                            <b>tidak</b>
+                            <b class="rupiah"></b>
                         </td>
                     </tr>
                     <tr>
@@ -104,7 +104,7 @@
                             :
                         </td>
                         <td>
-                            <b>tidak</b>
+                            <b class="readonly">tidak</b>
                         </td>
                     </tr>
                     <tr>
@@ -115,7 +115,7 @@
                             :
                         </td>
                         <td>
-                            <b>tidak</b>
+                            <b class="hidden"></b>
                         </td>
                     </tr>
                     <tr>
@@ -126,7 +126,7 @@
                             :
                         </td>
                         <td>
-                            <b>tidak</b>
+                            <b class="disabled"></b>
                         </td>
                     </tr>
                     <tr>
@@ -137,7 +137,7 @@
                             :
                         </td>
                         <td>
-                            <b>iya</b>
+                            <b class="required"></b>
                         </td>
                     </tr>
                     <tr>
@@ -148,7 +148,7 @@
                             :
                         </td>
                         <td>
-                         <b> field - field</b>
+                         <b class="formula"></b>
                         </td>
                     </tr>
                 </tbody>
@@ -161,4 +161,39 @@
         </div>
     </div>
 </div>
+
+@push('extraScript')
+    <script>
+        $('.toggle-modal').on('click', function() {
+            var judul = $(this).data('label');
+            var level = $(this).data('level');
+            var induk = $(this).data('induk');
+            var type = $(this).data('type');
+            var urutan = $(this).data('urutan');
+            var hanya = $(this).data('hanya');
+            var rupiah = $(this).data('rupiah');
+            var readonly = $(this).data('readonly');
+            var hidden = $(this).data('hidden');
+            console.log(hidden);
+            var disabled = $(this).data('disabled');
+            var required = $(this).data('required');
+            var formula = $(this).data('rumus');
+
+
+            $('.judul-modal').html(judul)
+            $('.label').html(judul)
+            $('.level').html(level)
+            $('.induk').html(induk)
+            $('.type').html(type)
+            $('.urutan').html(urutan)
+            $('.hanya').html(hanya)
+            $('.rupiah').html(rupiah)
+            $('.readonly').html(readonly)
+            $('.hidden').html(hidden)
+            $('.disabled').html(disabled)
+            $('.required').html(required)
+            $('.formula').html(formula)
+        })
+    </script>
+@endpush
 
