@@ -402,6 +402,11 @@ class ItemAsuransiController extends Controller
 
             $currentItemAsuransi = MstFormItemAsuransi::findOrFail($id);
             if ($currentItemAsuransi) {
+                if ($currentItemAsuransi->type == 'option' || $currentItemAsuransi->type == 'radio') {
+                    DB::table('mst_option_values')
+                        ->where('form_asuransi_id', $id)
+                        ->delete();
+                }
                 $currentItemAsuransi->delete();
 
                 $status = 'success';
