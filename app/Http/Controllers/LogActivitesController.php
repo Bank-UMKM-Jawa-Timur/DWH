@@ -9,6 +9,16 @@ use Illuminate\Support\Facades\Http;
 
 class LogActivitesController extends Controller
 {
+    private $losHeaders;
+    private $losHost;
+
+    function __construct() {
+        $bearerToken = \Session::get(config('global.user_token_session'));
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
+    }
     public function index(Request $request)
     {
         $param['title'] = 'Log Aktivitas';
@@ -46,24 +56,19 @@ class LogActivitesController extends Controller
         else
             $data = $data->get();
 
-
+        $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
+        
         foreach ($data as $key => $value) {
             if ($value->role_id != 3) {
                 // role bukan vendor
                 // retrieve from api
-                $host = config('global.los_api_host');
-                $apiURL = $host . '/kkb/get-data-users-by-id/' . $value->user_id;
-
-                $headers = [
-                    'token' => config('global.los_api_token')
-                ];
-
+                $apiURL = $this->losHost . '/kkb/get-data-users-by-id/' . $value->user_id;
                 $responseBody = null;
-
                 $user = null;
 
                 try {
-                    $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    $response = Http::withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
@@ -107,13 +112,9 @@ class LogActivitesController extends Controller
         $token = \Session::get(config('global.user_token_session'));
 
         $newActivity = new LogActivity();
-
         $newActivity->user_id = $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id;
-
         $newActivity->content = $content;
-
         $newActivity->asuransi_id = $asuransi_id;
-
         $newActivity->is_asuransi = $is_asuransi;
 
         $newActivity->save();

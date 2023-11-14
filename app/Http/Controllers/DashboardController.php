@@ -23,11 +23,16 @@ class DashboardController extends Controller
 {
     private $role_id;
     private $param;
-
+    private $losHeaders;
+    private $losHost;
 
     function __construct()
     {
         $this->role_id = Session::get(config('global.role_id_session'));
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
     }
 
     public function index(Request $request)
@@ -186,12 +191,6 @@ class DashboardController extends Controller
 
             $user_id = $token ? $user['id'] : $user->id;
 
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
-
-
             // $dataAsuransi = DB::table('asuransi')->get();
             $belumBayar = 0;
             $sudahBayar = 0;
@@ -212,13 +211,11 @@ class DashboardController extends Controller
             $this->param['belumBayar'] = $belumBayar;
 
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
 
-            $apiCabang = $host . '/kkb/get-cabang/';
-            $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+            $apiCabang = $this->losHost . '/kkb/get-cabang';
+            $this->losHeaders['Authorization'] = "Bearer $token";
+            $api_req = Http::timeout(20)->withHeaders($this->losHeaders)->get($apiCabang);
+
             $responseCabang = json_decode($api_req->getBody(), true);
 
             $this->param['dataCabang'] = $responseCabang;
@@ -234,10 +231,6 @@ class DashboardController extends Controller
             // Klaim
             $total_sudah_klaim = 0;
             $total_belum_klaim = 0;
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
 
             if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
                 // Registrasi
@@ -289,11 +282,10 @@ class DashboardController extends Controller
                                     ->count();
 
                 // retrieve from api
-                $apiURL = "$host/v1/get-list-pengajuan";
-
+                $apiURL = "$this->losHost/v1/get-list-pengajuan";
                 try {
                     $response = Http::timeout(60)
-                                    ->withHeaders($headers)
+                                    ->withHeaders($this->losHeaders)
                                     ->withOptions(['verify' => false])
                                     ->get($apiURL, [
                                         'kode_cabang' => $user_cabang,
@@ -397,11 +389,10 @@ class DashboardController extends Controller
                 
                 // retrieve from api
                 $data_registrasi = [];
-                $apiURL = "$host/v1/get-list-pengajuan";
-
+                $apiURL = "$this->losHost/v1/get-list-pengajuan";
                 try {
                     $response = Http::timeout(60)
-                                    ->withHeaders($headers)
+                                    ->withHeaders($this->losHeaders)
                                     ->withOptions(['verify' => false])
                                     ->get($apiURL, [
                                         'kode_cabang' => $user_cabang,
@@ -471,30 +462,6 @@ class DashboardController extends Controller
                 } catch (\Illuminate\Http\Client\ConnectionException $e) {
                     // return $e->getMessage();
                 }
-
-                // $result = $this->group_by("nip", $data_registrasi);
-                // $finalResult = [];
-                // if ($result) {
-                //     foreach ($result as $key => $value) {
-                //         $jml_asuransi = 0;
-                //         $jml_diproses = 0;
-                //         for ($i=0; $i < count($value); $i++) {
-                //             $jml_asuransi += $value[$i]['jml_asuransi'];
-                //             $jml_diproses += $value[$i]['jml_diproses'];
-                //         };
-                //         $final_d = [
-                //             'nip' => $key,
-                //             'nama' => $value[0]['nama'],
-                //             'jml_asuransi' => $jml_asuransi,
-                //             'jml_diproses' => $jml_diproses,
-                //         ];
-
-                //         array_push($finalResult, $final_d);
-
-                //         $total_sudah_klaim += $jml_diproses;
-                //         $total_belum_klaim += $jml_asuransi - $total_sudah_klaim;
-                //     }
-                // }
 
                 $this->param['role'] = $role;
                 if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
@@ -573,11 +540,7 @@ class DashboardController extends Controller
         $data_registrasi = [];
 
         $user_id = $token ? $user['id'] : $user->id;
-
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
+        $this->losHeaders['Authorization'] = "Bearer $token";
 
         if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
             // Registrasi
@@ -601,12 +564,12 @@ class DashboardController extends Controller
                             ->where('k.kode_cabang', $user_cabang)
                             ->count();
             // retrieve from api
-            $apiURL = "$host/v1/get-list-pengajuan";
+            $apiURL = "$this->losHost/v1/get-list-pengajuan";
 
             try {
                 $user = $request->has('id_penyelia') ? $request->id_penyelia : 'all';
                 $response = Http::timeout(60)
-                                ->withHeaders($headers)
+                                ->withHeaders($this->losHeaders)
                                 ->withOptions(['verify' => false])
                                 ->get($apiURL, [
                                     'kode_cabang' => $user_cabang,
@@ -678,11 +641,11 @@ class DashboardController extends Controller
         } else {
             // Penyelia & staf
             // retrieve from api
-            $apiURL = "$host/v1/get-list-pengajuan";
-
+            $apiURL = "$this->losHost/v1/get-list-pengajuan";
+            
             try {
                 $response = Http::timeout(60)
-                                ->withHeaders($headers)
+                                ->withHeaders($this->losHeaders)
                                 ->withOptions(['verify' => false])
                                 ->get($apiURL, [
                                     'kode_cabang' => $user_cabang,
@@ -833,12 +796,10 @@ class DashboardController extends Controller
 
         $user_id = $token ? $user['id'] : $user->id;
 
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
         $total_sudah_klaim = 0;
         $total_belum_klaim = 0;
+
+        $this->losHeaders['Authorization'] = "Bearer $token";
         
         if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
             $total_sudah_klaim = DB::table('asuransi')
@@ -867,12 +828,12 @@ class DashboardController extends Controller
                                 ->whereRaw('asuransi.id NOT IN (SELECT asuransi_id FROM pengajuan_klaim)')
                                 ->count();
             // retrieve from api
-            $apiURL = "$host/v1/get-list-pengajuan";
+            $apiURL = "$this->losHost/v1/get-list-pengajuan";
 
             try {
                 $user = $request->has('id_penyelia') ? $request->id_penyelia : 'all';
                 $response = Http::timeout(60)
-                                ->withHeaders($headers)
+                                ->withHeaders($this->losHeaders)
                                 ->withOptions(['verify' => false])
                                 ->get($apiURL, [
                                     'kode_cabang' => $user_cabang,
@@ -990,11 +951,11 @@ class DashboardController extends Controller
                                 ->count();
             // retrieve from api
             // dd($total_belum_klaim);
-            $apiURL = "$host/v1/get-list-pengajuan";
+            $apiURL = "$this->losHost/v1/get-list-pengajuan";
 
             try {
                 $response = Http::timeout(60)
-                                ->withHeaders($headers)
+                                ->withHeaders($this->losHeaders)
                                 ->withOptions(['verify' => false])
                                 ->get($apiURL, [
                                     'kode_cabang' => $user_cabang,
@@ -1155,11 +1116,7 @@ class DashboardController extends Controller
         $data_registrasi = [];
 
         $user_id = $token ? $user['id'] : $user->id;
-
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
+        $this->losHeaders['Authorization'] = "Bearer $token";
 
         if ($role == 'Pincab' || $role == 'PBP' || $role == 'PBO') {
             $sudahBayar = DB::table('asuransi')
@@ -1184,12 +1141,12 @@ class DashboardController extends Controller
                             ->count();
 
             // retrieve from api
-            $apiURL = "$host/v1/get-list-pengajuan";
+            $apiURL = "$this->losHost/v1/get-list-pengajuan";
 
             try {
                 $user = $request->has('id_penyelia') ? $request->id_penyelia : 'all';
                 $response = Http::timeout(60)
-                                ->withHeaders($headers)
+                                ->withHeaders($this->losHeaders)
                                 ->withOptions(['verify' => false])
                                 ->get($apiURL, [
                                     'kode_cabang' => $user_cabang,
@@ -1279,11 +1236,11 @@ class DashboardController extends Controller
                             ->where('k.kode_cabang', $user_cabang)
                             ->count();
             // retrieve from api
-            $apiURL = "$host/v1/get-list-pengajuan";
+            $apiURL = "$this->losHost/v1/get-list-pengajuan";
 
             try {
                 $response = Http::timeout(60)
-                                ->withHeaders($headers)
+                                ->withHeaders($this->losHeaders)
                                 ->withOptions(['verify' => false])
                                 ->get($apiURL, [
                                     'kode_cabang' => $user_cabang,
@@ -1553,13 +1510,11 @@ class DashboardController extends Controller
         $hari_ini = now();
         $tAwal = date("Y-m-d", strtotime(Request()->tAwal));
         $tAkhir = date("Y-m-d", strtotime(Request()->tAkhir));
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
 
-        $apiCabang = $host . '/kkb/get-cabang/';
-        $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+        $apiCabang = $this->losHost . '/kkb/get-cabang/';
+        $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
+        $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiCabang);
         $responseCabang = json_decode($api_req->getBody(), true);
         $dataCharts = [];
 

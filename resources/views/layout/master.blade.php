@@ -179,6 +179,7 @@
             confirmButtonColor: '#DC3545'
         }).then((result) => {
             if (result.isConfirmed) {
+                $('#preload-data').removeClass('hidden')
                 $.ajax({
                     type: "POST",
                     url: "{{ route('logout') }}",
@@ -186,13 +187,12 @@
                         _token: "{{ csrf_token() }}",
                     },
                     success: function(data) {
-                        console.log(data);
                         if (data.status == 'success') {
-                        const url = "{{route('login')}}"
-                        window.location.href = url;
+                            const url = "{{route('login')}}"
+                            window.location.href = url;
                         } else {
-                        ErrorMessage(data.message)
-                    }
+                            ErrorMessage(data.message)
+                        }
                     },
                     error: function(e) {
                     console.log(e)

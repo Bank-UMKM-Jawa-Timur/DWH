@@ -32,6 +32,8 @@ class KreditController extends Controller
     private $notificationController;
     private $penggunaController;
     private $param;
+    private $losHeaders;
+    private $losHost;
 
     function __construct()
     {
@@ -39,6 +41,10 @@ class KreditController extends Controller
         $this->dashboardContoller = new DashboardController;
         $this->notificationController = new NotificationController;
         $this->penggunaController = new PenggunaController;
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
     }
 
     public function index(Request $request)
@@ -64,6 +70,8 @@ class KreditController extends Controller
             $temp_page = $request->page;
 
             $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
+
             $user = $token ? $this->getLoginSession() : Auth::user();
             $role = '';
             if ($user) {
@@ -263,14 +271,9 @@ class KreditController extends Controller
                 $data = $data->get();
 
             // retrieve from api
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
-
             foreach ($data as $key => $value) {
                 if ($value->kategori == 'data_kkb') {
-                    $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
+                    $apiURL = $this->losHost . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
 
                     try {
                         $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
@@ -319,10 +322,10 @@ class KreditController extends Controller
                         // return $e->getMessage();
                     }
                 } else {
-                    $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
+                    $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
 
                     try {
-                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                        $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
@@ -333,7 +336,7 @@ class KreditController extends Controller
                                 $value->detail = $responseBody;
                             }
                         } else {
-                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
@@ -529,15 +532,10 @@ class KreditController extends Controller
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
-                $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
+                $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
 
                 try {
-                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
@@ -693,15 +691,10 @@ class KreditController extends Controller
                     foreach ($importedSearch as $key => $value) {
                         // retrieve cabang from api
                         $value->cabang = 'undifined';
-                        $host = env('LOS_API_HOST');
-                        $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
-
-                        $headers = [
-                            'token' => env('LOS_API_TOKEN')
-                        ];
+                        $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
 
                         try {
-                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
@@ -762,16 +755,19 @@ class KreditController extends Controller
                     }
 
                     // data search
-                    $apiDataPengajuanSearch = $host . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
-                    $api_req_pengajuan = Http::timeout(6)->withHeaders($headers)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
+                    $apiDataPengajuanSearch = $this->losHost . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
+                    $api_req_pengajuan = Http::timeout(6)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
                     $responseDataPengajuanSearch = json_decode($api_req_pengajuan->getBody(), true);
-                    $arr_response_search = $responseDataPengajuanSearch['data'];
+
+                    $arr_response_search = $responseDataPengajuanSearch ? $responseDataPengajuanSearch['data'] : null;
 
                     $result_search = [];
-                    for ($i = 0; $i < count($arr_response_search); $i++) {
-                        $detail = $this->loadKreditById($arr_response_search[$i]['id_pengajuan']);
-                        $detail['detail'] = $arr_response_search[$i];
-                        array_push($result_search, $detail);
+                    if ($responseDataPengajuanSearch) {
+                        for ($i = 0; $i < count($arr_response_search); $i++) {
+                            $detail = $this->loadKreditById($arr_response_search[$i]['id_pengajuan']);
+                            $detail['detail'] = $arr_response_search[$i];
+                            array_push($result_search, $detail);
+                        }
                     }
 
                     if ($tab_type != 'tab-kkb')
@@ -780,7 +776,7 @@ class KreditController extends Controller
                         $request->merge(['page' => $temp_page]);
 
                     $page = $temp_page;
-                    $total = $responseDataPengajuanSearch['total']; //total items in array
+                    $total = $responseDataPengajuanSearch ? $responseDataPengajuanSearch['total'] : 0; //total items in array
                     $limit = $request->page_length ? $request->page_length : 5; //per page
                     $totalPages = ceil($total / $limit); //calculate total pages
                     $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
@@ -796,8 +792,8 @@ class KreditController extends Controller
                         'dataSearch' => $orders
                     ];
                 } else {
-                    $apiDataPengajuanSearch = $host . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
-                    $api_req_pengajuan = Http::timeout(6)->withHeaders($headers)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
+                    $apiDataPengajuanSearch = $this->losHost . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
+                    $api_req_pengajuan = Http::timeout(6)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
                     $responseDataPengajuanSearch = json_decode($api_req_pengajuan->getBody(), true);
                     $arr_response_search = $responseDataPengajuanSearch['data'];
 
@@ -835,14 +831,9 @@ class KreditController extends Controller
                     $this->param['importedSearch'] = $importedSearch;
                 }
             }
-            // return $this->param;
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
-
-            $apiCabang = $host . '/kkb/get-cabang/';
-            $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+            
+            $apiCabang = $this->losHost . '/kkb/get-cabang/';
+            $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiCabang);
             $responseCabang = json_decode($api_req->getBody(), true);
 
 
@@ -970,6 +961,7 @@ class KreditController extends Controller
             $this->param['documentCategories'] = DocumentCategory::select('id', 'name')->whereNotIn('name', ['Bukti Pembayaran', 'Penyerahan Unit', 'Bukti Pembayaran Imbal Jasa'])->orderBy('name', 'DESC')->get();
 
             $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
             $user = $token ? $this->getLoginSession() : Auth::user();
             $role = '';
             if ($user) {
@@ -1162,16 +1154,12 @@ class KreditController extends Controller
                 $data = $data->get();
 
             // retrieve from api
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
             foreach ($data as $key => $value) {
                 if ($value->kategori == 'data_kkb') {
-                    $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
+                    $apiURL = $this->losHost . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
 
                     try {
-                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                        $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
@@ -1184,7 +1172,7 @@ class KreditController extends Controller
                             if (array_key_exists('pk', $responseBody))
                                 $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
                         } else {
-                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
@@ -1217,10 +1205,10 @@ class KreditController extends Controller
                         // return $e->getMessage();
                     }
                 } else {
-                    $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
+                    $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
 
                     try {
-                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                        $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
@@ -1231,7 +1219,7 @@ class KreditController extends Controller
                                 $value->detail = $responseBody;
                             }
                         } else {
-                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
@@ -1417,15 +1405,10 @@ class KreditController extends Controller
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
-                $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
+                $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
 
                 try {
-                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
@@ -1513,14 +1496,12 @@ class KreditController extends Controller
     public function getDataPO($pengajuan_id)
     {
         try {
-            $host = env('LOS_API_HOST');
-            $apiURL = $host . '/kkb/get-data-pengajuan-by-id/' . $pengajuan_id;
+            $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
 
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
+            $apiURL = $this->losHost . '/kkb/get-data-pengajuan-by-id/' . $pengajuan_id;
 
-            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
             $statusCode = $response->status();
             $responseBody = json_decode($response->getBody(), true);
@@ -2579,6 +2560,7 @@ class KreditController extends Controller
         try {
             $is_import = $request->has('is_import');
             $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
             $user = $token ? $this->getLoginSession() : Auth::user();
             $user_id = $token ? $user['id'] : $user->id;
             $user_nip = $token ? $user['data']['nip'] : $user->nip;
@@ -2651,15 +2633,10 @@ class KreditController extends Controller
 
                 if ($imported_data) {
                     $imported_data->cabang = 'undifined';
-                    $host = env('LOS_API_HOST');
-                    $apiURL = $host . '/kkb/get-cabang/' . $imported_data->kode_cabang;
-
-                    $headers = [
-                        'token' => env('LOS_API_TOKEN')
-                    ];
+                    $apiURL = $this->losHost . '/kkb/get-cabang/' . $imported_data->kode_cabang;
 
                     try {
-                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                        $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
@@ -2674,15 +2651,10 @@ class KreditController extends Controller
                 }
             } else {
                 // retrieve from api
-                $host = config('global.los_api_host');
-                $apiURL = $host . '/kkb/get-data-pengajuan/' . $kredit->pengajuan_id . '/' . $user_id;
-
-                $headers = [
-                    'token' => config('global.los_api_token')
-                ];
+                $apiURL = $this->losHost . '/kkb/get-data-pengajuan/' . $kredit->pengajuan_id . '/' . $user_id;
 
                 try {
-                    $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    $response = Http::withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);

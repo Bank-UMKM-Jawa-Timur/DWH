@@ -17,9 +17,11 @@
                 <label for="" class="uppercase">Cabang</label>
                 <select name="cabang" class="w-full p-2 border" id="cabang">
                     <option value="" selected>-- Pilih Cabang --</option>
-                    @foreach ($dataCabang as $item)
-                        <option value="{{$item['kode_cabang']}}">{{$item['kode_cabang']}} - {{$item['cabang']}}</option>
-                    @endforeach
+                    @if ($dataCabang)
+                        @foreach ($dataCabang as $item)
+                            <option value="{{$item['kode_cabang']}}">{{$item['kode_cabang']}} - {{$item['cabang']}}</option>
+                        @endforeach
+                    @endif
                 </select>
             </div>
             <button class="bg-theme-primary px-8 rounded text-white py-2">
