@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
+
 
 class PerusahaanAsuransiController extends Controller
 {
@@ -279,8 +281,48 @@ class PerusahaanAsuransiController extends Controller
     public function form($id)
     {
         $perusahaan = PerusahaanAsuransi::select('id', 'nama')->where('id',$id)->first();
-        $data = DB::table('mst_form_item_asuransi')->get();
-        
+        $data = DB::table('mst_form_item_asuransi as item')->select(
+            'item.*',
+            DB::raw("IF ((SELECT COUNT(form_item_asuransi_id) FROM mst_form_asuransi WHERE form_item_asuransi_id = item.id AND perusahaan_id = $id) = 1, 'checked', 'uncheck') AS status")
+        )->get();
+
+        // return $data;
+
         return view('pages.perusahaan_asuransi.form-asuransi', compact('data', 'perusahaan'));
+    }
+
+    public function formPost(Request $request, $id){
+        // return $request;
+        try {
+            DB::beginTransaction();
+
+            $data = DB::table('mst_form_item_asuransi')->select('id', 'label')->orderBy('id')->get();
+            foreach ($data as $key => $value) {
+                $formAsuransi = DB::table('mst_form_asuransi')->where('perusahaan_id', $id)->where('form_item_asuransi_id', $value->id)->first();
+
+                if (array_key_exists($value->id, $request->check)) {
+                    if (!$formAsuransi) {
+                        $setItemFormAsuransi = new MstFormAsuransi();
+                        $setItemFormAsuransi->perusahaan_id = $id;
+                        $setItemFormAsuransi->form_item_asuransi_id = $value->id;
+                        $setItemFormAsuransi->save();
+                    }
+                }
+                else {
+                    DB::table('mst_form_asuransi')->where('perusahaan_id', $id)->where('form_item_asuransi_id', $value->id)->delete();
+                }
+            }
+            DB::commit();
+            Alert::success('Berhasil', 'Berhasil menyimpan data');
+            return redirect()->route('perusahaan-asuransi.index');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Alert::error('error', $e->getMessage());
+            return back();
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollback();
+            Alert::error('error', $e->getMessage());
+            return back();
+        }
     }
 }

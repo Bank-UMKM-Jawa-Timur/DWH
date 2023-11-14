@@ -59,24 +59,38 @@
               </tr>
               <tbody>
                 @forelse ($data as $item)
-                <tr>
-                  <td>{{ $loop->iteration }}</td>
-                  <td><a  href="#" data-target-id="modal-detail-asuransi" class="toggle-modal underline">{{ $item->label }}</a></td>
-                  <td>{{ $item->type }}</td>
-                  <td>
-                    <input
-                      id="check_{{$item->id}}"
-                      type="checkbox"
-                      name="check[{{$item->id}}]"
-                      value=""
-                      class="check-item w-5 h-5 accent-current text-theme-primary bg-gray-100 border-gray-300 rounded focus:ring-theme-primary focus:ring-2"
-                    />
-                  </td>
-                </tr>
-                @empty
                     <tr>
-                        <td>Data item tidak ada.</td>
+                        <td>{{ $loop->iteration }}</td>
+                        <td><a  href="#" data-target-id="modal-detail-asuransi"
+                            data-label = {{$item->label}}
+                            data-level = {{$item->level}}
+                            data-induk = {{$item->parent_id ? $item->parent_id : '-'}}
+                            data-type = {{$item->type}}
+                            data-urutan = {{$item->sequence}}
+                            data-hanya = {{$item->only_accept}}
+                            data-rupiah = {{$item->rupiah == 1 ? 'iya' : 'tidak'}}
+                            data-readonly = {{$item->readonly == 1 ? 'iya' : 'tidak'}}
+                            data-hidden = {{$item->hidden == 1 ? 'iya' : 'tidak'}}
+                            data-disabled = {{$item->disabled == 1 ? 'iya' : 'tidak'}}
+                            data-required = {{$item->required == 1 ? 'iya' : 'tidak'}}
+                            data-rumus = {{$item->formula ? $item->formula : '-'}}
+                            class="toggle-modal underline">{{ $item->label }}</a></td>
+                        <td>{{ $item->type }}</td>
+                        <td>
+                            <input
+                            @if ($item->status == 'checked') checked @endif
+                            id="check_{{$item->id}}"
+                            type="checkbox"
+                            name="check[{{$item->id}}]"
+                            value=""
+                            class="check-item w-5 h-5 accent-current text-theme-primary bg-gray-100 border-gray-300 rounded focus:ring-theme-primary focus:ring-2"
+                            />
+                        </td>
                     </tr>
+                    @empty
+                        <tr>
+                            <td>Data item tidak ada.</td>
+                        </tr>
                 @endforelse
               </tbody>
               <tfoot>
