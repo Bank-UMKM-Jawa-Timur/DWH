@@ -115,7 +115,7 @@
                             :
                         </td>
                         <td>
-                            <b class="hidden"></b>
+                            <b class="txt-modal-hidden"></b>
                         </td>
                     </tr>
                     <tr>
@@ -189,7 +189,7 @@
             $('.hanya').html(hanya)
             $('.rupiah').html(rupiah)
             $('.readonly').html(readonly)
-            $('.hidden').html(hidden)
+            $('.txt-modal-hidden').html(hidden)
             $('.disabled').html(disabled)
             $('.required').html(required)
             $('.formula').html(formula)
