@@ -23,11 +23,16 @@ class DashboardController extends Controller
 {
     private $role_id;
     private $param;
-
+    private $losHeaders;
+    private $losHost;
 
     function __construct()
     {
         $this->role_id = Session::get(config('global.role_id_session'));
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
     }
 
     public function index(Request $request)
@@ -108,6 +113,11 @@ class DashboardController extends Controller
 
             $user_id = $token ? $user['id'] : $user->id;
             $user_cabang = $token ? $user['kode_cabang'] : $user->kode_cabang;
+
+            $apiCabang = $this->losHost . '/kkb/get-cabang';
+            $this->losHeaders['Authorization'] = "Bearer $token";
+            $api_req = Http::timeout(20)->withHeaders($this->losHeaders)->get($apiCabang);
+
             if (!$token)
                 $user_id = 0; // vendor
 
@@ -293,17 +303,12 @@ class DashboardController extends Controller
                 $data = $data->get();
 
             // retrieve from api
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
-
             foreach ($data as $key => $value) {
                 if ($value->kategori == 'data_kkb') {
                     $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
 
                     try {
-                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                        $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
@@ -907,7 +912,6 @@ class DashboardController extends Controller
 
     public function loadKreditById($pengajuan_id)
     {
-
         $data = Kredit::select(
             'kredits.id',
             \DB::raw("IF (kredits.pengajuan_id IS NOT NULL, 'data_kkb', 'data_import') AS kategori"),
@@ -1027,13 +1031,10 @@ class DashboardController extends Controller
 
     public function getChartData()
     {
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
-
-        $apiCabang = $host . '/kkb/get-cabang/';
-        $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+        $apiCabang = $this->losHost . '/kkb/get-cabang/';
+        $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
+        $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiCabang);
         $responseCabang = json_decode($api_req->getBody(), true);
         $dataCharts = [];
 

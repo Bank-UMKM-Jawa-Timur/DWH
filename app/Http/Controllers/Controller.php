@@ -52,6 +52,8 @@ class Controller extends BaseController
 
         if ($this->host) {
             $apiURL = $this->host . "/get-session-check/$this->user_id";
+            $token = \Session::get(config('global.user_token_session'));
+            $this->headers['Authorization'] = $token;
 
             try {
                 $response = Http::timeout(3)
@@ -94,7 +96,9 @@ class Controller extends BaseController
 
         if ($this->host) {
             $apiURL = $this->host . '/v1/get-cabang';
-
+            $token = \Session::get(config('global.user_token_session'));
+            $this->headers['Authorization'] = $token;
+            
             try {
                 $response = Http::timeout(3)
                                 ->withHeaders($this->headers)
@@ -126,6 +130,27 @@ class Controller extends BaseController
             ];
 
             return $failed_response;
+        }
+    }
+
+    public function getStafByCabang($kode_cabang) {
+        // retrieve from api
+        $host = config('global.los_api_host');
+        $apiURL = $host . '/kkb/get-data-staf-cabang/' . $kode_cabang;
+        $token = \Session::get(config('global.user_token_session'));
+        $this->headers['Authorization'] = $token;
+        $responseBody = null;
+
+        try {
+            $response = Http::withHeaders($this->headers)->withOptions(['verify' => false])->get($apiURL);
+
+            $statusCode = $response->status();
+            $responseBody = json_decode($response->getBody(), true);
+            return $responseBody;
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return $e->getMessage();
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
     }
 }

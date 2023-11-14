@@ -84,6 +84,7 @@ class AuthenticatedSessionController extends Controller
                                 }
                                 Session::put(config('global.auth_session'), $responseBody);
                                 Session::put(config('global.role_id_session'), $role_id);
+                                Session::put(config('global.user_token_session'), $responseBody['access_token']);
                                 Session::put(config('global.user_id_session'), $responseBody['id']);
                                 Session::put(config('global.user_nip_session'), $responseBody['data']['nip']);
                                 Session::put(config('global.user_name_session'), $responseBody['data']['nama']);
