@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Asuransi;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
+use App\Models\MstFormItemAsuransi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -13,6 +14,7 @@ use App\Models\DetailAsuransi;
 use App\Models\Kredit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 class RegistrasiController extends Controller
 {
@@ -227,6 +229,7 @@ class RegistrasiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function create(Request $request)
     {
         $token = \Session::get(config('global.user_token_session'));
