@@ -1388,4 +1388,18 @@ class RegistrasiController extends Controller
             return response()->json($res);
         }
     }
+
+    public function itemByPerusahaan($perusahaan_id){
+        $data = DB::table('mst_form_asuransi as form')->select(
+            'item.*'
+        )
+        ->join('mst_form_item_asuransi as item', 'form.form_item_asuransi_id', 'item.id')
+        ->orderBy('item.sequence', 'ASC')
+        ->where('form.perusahaan_id', $perusahaan_id)
+        ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
 }

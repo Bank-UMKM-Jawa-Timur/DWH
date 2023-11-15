@@ -137,19 +137,21 @@
                         <small class="form-text text-red-600 error"></small>
                     </div>
                 </div>
+
+
                 <div class="title-form">
                     <h2 class="text-theme-primary font-bold text-lg">Data Registrasi</h2>
                 </div>
                 {{-- form data register 1 --}}
-                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
-                    <div class="input-box space-y-3">
+                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center" id="form-registrasi">
+                    {{-- <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Rekening<span class="text-theme-primary">*</span>
                         </label>
                         <input type="text" class="p-2 w-full border "
                         id="no_rekening" name="no_rekening" value="{{old('no_rekening')}}"/>
-                        <small class="form-text text-red-600 error"></small>
-                    </div>
-                    <div class="input-box space-y-3">
+                            <small class="form-text text-red-600 error"></small>
+                    </div> --}}
+                    {{-- <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span>
                         </label>
                         <input type="hidden" name="jenis_asuransi" id="jenis_asuransi"
@@ -197,11 +199,11 @@
                             <option @if (old('tipe_premi') == '0') selected @endif value="0">Biasa</option>
                             <option @if (old('tipe_premi') == '1') selected @endif value="1">Refund</option>
                         </select>
-                    </div>
+                    </div> --}}
                 </div>
 
                 {{-- form data register 6 should be hidden when choosing baru in jenis pengajuan --}}
-                <div class="form-6 hidden lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5 justify-center">
+                {{-- <div class="form-6 hidden lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5 justify-center">
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Polis Sebelumya<span
                                 class="text-theme-primary">*</span> </label>
@@ -220,9 +222,9 @@
                         <input type="text" class="rupiah p-2 w-full border " id="tunggakan" value="{{old('tunggakan')}}" name="tunggakan" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
-                </div>
+                </div> --}}
                 {{-- form data register 5 --}}
-                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                {{-- <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi</label>
                         <input type="hidden" id="rate_premi" name="rate_premi" />
@@ -280,7 +282,10 @@
                             name="premi_disetor" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
-                </div>
+                </div> --}}
+
+
+
                 <div class="flex gap-5">
                     <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit"
                         id="simpan-asuransi">
@@ -315,6 +320,7 @@
 
         $("#perusahaan").on("change", function(){
             var value = $(this).val();
+
             if(value == 2){
                 Swal.fire({
                     icon: 'error',
@@ -322,6 +328,39 @@
                 });
 
                 $("#perusahaan").val('').trigger('change');
+            }
+            else{
+                $("#form-registrasi").empty();
+                $.ajax({
+                   url: "{{url('asuransi/registrasi/get-item-form-by-perusahaan')}}/"+ value,
+                   type: "GET",
+                   accept: "Application/json",
+                   success: function(response) {
+                        var data = response.data;
+                        console.log(data);
+                        $.each(data, function(i, item) {
+                            var name = item.label;
+                            var names = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('_');
+
+                            var rupiah = item.rupiah;
+                            var required = item.required;
+                            var readonly = item.readonly;
+                            $("#form-registrasi").append(`
+                                <div class="input-box space-y-3">
+                                    <label for="${names}" class="uppercase ${names}">${item.label}
+                                    ${required ? '<span class="text-theme-primary">*</span>' : ''}
+                                    </label>
+                                    <input type="${item.type}" class="${rupiah ? 'rupiah' : ''} ${readonly ? 'disabled-input bg-disabled' : ''} p-2 w-full border "
+                                    id="${names}" name="${names}" value="{{old('${names}')}}" ${readonly ? 'readonly' : ''}/>
+                                        <small class="form-text text-red-600 error"></small>
+                                </div>
+                            `);
+                        });
+                   },
+                   error: function(response) {
+                       alertWarning('Terjadi kesalahan saat mengambil item form')
+                   }
+               })
             }
         })
 
