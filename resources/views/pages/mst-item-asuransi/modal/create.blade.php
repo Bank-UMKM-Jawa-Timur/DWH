@@ -23,12 +23,6 @@
                 <tbody>
                     <tr>
                         <td>
-                            <select name="add-formula-operator" id="add-operator" class="border p-2 w-full">
-                                <option value="+">+</option>
-                                <option value="-">-</option>
-                                <option value="*">*</option>
-                                <option value="/">/</option>
-                            </select>
                         </td>
                         <td>
                             <select name="add-formula-item" id="add-field" class="border p-2 w-full"> 
@@ -48,7 +42,7 @@
         </div>
         <div class="modal-footer flex gap-3 justify-end">
             <button data-dismiss-id="modal-formula" id="btn-hitung" class="px-7 py-3 bg-theme-primary flex gap-3 rounded text-white">
-                <span class="lg:block hidden"> Create </span>
+                <span class="lg:block hidden"> Simpan </span>
             </button>
             <button data-dismiss-id="modal-formula" class="border px-7 py-3 text-black rounded">
                 Tutup
@@ -79,7 +73,7 @@
                 </select>
             </td>
             <td>
-                <select name="field[]" id="add-field${number}" class="border p-2 w-full"> 
+                <select name="field[]" id="add-field${number}" class="border p-2 w-full select2"> 
                     <option value="">--- Pilih field ---</option>
                 </select>
             </td>

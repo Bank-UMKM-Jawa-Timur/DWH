@@ -40,7 +40,7 @@
                 </select>
             </div>
             <div class="input-box space-y-3">
-                <label for="" class="uppercase">Urutan<span class="text-theme-primary">*</span></label>
+                <label for="" class="uppercase">Urutan(terakhir {{$last_sequence}})<span class="text-theme-primary">*</span></label>
                 <input type="number" class=" p-2 w-full border" id="add-sequence" name="add-sequence" />
                 <small class="form-text text-red-600 error"></small>
             </div>
@@ -50,14 +50,14 @@
                     <option value="">-- Pilih Tipe Input --</option>
                     <option value="text">Teks</option>
                     <option value="number">Angka</option>
-                    <option value="option">Opsi</option>
+                    <option value="option">Opsi(radio)</option>
                     <option value="radio">Pilihan</option>
                     <option value="file">Berkas</option>
                     <option value="email">Email</option>
                     <option value="password">Password</option>
                 </select>
             </div>
-            <div class="input-box space-y-3">
+            <div class="input-box space-y-3 only-accept-box">
                 <label for="" class="uppercase">Hanya menerima<span class="text-theme-primary">*</span></label>
                 <select name="add-only_accept" class="w-full p-2 border" id="add-only_accept">
                     <option value="text">Teks</option>
@@ -93,39 +93,39 @@
             </table>
         </div>
         <div class="lg:grid-cols-3 max-w-lg md:grid-cols-2 grid-cols-1 grid gap-5 justify-end">
-            <div class="input-check-box space-y-3">
+            <div class="input-check-box space-y-3 rupiah-box">
                 <div class="flex gap-5">
                     <input type="checkbox" value="0" name="add-rupiah" id="add-rupiah" class="accent-theme-primary">
                     <input type="hidden" value="0" id="add-rupiah-value" name="add-rupiah-value" />
-                    <label for="rupiah">Rupiah</label>
+                    <label for="add-rupiah">Rupiah</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
                     <input type="checkbox" value="0" name="add-readonly" id="add-readonly" class="accent-theme-primary">
                     <input type="hidden" value="0" id="add-readonly-value" name="add-readonly-value" />
-                    <label for="readonly">Read Only</label>
+                    <label for="add-readonly">Read Only</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
                     <input type="checkbox" value="0" name="add-hidden" id="add-hidden" class="accent-theme-primary">
                     <input type="hidden" value="0" id="add-hidden-value" name="add-hidden-value" />
-                    <label for="hidden">Hidden</label>
+                    <label for="add-hidden">Hidden</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
                     <input type="checkbox" value="0" name="add-disabled" id="add-disabled" class="accent-theme-primary">
                     <input type="hidden" value="0" id="add-disabled-value" name="add-disabled-value" />
-                    <label for="disabled">Disabled</label>
+                    <label for="add-disabled">Disabled</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
                     <input type="checkbox" value="0" name="add-type_require" id="add-type_require" class="accent-theme-primary">
                     <input type="hidden" value="0" id="add-type_require-value" name="add-type_require-value" />
-                    <label for="require">Required</label>
+                    <label for="add-type_require">Required</label>
                 </div>
             </div>
         </div>
@@ -151,6 +151,7 @@
 @endsection
 @push('extraScript')
     <script>
+        $('#add-parent_id').select2()
         // change checkbox value to 1 or 0
         $('#add-rupiah').on('change', function(){
             $('#add-rupiah-value').val(this.checked ? 1 : 0);
@@ -182,9 +183,13 @@
             const selected = $(this).val()
             if (selected == 'option' || selected == 'radio') {
                 $('.extra-item').removeClass('hidden')
+                $('.only-accept-box').addClass('hidden')
+                $('.rupiah-box').addClass('hidden')
             }
             else {
                 $('.extra-item').addClass('hidden')
+                $('.only-accept-box').removeClass('hidden')
+                $('.rupiah-box').removeClass('hidden')
             }
         })
 
@@ -274,6 +279,7 @@
                 },
                 success: function(data) {
                     if (Array.isArray(data.error)) {
+                        $('#preload-data').addClass('hidden')
                         for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];
                             console.log(message);
@@ -295,6 +301,7 @@
                                 }, 3000);
                             });
                         } else {
+                            $('#preload-data').addClass('hidden')
                             ErrorMessage(data.message)
                         }
                     }
