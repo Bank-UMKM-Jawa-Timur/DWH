@@ -31,6 +31,16 @@
                 <div class="title-form">
                     <h2 class="text-theme-primary font-bold text-lg">Data Debitur</h2>
                 </div>
+                {{-- CONTOH PENGGUNAAN PADA ONLY ACCEPT --}}
+                {{-- <label for="label">Label:
+                    <input type="text" id="label" class="bg-disabled p-2 w-full border" name="label" oninput="handleInput()" required>
+                </label>
+                <div>
+                    <label class="bg-disabled p-2 w-full border">
+                        TYPE : 
+                        <input type="text" name="only_accept" value="numeric" readonly>
+                    </label>
+                </div> --}}
 
                 {{-- form data debitur 1 --}}
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
@@ -783,6 +793,52 @@
 
         function validationData() {
 
+        }
+
+        function isText(input) {
+            return true;
+        }
+
+        function isAlpha(input) {
+            var regex = /^[a-zA-Z]+$/;
+            return regex.test(input);
+        }
+
+        function isAlphanumeric(input) {
+            var regex = /^[a-zA-Z0-9]+$/;
+            return regex.test(input);
+        }
+
+        function isNumeric(input) {
+            var regex = /^[0-9]+$/;
+            return regex.test(input);
+        }
+
+        function handleInput() {
+            var labelInput = document.getElementById('label');
+            var label = labelInput.value;
+            var type = document.querySelector('input[name="only_accept"]').value;
+
+            var isValid = validateInput(label, type);
+
+            if (!isValid) {
+                labelInput.value = label.slice(0, -1);
+            }
+        }
+
+        function validateInput(input, type) {
+            switch (type) {
+                case 'text':
+                    return isText(input);
+                case 'alpha':
+                    return isAlpha(input);
+                case 'alphanumeric':
+                    return isAlphanumeric(input);
+                case 'numeric':
+                    return isNumeric(input);
+                default:
+                    return true;
+            }
         }
 
         function alertWarning(message) {
