@@ -45,15 +45,17 @@ class ItemAsuransiController extends Controller
 
     public function list($page_length =5, $searchQuery, $searchBy)
     {
-        $data = MstFormItemAsuransi::orderBy('sequence', 'ASC');
+        $data = MstFormItemAsuransi::select('mst_form_item_asuransi.*', 'p.label AS parent')
+                                    ->leftJoin('mst_form_item_asuransi AS p', 'p.id', 'mst_form_item_asuransi.parent_id')
+                                    ->orderBy('mst_form_item_asuransi.sequence', 'ASC');
         if ($searchQuery && $searchBy === 'field') {
             $data->where(function ($q) use ($searchQuery) {
-                $q->where('label', 'like', '%' . $searchQuery . '%')
-                ->orWhere('level', 'like', '%' . $searchQuery . '%')
-                ->orWhere('parent_id', 'like', '%' . $searchQuery . '%')
-                ->orWhere('type', 'like', '%' . $searchQuery . '%')
-                ->orWhere('sequence', 'like', '%' . $searchQuery . '%')
-                ->orWhere('only_accept', 'like', '%' . $searchQuery . '%');
+                $q->where('mst_form_item_asuransi.label', 'like', '%' . $searchQuery . '%')
+                ->orWhere('mst_form_item_asuransi.level', 'like', '%' . $searchQuery . '%')
+                ->orWhere('p.label', 'like', '%' . $searchQuery . '%')
+                ->orWhere('mst_form_item_asuransi.type', 'like', '%' . $searchQuery . '%')
+                ->orWhere('mst_form_item_asuransi.sequence', 'like', '%' . $searchQuery . '%')
+                ->orWhere('mst_form_item_asuransi.only_accept', 'like', '%' . $searchQuery . '%');
             });
         }
 
@@ -71,9 +73,14 @@ class ItemAsuransiController extends Controller
      */
     public function create()
     {
-        $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
+        $last_sequence = 1;
+        $dataField = MstFormItemAsuransi::orderBy('sequence')->get();
+        if ($dataField) {
+            $last_index = count($dataField) - 1;
+            $last_sequence = $dataField[$last_index]->sequence;
+        }
 
-        return view('pages.mst-item-asuransi.create', compact(['dataField']));
+        return view('pages.mst-item-asuransi.create', compact('dataField', 'last_sequence'));
     }
 
     /**
@@ -91,7 +98,7 @@ class ItemAsuransiController extends Controller
         $validator = Validator::make($request->all(), [
             'label' => 'required',
             'level' => 'required',
-            'sequence' => 'required',
+            'sequence' => 'required|unique:mst_form_item_asuransi,sequence',
             'only_accept' => 'required',
         ], [
             'required' => ':attribute harus diisi.',
@@ -99,7 +106,7 @@ class ItemAsuransiController extends Controller
         ], [
             'label' => 'Label',
             'level' => 'Level',
-            'sequence' => 'Sequence',
+            'sequence' => 'Urutan',
             'only_accept' => 'Only Accept',
         ]);
 
@@ -159,17 +166,17 @@ class ItemAsuransiController extends Controller
             DB::commit();
             $status = 'success';
             $message = 'Berhasil menyimpan data';
-            $url = redirect()->route('mst-item-asuransi.index');
+            $url = route('mst-item-asuransi.index');
         } catch (\Exception $e) {
             DB::rollBack();
             $status = 'failed';
             $message = 'Terjadi kesalahan. '.$e->getMessage();
-            $url = redirect()->back();
+            $url = back();
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
             $status = 'failed';
             $message = 'Terjadi kesalahan pada database. '.$e->getMessage();
-            $url = redirect()->back();
+            $url = back();
         } finally {
             $response = [
                 'status' => $status,
@@ -402,6 +409,11 @@ class ItemAsuransiController extends Controller
 
             $currentItemAsuransi = MstFormItemAsuransi::findOrFail($id);
             if ($currentItemAsuransi) {
+                if ($currentItemAsuransi->type == 'option' || $currentItemAsuransi->type == 'radio') {
+                    DB::table('mst_option_values')
+                        ->where('form_asuransi_id', $id)
+                        ->delete();
+                }
                 $currentItemAsuransi->delete();
 
                 $status = 'success';

@@ -12,11 +12,23 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class PengajuanKlaimController extends Controller
 {
+    private $losHeaders;
+    private $losHost;
+
+    function __construct() {
+        $bearerToken = \Session::get(config('global.user_token_session'));
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
+    }
     
     public function index(Request $request){
-        // dd($request->all());
         ini_set('max_execution_time', 120);
         try{
+            $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
+            
             $allCabang = $this->getAllCabang();
             if($allCabang['status'] == 'berhasil'){
                 $allCabang = $allCabang['data'];
@@ -71,14 +83,10 @@ class PengajuanKlaimController extends Controller
                             return $query->where('pk.status', $status);
                     })
                     ->paginate($page_length);
-    
-                $host = env('LOS_API_HOST');
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
+
                 foreach($dataKlaim as $i => $item){
-                    $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $item->pengajuan_id;
-                    $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
+                    $apiPengajuan = $this->losHost . '/v1/get-list-pengajuan-by-id/' . $item->pengajuan_id;
+                    $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiPengajuan);
                     $response = json_decode($api_req->getBody(), true);
                     $pengajuan = null;
                     if ($response) {

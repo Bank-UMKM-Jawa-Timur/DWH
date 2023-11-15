@@ -17,10 +17,16 @@ use Illuminate\Support\Facades\Http;
 class RegistrasiController extends Controller
 {
     private $logActivity;
+    private $losHeaders;
+    private $losHost;
 
     function __construct()
     {
         $this->logActivity = new LogActivitesController;
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
     }
 
     /**
@@ -50,15 +56,12 @@ class RegistrasiController extends Controller
             $page_length = $request->page_length ? $request->page_length : 5;
 
             // retrieve from api
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
-            $apiURL = "$host/v1/get-list-pengajuan/$user_id";
+            $apiURL = "$this->losHost/v1/get-list-pengajuan/$user_id";
+            $data = [];
+            $this->losHeaders['Authorization'] = "Bearer $token";
 
             try {
-                $response = Http::timeout(60)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
-
+                $response = Http::timeout(60)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
 
@@ -227,6 +230,7 @@ class RegistrasiController extends Controller
     public function create(Request $request)
     {
         $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
         $user = $token ? $this->getLoginSession() : Auth::user();
 
         $user_id = $token ? $user['id'] : $user->id;
@@ -252,13 +256,8 @@ class RegistrasiController extends Controller
                         ->select('id', 'nama', 'alamat')
                         ->get();
 
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
-
-        $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $id_pengajuan;
-        $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
+        $apiPengajuan = $this->losHost . '/v1/get-list-pengajuan-by-id/' . $id_pengajuan;
+        $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiPengajuan);
         $response = json_decode($api_req->getBody(), true);
         $pengajuan = null;
         if ($response) {
@@ -287,6 +286,7 @@ class RegistrasiController extends Controller
     public function review(Request $request)
     {
         $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
         $user = $token ? $this->getLoginSession() : Auth::user();
 
         $user_id = $token ? $user['id'] : $user->id;
@@ -348,13 +348,8 @@ class RegistrasiController extends Controller
                         ->orderBy('id', 'DESC')
                         ->get();
 
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
-
-        $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $id_pengajuan;
-        $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
+        $apiPengajuan = $this->losHost . '/v1/get-list-pengajuan-by-id/' . $id_pengajuan;
+        $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiPengajuan);
         $response = json_decode($api_req->getBody(), true);
         $pengajuan = null;
         if ($response) {
@@ -573,6 +568,9 @@ class RegistrasiController extends Controller
     public function send(Request $request) {
         ini_set('max_execution_time', 120);
         try {
+            $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
+
             $id_asuransi = $request->id;
             $asuransi = DB::table('asuransi AS a')
                         ->select(
@@ -604,13 +602,8 @@ class RegistrasiController extends Controller
                         ->where('a.id', $id_asuransi)
                         ->first();
 
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
-
-            $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $asuransi->pengajuan_id;
-            $api_req = Http::timeout(20)->withHeaders($headers)->get($apiPengajuan);
+            $apiPengajuan = $this->losHost . '/v1/get-list-pengajuan-by-id/' . $asuransi->pengajuan_id;
+            $api_req = Http::timeout(20)->withHeaders($this->losHeaders)->get($apiPengajuan);
             $response = json_decode($api_req->getBody(), true);
             $pengajuan = null;
             if ($response) {
@@ -791,15 +784,13 @@ class RegistrasiController extends Controller
             'message' => 'Gagal mengambil data'
         ];
 
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
-        $apiURL = $host . "/kkb/get-data-users-by-id/$user_id";
+        $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
+        $apiURL = $this->losHost . "/kkb/get-data-users-by-id/$user_id";
 
         try {
             $response = Http::timeout(3)
-                            ->withHeaders($headers)
+                            ->withHeaders($this->losHeaders)
                             ->withOptions(['verify' => false])
                             ->get($apiURL);
             $responseBody = json_decode($response->getBody(), true);
@@ -1213,19 +1204,16 @@ class RegistrasiController extends Controller
     }
 
     public function edit($id){
-        $host = env('LOS_API_HOST');
-        $headers = [
-            'token' => env('LOS_API_TOKEN')
-        ];
         try {
-            $apiURL = $host . '/v1/get-list-pengajuan-by-id/' . $id;
+            $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
+            $apiURL = $this->losHost . '/v1/get-list-pengajuan-by-id/' . $id;
 
             try {
-                $response = Http::timeout(6)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                $response = Http::timeout(6)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
-                // return $responseBody;
 
                 if ($responseBody['status'] == "success") {
                     $data = $responseBody['data'];

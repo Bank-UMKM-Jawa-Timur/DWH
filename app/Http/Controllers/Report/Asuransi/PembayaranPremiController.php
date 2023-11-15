@@ -11,6 +11,17 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class PembayaranPremiController extends Controller
 {
+    private $losHeaders;
+    private $losHost;
+
+    function __construct() {
+        $bearerToken = \Session::get(config('global.user_token_session'));
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
+    }
+
     public function index(Request $request) {
         ini_set('max_execution_time', 120);
         try {
@@ -173,14 +184,12 @@ class PembayaranPremiController extends Controller
             $data = $data->orderBy('pem.tgl_bayar', 'DESC')->get();
         }
 
-        foreach ($data as $key => $value) {
-            $host = env('LOS_API_HOST');
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
+        $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
 
-            $apiPengajuan = $host . '/v1/get-list-pengajuan-by-id/' . $value->pengajuan_id;
-            $api_req = Http::timeout(6)->withHeaders($headers)->get($apiPengajuan);
+        foreach ($data as $key => $value) {
+            $apiPengajuan = $this->losHost . '/v1/get-list-pengajuan-by-id/' . $value->pengajuan_id;
+            $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiPengajuan);
             $response = json_decode($api_req->getBody(), true);
             $pengajuan = null;
             if ($response) {
