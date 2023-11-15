@@ -20,6 +20,17 @@ use PHPMailer\PHPMailer\Exception;
 
 class NotificationController extends Controller
 {
+    private $losHeaders;
+    private $losHost;
+
+    function __construct() {
+        $bearerToken = \Session::get(config('global.user_token_session'));
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
+    }
+
     public function index(Request $request)
     {
         try {
@@ -64,16 +75,14 @@ class NotificationController extends Controller
             return back()->withError('Terjadi kesalahan pada database');
         }
     }
+
     public function getDataPO($pengajuan_id) {
         try {
-            $host = env('LOS_API_HOST');
-            $apiURL = $host . '/kkb/get-data-pengajuan-by-id/' . $pengajuan_id;
+            $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
+            $apiURL = $this->losHost . '/kkb/get-data-pengajuan-by-id/' . $pengajuan_id;
 
-            $headers = [
-                'token' => env('LOS_API_TOKEN')
-            ];
-
-            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
             $statusCode = $response->status();
             $responseBody = json_decode($response->getBody(), true);
@@ -334,22 +343,19 @@ class NotificationController extends Controller
             // get kredit
             $kredit = Kredit::find($kreditId);
 
+            $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
+
             // get user who will be sended the notification
             foreach ($template as $key => $value) {
                 // get kode cabang
                 if (!$value->role_id && $value->all_role) {
                     // retrieve from api
-                    $host = config('global.los_api_host');
-                    $apiURL = $host . '/kkb/get-data-users-cabang/' . $kredit->kode_cabang;
-
-                    $headers = [
-                        'token' => config('global.los_api_token')
-                    ];
-
+                    $apiURL = $this->losHost . '/kkb/get-data-users-cabang/' . $kredit->kode_cabang;
                     $responseBody = null;
 
                     try {
-                        $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                        $response = Http::withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);

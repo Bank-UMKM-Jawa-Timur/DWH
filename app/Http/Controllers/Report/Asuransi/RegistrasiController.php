@@ -11,9 +11,23 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class RegistrasiController extends Controller
 {
+    private $losHeaders;
+    private $losHost;
+
+    function __construct() {
+        $bearerToken = \Session::get(config('global.user_token_session'));
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
+    }
+
     public function registrasi(Request $request) {
         ini_set('max_execution_time', 120);
         try {
+            $token = \Session::get(config('global.user_token_session'));
+            $this->losHeaders['Authorization'] = "Bearer $token";
+            
             $page_length = $request->page_length ? $request->page_length : 5;
             $allCabang = $this->getAllCabang();
 
@@ -90,16 +104,12 @@ class RegistrasiController extends Controller
                             ->count();
 
                 // retrieve from api
-                $host = env('LOS_API_HOST');
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
-                $apiURL = "$host/v1/get-list-pengajuan";
+                $apiURL = "$this->losHost/v1/get-list-pengajuan";
                 $belum_registrasi = 0;
 
                 try {
                     $response = Http::timeout(60)
-                                    ->withHeaders($headers)
+                                    ->withHeaders($this->losHeaders)
                                     ->withOptions(['verify' => false])
                                     ->get($apiURL, [
                                         'kode_cabang' => $kode_cabang,

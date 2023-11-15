@@ -11,26 +11,29 @@ use Illuminate\Support\Facades\Auth;
 class ImportKKBController extends Controller
 {
     private $logActivity;
+    private $losHeaders;
+    private $losHost;
 
     function __construct()
     {
         $this->logActivity = new LogActivitesController;
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
     }
 
     public function index() {
         // retrieve from api
-        $host = config('global.los_api_host');
-        $apiURL = $host . '/kkb/get-cabang';
-
-        $headers = [
-            'token' => config('global.los_api_token')
-        ];
-
+        $apiURL = $this->losHost . '/kkb/get-cabang';
+        $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
+        
         $responseBody = null;
         $params['cabang'] = [];
 
         try {
-            $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+            $response = Http::withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
             $statusCode = $response->status();
             $responseBody = json_decode($response->getBody(), true);

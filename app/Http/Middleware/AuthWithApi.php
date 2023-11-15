@@ -49,13 +49,15 @@ class AuthWithApi
 
     private function logout($token) {
         if ($token) {
-            $host = env('LOS_API_HOST');
+            $bearerToken = \Session::get(config('global.user_token_session'));
+            $host = config('global.los_api_host');
+            $headers = [
+                'token' => config('global.los_api_token'),
+                'Authorization' => "Bearer $bearerToken",
+            ];
+
             if ($host) {
                 $apiURL = $host . '/logout';
-                $headers = [
-                    'token' => env('LOS_API_TOKEN'),
-                    'Authorization' => "Bearer $token",
-                ];
 
                 try {
                     $response = Http::withHeaders($headers)

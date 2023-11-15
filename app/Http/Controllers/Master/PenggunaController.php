@@ -13,10 +13,16 @@ use Illuminate\Support\Facades\Validator;
 class PenggunaController extends Controller
 {
     private $logActivity;
+    private $losHeaders;
+    private $losHost;
 
     function __construct()
     {
         $this->logActivity = new LogActivitesController;
+        $this->losHost = config('global.los_api_host');
+        $this->losHeaders = [
+            'token' => config('global.los_api_token')
+        ];
     }
     /**
      * Display a listing of the resource.
@@ -107,19 +113,16 @@ class PenggunaController extends Controller
                         'error' => $validator->errors()->all()
                     ]);
         }
+        $token = \Session::get(config('global.user_token_session'));
+        $this->losHeaders['Authorization'] = "Bearer $token";
 
         try {
             // retrieve kode_cabang from api
             $kode_cabang = '';
-            $host = config('global.los_api_host');
-            $apiURL = $host.'/kkb/get-data-users/'.$request->nip;
-
-            $headers = [
-                'token' => config('global.los_api_token')
-            ];
+            $apiURL = $this->losHost.'/kkb/get-data-users/'.$request->nip;
 
             try {
-                $response = Http::withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                $response = Http::withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
