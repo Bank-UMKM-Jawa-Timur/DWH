@@ -32,20 +32,13 @@
                     <h2 class="text-theme-primary font-bold text-lg">Data Debitur</h2>
                 </div>
                 {{-- CONTOH PENGGUNAAN PADA ONLY ACCEPT --}}
-                {{-- <label for="label">Label:</label>
-                <input type="text" id="label" name="label" oninput="handleInput()" required>
+                {{-- <label for="label">Label:
+                    <input type="text" id="label" class="bg-disabled p-2 w-full border" name="label" oninput="handleInput()" required>
+                </label>
                 <div>
-                    <label>
-                        <input type="radio" name="type" value="text" checked> Text
-                    </label>
-                    <label>
-                        <input type="radio" name="type" value="alpha"> Alpha
-                    </label>
-                    <label>
-                        <input type="radio" name="type" value="alphanumeric"> Alphanumeric
-                    </label>
-                    <label>
-                        <input type="radio" name="type" value="numeric"> Numeric
+                    <label class="bg-disabled p-2 w-full border">
+                        TYPE : 
+                        <input type="text" name="only_accept" value="numeric" readonly>
                     </label>
                 </div> --}}
 
@@ -712,7 +705,7 @@
         function handleInput() {
             var labelInput = document.getElementById('label');
             var label = labelInput.value;
-            var type = document.querySelector('input[name="type"]:checked').value;
+            var type = document.querySelector('input[name="only_accept"]').value;
 
             var isValid = validateInput(label, type);
 
