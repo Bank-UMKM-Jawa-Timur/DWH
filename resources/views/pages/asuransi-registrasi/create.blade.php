@@ -356,25 +356,60 @@
                    accept: "Application/json",
                    success: function(response) {
                         var data = response.data;
-                        console.log(data);
+                        
                         $.each(data, function(i, item) {
                             var name = item.label;
                             var names = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('_');
+                            var class_name = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('-');
 
+                            var type = item.type;
                             var rupiah = item.rupiah;
                             var required = item.required;
                             var readonly = item.readonly;
                             var hidden = item.hidden;
-                            console.log(hidden)
+                            var item_function = item.function;
+
+                            var input_element = ``;
+                            if (type == 'option' || type == 'radio') {
+                                var options_element = ``;
+                                var option_values = item.items
+                                for (let i = 0; i < option_values.length; i++) {
+                                    var o_value = option_values[i]
+                                    if (type == 'option') {
+                                        // option
+                                        options_element += `<option value="${o_value.value}">${o_value.display_value}</option>`
+                                    }
+                                    else {
+                                        // radio
+                                        options_element += `<input type="radio" name="${names}"
+                                                            id="${names}-${i}" class="${class_name} accent-theme-primary"
+                                                            value="${o_value.value}">
+                                                            <label for="${names}-${i}">${o_value.display_value}</label>`
+                                    }
+                                }
+
+                                if (type == 'option') {
+                                    // radio
+                                    input_element = `<select name="${names}" class="${class_name} w-full p-2 border" onchange="${item_function}">
+                                        <option selected value="">-- Pilih ${name} ---</option>
+                                        ${options_element}
+                                    </select>`
+                                } else {
+                                    // radio
+                                    input_element = options_element
+                                }
+                            } else {
+                                input_element = `<input type="${item.type}" class="${rupiah ? 'rupiah' : ''} ${readonly ? 'disabled-input bg-disabled' : ''} p-2 w-full border "
+                                id="${names}" name="${names}" value="{{old('${names}')}}" ${readonly ? 'readonly' : ''}/>`
+                            }
                             
                             $("#form-registrasi").append(`
                                 <div class="input-box space-y-3 ${hidden ? 'hidden' : ''}">
                                     <label for="${names}" class="uppercase ${names}">${item.label}
                                     ${required ? '<span class="text-theme-primary">*</span>' : ''}
                                     </label>
-                                    <input type="${item.type}" class="${rupiah ? 'rupiah' : ''} ${readonly ? 'disabled-input bg-disabled' : ''} p-2 w-full border "
-                                    id="${names}" name="${names}" value="{{old('${names}')}}" ${readonly ? 'readonly' : ''}/>
-                                        <small class="form-text text-red-600 error"></small>
+                                    ${input_element}
+                                    <small class="form-text text-red-600 error"></small>
                                 </div>
                             `);
                         });
@@ -407,7 +442,22 @@
             }
         })
 
-        /*$('#jenis_pertanggungan').on('change', function() {
+        function jenisPengajuan(jenis) {
+            console.log(jenis)
+            if (parseInt(jenis) === 1) {
+                $('.form-6').removeClass('hidden')
+                $('.form-7').removeClass('hidden')
+                $('.form-6').addClass('grid')
+                $('.form-7').addClass('grid')
+            } else {
+                $('.form-6').removeClass('grid')
+                $('.form-7').removeClass('grid')
+                $('.form-6').addClass('hidden')
+                $('.form-7').addClass('hidden')
+            }
+        }
+
+        $('#jenis_pertanggungan').on('change', function() {
             var cod = 0;
             var masa_asuransi = $('#jumlah_bulan').val()
             if (masa_asuransi == '') {
@@ -470,7 +520,8 @@
                     }
                 })
             }
-        })*/
+        })
+
         function jenisPertanggungan(jenis) {
             var cod = 0;
             var masa_asuransi = $('#jumlah_bulan').val()
