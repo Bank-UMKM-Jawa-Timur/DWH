@@ -91,9 +91,9 @@
             <th>Label</th>
             <th>Level</th>
             <th>Parent</th>
-            <th>Type input</th>
-            <th>Sequence</th>
-            <th>Only Accept</th>
+            <th>Tipe input</th>
+            <th>Urutan</th>
+            <th>Hanya Menerima</th>
             <th>Aksi</th>
           </tr>
           <tbody>
@@ -102,7 +102,7 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $item->label }}</td>
                 <td>{{ $item->level }}</td>
-                <td>{{ $item->parent_id ? $item->parent_id : "-" }}</td>
+                <td>{{ $item->parent_id ? $item->parent : "-" }}</td>
                 <td>{{ $item->type ? $item->type : "-" }}</td>
                 <td>{{ $item->sequence ? $item->sequence : "-" }}</td>
                 <td>{{ $item->only_accept }}</td>
