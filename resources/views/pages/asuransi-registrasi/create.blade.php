@@ -144,6 +144,15 @@
                 </div>
                 {{-- form data register 1 --}}
                 <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center" id="form-registrasi">
+                    <div class="input-box space-y-3">
+                        <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span>
+                        </label>
+                        <input type="hidden" name="jenis_asuransi" id="jenis_asuransi"
+                            value="{{$jenisAsuransi->id.'-'.$jenisAsuransi->kode}}">
+                        <input type="text" class="bg-disabled disabled-input p-2 w-full border" name="display_jenis_asuransi"
+                            id="display_jenis_asuransi" value="{{$jenisAsuransi->jenis}}" readonly>
+                        <small class="form-text text-red-600 error"></small>
+                    </div>
                     {{-- <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Rekening<span class="text-theme-primary">*</span>
                         </label>
@@ -331,6 +340,16 @@
             }
             else{
                 $("#form-registrasi").empty();
+                $("#form-registrasi").append(`
+                <div class="input-box space-y-3">
+                    <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span>
+                    </label>
+                    <input type="hidden" name="jenis_asuransi" id="jenis_asuransi"
+                        value="{{$jenisAsuransi->id.'-'.$jenisAsuransi->kode}}">
+                    <input type="text" class="bg-disabled disabled-input p-2 w-full border" name="display_jenis_asuransi"
+                        id="display_jenis_asuransi" value="{{$jenisAsuransi->jenis}}" readonly>
+                    <small class="form-text text-red-600 error"></small>
+                </div>`);
                 $.ajax({
                    url: "{{url('asuransi/registrasi/get-item-form-by-perusahaan')}}/"+ value,
                    type: "GET",
@@ -345,8 +364,11 @@
                             var rupiah = item.rupiah;
                             var required = item.required;
                             var readonly = item.readonly;
+                            var hidden = item.hidden;
+                            console.log(hidden)
+                            
                             $("#form-registrasi").append(`
-                                <div class="input-box space-y-3">
+                                <div class="input-box space-y-3 ${hidden ? 'hidden' : ''}">
                                     <label for="${names}" class="uppercase ${names}">${item.label}
                                     ${required ? '<span class="text-theme-primary">*</span>' : ''}
                                     </label>

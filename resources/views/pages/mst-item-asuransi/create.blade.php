@@ -50,8 +50,8 @@
                     <option value="">-- Pilih Tipe Input --</option>
                     <option value="text">Teks</option>
                     <option value="number">Angka</option>
-                    <option value="option">Opsi(radio)</option>
-                    <option value="radio">Pilihan</option>
+                    <option value="radio">Opsi(radio)</option>
+                    <option value="option">Pilihan</option>
                     <option value="file">Berkas</option>
                     <option value="email">Email</option>
                     <option value="password">Password</option>
@@ -95,36 +95,36 @@
         <div class="lg:grid-cols-3 max-w-lg md:grid-cols-2 grid-cols-1 grid gap-5 justify-end">
             <div class="input-check-box space-y-3 rupiah-box">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-rupiah" id="add-rupiah" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-rupiah-value" name="add-rupiah-value" />
+                    <input type="checkbox" name="add-rupiah" id="add-rupiah" class="accent-theme-primary">
+                    <input type="hidden" id="add-rupiah-value" name="add-rupiah-value" />
                     <label for="add-rupiah">Rupiah</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-readonly" id="add-readonly" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-readonly-value" name="add-readonly-value" />
+                    <input type="checkbox" name="add-readonly" id="add-readonly" class="accent-theme-primary">
+                    <input type="hidden" id="add-readonly-value" name="add-readonly-value" />
                     <label for="add-readonly">Read Only</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-hidden" id="add-hidden" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-hidden-value" name="add-hidden-value" />
+                    <input type="checkbox" name="add-hidden" id="add-hidden" class="accent-theme-primary">
+                    <input type="hidden" id="add-hidden-value" name="add-hidden-value" />
                     <label for="add-hidden">Hidden</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-disabled" id="add-disabled" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-disabled-value" name="add-disabled-value" />
+                    <input type="checkbox" name="add-disabled" id="add-disabled" class="accent-theme-primary">
+                    <input type="hidden" id="add-disabled-value" name="add-disabled-value" />
                     <label for="add-disabled">Disabled</label>
                 </div>
             </div>
             <div class="input-check-box space-y-3">
                 <div class="flex gap-5">
-                    <input type="checkbox" value="0" name="add-type_require" id="add-type_require" class="accent-theme-primary">
-                    <input type="hidden" value="0" id="add-type_require-value" name="add-type_require-value" />
+                    <input type="checkbox" name="add-type_require" id="add-type_require" class="accent-theme-primary">
+                    <input type="hidden" id="add-type_require-value" name="add-type_require-value" />
                     <label for="add-type_require">Required</label>
                 </div>
             </div>
@@ -233,7 +233,7 @@
         }
 
         $('#btnSimpan').on('click', function (e) {
-            $('#preload-data').removeClass('hidden')
+            //$('#preload-data').removeClass('hidden')
             e.preventDefault()
             const token = generateCsrfToken()
             const req_label = document.getElementById('add-label');
@@ -242,11 +242,11 @@
             const req_type_input = document.getElementById('add-type_input');
             const req_sequence = document.getElementById('add-sequence');
             const req_only_accept = document.getElementById('add-only_accept');
-            const req_rupiah = document.getElementById('add-rupiah-value');
-            const req_readonly = document.getElementById('add-readonly-value');
-            const req_hidden = document.getElementById('add-hidden-value');
-            const req_disabled = document.getElementById('add-disabled-value');
-            const req_type_required = document.getElementById('add-type_require-value');
+            const req_rupiah = $('#add-rupiah').is(':checked')
+            const req_readonly = $('#add-readonly').is(':checked')
+            const req_hidden = $('#add-hidden').is(':checked')
+            const req_disabled = $('#add-disabled').is(':checked')
+            const req_type_required = $('#add-type_require').is(':checked')
             const req_formula = document.getElementById('add-formula');
             var item_val = []
             $('input[name^="item_val"]').each(function(oneTag){
@@ -269,11 +269,11 @@
                     formula: req_formula.value,
                     sequence: req_sequence.value,
                     only_accept: req_only_accept.value,
-                    rupiah: req_rupiah.value,
-                    readonly: req_readonly.value,
-                    hidden: req_hidden.value,
-                    disabled: req_disabled.value,
-                    required: req_type_required.value,
+                    rupiah: req_rupiah,
+                    readonly: req_readonly,
+                    hidden: req_hidden,
+                    disabled: req_disabled,
+                    required: req_type_required,
                     item_val: item_val,
                     item_display_val: item_display_val,
                 },
@@ -306,7 +306,7 @@
                         }
                     }
                 }
-            });
+            })
         })
 
         function showError(input, message) {
