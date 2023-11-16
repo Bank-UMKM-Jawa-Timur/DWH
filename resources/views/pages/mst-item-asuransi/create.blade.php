@@ -70,8 +70,9 @@
                 <label for="" class="uppercase">Function<span class="text-theme-primary">*</span></label>
                 <select name="function" class="w-full p-2 border" id="add-function">
                     <option value="" selected>-- pilih function --</option>
-                    <option value="jenisPengajuan(this.value)">jenisPengajuan</option>
-                    <option value="jenisPertanggungan(this.value)">jenisPertanggungan</option>
+                    <option value="jenisPengajuan(this)">jenisPengajuan</option>
+                    <option value="jenisPertanggungan(this)">jenisPertanggungan</option>
+                    <option value="hitungPremiDisetor()">hitungPremiDisetor</option>
                 </select>
             </div>
         </div>
