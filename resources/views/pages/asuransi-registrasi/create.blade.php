@@ -394,19 +394,10 @@
 
                     if (type == 'option') {
                         // radio
-                        if (name == "Jenis Pengajuan") {
-                            input_element = `<select name="${names}" class="${class_name} w-full p-2 border" onchange="${item_function}">
-                                <option selected value="">-- Pilih ${name} ---</option>
-                                <option value="00">Baru</option>
-                                <option value="01">Top Up</option>
-                                ${options_element}
-                            </select>`
-                        }else{
-                            input_element = `<select name="${names}" class="${class_name} w-full p-2 border" onchange="${item_function}">
-                                <option selected value="">-- Pilih ${name} ---</option>
-                                ${options_element}
-                            </select>`
-                        }
+                        input_element = `<select name="${names}" class="${class_name} w-full p-2 border" onchange="${item_function}">
+                            <option selected value="">-- Pilih ${name} ---</option>
+                            ${options_element}
+                        </select>`
                     } else {
                         // radio
                         input_element = options_element
