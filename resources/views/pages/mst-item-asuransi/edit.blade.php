@@ -68,6 +68,14 @@
                     <option value="numeric" {{ $data->only_accept == 'numeric' ? 'selected' : '' }}>Numeric</option>
                 </select>
             </div>
+            <div class="input-box space-y-3">
+                <label for="" class="uppercase">Function<span class="text-theme-primary">*</span></label>
+                <select name="function" class="w-full p-2 border" id="add-function">
+                    <option value="" selected>-- pilih function --</option>
+                    <option value="jenisPengajuan(this.value)" {{$data->function = 'jenisPengajuan(this.value)' ? 'selected' : ''}}>jenisPengajuan</option>
+                    <option value="jenisPertanggungan(this.value)" {{$data->function = 'jenisPertanggungan(this.value)' ? 'selected' : ''}}>jenisPertanggungan</option>
+                </select>
+            </div>
         </div>
         <div class="extra-item mt-0 space-y-3 hidden">
             <h2 class="text-lg font-bold">Item</h2>
@@ -181,6 +189,7 @@
         $("#add-type_input").select2();
         $("#add-only_accept").select2();
         $("#add-level").select2();
+        $("#add-function").select2();
 
         var tipe_input = "{{$data->type}}"
         if (tipe_input == 'option' || tipe_input == 'radio') {
@@ -319,6 +328,7 @@
                     hidden: req_hidden.value,
                     disabled: req_disabled.value,
                     required: req_type_required.value,
+                    function: req_function.value,
                     item_id: item_id,
                     item_val: item_val,
                     item_display_val: item_display_val,

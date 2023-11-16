@@ -66,6 +66,14 @@
                     <option value="numeric">Angka</option>
                 </select>
             </div>
+            <div class="input-box space-y-3">
+                <label for="" class="uppercase">Function<span class="text-theme-primary">*</span></label>
+                <select name="function" class="w-full p-2 border" id="add-function">
+                    <option value="" selected>-- pilih function --</option>
+                    <option value="jenisPengajuan(this.value)">jenisPengajuan</option>
+                    <option value="jenisPertanggungan(this.value)">jenisPertanggungan</option>
+                </select>
+            </div>
         </div>
         <div class="extra-item mt-0 space-y-3 hidden">
             <h2 class="text-lg font-bold">Item</h2>
@@ -236,6 +244,7 @@
             //$('#preload-data').removeClass('hidden')
             e.preventDefault()
             const token = generateCsrfToken()
+            const req_function = document.getElementById('add-function');
             const req_label = document.getElementById('add-label');
             const req_level = document.getElementById('add-level');
             const req_parent_id = document.getElementById('add-parent_id');
@@ -274,7 +283,9 @@
                     hidden: req_hidden,
                     disabled: req_disabled,
                     required: req_type_required,
+                    function: req_function.value,
                     item_val: item_val,
+                    item_display_val: item_display_val,
                     item_display_val: item_display_val,
                 },
                 success: function(data) {
