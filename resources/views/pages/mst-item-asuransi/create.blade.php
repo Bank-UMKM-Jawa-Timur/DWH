@@ -72,6 +72,7 @@
                     <option value="" selected>-- pilih function --</option>
                     <option value="jenisPengajuan(this.value)">jenisPengajuan</option>
                     <option value="jenisPertanggungan(this.value)">jenisPertanggungan</option>
+                    <option value="hitungPremiDisetor()">hitungPremiDisetor</option>
                 </select>
             </div>
         </div>
