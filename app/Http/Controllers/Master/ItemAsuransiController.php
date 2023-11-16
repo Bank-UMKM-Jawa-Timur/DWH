@@ -75,7 +75,7 @@ class ItemAsuransiController extends Controller
     {
         $last_sequence = 1;
         $dataField = MstFormItemAsuransi::orderBy('sequence')->get();
-        if ($dataField) {
+        if (count($dataField) > 0) {
             $last_index = count($dataField) - 1;
             $last_sequence = $dataField[$last_index]->sequence;
         }
@@ -131,6 +131,7 @@ class ItemAsuransiController extends Controller
             $newItem->hidden = $request->hidden;
             $newItem->disabled = $request->disabled;
             $newItem->required = $request->required;
+            $newItem->function = $request->function;
             $newItem->save();
 
             $item_val = $request->item_val;
@@ -138,7 +139,7 @@ class ItemAsuransiController extends Controller
 
             if ($request->type == 'option' || $request->type == 'radio') {
                 if (count($item_val) == count($item_display_val)) {
-                    for ($i=0; $i < count($item_val); $i++) { 
+                    for ($i=0; $i < count($item_val); $i++) {
                         DB::table('mst_option_values')->insert([
                             'form_asuransi_id' => $newItem->id,
                             'value' => $item_val[$i],
@@ -225,7 +226,7 @@ class ItemAsuransiController extends Controller
     {
         try{
             $data = MstFormItemAsuransi::find($id);
-            $dataField = MstFormItemAsuransi::orderBy('id', 'ASC')->get();
+            $dataField = MstFormItemAsuransi::orderBy('id')->get();
             if($data) {
                 $itemValue = DB::table('mst_option_values')
                                 ->select('id', 'form_asuransi_id', 'value', 'display_value')
@@ -296,6 +297,7 @@ class ItemAsuransiController extends Controller
             $updated->hidden = $request->hidden;
             $updated->disabled = $request->disabled;
             $updated->required = $request->required;
+            $updated->function = $request->function;
             $updated->updated_at = now();
             $updated->save();
 
