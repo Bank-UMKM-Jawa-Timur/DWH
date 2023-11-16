@@ -136,7 +136,6 @@ Route::middleware('auth_api')->group(function () {
                 Route::post('/update/{id}', 'update')->name('update');
                 Route::get('/detail/{id}', 'detail')->name('detail');
                 Route::get('/get-item-form-by-perusahaan/{perusahaan_id}', 'itemByPerusahaan')->name('itemByPerusahaan');
-                Route::get('/get-item-form-by-perusahaan-topup/{perusahaan_id}', 'itemByPerusahaanTopUp')->name('itemByPerusahaanTopUp');
             });
 
         Route::resource('/pengajuan-klaim', PengajuanKlaimController::class);
