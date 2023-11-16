@@ -1497,4 +1497,34 @@ class RegistrasiController extends Controller
             'data' => $data
         ]);
     }
+
+    public function itemByPerusahaanTopUp($perusahaan_id) {
+        $data = DB::table('mst_form_asuransi as form')->select(
+            'item.*'
+        )
+        ->join('mst_form_item_asuransi as item', 'form.form_item_asuransi_id', 'item.id')
+        ->orderBy('item.sequence', 'ASC')
+        ->where('form.perusahaan_id', $perusahaan_id)
+        ->where('item.level', 1)
+        ->get();
+
+        foreach ($data as $key => $value) {
+            $childs = DB::table('mst_form_item_asuransi')
+                        ->where('parent_id', $value->id)
+                        ->get();
+            $value->childs = $childs;
+
+            if ($value->type == 'option' || $value->type == 'radio') {
+                $value->items = DB::table('mst_option_values')
+                                ->select('id', 'value', 'display_value')
+                                ->where('form_asuransi_id', $value->id)
+                                ->orderBy('value')
+                                ->get();
+            }
+        }
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
 }
