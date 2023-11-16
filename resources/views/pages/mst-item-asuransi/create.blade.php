@@ -296,9 +296,7 @@
                                 html: data.message,
                                 closeOnClickOutside: false
                             }).then(() => {
-                                setTimeout(function() {
-                                    window.location = data.url
-                                }, 3000);
+                                window.location = data.url
                             });
                         } else {
                             $('#preload-data').addClass('hidden')

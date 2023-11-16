@@ -411,7 +411,8 @@ class RegistrasiController extends Controller
                 ]);
             }
 
-            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menyimpan review asuransi.', $id_asuransi, 1);
+            $message = $type == 'approved' ? ' menyetujui asuransi.' : ' mengembalikan data asuransi pada staf.';
+            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . $message, $id_asuransi, 1);
 
             DB::commit();
             $status = 'success';
@@ -491,7 +492,6 @@ class RegistrasiController extends Controller
         }
 
         DB::beginTransaction();
-
         try {
             $user_name = \Session::get(config('global.user_name_session'));
             $token = \Session::get(config('global.user_token_session'));
@@ -510,19 +510,83 @@ class RegistrasiController extends Controller
             $newKredit->created_at = now();
             $newKredit->save();
 
-            $premi = UtilityController::clearCurrencyFormat($request->get('premi'));
-            $refund = UtilityController::clearCurrencyFormat($request->get('refund'));
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
 
             $user_id = $token ? $user['id'] : $user->id;
             $jenis_asuransi_id = $jenis_asuransi_option[0];
+
+            // Get request item
+            $item_req = $request->get('items');
+            $arr_item_id = [];
+            $arr_item_label = [];
+            $arr_item_value = [];
+            for ($i=0; $i < count($item_req); $i++) { 
+                // get item id & label
+                $key = '';
+                $id = '';
+                $label = '';
+                $get_key = array_keys($item_req[$i]);
+                if (count($get_key) > 0) {
+                    $key = $get_key[0];
+                    $split_input_name = explode('-', $key);
+                    $id = $split_input_name[1];
+                    $label = $split_input_name[0];
+                    array_push($arr_item_id, $id);
+                    array_push($arr_item_label, $label);
+                }
+
+                // get item value
+                if ($key != '') {
+                    $value = $item_req[$i][$key];
+                    array_push($arr_item_value, $value);
+                }
+            }
+
             // insert asuransi
+            $index_norek = array_keys($arr_item_label, 'no_rekening');
+            $no_rek = count($index_norek) > 0 ? $arr_item_value[$index_norek[0]] : null;
+            $index_premi = array_keys($arr_item_label, 'premi');
+            $premi = count($index_premi) > 0 ? $arr_item_value[$index_premi[0]] : null;
+            $premi = $premi ? UtilityController::clearCurrencyFormat($premi) : $premi;
+            $index_refund = array_keys($arr_item_label, 'refund');
+            $refund = count($index_refund) > 0 ? $arr_item_value[$index_refund[0]] : null;
+            $refund = $refund ? UtilityController::clearCurrencyFormat($refund) : $refund;
+            $index_jenis_pengajuan = array_keys($arr_item_label, 'jenis_pengajuan');
+            $jenis_pengajuan = count($index_jenis_pengajuan) > 0 ? $arr_item_value[$index_jenis_pengajuan[0]] : null;
+            $index_kolektibilitas = array_keys($arr_item_label, 'kolektibilitas');
+            $kolektibilitas = count($index_kolektibilitas) > 0 ? $arr_item_value[$index_kolektibilitas[0]] : null;
+            $index_jenis_pertanggungan = array_keys($arr_item_label, 'jenis_pertanggungan');
+            $jenis_pertanggungan = count($index_jenis_pertanggungan) > 0 ? $arr_item_value[$index_jenis_pertanggungan[0]] : null;
+            $index_tipe_premi = array_keys($arr_item_label, 'tipe_premi');
+            $tipe_premi = count($index_tipe_premi) > 0 ? $arr_item_value[$index_tipe_premi[0]] : null;
+            $index_jenis_coverage = array_keys($arr_item_label, 'jenis_coverage');
+            $jenis_coverage = count($index_jenis_coverage) > 0 ? $arr_item_value[$index_jenis_coverage[0]] : null;
+            $index_no_polis_sebelumnya = array_keys($arr_item_label, 'no_polis_sebelumnya');
+            $no_polis_sebelumnya = count($index_no_polis_sebelumnya) > 0 ? $arr_item_value[$index_no_polis_sebelumnya[0]] : null;
+            $index_baki_debet = array_keys($arr_item_label, 'baki_debet');
+            $baki_debet = count($index_baki_debet) > 0 ? $arr_item_value[$index_baki_debet[0]] : null;
+            $baki_debet = $baki_debet ? UtilityController::clearCurrencyFormat($baki_debet) : $baki_debet;
+            $index_tunggakan = array_keys($arr_item_label, 'tunggakan');
+            $tunggakan = count($index_tunggakan) > 0 ? $arr_item_value[$index_tunggakan[0]] : null;
+            $tunggakan = $tunggakan ? UtilityController::clearCurrencyFormat($tunggakan) : $tunggakan;
+            $index_tarif = array_keys($arr_item_label, 'tarif');
+            $tarif = count($index_tarif) > 0 ? $arr_item_value[$index_tarif[0]] : null;
+            $tarif = $tarif ? UtilityController::clearCurrencyFormat($tarif) : $tarif;
+            $index_kode_layanan_syariah = array_keys($arr_item_label, 'kode_layanan_syariah');
+            $kode_layanan_syariah = count($index_kode_layanan_syariah) > 0 ? $arr_item_value[$index_kode_layanan_syariah[0]] : null;
+            $index_handling_fee = array_keys($arr_item_label, 'handling_fee');
+            $handling_fee = count($index_handling_fee) > 0 ? $arr_item_value[$index_handling_fee[0]] : null;
+            $handling_fee = $handling_fee ? UtilityController::clearCurrencyFormat($handling_fee) : $handling_fee;
+            $index_premi_disetor = array_keys($arr_item_label, 'premi_disetor');
+            $premi_disetor = count($index_premi_disetor) > 0 ? $arr_item_value[$index_premi_disetor[0]] : null;
+            $premi_disetor = $premi_disetor ? UtilityController::clearCurrencyFormat($premi_disetor) : $premi_disetor;
+            
             $newAsuransi = new Asuransi();
             $newAsuransi->perusahaan_asuransi_id = $request->perusahaan;
             $newAsuransi->no_aplikasi = $request->no_aplikasi;
             $newAsuransi->no_pk = $request->no_pk;
-            $newAsuransi->no_rek = $request->no_rekening;
+            $newAsuransi->no_rek = $no_rek;
             $newAsuransi->premi = $premi;
             $newAsuransi->refund = $refund;
             $newAsuransi->kredit_id = $newKredit->id;
@@ -538,19 +602,42 @@ class RegistrasiController extends Controller
             // insert detail asuransi
             $newDetail = new DetailAsuransi();
             $newDetail->asuransi_id = $newAsuransi->id;
-            $newDetail->jenis_pengajuan = $request->jenis_pengajuan;
-            $newDetail->kolektibilitas = $request->kolektibilitas;
-            $newDetail->jenis_pertanggungan = $request->jenis_pertanggungan;
-            $newDetail->tipe_premi = $request->tipe_premi;
-            $newDetail->jenis_coverage = $request->jenis_coverage;
-            $newDetail->no_polis_sebelumnya = $request->no_polis_sebelumnya;
-            $newDetail->baki_debet = UtilityController::clearCurrencyFormat($request->baki_debet);
-            $newDetail->tunggakan = UtilityController::clearCurrencyFormat($request->tunggakan);
-            $newDetail->tarif = $request->tarif;
-            $newDetail->kode_layanan_syariah = $request->kode_ls;
-            $newDetail->handling_fee = UtilityController::clearCurrencyFormat($request->handling_fee);
-            $newDetail->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
+            $newDetail->jenis_pengajuan = $jenis_pengajuan;
+            $newDetail->kolektibilitas = $kolektibilitas;
+            $newDetail->jenis_pertanggungan = $jenis_pertanggungan;
+            $newDetail->tipe_premi = $tipe_premi;
+            $newDetail->jenis_coverage = $jenis_coverage;
+            $newDetail->no_polis_sebelumnya = $no_polis_sebelumnya;
+            $newDetail->baki_debet = $baki_debet;
+            $newDetail->tunggakan = $tunggakan;
+            $newDetail->tarif = $tarif;
+            $newDetail->kode_layanan_syariah = $kode_layanan_syariah;
+            $newDetail->handling_fee = $handling_fee;
+            $newDetail->premi_disetor = $premi_disetor;
             $newDetail->save();
+
+            // insert to dynamic table (form_value_asuransi)
+            if (count($arr_item_id) > 0 && count($arr_item_label) > 0 && count($arr_item_value) > 0) {
+                if (count($arr_item_id) == count($arr_item_label) &&
+                    count($arr_item_id) == count($arr_item_value) &&
+                    count($arr_item_label) == count($arr_item_value)) {
+                    for ($i=0; $i < count($arr_item_id); $i++) { 
+                        DB::table('form_value_asuransi')->insert([
+                            'asuransi_id' => $newAsuransi->id,
+                            'form_item_asuransi_id' => $arr_item_id[$i],
+                            'value' => $arr_item_value[$i],
+                        ]);
+                    }
+                }
+                else {
+                    Alert::error('Gagal', 'Harap pastikan form sudah terisi dengan lengkap.');
+                    return back()->withInput();
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Harap pastikan form sudah terisi dengan lengkap.');
+                return back()->withInput();
+            }
 
             $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' menyimpan data asuransi.', $newAsuransi->id, 1);
 
@@ -560,11 +647,13 @@ class RegistrasiController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Alert::error('Gagal', $e->getMessage());
-            return back()->withInput();
+            // return back()->withInput();
+            return $e->getMessage();
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             DB::rollBack();
             Alert::error('Gagal timeout', $e->getMessage());
-            return back()->withInput();
+            // return back()->withInput();
+            return $e->getMessage();
         }
     }
 
@@ -1341,7 +1430,6 @@ class RegistrasiController extends Controller
             $token = \Session::get(config('global.user_token_session'));
             $user = $token ? $this->getLoginSession() : Auth::user();
             $name = $token ? $user['data']['nip'] : $user->email;
-
 
             $id_pengajuan = $request->id_pengajuan;
 

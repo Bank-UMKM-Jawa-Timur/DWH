@@ -303,8 +303,6 @@
                     </div>
                 </div> --}}
 
-
-
                 <div class="flex gap-5">
                     <button class="px-6 py-2 bg-theme-primary flex gap-3 rounded text-white" type="submit"
                         id="simpan-asuransi">
@@ -339,8 +337,11 @@
 
         $("#perusahaan").on("change", function(){
             var value = $(this).val();
+            var loading = $('#preload-data')
+            loading.removeClass('hidden')
 
             if(value == 2){
+                loading.addClass('hidden')
                 Swal.fire({
                     icon: 'error',
                     title: 'Coming soon'
@@ -361,73 +362,79 @@
                     <small class="form-text text-red-600 error"></small>
                 </div>`);
                 $.ajax({
-                   url: "{{url('asuransi/registrasi/get-item-form-by-perusahaan')}}/"+ value,
-                   type: "GET",
-                   accept: "Application/json",
-                   success: function(response) {
-                        var data = response.data;
-                        
-                        $.each(data, function(i, item) {
-                            var name = item.label;
-                            var names = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('_');
-                            var class_name = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('-');
-
-                            var type = item.type;
-                            var rupiah = item.rupiah;
-                            var required = item.required;
-                            var readonly = item.readonly;
-                            var hidden = item.hidden;
-                            var item_function = item.function;
-
-                            var input_element = ``;
-                            if (type == 'option' || type == 'radio') {
-                                var options_element = ``;
-                                var option_values = item.items
-                                for (let i = 0; i < option_values.length; i++) {
-                                    var o_value = option_values[i]
-                                    if (type == 'option') {
-                                        // option
-                                        options_element += `<option value="${o_value.value}">${o_value.display_value}</option>`
-                                    }
-                                    else {
-                                        // radio
-                                        options_element += `<input type="radio" name="${names}"
-                                                            id="${names}-${i}" class="${class_name} accent-theme-primary"
-                                                            value="${o_value.value}">
-                                                            <label for="${names}-${i}">${o_value.display_value}</label>`
-                                    }
-                                }
-
-                                if (type == 'option') {
-                                    // radio
-                                    input_element = `<select name="${names}" class="${class_name} w-full p-2 border" onchange="${item_function}">
-                                        <option selected value="">-- Pilih ${name} ---</option>
-                                        ${options_element}
-                                    </select>`
-                                } else {
-                                    // radio
-                                    input_element = options_element
-                                }
-                            } else {
-                                input_element = `<input type="${item.type}" class="${rupiah ? 'rupiah' : ''} ${readonly ? 'disabled-input bg-disabled' : ''} p-2 w-full border "
-                                id="${names}" name="${names}" value="{{old('${names}')}}" ${readonly ? 'readonly' : ''}/>`
-                            }
+                    url: "{{url('asuransi/registrasi/get-item-form-by-perusahaan')}}/"+ value,
+                    type: "GET",
+                    accept: "Application/json",
+                    success: function(response) {
+                            var data = response.data;
                             
-                            $("#form-registrasi").append(`
-                                <div class="input-box space-y-3 ${hidden ? 'hidden' : ''}">
-                                    <label for="${names}" class="uppercase ${names}">${item.label}
-                                    ${required ? '<span class="text-theme-primary">*</span>' : ''}
-                                    </label>
-                                    ${input_element}
-                                    <small class="form-text text-red-600 error"></small>
-                                </div>
-                            `);
-                        });
-                   },
-                   error: function(response) {
-                       alertWarning('Terjadi kesalahan saat mengambil item form')
-                   }
-               })
+                            $.each(data, function(i, item) {
+                                var name = item.label;
+                                var names = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('_');
+                                names = `items[][${names}-${item.id}]`
+                                var input_id = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('_');
+                                var class_name = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('-');
+
+                                var type = item.type;
+                                var rupiah = item.rupiah;
+                                var required = item.required;
+                                var readonly = item.readonly;
+                                var hidden = item.hidden;
+                                var item_function = item.function;
+
+                                var input_element = ``;
+                                if (type == 'option' || type == 'radio') {
+                                    var options_element = ``;
+                                    var option_values = item.items
+                                    for (let i = 0; i < option_values.length; i++) {
+                                        var o_value = option_values[i]
+                                        if (type == 'option') {
+                                            // option
+                                            options_element += `<option value="${o_value.value}">${o_value.display_value}</option>`
+                                        }
+                                        else {
+                                            // radio
+                                            options_element += `<input type="radio" name="${names}"
+                                                                id="${input_id}" class="${class_name} accent-theme-primary"
+                                                                value="${o_value.value}">
+                                                                <label for="${input_id}">${o_value.display_value}</label>`
+                                        }
+                                    }
+
+                                    if (type == 'option') {
+                                        // radio
+                                        input_element = `<select name="${names}" id="${input_id}" class="${class_name} w-full p-2 border" onchange="${item_function}">
+                                            <option selected value="">-- Pilih ${name} ---</option>
+                                            ${options_element}
+                                        </select>`
+                                    } else {
+                                        // radio
+                                        input_element = options_element
+                                    }
+                                } else {
+                                    input_element = `<input type="${item.type}" class="${readonly ? 'disabled-input bg-disabled' : ''} p-2 w-full border "
+                                                        id="${input_id}" name="${names}" value="" ${readonly ? 'readonly' : ''}
+                                                        ${rupiah ? 'onkeyup="formatRupiahOnKeyup(this)"' : ''} ${item_function ? 'onchange="'+item_function+'"' : ''}/>`
+                                }
+                                
+                                $("#form-registrasi").append(`
+                                    <div class="input-box space-y-3 ${hidden ? 'hidden' : ''}">
+                                        <label for="${input_id}" class="uppercase ${names}">${item.label}
+                                        ${required ? '<span class="text-theme-primary">*</span>' : ''}
+                                        </label>
+                                        ${input_element}
+                                        <small class="form-text text-red-600 error"></small>
+                                    </div>
+                                `);
+                            });
+
+                            loading.addClass('hidden')
+                    },
+                    error: function(response) {
+                        loading.addClass('hidden')
+                        alertWarning('Terjadi kesalahan saat mengambil item form')
+                    }
+                })
             }
         })
 
@@ -533,6 +540,7 @@
         })
 
         function jenisPertanggungan(jenis) {
+            console.log(jenis)
             var cod = 0;
             var masa_asuransi = $('#jumlah_bulan').val()
             if (masa_asuransi == '') {
@@ -572,6 +580,7 @@
                         'masa_asuransi': masa_asuransi,
                     },
                     success: function(response) {
+                        console.log(response)
                         if (response.status == 'success') {
                             if (response.data) {
                                 var rate = parseFloat(response.data.rate)
