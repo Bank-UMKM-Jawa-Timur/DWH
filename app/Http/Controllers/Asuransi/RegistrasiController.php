@@ -1482,8 +1482,21 @@ class RegistrasiController extends Controller
             $childs = DB::table('mst_form_item_asuransi')
                         ->where('parent_id', $value->id)
                         ->get();
+            
+            foreach ($childs as $child) {
+                $child->items = [];
+                if ($child->type == 'option' || $child->type == 'radio') {
+                    $child->items = DB::table('mst_option_values')
+                                    ->select('id', 'value', 'display_value')
+                                    ->where('form_asuransi_id', $child->id)
+                                    ->orderBy('value')
+                                    ->get();
+                }
+            }
+
             $value->childs = $childs;
 
+            $value->items = [];
             if ($value->type == 'option' || $value->type == 'radio') {
                 $value->items = DB::table('mst_option_values')
                                 ->select('id', 'value', 'display_value')
