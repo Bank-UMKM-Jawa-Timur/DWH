@@ -161,26 +161,24 @@
                     <h2 class="text-theme-primary font-bold text-lg">Data Registrasi</h2>
                 </div>
                 {{-- form data register 1 --}}
-                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
-                    <div class="input-box space-y-3">
+                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center" id="edit-form-registrasi">
+                    {{-- <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Rekening<span class="text-theme-primary">*</span>
                         </label>
                         <input type="text" class="p-2 w-full border "
                         id="no_rekening" name="no_rekening" value="{{$jenis_asuransi->asuransi->no_rek}}"/>
                         <small class="form-text text-red-600 error"></small>
-                    </div>
+                    </div> --}}
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span>
                         </label>
                         <input type="text" class="p-2 w-full border "
-                        id="no_rekening" name="jenis_asuransi" value="{{$jenis_asuransi->jenis}}" readonly/>
+                        id="jenis_asuransi" name="jenis_asuransi" value="{{$jenis_asuransi->jenis}}" readonly/>
                         <small class="form-text text-red-600 error"></small>
                     </div>
-                    <div class="input-box space-y-3">
+                    {{-- <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span>
                         </label>
-                        {{-- <input type="text" class="p-2 w-full border "
-                        id="no_rekening" name="jenis_pengajuan" value="{{$jenis_asuransi->asuransi->jenis_pengajuan == '01' ?}}" readonly/> --}}
                         <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pengajuan ---</option>
                             <option {{$jenis_asuransi->asuransi->jenis_pengajuan == '00' ? 'selected' : ''}} value="00">Baru</option>
@@ -217,11 +215,11 @@
                             <option {{$jenis_asuransi->asuransi->tipe_premi == '0' ? 'selected' : ''}} value="0">Biasa</option>
                             <option {{$jenis_asuransi->asuransi->tipe_premi == '1' ? 'selected' : ''}} value="1">Refund</option>
                         </select>
-                    </div>
+                    </div> --}}
                 </div>
 
                 {{-- form data register 6 should be hidden when choosing baru in jenis pengajuan --}}
-                <div class="form-6 hidden lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5 justify-center">
+                {{-- <div class="form-6 hidden lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5 justify-center">
                     <div class="input-box space-y-3">
                         <label for="add-role" class="uppercase">No Polis Sebelumya<span
                                 class="text-theme-primary">*</span> </label>
@@ -240,9 +238,9 @@
                         <input type="text" class="rupiah p-2 w-full border " id="tunggakan" value="{{$jenis_asuransi->asuransi->tunggakan}}" name="tunggakan" />
                         <small class="form-text text-red-600 error"></small>
                     </div>
-                </div>
+                </div> --}}
                 {{-- form data register 5 --}}
-                <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
+                {{-- <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Premi</label>
                         <input type="hidden" id="rate_premi" name="rate_premi" />
@@ -299,7 +297,7 @@
                             name="premi_disetor" value="{{number_format($jenis_asuransi->asuransi->premi_disetor, 0, ',', '.')}}" readonly />
                         <small class="form-text text-red-600 error"></small>
                     </div>
-                </div>
+                </div> --}}
                 {{-- <div class="mt-5 space-y-5 bg-white border p-5 w-auto">
                     <h2 class="text-theme-primary font-bold">Pendapat dari Penyelia</h2>
                     <p>Apakah form diatas yang diisi sudah benar atau ada kesalahan?.  berikan keterangan secara ringkas</p>
@@ -334,6 +332,167 @@
 
         $('#pengajuan').select2();
 
+        var id_perusahaan = {{ $jenis_asuransi->asuransi->perusahaan_asuransi_id }};
+
+        $( document ).ready(function() {
+            getItems(id_perusahaan);
+        });
+
+        function getItems(value) {
+            var loading = $('#preload-data')
+            loading.removeClass('hidden')
+            $("#edit-form-registrasi").empty();
+            $("#edit-form-registrasi").append(`
+            <div class="input-box space-y-3">
+                    <label for="add-role" class="uppercase">Jenis Asuransi<span class="text-theme-primary">*</span>
+                    </label>
+                    <input type="text" class="p-2 w-full border "
+                    id="jenis_asuransi" name="jenis_asuransi" value="{{$jenis_asuransi->jenis}}" readonly/>
+                    <small class="form-text text-red-600 error"></small>
+                </div>`);
+            $.ajax({
+                url: "{{url('asuransi/registrasi/get-item-form-edit-by-perusahaan')}}/"+ value,
+                type: "GET",
+                accept: "Application/json",
+                success: function(response) {
+                        var data = response.data;
+                        // console.log(data);
+                        $.each(data, function(i, item) {
+                            var name = item.label;
+                            var names = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('_');
+                            names = `items[][${names}-${item.id}]`
+                            var input_id = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('_');
+                            var class_name = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('-');
+
+                            var type = item.type;
+                            var rupiah = item.rupiah;
+                            var required = item.required;
+                            var readonly = item.readonly;
+                            var hidden = item.hidden;
+                            var item_function = item.function;
+                            var childs = item.childs;
+                            var value_items = item.value;
+                            console.log(input_id);
+
+                            var input_element = ``;
+                            if (type == 'option' || type == 'radio') {
+                                var options_element = ``;
+                                var option_values = item.items;
+                                for (let i = 0; i < option_values.length; i++) {
+                                    var o_value = option_values[i]
+                                    if (type == 'option') {
+                                        // option
+                                        options_element += `<option ${value_items === o_value.value ? "selected" : '' } value="${o_value.value}">${o_value.display_value}</option>`
+                                    }
+                                    else {
+                                        // radio
+                                        options_element += `<input type="radio" name="${names}"
+                                                            id="${input_id}" class="${class_name} accent-theme-primary"
+                                                            value="${o_value.value}" data-id="${item.id}">
+                                                            <label for="${input_id}">${o_value.display_value}</label>`
+                                    }
+                                }
+
+                                if (type == 'option') {
+                                    // radio
+                                    input_element = `<select name="${names}" id="${input_id}" class="${class_name} w-full p-2 border" onchange="${item_function}" data-id="${item.id}">
+                                        <option selected value="">-- Pilih ${name} ---</option>
+                                        ${options_element}
+                                    </select>`
+                                } else {
+                                    // radio
+                                    input_element = options_element
+                                }
+                            } else {
+                                input_element = `<input type="${item.type}" class="${class_name} ${readonly ? 'disabled-input bg-disabled' : ''} p-2 w-full border "
+                                                    id="${input_id}" name="${names}" value="${value_items}" ${readonly ? 'readonly' : ''}
+                                                    ${rupiah ? 'onkeyup="formatRupiahOnKeyup(this)"' : ''} ${item_function ? 'onchange="'+item_function+'"' : ''} data-id="${item.id}"/>`
+                            }
+                            
+                            $("#edit-form-registrasi").append(`
+                                <div class="input-box space-y-3 ${hidden ? 'hidden' : ''}">
+                                    <label for="${input_id}" class="uppercase ${names}">${item.label}
+                                    ${required ? '<span class="text-theme-primary">*</span>' : ''}
+                                    </label>
+                                    ${input_element}
+                                    <small class="form-text text-red-600 error"></small>
+                                </div>
+                            `);
+
+                            // Loop child item
+                            $.each(childs, function(j, child) {
+                                var input_element = ``;
+                                var name = child.label;
+                                var names = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('_');
+                                var class_name = name.replace(/\W+/g, " ").toLowerCase().split(' ').join('-');
+                                var type = child.type;
+                                var rupiah = child.rupiah;
+                                var required = child.required;
+                                var readonly = child.readonly;
+                                var hidden = child.hidden;
+                                var child_function = child.function;
+
+                                if (type == 'option' || type == 'radio') {
+                                    var options_element = ``;
+                                    var option_values = child.items
+                                    for (let i = 0; i < option_values.length; i++) {
+                                        var o_value = option_values[i]
+                                        if (type == 'option') {
+                                            // option
+                                            options_element += `<option value="${o_value.value}">${o_value.display_value}</option>`
+                                        }
+                                        else {
+                                            // radio
+                                            options_element += `<input type="radio" name="${names}"
+                                                                id="${names}-${i}" class="${class_name} accent-theme-primary"
+                                                                value="${o_value.value}">
+                                                                <label for="${names}-${i}">${o_value.display_value}</label>`
+                                        }
+                                    }
+
+                                    if (type == 'option') {
+                                        // radio
+                                        input_element = `<select name="${names}" class="${class_name} w-full p-2 border" onchange="${item_function}">
+                                            <option selected value="">-- Pilih ${name} ---</option>
+                                            ${options_element}
+                                        </select>`
+                                    } else {
+                                        // radio
+                                        input_element = options_element
+                                    }
+                                } else {
+                                    input_element = `<input type="${child.type}" class="${rupiah ? 'rupiah' : ''} ${readonly ? 'disabled-input bg-disabled' : ''} p-2 w-full border "
+                                    id="${names}" name="${names}" value="{{old('${names}')}}" ${readonly ? 'readonly' : ''}/>`
+                                }
+
+                                $("#edit-form-registrasi").append(`
+                                    <div class="input-box space-y-3 parent-${child.parent_id} ${hidden ? 'hidden' : ''} ">
+                                        <label for="${names}" class="uppercase ${names}">${child.label}
+                                        ${required ? '<span class="text-theme-primary">*</span>' : ''}
+                                        </label>
+                                        ${input_element}
+                                        <small class="form-text text-red-600 error"></small>
+                                    </div>
+                                `);
+                            })
+                            // End loop child item
+                        });
+
+                        // $('#no_rekening').val('{{ $jenis_asuransi->asuransi->no_rek }}')
+                        // $('#premi').val('{{ number_format($jenis_asuransi->asuransi->premi, 0, ',', '.') }}')
+                        // $('#tarif').val('{{ $jenis_asuransi->asuransi->tarif }}')
+                        // $('#handling_fee').val('{{number_format($jenis_asuransi->asuransi->handling_fee, 0, ',', '.')}}')
+                        // $('#premi_disetor').val('{{number_format($jenis_asuransi->asuransi->premi_disetor, 0, ',', '.')}}')
+
+                        loading.addClass('hidden')
+                },
+                error: function(response) {
+                    loading.addClass('hidden')
+                    alertWarning('Terjadi kesalahan saat mengambil item form')
+                }
+            })
+        }
+
         $('#form-reset').on('click', function() {
             $('#form-asuransi-registrasi')[0].reset();
             if ($('#form-asuransi-registrasi .datepicker')[0]) {
@@ -355,11 +514,24 @@
             }
         })
 
+        function jenisPengajuan(input) {
+            var jenis = input.value
+            var id = input.getAttribute('data-id')
+
+            if (parseInt(jenis) === 1) {
+                // Top up
+                $(`.parent-${id}`).removeClass('hidden')
+            } else {
+                // Baru
+                $(`.parent-${id}`).addClass('hidden')
+            }
+        }
 
         $('#jenis_pertanggungan').on('change', function() {
+            var cod = 0;
             var masa_asuransi = $('#jumlah_bulan').val()
             if (masa_asuransi == '') {
-                alert('Harap pilih data pengajuan terlebih dahulu')
+                alertWarning('Harap pilih data pengajuan terlebih dahulu')
             }
             var plafon_kredit = $('#plafon_kredit').val()
             if (plafon_kredit != '') {
@@ -368,6 +540,15 @@
             }
             let premi;
             var jenis = $(this).val()
+
+            if (masa_asuransi > 60) {
+                if (jenis == '01') {
+                    alertWarning('Tidak bisa memilih jenis pertanggungan pokok, dikarenakan jumlah bulan lebih dari 60 bulan')
+                    $('[name="jenis_pertanggungan"]').focus()
+                    $('#jenis_pertanggungan').val("");
+                    cod++
+                }
+            }
             if (jenis == '01')
                 jenis = 'plafon'
             else if (jenis == '02')
@@ -376,7 +557,7 @@
                 jenis = '';
 
 
-            if (jenis != '') {
+            if (jenis != '' && cod == 0) {
                 $.ajax({
                     url: "{{ route('asuransi.registrasi.rate_premi') }}",
                     type: "GET",
@@ -396,20 +577,88 @@
                                 $('#tarif').val(rate)
                                 hitungPremiDisetor()
                             } else {
-                                alert('Rate premi tidak ditemukan')
+                                alertWarning('Rate premi tidak ditemukan')
                             }
                         } else {
                             console.log(response.message)
-                            alert('Terjadi  kesalahan saat mengambil rate premi')
+                            alertWarning('Terjadi  kesalahan saat mengambil rate premi')
                         }
                     },
                     error: function(response) {
                         console.log(response)
-                        alert('Terjadi kesalahan saat mengambil rate premi')
+                        alertWarning('Terjadi kesalahan saat mengambil rate premi')
                     }
                 })
             }
         })
+
+        function jenisPertanggungan(input) {
+            var jenis = input.value
+            console.log(jenis)
+            var cod = 0;
+            var masa_asuransi = $('#jumlah_bulan').val()
+            if (masa_asuransi == '') {
+                alertWarning('Harap pilih data pengajuan terlebih dahulu')
+            }
+            var plafon_kredit = $('#plafon_kredit').val()
+            if (plafon_kredit != '') {
+                plafon_kredit = plafon_kredit.replaceAll('.', '')
+                plafon_kredit = parseInt(plafon_kredit)
+            }
+            let premi;
+            //var jenis = $(this).val()
+
+            if (masa_asuransi > 60) {
+                if (jenis == '01') {
+                    alertWarning('Tidak bisa memilih jenis pertanggungan pokok, dikarenakan jumlah bulan lebih dari 60 bulan')
+                    $('[name="jenis_pertanggungan"]').focus()
+                    $('#jenis_pertanggungan').val("");
+                    cod++
+                }
+            }
+            if (jenis == '01')
+                jenis = 'plafon'
+            else if (jenis == '02')
+                jenis = 'bade'
+            else
+                jenis = '';
+
+
+            if (jenis != '' && cod == 0) {
+                $.ajax({
+                    url: "{{ route('asuransi.registrasi.rate_premi') }}",
+                    type: "GET",
+                    accept: "Application/json",
+                    data: {
+                        'jenis': jenis,
+                        'masa_asuransi': masa_asuransi,
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        if (response.status == 'success') {
+                            if (response.data) {
+                                var rate = parseFloat(response.data.rate)
+                                premi = Math.round(plafon_kredit * (rate / 1000))
+                                premi = formatRupiah(premi.toString())
+                                $('#premi').val(premi)
+                                $('#rate_premi').val(rate)
+                                $('#tarif').val(rate)
+                                hitungPremiDisetor()
+                            } else {
+                                alertWarning('Rate premi tidak ditemukan')
+                            }
+                        } else {
+                            console.log(response.message)
+                            alertWarning('Terjadi  kesalahan saat mengambil rate premi')
+                        }
+                    },
+                    error: function(response) {
+                        console.log(response)
+                        alertWarning('Terjadi kesalahan saat mengambil rate premi')
+                    }
+                })
+            }
+        }
 
         $("#simpan-asuransi").on("click", function(e) {
             e.preventDefault();

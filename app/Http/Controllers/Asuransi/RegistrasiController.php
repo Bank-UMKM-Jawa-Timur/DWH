@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Asuransi;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
+use App\Models\FormValueAsuransi;
 use App\Models\MstFormItemAsuransi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -1339,6 +1340,7 @@ class RegistrasiController extends Controller
                             'd.kode_layanan_syariah',
                         )
                         ->where('asuransi.jenis_asuransi_id', $jenis_asuransi->id);
+                        
 
                     $asuransi = $asuransi->groupBy('no_pk')
                         ->orderBy('no_aplikasi')
@@ -1379,8 +1381,76 @@ class RegistrasiController extends Controller
             $premi = UtilityController::clearCurrencyFormat($request->get('premi'));
             $refund = UtilityController::clearCurrencyFormat($request->get('refund'));
 
-            $editAsuransi = Asuransi::find($id);
-            $editAsuransi->no_rek = $request->no_rekening;
+            $jenis_asuransi_option = explode('-', $request->jenis_asuransi);
+            $jenis_asuransi_id = $jenis_asuransi_option[0];
+            // Get request item
+            $item_req = $request->get('items');
+            $arr_item_id = [];
+            $arr_item_label = [];
+            $arr_item_value = [];
+            for ($i=0; $i < count($item_req); $i++) { 
+                // get item id & label
+                $key = '';
+                $id2 = '';
+                $label = '';
+                $get_key = array_keys($item_req[$i]);
+                if (count($get_key) > 0) {
+                    $key = $get_key[0];
+                    $split_input_name = explode('-', $key);
+                    $id2 = $split_input_name[1];
+                    $label = $split_input_name[0];
+                    array_push($arr_item_id, $id2);
+                    array_push($arr_item_label, $label);
+                }
+
+                // get item value
+                if ($key != '') {
+                    $value = $item_req[$i][$key];
+                    array_push($arr_item_value, $value);
+                }
+            }
+
+            // insert asuransi
+            $index_norek = array_keys($arr_item_label, 'no_rekening');
+            $no_rek = count($index_norek) > 0 ? $arr_item_value[$index_norek[0]] : null;
+            $index_premi = array_keys($arr_item_label, 'premi');
+            $premi = count($index_premi) > 0 ? $arr_item_value[$index_premi[0]] : null;
+            $premi = $premi ? UtilityController::clearCurrencyFormat($premi) : $premi;
+            $index_refund = array_keys($arr_item_label, 'refund');
+            $refund = count($index_refund) > 0 ? $arr_item_value[$index_refund[0]] : null;
+            $refund = $refund ? UtilityController::clearCurrencyFormat($refund) : $refund;
+            $index_jenis_pengajuan = array_keys($arr_item_label, 'jenis_pengajuan');
+            $jenis_pengajuan = count($index_jenis_pengajuan) > 0 ? $arr_item_value[$index_jenis_pengajuan[0]] : null;
+            $index_kolektibilitas = array_keys($arr_item_label, 'kolektibilitas');
+            $kolektibilitas = count($index_kolektibilitas) > 0 ? $arr_item_value[$index_kolektibilitas[0]] : null;
+            $index_jenis_pertanggungan = array_keys($arr_item_label, 'jenis_pertanggungan');
+            $jenis_pertanggungan = count($index_jenis_pertanggungan) > 0 ? $arr_item_value[$index_jenis_pertanggungan[0]] : null;
+            $index_tipe_premi = array_keys($arr_item_label, 'tipe_premi');
+            $tipe_premi = count($index_tipe_premi) > 0 ? $arr_item_value[$index_tipe_premi[0]] : null;
+            $index_jenis_coverage = array_keys($arr_item_label, 'jenis_coverage');
+            $jenis_coverage = count($index_jenis_coverage) > 0 ? $arr_item_value[$index_jenis_coverage[0]] : null;
+            $index_no_polis_sebelumnya = array_keys($arr_item_label, 'no_polis_sebelumnya');
+            $no_polis_sebelumnya = count($index_no_polis_sebelumnya) > 0 ? $arr_item_value[$index_no_polis_sebelumnya[0]] : null;
+            $index_baki_debet = array_keys($arr_item_label, 'baki_debet');
+            $baki_debet = count($index_baki_debet) > 0 ? $arr_item_value[$index_baki_debet[0]] : null;
+            $baki_debet = $baki_debet ? UtilityController::clearCurrencyFormat($baki_debet) : $baki_debet;
+            $index_tunggakan = array_keys($arr_item_label, 'tunggakan');
+            $tunggakan = count($index_tunggakan) > 0 ? $arr_item_value[$index_tunggakan[0]] : null;
+            $tunggakan = $tunggakan ? UtilityController::clearCurrencyFormat($tunggakan) : $tunggakan;
+            $index_tarif = array_keys($arr_item_label, 'tarif');
+            $tarif = count($index_tarif) > 0 ? $arr_item_value[$index_tarif[0]] : null;
+            $tarif = $tarif ? UtilityController::clearCurrencyFormat($tarif) : $tarif;
+            $index_kode_layanan_syariah = array_keys($arr_item_label, 'kode_layanan_syariah');
+            $kode_layanan_syariah = count($index_kode_layanan_syariah) > 0 ? $arr_item_value[$index_kode_layanan_syariah[0]] : null;
+            $index_handling_fee = array_keys($arr_item_label, 'handling_fee');
+            $handling_fee = count($index_handling_fee) > 0 ? $arr_item_value[$index_handling_fee[0]] : null;
+            $handling_fee = $handling_fee ? UtilityController::clearCurrencyFormat($handling_fee) : $handling_fee;
+            $index_premi_disetor = array_keys($arr_item_label, 'premi_disetor');
+            $premi_disetor = count($index_premi_disetor) > 0 ? $arr_item_value[$index_premi_disetor[0]] : null;
+            $premi_disetor = $premi_disetor ? UtilityController::clearCurrencyFormat($premi_disetor) : $premi_disetor;
+
+            $editAsuransi = Asuransi::where('id', $id)->first();
+            $editAsuransi->no_rek = $no_rek;
             $editAsuransi->premi = $premi;
             $editAsuransi->refund = $refund;
             $editAsuransi->status = 'waiting approval';
@@ -1401,11 +1471,36 @@ class RegistrasiController extends Controller
             $editDetailAsuransi->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
             $editDetailAsuransi->save();
 
-        $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '('. $name .')'.' melakukan edit data registrasi asuransi.', $id, 1);
+            // insert to dynamic table (form_value_asuransi)
+            if (count($arr_item_id) > 0 && count($arr_item_label) > 0 && count($arr_item_value) > 0) {
+                if (count($arr_item_id) == count($arr_item_label) &&
+                    count($arr_item_id) == count($arr_item_value) &&
+                    count($arr_item_label) == count($arr_item_value)) {
+                    for ($i=0; $i < count($arr_item_id); $i++) { 
+                        DB::table('form_value_asuransi')
+                            ->where('asuransi_id', $editAsuransi->id)
+                            ->where('form_item_asuransi_id', $arr_item_id[$i])
+                            ->update([
+                                'value' => $arr_item_value[$i],
+                            ]);
 
-        DB::commit();
-        Alert::success('Berhasil', 'Berhasil edit data');
-        return redirect()->route('asuransi.registrasi.index');
+                    }
+                }
+                else {
+                    Alert::error('Gagal', 'Harap pastikan form sudah terisi dengan lengkap.');
+                    return back()->withInput();
+                }
+            }
+            else {
+                Alert::error('Gagal', 'Harap pastikan form sudah terisi dengan lengkap.');
+                return back()->withInput();
+            }
+
+            $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '('. $name .')'.' melakukan edit data registrasi asuransi.', $id, 1);
+
+            DB::commit();
+            Alert::success('Berhasil', 'Berhasil edit data');
+            return redirect()->route('asuransi.registrasi.index');
         } catch (\Exception $e) {
             DB::rollBack();
             Alert::error('Terjadi kesalahan', $e->getMessage());
@@ -1477,6 +1572,59 @@ class RegistrasiController extends Controller
         ->where('form.perusahaan_id', $perusahaan_id)
         ->where('item.level', 1)
         ->get();
+
+        foreach ($data as $key => $value) {
+            $childs = DB::table('mst_form_item_asuransi')
+                        ->where('parent_id', $value->id)
+                        ->get();
+            
+            foreach ($childs as $child) {
+                $child->items = [];
+                if ($child->type == 'option' || $child->type == 'radio') {
+                    $child->items = DB::table('mst_option_values')
+                                    ->select('id', 'value', 'display_value')
+                                    ->where('form_asuransi_id', $child->id)
+                                    ->orderBy('value')
+                                    ->get();
+                }
+            }
+
+            $value->childs = $childs;
+
+            $value->items = [];
+            if ($value->type == 'option' || $value->type == 'radio') {
+                $value->items = DB::table('mst_option_values')
+                                ->select('id', 'value', 'display_value')
+                                ->where('form_asuransi_id', $value->id)
+                                ->orderBy('value')
+                                ->get();
+            }
+        }
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
+    public function itemEditByPerusahaan($perusahaan_id){
+        $data = DB::table('form_value_asuransi as form_value')->select(
+            'item.*', 'form_value.value'
+        )
+        ->join('mst_form_item_asuransi as item', 'form_value.form_item_asuransi_id', 'item.id')
+        ->join('mst_form_asuransi as form', 'form.form_item_asuransi_id', 'item.id')
+        ->orderBy('item.sequence', 'ASC')
+        ->where('form.perusahaan_id', $perusahaan_id)
+        ->where('item.level', 1)
+        ->get();
+
+        // $data = DB::table('mst_form_asuransi as form')->select(
+        //     'item.*'
+        // )
+        // ->join('mst_form_item_asuransi as item', 'form.form_item_asuransi_id', 'item.id')
+        // ->orderBy('item.sequence', 'ASC')
+        // ->where('form.perusahaan_id', $perusahaan_id)
+        // ->where('item.level', 1)
+        // ->get();
 
         foreach ($data as $key => $value) {
             $childs = DB::table('mst_form_item_asuransi')

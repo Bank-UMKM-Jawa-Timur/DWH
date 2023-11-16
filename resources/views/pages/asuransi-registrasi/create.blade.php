@@ -386,7 +386,8 @@
                                 var input_element = ``;
                                 if (type == 'option' || type == 'radio') {
                                     var options_element = ``;
-                                    var option_values = item.items
+                                    var option_values = item.items;
+                                    console.log(option_values);
                                     for (let i = 0; i < option_values.length; i++) {
                                         var o_value = option_values[i]
                                         if (type == 'option') {

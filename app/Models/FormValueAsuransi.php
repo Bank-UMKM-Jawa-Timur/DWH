@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Asuransi extends Model
+class FormValueAsuransi extends Model
 {
     use HasFactory;
-    protected $table = 'asuransi';
-    protected $primaryKey = 'id';
+
+    protected $table = 'form_value_asuransi';
 }
