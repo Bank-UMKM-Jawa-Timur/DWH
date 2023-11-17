@@ -313,45 +313,6 @@ class RegistrasiController extends Controller
         $id_pengajuan = $request->id;
         $id_asuransi = $request->asuransi;
 
-        $asuransi = DB::table('asuransi AS a')
-                    ->select(
-                        'a.id',
-                        'a.perusahaan_asuransi_id',
-                        'a.jenis_asuransi_id',
-                        'a.no_aplikasi',
-                        'a.no_rek',
-                        'a.no_pk',
-                        'a.premi',
-                        'a.refund',
-                        'd.jenis_pengajuan',
-                        'd.kolektibilitas',
-                        'd.jenis_pertanggungan',
-                        'd.tipe_premi',
-                        'd.jenis_coverage',
-                        'd.tarif',
-                        'd.kode_layanan_syariah',
-                        'd.handling_fee',
-                        'd.premi_disetor',
-                        'd.no_polis_sebelumnya',
-                        'd.baki_debet',
-                        'd.tunggakan',
-                    )
-                    ->join('asuransi_detail AS d', 'd.asuransi_id', 'a.id')
-                    ->where('a.id', $id_asuransi)
-                    ->first();
-
-        $perusahaan = DB::table('mst_perusahaan_asuransi')
-                        ->select('id', 'nama', 'alamat')
-                        ->where('id', $asuransi->perusahaan_asuransi_id)
-                        ->first();
-
-        $pendapat = DB::table('pendapat_asuransi AS p')
-                        ->select('p.id', 'p.pendapat', 'p.created_at')
-                        ->join('asuransi AS a', 'a.id', 'p.asuransi_id')
-                        ->where('a.id', $asuransi->id)
-                        ->orderBy('id', 'DESC')
-                        ->get();
-
         $apiPengajuan = $this->losHost . '/v1/get-list-pengajuan-by-id/' . $id_pengajuan;
         $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiPengajuan);
         $response = json_decode($api_req->getBody(), true);
@@ -360,23 +321,63 @@ class RegistrasiController extends Controller
             if (array_key_exists('status', $response)) {
                 if ($response['status'] == 'success') {
                     $pengajuan = $response['data'];
+                    $pengajuan['age'] = UtilityController::countAge($pengajuan['tanggal_lahir']);
+                    $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                        ->select('id', 'jenis')
+                        ->where('jenis_kredit', $pengajuan['skema_kredit'])
+                        ->orderBy('jenis')
+                        ->first();
+            
+                        $asuransi = DB::table('asuransi')
+                        ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
+                        ->join('mst_jenis_asuransi', 'mst_jenis_asuransi.id', 'asuransi.jenis_asuransi_id')
+                        ->join('mst_perusahaan_asuransi AS p', 'p.id', 'asuransi.perusahaan_asuransi_id')
+                        ->join('asuransi_detail AS d', 'd.asuransi_id', 'asuransi.id')
+                        ->select(
+                            'p.nama AS perusahaan',
+                            'asuransi.*',
+                            'mst_jenis_asuransi.jenis',
+                            'k.kode_cabang',
+                            'd.tarif',
+                            'd.premi_disetor',
+                            'd.handling_fee',
+                            'd.kolektibilitas',
+                            'd.jenis_pengajuan',
+                            'd.jenis_pertanggungan',
+                            'd.tipe_premi',
+                            'd.tunggakan',
+                            'd.baki_debet',
+                            'd.jenis_coverage',
+                            'd.kode_layanan_syariah',
+                        )
+                        ->where('asuransi.jenis_asuransi_id', $jenis_asuransi->id);
+                        
+
+                    $asuransi = $asuransi->groupBy('no_pk')
+                        ->orderBy('no_aplikasi')
+                        ->first();
+                    $jenis_asuransi->asuransi = $asuransi;
+                    $pendapat = DB::table('pendapat_asuransi')->where('asuransi_id', $jenis_asuransi->asuransi->id)->orderBy('created_at', 'DESC')->get();
+                    $perusahaan = DB::table('mst_perusahaan_asuransi')
+                        ->select('id', 'nama', 'alamat')
+                        ->get();
+            
+                    $pengajuan['no_aplikasi'] = $asuransi->no_aplikasi;
+                    $tenor = $pengajuan['tenor_yang_diminta'];
+                    $pengajuan['tgl_akhir_kredit'] = date('d-m-Y', strtotime($pengajuan['tanggal'] . " +$tenor month"));
+            
+                    $skema_kredit = $pengajuan['skema_kredit'];
+                    $pengajuan['age'] = UtilityController::countAge($pengajuan['tanggal_lahir']);
+            
+                    $jenisAsuransi = DB::table('mst_jenis_asuransi')
+                                        ->select('id', 'kode', 'jenis')
+                                        ->where('id', $asuransi->jenis_asuransi_id)
+                                        ->first();
                 }
             }
         }
-
-        $pengajuan['no_aplikasi'] = $asuransi->no_aplikasi;
-        $tenor = $pengajuan['tenor_yang_diminta'];
-        $pengajuan['tgl_akhir_kredit'] = date('d-m-Y', strtotime($pengajuan['tanggal'] . " +$tenor month"));
-
-        $skema_kredit = $pengajuan['skema_kredit'];
-        $pengajuan['age'] = UtilityController::countAge($pengajuan['tanggal_lahir']);
-
-        $jenisAsuransi = DB::table('mst_jenis_asuransi')
-                            ->select('id', 'kode', 'jenis')
-                            ->where('id', $asuransi->jenis_asuransi_id)
-                            ->first();
-
-        return view('pages.asuransi-registrasi.review', compact('perusahaan', 'pengajuan', 'asuransi', 'jenisAsuransi', 'pendapat'));
+// dd($jenisAsuransi);
+        return view('pages.asuransi-registrasi.review', compact('pengajuan', 'jenis_asuransi', 'pendapat', 'perusahaan'));
     }
 
     public function reviewStore(Request $request) {
