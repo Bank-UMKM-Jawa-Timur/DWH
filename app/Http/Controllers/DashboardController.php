@@ -305,7 +305,7 @@ class DashboardController extends Controller
             // retrieve from api
             foreach ($data as $key => $value) {
                 if ($value->kategori == 'data_kkb') {
-                    $apiURL = $host . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
+                    $apiURL = $this->losHost . '/kkb/get-data-pengajuan/' . $value->pengajuan_id . '/' . $user_id;
 
                     try {
                         $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
@@ -321,7 +321,7 @@ class DashboardController extends Controller
                             if (array_key_exists('pk', $responseBody))
                                 $responseBody['pk'] = "/upload/$value->pengajuan_id/pk/" . $responseBody['pk'];
                         } else {
-                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
@@ -354,10 +354,10 @@ class DashboardController extends Controller
                         // return $e->getMessage();
                     }
                 } else {
-                    $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
+                    $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
 
                     try {
-                        $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                        $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                         $statusCode = $response->status();
                         $responseBody = json_decode($response->getBody(), true);
@@ -368,12 +368,14 @@ class DashboardController extends Controller
                                 $value->detail = $responseBody;
                             }
                         } else {
-                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
-                            if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
-                                $value->detail = $responseBody;
+                            if ($responseBody) {
+                                if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
+                                    $value->detail = $responseBody;
+                                }
                             }
                         }
                     } catch (\Illuminate\Http\Client\ConnectionException $e) {
@@ -556,15 +558,15 @@ class DashboardController extends Controller
                     foreach ($importedSearch as $key => $value) {
                         // retrieve cabang from api
                         $value->cabang = 'undifined';
-                        $host = env('LOS_API_HOST');
-                        $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
+                        $this->losHost = env('LOS_API_HOST');
+                        $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
 
                         $headers = [
                             'token' => env('LOS_API_TOKEN')
                         ];
 
                         try {
-                            $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                             $statusCode = $response->status();
                             $responseBody = json_decode($response->getBody(), true);
@@ -625,8 +627,8 @@ class DashboardController extends Controller
                     }
 
                     // data search
-                    $apiDataPengajuanSearch = $host . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
-                    $api_req_pengajuan = Http::timeout(6)->withHeaders($headers)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
+                    $apiDataPengajuanSearch = $this->losHost . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
+                    $api_req_pengajuan = Http::timeout(6)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
                     $responseDataPengajuanSearch = json_decode($api_req_pengajuan->getBody(), true);
                     $arr_response_search = $responseDataPengajuanSearch['data'];
 
@@ -656,8 +658,8 @@ class DashboardController extends Controller
                     $orders = PaginateController::paginate($responseDataPengajuanSearch, $limit, $page);
 
                 } else {
-                    $apiDataPengajuanSearch = $host . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
-                    $api_req_pengajuan = Http::timeout(6)->withHeaders($headers)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
+                    $apiDataPengajuanSearch = $this->losHost . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
+                    $api_req_pengajuan = Http::timeout(6)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
                     $responseDataPengajuanSearch = json_decode($api_req_pengajuan->getBody(), true);
                     $arr_response_search = $responseDataPengajuanSearch['data'];
 
@@ -796,15 +798,15 @@ class DashboardController extends Controller
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
-                $host = env('LOS_API_HOST');
-                $apiURL = $host . '/kkb/get-cabang/' . $value->kode_cabang;
+                $this->losHost = env('LOS_API_HOST');
+                $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
 
                 $headers = [
                     'token' => env('LOS_API_TOKEN')
                 ];
 
                 try {
-                    $response = Http::timeout(3)->withHeaders($headers)->withOptions(['verify' => false])->get($apiURL);
+                    $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                     $statusCode = $response->status();
                     $responseBody = json_decode($response->getBody(), true);
@@ -866,14 +868,14 @@ class DashboardController extends Controller
 
             $this->param['imported'] = $imported;
 
-            $host = env('LOS_API_HOST');
+            $this->losHost = env('LOS_API_HOST');
             $headers = [
                 'token' => env('LOS_API_TOKEN')
             ];
 
 
-            $apiCabang = $host . '/kkb/get-cabang/';
-            $api_req = Http::timeout(6)->withHeaders($headers)->get($apiCabang);
+            $apiCabang = $this->losHost . '/kkb/get-cabang/';
+            $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiCabang);
             $responseCabang = json_decode($api_req->getBody(), true);
             $param['dataCabang'] = $responseCabang;
             $arr_data = [];
