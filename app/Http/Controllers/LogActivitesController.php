@@ -94,7 +94,7 @@ class LogActivitesController extends Controller
         return $data;
     }
 
-    public function store($content, $asuransi_id, $is_asuransi = 0)
+    public function store($content, $asuransi_id = null, $is_asuransi = 0)
     {
         $token = \Session::get(config('global.user_token_session'));
         $newActivity = new LogActivity();
