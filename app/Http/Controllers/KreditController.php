@@ -1840,7 +1840,15 @@ class KreditController extends Controller
             $file = $request->file('tagihan_scan');
             $file->storeAs('public/tagihan', $file->hashName());
             $kkb = KKB::find($request->id_kkb);
-            $kredit = Kredit::find($kkb->kredit_id);
+            if ($kkb) {
+                $kredit = Kredit::find($kkb->kredit_id);
+                if ($kredit) {
+                    if ($kredit->imported_data_id && !$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
+            }
 
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
@@ -1905,6 +1913,15 @@ class KreditController extends Controller
             $file = $request->file('bukti_pembayaran_scan');
             $file->storeAs('public/dokumentasi-bukti-pembayaran', $file->hashName());
             $kkb = KKB::find($request->id_kkb);
+            if ($kkb) {
+                $kredit = Kredit::find($kkb->kredit_id);
+                if ($kredit) {
+                    if ($kredit->imported_data_id && !$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
+            }
 
             $document = new Document();
             $document->kredit_id = $kkb->kredit_id;
@@ -2385,6 +2402,18 @@ class KreditController extends Controller
             DB::beginTransaction();
 
             $kkb = KKB::where('id', $request->id_kkb)->first();
+            if ($request->has('stnk_scan') || $request->has('polis_scan') || $request->has('bpkb_scan')) {
+                if ($kkb) {
+                    $kredit = Kredit::find($kkb->kredit_id);
+                    if ($kredit) {
+                        if ($kredit->imported_data_id && !$kredit->is_continue_import) {
+                            $kredit->is_continue_import = true;
+                            $kredit->save();
+                        }
+                    }
+                }
+            }
+
             // stnk
             if ($request->file('stnk_scan')) {
                 $already_upload = Document::select('id')
@@ -2505,6 +2534,20 @@ class KreditController extends Controller
             if (\Session::get(config('global.role_id_session')) == 2) {
                 // Cabang
                 $doc_cat_name = 'undifined';
+
+                $kkb = KKB::where('id', $request->id_kkb)->first();
+                if ($request->has('id_stnk') || $request->has('id_polis') || $request->has('id_bpkb')) {
+                    if ($kkb) {
+                        $kredit = Kredit::find($kkb->kredit_id);
+                        if ($kredit) {
+                            if ($kredit->imported_data_id && !$kredit->is_continue_import) {
+                                $kredit->is_continue_import = true;
+                                $kredit->save();
+                            }
+                        }
+                    }
+                }
+
                 // stnk
                 if ($request->has('id_stnk')) {
                     if (is_numeric($request->id_stnk) && $request->id_stnk != 0) {
@@ -2669,6 +2712,12 @@ class KreditController extends Controller
                 // Vendor
                 $document = Document::find($request->id);
                 $kredit = Kredit::find($document->kredit_id);
+                if ($kredit) {
+                    if ($kredit->imported_data_id && !$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
+                }
                 $docCategory = DocumentCategory::select('name')->find($request->category_id);
                 $document->is_confirm = 1;
                 $document->confirm_at = date('Y-m-d');
@@ -3077,6 +3126,10 @@ class KreditController extends Controller
                 $kredit = Kredit::find($document->kredit_id);
                 if ($kredit->imported_data_id) {
                     $kkb = KKB::where('kredit_id', $document->kredit_id)->first();
+                    if (!$kredit->is_continue_import) {
+                        $kredit->is_continue_import = true;
+                        $kredit->save();
+                    }
                     DB::table('kkb')
                         ->where('kredit_id', $document->kredit_id)
                         ->update([
