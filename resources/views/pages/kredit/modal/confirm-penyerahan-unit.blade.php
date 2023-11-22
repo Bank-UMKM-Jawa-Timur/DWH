@@ -73,14 +73,15 @@
                 timer: 3000,
                 closeOnClickOutside: true,
                 title: 'Berhasil',
+                message: message,
                 icon: 'success',
             }).then((result) => {
                 console.log('then')
                 $("#modalConfirmPenyerahanUnit").addClass("hidden");
-                //$('#preload-data').removeClass("hidden")
+                $('#preload-data').removeClass("hidden")
 
-                //refreshTable()
-                location.reload();
+                refreshTable()
+                //location.reload();
             })
         }
 
@@ -90,13 +91,14 @@
                 timer: 3000,
                 closeOnClickOutside: true,
                 title: 'Gagal',
+                message: message,
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    //$('#preload-data').removeClass("hidden")
+                    $('#preload-data').removeClass("hidden")
 
-                    //refreshTable()
-                    location.reload();
+                    refreshTable()
+                    //location.reload();
                 }
             })
         }

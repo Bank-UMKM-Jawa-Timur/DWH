@@ -132,10 +132,7 @@
                                 Upload Berkas
                             </button>
                         @else
-                            @if (($current_date == $hmin1_tgl_ketersediaan_unit || $current_date == $item->tgl_ketersediaan_unit) || $current_date > $item->tgl_ketersediaan_unit)
-                            @else
-                                -
-                            @endif
+                            Menunggu upload berkas
                         @endif
                     @endif
                 @else

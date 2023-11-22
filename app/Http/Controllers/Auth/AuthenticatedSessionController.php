@@ -50,16 +50,19 @@ class AuthenticatedSessionController extends Controller
                 'token' => env('LOS_API_TOKEN')
             ];
 
+            $ip = $_SERVER['REMOTE_ADDR'];
+
             try {
                 $response = Http::withHeaders($headers)
                                 ->withOptions(['verify' => false])
                                 ->post($apiURL, [
                                     'email' => $request->input_type,
                                     'password' => $request->password,
-                                    'project' => 'dashboard_kkb'
+                                    'project' => 'dashboard_kkb',
+                                    'ip' => $ip,
                                 ]);
                 $responseBody = json_decode($response->getBody(), true);
-                // return $responseBody;
+
                 if ($responseBody) {
                     if (array_key_exists('status', $responseBody)) {
                         if (strtolower($responseBody['status']) == 'berhasil') {

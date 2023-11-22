@@ -43,10 +43,10 @@
             }).then((result) => {
                 console.log('then')
                 $("#modalAturKetersedian").addClass("hidden");
-                //$('#preload-data').removeClass("hidden")
+                $('#preload-data').removeClass("hidden")
                 
-                //refreshTable()
-                location.reload();
+                refreshTable()
+                //location.reload();
             })
         }
         
@@ -59,10 +59,10 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    //$('#preload-data').removeClass("hidden")
+                    $('#preload-data').removeClass("hidden")
                     
-                    //refreshTable()
-                    location.reload();
+                    refreshTable()
+                    //location.reload();
                 }
             })
         }
@@ -112,9 +112,8 @@
                 },
                 error: function(e) {
                     Swal.close()
-                    console.log('qwerty')
                     console.log(e)
-                    //AturErrorMessage('Terjadi kesalahan')
+                    AturErrorMessage('Terjadi kesalahan')
                 }
             })
         })

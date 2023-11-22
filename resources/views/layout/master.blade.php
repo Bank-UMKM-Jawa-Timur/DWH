@@ -93,10 +93,11 @@
 
     function SuccessMessage(message) {
         Swal.fire({
-        title: 'Berhasil',
-        icon: 'success',
-        timer: 3000,
-        closeOnClickOutside: false
+            title: 'Berhasil',
+            icon: 'success',
+            text: message,
+            timer: 3000,
+            closeOnClickOutside: false
         }).then(() => {
             location.reload();
         });
@@ -107,10 +108,11 @@
 
     function ErrorMessage(message) {
         Swal.fire({
-        title: 'Gagal',
-        icon: 'error',
-        timer: 3000,
-        closeOnClickOutside: false
+            title: 'Gagal',
+            icon: 'error',
+            message: message,
+            timer: 3000,
+            closeOnClickOutside: false
         }).then(() => {
             location.reload();
         });
