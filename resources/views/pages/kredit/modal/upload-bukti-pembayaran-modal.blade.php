@@ -43,10 +43,10 @@
                 icon: 'success',
             }).then((result) => {
                 $("#modalUploadBuktiPembayaran").addClass("hidden");
-                //$('#preload-data').removeClass("hidden")
+                $('#preload-data').removeClass("hidden")
                 
-                //refreshTable()
-                location.reload();
+                refreshTable()
+                //location.reload();
             })
         }
         
@@ -59,10 +59,10 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    //$('#preload-data').removeClass("hidden")
+                    $('#preload-data').removeClass("hidden")
                     
-                    //refreshTable()
-                    location.reload();
+                    refreshTable()
+                    //location.reload();
                 }
             })
         }
@@ -98,7 +98,6 @@
                     if (Array.isArray(data.error)) {
                         for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];
-                            console.log(message)
                             /*if (message.toLowerCase().includes('bukti_pembayaran_scan'))
                                 showError(req_image, message)
                             */

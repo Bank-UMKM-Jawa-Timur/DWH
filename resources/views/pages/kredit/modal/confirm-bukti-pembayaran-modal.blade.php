@@ -60,10 +60,10 @@
             }).then((result) => {
                 console.log('then')
                 $("#modalConfirmBuktiPembayaran").addClass("hidden");
-                //$('#preload-data').removeClass("hidden")
+                $('#preload-data').removeClass("hidden")
 
-                //refreshTable()
-                location.reload();
+                refreshTable()
+                //location.reload();
             })
         }
 
@@ -76,10 +76,10 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    //$('#preload-data').removeClass("hidden")
+                    $('#preload-data').removeClass("hidden")
 
-                    //refreshTable()
-                    location.reload();
+                    refreshTable()
+                    //location.reload();
                 }
             })
         }
@@ -91,6 +91,18 @@
         });
 
         $('#confirm-form-vendor').on('submit', function(e) {
+            Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+
             e.preventDefault()
             const req_id = $('#confirm_id').val()
             const req_category_doc_id = $('#confirm_id_category').val()
@@ -104,6 +116,7 @@
                     category_id: req_category_doc_id
                 },
                 success: function(data) {
+                    Swal.close()
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
                     } else {
@@ -115,6 +128,7 @@
                     }
                 },
                 error: function(e) {
+                    Swal.close()
                     ConfirmPembayaranErrorMessage(e)
                 }
             })

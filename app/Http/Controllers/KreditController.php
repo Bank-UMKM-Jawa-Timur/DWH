@@ -945,7 +945,7 @@ class KreditController extends Controller
         try {
             $this->param['role_id'] = \Session::get(config('global.role_id_session'));
             $this->param['staf_analisa_kredit_role'] = 'Staf Analis Kredit';
-            $this->param['is_kredit_page'] = request()->is('kredit');
+            $this->param['is_kredit_page'] = $request->kredit_page;
             $page_length = $request->page_length ? $request->page_length : 5;
             $page_length_import = $request->page_length_import ? $request->page_length_import : 5;
             $this->param['role'] = $this->dashboardContoller->getRoleName();

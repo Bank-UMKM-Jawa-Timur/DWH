@@ -78,10 +78,10 @@
             }).then((result) => {
                 console.log('then')
                 $("#modalConfirmImbalJasa").addClass("hidden");
-                //$('#preload-data').removeClass("hidden")
+                $('#preload-data').removeClass("hidden")
 
-                //refreshTable()
-                location.reload();
+                refreshTable()
+                //location.reload();
             })
         }
 
@@ -94,10 +94,10 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    //$('#preload-data').removeClass("hidden")
+                    $('#preload-data').removeClass("hidden")
 
-                    //refreshTable()
-                    location.reload();
+                    refreshTable()
+                    //location.reload();
                 }
             })
         }
@@ -131,6 +131,17 @@
         });
 
         $('#confirm-form-imbal-jasa').on('submit', function(e) {
+            Swal.fire({
+                showConfirmButton: false,
+                closeOnClickOutside: false,
+                title: 'Memuat...',
+                html: 'Silahkan tunggu...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
             e.preventDefault()
             const req_id = $('#id_cat').val()
 
@@ -142,6 +153,7 @@
                     id: req_id,
                 },
                 success: function(data) {
+                    Swal.close()
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
                     } else {
@@ -151,6 +163,11 @@
                             ConfirmImbalJasaErrorMessage(data.message)
                         }
                     }
+                },
+                error: function(e) {
+                    Swal.close()
+                    console.log(e)
+                    ConfirmImbalJasaErrorMessage('Terjadi kesalahan')
                 }
             })
         })

@@ -168,7 +168,10 @@
                 title: 'Berhasil',
                 icon: 'success',
             }).then((result) => {
-                location.reload();
+                $('#preload-data').removeClass("hidden")
+
+                refreshTable()
+                //location.reload();
             })
         }
         
@@ -181,10 +184,10 @@
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    //$('#preload-data').removeClass("hidden")
+                    $('#preload-data').removeClass("hidden")
                     
-                    //refreshTable()
-                    location.reload();
+                    refreshTable()
+                    //location.reload();
                 }
             })
         }
@@ -268,6 +271,7 @@
         })
 
         $('#modal-berkas').on("submit", function(event) {
+            $('#preload-data').removeClass("hidden")
             event.preventDefault();
             var is_confirm = "{{ \Session::get(config('global.role_id_session')) }}" != 3;
 
@@ -456,7 +460,10 @@
                                 timer: 3000,
                                 closeOnClickOutside: false
                             }).then((result) => {
-                                location.reload();
+                                $('#preload-data').removeClass("hidden")
+
+                                refreshTable()
+                                //location.reload();
                             });
 
                             if (type == 'stnk')
@@ -475,7 +482,10 @@
                                 text: data.message,
                                 closeOnClickOutside: false
                             }).then((result) => {
-                                location.reload();
+                                $('#preload-data').removeClass("hidden")
+
+                                refreshTable()
+                                //location.reload();
                             });
                         }
                         //refreshTable()

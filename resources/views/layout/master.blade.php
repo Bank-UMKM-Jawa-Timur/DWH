@@ -117,6 +117,7 @@
         Swal.fire({
             title: 'Berhasil',
             icon: 'success',
+            text: message,
             timer: 3000,
             closeOnClickOutside: false
         }).then(() => {
@@ -131,6 +132,7 @@
         Swal.fire({
             title: 'Gagal',
             icon: 'error',
+            message: message,
             timer: 3000,
             closeOnClickOutside: false
         }).then(() => {

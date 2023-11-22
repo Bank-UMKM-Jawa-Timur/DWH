@@ -50,13 +50,14 @@
                 timer: 3000,
                 closeOnClickOutside: true,
                 title: 'Berhasil',
+                text: message,
                 icon: 'success',
             }).then((result) => {
                 $("#modalUploadImbalJasa").addClass("hidden");
-                //$('#preload-data').removeClass("hidden")
+                $('#preload-data').removeClass("hidden")
                 
-                //refreshTable()
-                location.reload();
+                refreshTable()
+                //location.reload();
             })
         }
         
@@ -66,13 +67,14 @@
                 timer: 3000,
                 closeOnClickOutside: true,
                 title: 'Gagal',
+                message: message,
                 icon: 'error',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    //$('#preload-data').removeClass("hidden")
+                    $('#preload-data').removeClass("hidden")
                     
-                    //refreshTable()
-                    location.reload();
+                    refreshTable()
+                    //location.reload();
                 }
             })
         }
@@ -110,14 +112,28 @@
                     Swal.close()
                     if (Array.isArray(data.error)) {
                         console.log(data.error)
-                        /*UploadImbalJasaErrorMessage('Gagal')
+                        Swal.fire({
+                            showConfirmButton: false,
+                            timer: 3000,
+                            closeOnClickOutside: true,
+                            title: 'Gagal',
+                            text: 'Harap lengkapi form terlebih dahulu',
+                            icon: 'error',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('#preload-data').removeClass("hidden")
+                                
+                                refreshTable()
+                                //location.reload();
+                            }
+                        })
                         for (var i = 0; i < data.error.length; i++) {
                             var message = data.error[i];
                             if (message.toLowerCase().includes('no_bpkb'))
                                 showError(req_date, message)
                             if (message.toLowerCase().includes('bpkb_scan'))
                                 showError(req_image, message)
-                        }*/
+                        }
                     } else {
                         if (data.status == 'success') {
                             UploadImbalJasaSuccessMessage(data.message);
