@@ -44,6 +44,7 @@ Route::get('first-login', [AuthenticatedSessionController::class, 'firstLogin'])
     ->name('first-login.index');
 Route::post('first-login', [AuthenticatedSessionController::class, 'firstLoginStore'])
     ->name('first-login.store');
+    Route::get('/load-json', [KreditController::class, 'loadDataJson'])->name('load_json');
 
 Route::middleware('auth_api')->group(function () {
     Route::get('send-notif/{action_id}/{kredit_id}', [NotificationController::class, 'send']);

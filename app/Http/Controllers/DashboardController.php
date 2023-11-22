@@ -52,6 +52,23 @@ class DashboardController extends Controller
             $data_realisasi = [];
             $total_terealisasi = 0;
 
+            // get all cabang
+            $apiURL = $this->losHost . '/kkb/get-cabang';
+            $allCabangArr = [];
+
+            try {
+                $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
+
+                $statusCode = $response->status();
+                $responseBody = json_decode($response->getBody(), true);
+                // input file path
+                if ($responseBody) {
+                    $allCabangArr = $responseBody;
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                return $e->getMessage();
+            }
+
             $all_data = Kredit::select(
                 \DB::raw("IF (CAST(COALESCE(SUM(d.is_confirm), 0) AS UNSIGNED) < (SELECT COUNT(id) FROM document_categories), 'in progress', 'done') AS status"),
             )
@@ -354,32 +371,14 @@ class DashboardController extends Controller
                         // return $e->getMessage();
                     }
                 } else {
-                    $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
-
-                    try {
-                        $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
-
-                        $statusCode = $response->status();
-                        $responseBody = json_decode($response->getBody(), true);
-
-                        // input file path
-                        if ($responseBody) {
-                            if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
-                                $value->detail = $responseBody;
-                            }
-                        } else {
-                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
-
-                            $statusCode = $response->status();
-                            $responseBody = json_decode($response->getBody(), true);
-                            if ($responseBody) {
-                                if (array_key_exists('kode_cabang', $responseBody) && array_key_exists('cabang', $responseBody)) {
-                                    $value->detail = $responseBody;
-                                }
+                    $value->detail = null;
+                    if (count($allCabangArr) > 0) {
+                        for ($i=0; $i < count($allCabangArr); $i++) { 
+                            if ($value->kode_cabang == $allCabangArr[$i]['kode_cabang']) {
+                                $value->detail = $allCabangArr[$i];
+                                break;
                             }
                         }
-                    } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                        // return $e->getMessage();
                     }
                 }
 
@@ -558,25 +557,13 @@ class DashboardController extends Controller
                     foreach ($importedSearch as $key => $value) {
                         // retrieve cabang from api
                         $value->cabang = 'undifined';
-                        $this->losHost = env('LOS_API_HOST');
-                        $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
-
-                        $headers = [
-                            'token' => env('LOS_API_TOKEN')
-                        ];
-
-                        try {
-                            $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
-
-                            $statusCode = $response->status();
-                            $responseBody = json_decode($response->getBody(), true);
-                            // input file path
-                            if ($responseBody) {
-                                if (array_key_exists('cabang', $responseBody))
-                                    $value->cabang = $responseBody['cabang'];
+                        if (count($allCabangArr) > 0) {
+                            for ($i=0; $i < count($allCabangArr); $i++) { 
+                                if ($value->kode_cabang == $allCabangArr[$i]['kode_cabang']) {
+                                    $value->cabang = $allCabangArr[$i]['cabang'];
+                                    break;
+                                }
                             }
-                        } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                            // return $e->getMessage();
                         }
 
                         // retrieve documents
@@ -798,25 +785,13 @@ class DashboardController extends Controller
             foreach ($imported as $key => $value) {
                 // retrieve cabang from api
                 $value->cabang = 'undifined';
-                $this->losHost = env('LOS_API_HOST');
-                $apiURL = $this->losHost . '/kkb/get-cabang/' . $value->kode_cabang;
-
-                $headers = [
-                    'token' => env('LOS_API_TOKEN')
-                ];
-
-                try {
-                    $response = Http::timeout(3)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
-
-                    $statusCode = $response->status();
-                    $responseBody = json_decode($response->getBody(), true);
-                    // input file path
-                    if ($responseBody) {
-                        if (array_key_exists('cabang', $responseBody))
-                            $value->cabang = $responseBody['cabang'];
+                if (count($allCabangArr) > 0) {
+                    for ($i=0; $i < count($allCabangArr); $i++) { 
+                        if ($value->kode_cabang == $allCabangArr[$i]['kode_cabang']) {
+                            $value->cabang = $allCabangArr[$i]['cabang'];
+                            break;
+                        }
                     }
-                } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                    // return $e->getMessage();
                 }
 
                 // retrieve documents

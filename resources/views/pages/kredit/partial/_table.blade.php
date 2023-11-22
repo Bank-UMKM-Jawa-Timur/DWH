@@ -33,7 +33,7 @@
 <div class="footer-table p-3 text-theme-text lg:flex lg:space-y-0 space-y-10 justify-between">
     <div class="w-full">
         <div class="pagination kkb-pagination">
-            @if (Request::has('query') || Request::has('page_length'))
+            @if (Request::has('query'))
                 @if ($dataSearch instanceof \Illuminate\Pagination\LengthAwarePaginator)
                     {{ $dataSearch->links('pagination::tailwind') }}
                 @endif

@@ -2,7 +2,6 @@
 @push('extraScript')
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
-        /*
         Pusher.logToConsole = true;
         const app_key = "{{ config('broadcasting.connections.pusher.key') }}"
 
@@ -43,26 +42,28 @@
                 },
                 success: function(response) {
                     console.log('response')
+                    console.log(response)
                     if (response) {
                         if (response.status == 'success') {
                             if ("html" in response) {
+                                console.log('data kkb loaded')
                                 $('#table_content').html(response.html);
                             }
                             if ("html_import" in response) {
+                                console.log('data import loaded')
                                 $('#table_content_import').html(response.html_import);
                             }
                         }
                     }
-                    //$('#preload-data').addClass("hidden")
+                    $('#preload-data').addClass("hidden")
                 },
                 error: function(e) {
                     console.log('Error load json')
-                    //console.log(e)
-                    //$('#preload-data').addClass("hidden")
+                    console.log(e)
+                    $('#preload-data').addClass("hidden")
                 }
             });
         }
-        */
 
         function generateCsrfToken() {
             var token = "{{csrf_token()}}"
@@ -964,7 +965,7 @@
         $(".tab-wrapper .tab-btn").click(function(e) {
             e.preventDefault();
             tabId = $(this).data("tab")
-            console.log('asdaddsasd ')
+            
             $('#tab_type').val(tabId)
             if (tabId == 'tab-kkb') {
                 $('.tab_type_kkb').val(tabId)

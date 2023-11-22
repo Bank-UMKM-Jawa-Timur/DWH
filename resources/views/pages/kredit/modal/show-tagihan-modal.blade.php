@@ -58,8 +58,9 @@
             console.log(kategori);
             const confirm_at = $(this).data('confirm_at');
             var path_file = "{{ asset('storage') }}" + "/tagihan/" + file + "#navpanes=0";
-
+            console.log(path_file)
             fetch(path_file).then(function(response){
+                console.log(response)
                     if(!response.ok){
                         $('.content-tagihan').addClass("hidden");
                         $('.alert-tagihan').removeClass("hidden");
