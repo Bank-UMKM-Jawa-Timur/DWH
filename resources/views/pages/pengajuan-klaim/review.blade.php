@@ -11,10 +11,6 @@
     </div>
 <div class="body-pages">
     @php
-        function formatRupiah($num){
-            return number_format($num, 0, '.', '.');
-        }
-
         $penyebab_klaim = [
             "1" => 'Meninggal Dunia',
             "2" => 'PHK',
@@ -90,7 +86,7 @@
                 </div>
                 <div class="input-box-calendar space-y-3">
                     <label for="" class="uppercase">Tunggakan Pokok<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="rupiah disabled-input bg-disabled p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_pokok)}}" name="tunggakan_pokok" readonly>
+                    <input type="text" class="rupiah disabled-input bg-disabled p-2 w-full border" id="" value="{{number_format($data->tunggakan_pokok, 0, '.', '.')}}" name="tunggakan_pokok" readonly>
                     <div class="errorSpan hidden" id="errorTnggakanPokok">
                         <p id="errorText">Tunggakan Pokok Belum Di Isi.</p>
                     </div>
@@ -100,21 +96,21 @@
             <div class="lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid gap-5 justify-center">
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggakan Bunga<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_bunga)}}" name="tunggakan_bunga" readonly/>
+                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{number_format($data->tunggakan_bunga, 0, '.', '.')}}" name="tunggakan_bunga" readonly/>
                     @error('tunggakan_bunga')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Tunggakan Denda<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{formatRupiah($data->tunggakan_denda)}}" name="tunggakan_denda" readonly/>
+                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{number_format($data->tunggakan_denda, 0, '.', '.')}}" name="tunggakan_denda" readonly/>
                     @error('tunggakan_denda')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Pengikatan<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{formatRupiah($data->nilai_pengikatan)}}" name="nilai_pengikatan" readonly/>
+                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{number_format($data->nilai_pengikatan, 0, '.', '.')}}" name="nilai_pengikatan" readonly/>
                     @error('nilai_pengikatan')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
@@ -125,14 +121,14 @@
 
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Nilai Tuntunan Klaim<span class="text-theme-primary">*</span></label>
-                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{formatRupiah($data->nilai_tuntutan_klaim)}}" name="nilai_tuntutan_klaim" readonly/>
+                    <input type="text" class="disabled-input bg-disabled rupiah p-2 w-full border" id="" value="{{number_format($data->nilai_tuntutan_klaim, 0, '.', '.')}}" name="nilai_tuntutan_klaim" readonly/>
                     @error('nilai_tuntutan_klaim')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="input-box space-y-3">
                     <label for="" class="uppercase">Penyebab Klaim<span class="text-theme-primary">*</span></label>
-                    <input type="text" value="{{ $penyebab_klaim[$data->penyebab_klaim] }}" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_sp" readonly/>
+                    <input type="text" value="{{ isset($penyebab_klaim[$data->penyebab_klaim]) ? $penyebab_klaim[$data->penyebab_klaim] : '' }}" class="disabled-input bg-disabled p-2 w-full border" id="" name="no_sp" readonly/>
                     @error('penyebab_klaim')
                         <small class="form-text text-red-600 error">{{ $message }}</small>
                     @enderror

@@ -544,7 +544,7 @@ class RegistrasiController extends Controller
             $newDetail->baki_debet = UtilityController::clearCurrencyFormat($request->baki_debet);
             $newDetail->tunggakan = UtilityController::clearCurrencyFormat($request->tunggakan);
             $newDetail->tarif = $request->tarif;
-            $newDetail->kode_layanan_syariah = $request->kode_ls;
+            $newDetail->kode_layanan_syariah = '0';
             $newDetail->handling_fee = UtilityController::clearCurrencyFormat($request->handling_fee);
             $newDetail->premi_disetor = UtilityController::clearCurrencyFormat($request->premi_disetor);
             $newDetail->save();
@@ -1210,19 +1210,20 @@ class RegistrasiController extends Controller
             $apiURL = $this->losHost . '/v1/get-list-pengajuan-by-id/' . $id;
 
             try {
-                $response = Http::timeout(6)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
+                $response = Http::timeout(30)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
                 $statusCode = $response->status();
                 $responseBody = json_decode($response->getBody(), true);
 
                 if ($responseBody['status'] == "success") {
                     $data = $responseBody['data'];
+                    $kredit = DB::table('kredits')
+                                ->select('id', 'pengajuan_id')
+                                ->where('pengajuan_id', $data['id'])
+                                ->where('is_asuransi', 1)
+                                ->first();
+
                     $data['age'] = UtilityController::countAge($data['tanggal_lahir']);
-                    $jenis_asuransi = DB::table('mst_jenis_asuransi')
-                        ->select('id', 'jenis')
-                        ->where('jenis_kredit', $data['skema_kredit'])
-                        ->orderBy('jenis')
-                        ->first();
 
                     $asuransi = DB::table('asuransi')
                         ->join('kredits AS k', 'k.id', 'asuransi.kredit_id')
@@ -1246,20 +1247,24 @@ class RegistrasiController extends Controller
                             'd.jenis_coverage',
                             'd.kode_layanan_syariah',
                         )
-                        ->where('asuransi.jenis_asuransi_id', $jenis_asuransi->id);
+                        ->where('asuransi.kredit_id', $kredit->id);
 
                     $asuransi = $asuransi->groupBy('no_pk')
-                        ->orderBy('no_aplikasi')
-                        ->first();
+                                    ->orderBy('no_aplikasi')
+                                    ->first();
+
+                    $jenis_asuransi = DB::table('mst_jenis_asuransi')
+                                    ->select('id', 'jenis')
+                                    ->where('id', $asuransi->jenis_asuransi_id)
+                                    ->first();
+
                     $jenis_asuransi->asuransi = $asuransi;
                     $pendapat = DB::table('pendapat_asuransi')->where('asuransi_id', $jenis_asuransi->asuransi->id)->orderBy('created_at', 'DESC')->get();
                     $perusahaan = DB::table('mst_perusahaan_asuransi')
                     ->select('id', 'nama', 'alamat')
                     ->get();
-
-                // return ['data' => $data, 'jenis' => $jenis_asuransi];
                 } else {
-                    return 'gagal';
+                    return back()->with('error', 'Data pengajuan tidak dapat ditemukan');
                 }
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
@@ -1268,9 +1273,11 @@ class RegistrasiController extends Controller
 
             return view('pages.asuransi-registrasi.edit', compact('data', 'jenis_asuransi', 'pendapat', 'perusahaan'));
         } catch (\Exception $e) {
+            return $e->getMessage();
             Alert::error('Terjadi kesalahan', $e->getMessage());
             return back()->with('error', $e->getMessage());
         } catch (\Illuminate\Database\QueryException $e) {
+            return $e->getMessage();
             Alert::error('Terjadi kesalahan', $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan pada database. ' . $e->getMessage());
         }
@@ -1300,7 +1307,7 @@ class RegistrasiController extends Controller
             $editDetailAsuransi->jenis_pertanggungan = $request->jenis_pertanggungan;
             $editDetailAsuransi->tipe_premi = $request->tipe_premi;
             $editDetailAsuransi->jenis_coverage = $request->jenis_coverage;
-            $editDetailAsuransi->kode_layanan_syariah = $request->kode_ls;
+            $editDetailAsuransi->kode_layanan_syariah = '0';
             $editDetailAsuransi->no_polis_sebelumnya = $request->no_polis_sebelumnya;
             $editDetailAsuransi->tarif = $request->tarif;
             $editDetailAsuransi->handling_fee = UtilityController::clearCurrencyFormat($request->handling_fee);
