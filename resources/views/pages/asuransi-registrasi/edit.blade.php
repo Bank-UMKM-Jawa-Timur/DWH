@@ -179,8 +179,6 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Jenis Pengajuan<span class="text-theme-primary">*</span>
                         </label>
-                        {{-- <input type="text" class="p-2 w-full border "
-                        id="no_rekening" name="jenis_pengajuan" value="{{$jenis_asuransi->asuransi->jenis_pengajuan == '01' ?}}" readonly/> --}}
                         <select name="jenis_pengajuan" class="jenis-pengajuan w-full p-2 border">
                             <option selected value="">-- Pilih Jenis Pengajuan ---</option>
                             <option {{$jenis_asuransi->asuransi->jenis_pengajuan == '00' ? 'selected' : ''}} value="00">Baru</option>
@@ -212,11 +210,16 @@
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Tipe Premi<span class="text-theme-primary">*</span>
                         </label>
-                        <select name="tipe_premi" class="w-full p-2 border">
+                        <input type="hidden" name="tipe_premi" id="tipe_premi"
+                            value="{{$jenis_asuransi->asuransi->tipe_premi}}">
+                        <input type="text" name="display_tipe_premi" id="display_tipe_premi"
+                            class="p-2 w-full border disabled-input bg-disabled"
+                            value="{{$jenis_asuransi->asuransi->tipe_premi == '0' ? 'Biasa' : 'Refund'}}" readonly>
+                        {{--  <select name="tipe_premi" class="w-full p-2 border">
                             <option selected value="">-- Pilih Tipe Premi ---</option>
                             <option {{$jenis_asuransi->asuransi->tipe_premi == '0' ? 'selected' : ''}} value="0">Biasa</option>
                             <option {{$jenis_asuransi->asuransi->tipe_premi == '1' ? 'selected' : ''}} value="1">Refund</option>
-                        </select>
+                        </select>  --}}
                     </div>
                 </div>
 
@@ -276,14 +279,6 @@
                         <input type="text" class="rupiah p-2 w-full border" id="refund" name="refund"
                             onchange="hitungPremiDisetor()" value="{{$jenis_asuransi->asuransi->refund}}" />
                         <small class="form-text text-red-600 error"></small>
-                    </div>
-                    <div class="input-box space-y-3">
-                        <label for="" class="uppercase">Kode Layanan Syariah</label>
-                        <select name="kode_ls" class="w-full p-2 border">
-                            <option selected value="">-- Kode Layanan Syariah ---</option>
-                            <option {{$jenis_asuransi->asuransi->kode_layanan_syariah == '0' ? 'selected' : ''}} @if (old('kode_is') == '0') selected @endif value="0">KV</option>
-                            <option {{$jenis_asuransi->asuransi->kode_layanan_syariah == '1' ? 'selected' : ''}} @if (old('kode_is') == '1') selected @endif value="1">SY</option>
-                        </select>
                     </div>
                     <div class="input-box space-y-3">
                         <label for="" class="uppercase">Handling Fee<span
@@ -347,11 +342,15 @@
                 $('.form-7').removeClass('hidden')
                 $('.form-6').addClass('grid')
                 $('.form-7').addClass('grid')
+                $('#tipe_premi').val('1')
+                $('#display_tipe_premi').val('Refund')
             } else {
                 $('.form-6').removeClass('grid')
                 $('.form-7').removeClass('grid')
                 $('.form-6').addClass('hidden')
                 $('.form-7').addClass('hidden')
+                $('#tipe_premi').val('0')
+                $('#display_tipe_premi').val('Biasa')
             }
         })
 
@@ -441,18 +440,12 @@
             data['jenis_coverage'] = $("[name='jenis_coverage']").val()
             data['tarif'] = $("[name='tarif']").val()
             data['refund'] = $("[name='refund']").val()
-            data['kode_ls'] = $("[name='kode_ls']").val()
             data['jenis_kredit'] = $("[name='jenis_kredit']").val()
             data['handling_fee'] = $("[name='handling_fee']").val()
             data['premi_disetor'] = $("[name='premi_disetor']").val()
 
             if (data['handling_fee'] === '') {
                 var message = 'Handling Fee belum diisi.'
-                alertWarning(message)
-                total_empty_field++;
-            }
-            if (data['kode_ls'] === '') {
-                var message = 'Kode Layanan Syariah belum diisi.'
                 alertWarning(message)
                 total_empty_field++;
             }
