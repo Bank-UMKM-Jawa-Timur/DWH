@@ -156,6 +156,14 @@ class KreditController extends Controller
                         'po.jumlah',
                         'po.harga',
                     ])
+                    ->when($role, function($query) use ($role, $user_id) {
+                        if ($role == 'Staf Analis Kredit') {
+                            $query->where('kkb.user_id', $user_id);
+                        }
+                        else {
+                            $query->whereNotNull('kkb.user_id');
+                        }
+                    })
                     ->whereNotNull('kredits.pengajuan_id')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
                         if (strtolower($role) != 'administrator' && strtolower($role) != 'kredit umum' && strtolower($role) != 'pemasaran' && strtolower($role) != 'spi') {
@@ -190,7 +198,6 @@ class KreditController extends Controller
                     ->when($request->cabang, function ($query, $cbg) {
                         return $query->having('kredits.kode_cabang', $cbg);
                     })
-                    ->orWhereNotNull('kkb.user_id')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
                         if (strtolower($role) != 'administrator' && strtolower($role) != 'kredit umum' && strtolower($role) != 'pemasaran' && strtolower($role) != 'spi') {
                             $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
@@ -1042,6 +1049,14 @@ class KreditController extends Controller
                         'po.jumlah',
                         'po.harga',
                     ])
+                    ->when($role, function($query) use ($role, $user_id) {
+                        if ($role == 'Staf Analis Kredit') {
+                            $query->where('kkb.user_id', $user_id);
+                        }
+                        else {
+                            $query->whereNotNull('kkb.user_id');
+                        }
+                    })
                     ->whereNotNull('kredits.pengajuan_id')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
                         if (strtolower($role) != 'administrator' && strtolower($role) != 'kredit umum' && strtolower($role) != 'pemasaran' && strtolower($role) != 'spi') {
@@ -1076,7 +1091,6 @@ class KreditController extends Controller
                     ->when($request->cabang, function ($query, $cbg) {
                         return $query->having('kredits.kode_cabang', $cbg);
                     })
-                    ->orWhereNotNull('kkb.user_id')
                     ->when(\Session::get(config('global.role_id_session')), function ($query) use ($request, $role) {
                         if (strtolower($role) != 'administrator' && strtolower($role) != 'kredit umum' && strtolower($role) != 'pemasaran' && strtolower($role) != 'spi') {
                             $query->where('kredits.kode_cabang', \Session::get(config('global.user_token_session')) ? 
