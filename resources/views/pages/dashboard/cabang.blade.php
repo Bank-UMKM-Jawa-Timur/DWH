@@ -14,7 +14,7 @@
                 <div class="w-full lg:text-right text-center mt-5">
                     <p class="text-gray-500">Target:</p>
                     <h2 class="text-7xl font-bold text-black">
-                        {{$target->total_unit}}
+                        {{$target?->total_unit}}
                     </h2>
                 </div>
                 <div class="chart w-full lg:mt-0 mt-10"></div>
