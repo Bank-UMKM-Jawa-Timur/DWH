@@ -4,6 +4,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
 @endpush
 @section('modal')
+    <!-- Modal-Pelunasan -->
+    @include('pages.asuransi-registrasi.modal.pelunasan')
     <!-- Modal-Filter -->
     @include('pages.asuransi-registrasi.modal.filter')
     <!-- Modal-Canceled -->
@@ -11,8 +13,6 @@
     <!-- Modal-Batal -->
     @include('pages.asuransi-registrasi.modal.batal')
     @include('pages.asuransi-registrasi.modal.pembatalanKlaim')
-    <!-- Modal-Pelunasan -->
-    @include('pages.asuransi-registrasi.modal.pelunasan')
     <!-- Modal-Send -->
     @include('pages.asuransi-registrasi.modal.send')
     <!-- Modal-Tidak Registrasi -->
@@ -483,6 +483,11 @@
 @push('extraScript')
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <script>
+        $(`#btn-submit-pelunasan`).on('click'), function(){
+            $('#modalPelunasan').addClass('hidden')
+            $('#preload-data').removeClass('hidden')
+        }
+
         $("table .view").on("click", function(e) {
             const $collapseTable = $(this).next(".collapse-table");
             $collapseTable.toggleClass("hidden");
@@ -594,7 +599,7 @@
 
         $(".btnCekStatus").on("click", function(){
             var statKlaim = ["Sedang diproses", "Disetujui dan sedang menunggu pembayaran", "Disetujui dan telah dibayarkan", "Dokumen belum lengkap", "Premi belum dibayar", "Ditolak", "Data tidak ditemukan"]
-            
+
             var noAplikasi = $(this).data('no_aplikasi');
             $('#preload-data').removeClass('hidden')
             $.ajax({
@@ -690,6 +695,9 @@
         })
 
         $('.btn-send-klaim').on('click', function() {
+            $('#preload-data').removeClass('hidden')
+        })
+        $('.btn-submit-pelunasan    ').on('click', function() {
             $('#preload-data').removeClass('hidden')
         })
     </script>

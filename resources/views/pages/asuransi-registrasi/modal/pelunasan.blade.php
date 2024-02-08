@@ -70,7 +70,7 @@
                 <button data-dismiss-id="modalPelunasan" class="border px-7 py-3 text-black rounded">
                     Tutup
                 </button>
-                <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded" id="btn-submit">
+                <button class="bg-theme-primary px-7 py-3 text-white rounded btn-submit-pelunasan" id="btn-submit">
                     Simpan
                 </button>
             </div>
@@ -93,7 +93,7 @@
 
             $(`#${identifier}`).removeClass("hidden");
             $(".layout-overlay-edit-form").removeClass("hidden");
-            
+
             $(`#${identifier} #modal_token`).val(token)
             $(`#${identifier} #modal_id`).val(id)
             $(`#${identifier} #modal_no_aplikasi`).val(no_aplikasi)
@@ -104,7 +104,7 @@
             $(`#${identifier} #modal_tgl_akhir`).val(tgl_akhir)
             $('#modal_tgl_lunas').val('dd-mm-yyyy')
         })
-        
+
         function monthDiff(date1, date2) {
             var months;
             months = (date2.getFullYear() - date1.getFullYear()) * 12;
@@ -164,8 +164,7 @@
 
         $('#btn-submit').on('click', function(e) {
             e.preventDefault()
-            $('#preload-data').removeClass('hidden')
-            
+
             const identifier = 'modalPelunasan'
 
             var tgl_lunas = $('#modal_tgl_lunas').val()
