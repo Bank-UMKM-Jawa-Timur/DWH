@@ -13,6 +13,7 @@ use App\Models\DetailAsuransi;
 use App\Models\Kredit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 class RegistrasiController extends Controller
 {
@@ -170,7 +171,7 @@ class RegistrasiController extends Controller
             } catch (\Illuminate\Http\Client\ConnectionException $e) {
                 // return $e->getMessage();
             }
-            
+
             return view('pages.asuransi-registrasi.index', compact('data', 'role_id', 'role'));
         } catch (\Exception $e) {
             Alert::error('Terjadi kesalahan', $e->getMessage());
@@ -488,7 +489,19 @@ class RegistrasiController extends Controller
         }
 
         DB::beginTransaction();
+        $validateData = Validator::make($request->all(),[
+            'perusahaan' => 'required',
+        ]);
+        if ($validateData->fails()) {
+            $html = "<ol class='max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400'>";
+            foreach($validateData->errors()->getMessages() as $error) {
+                $html .= "<li>$error[0]</li>";
+            }
+            $html .= "</ol>";
 
+            alert()->html('Terjadi kesalahan eror!', $html, 'error')->autoClose(5000);
+            return redirect()->route('asuransi.registrasi.create');
+        }
         try {
             $user_name = \Session::get(config('global.user_name_session'));
             $token = \Session::get(config('global.user_token_session'));
@@ -1137,9 +1150,9 @@ class RegistrasiController extends Controller
                                                         'created_at' => $current_time,
                                                         'updated_at' => $current_time,
                                                     ]);
-    
+
                                                     $this->logActivity->storeAsuransi('Pengguna ' . $user_name . '(' . $name . ')' . ' melakukan pelunasan registrasi asuransi.', $request->id, 1);
-    
+
                                                     DB::commit();
                                                 }
 

@@ -27,14 +27,13 @@ class RegistrasiController extends Controller
         try {
             $token = \Session::get(config('global.user_token_session'));
             $this->losHeaders['Authorization'] = "Bearer $token";
-            
+
             $page_length = $request->page_length ? $request->page_length : 5;
             $allCabang = $this->getAllCabang();
 
             if ($allCabang['status'] == 'berhasil') {
                 $allCabang = $allCabang['data'];
             }
-
             $asuransi = null;
             $staf = null;
             $registered = 0;
@@ -193,7 +192,7 @@ class RegistrasiController extends Controller
             if ($allCabang['status'] == 'berhasil') {
                 $allCabang = $allCabang['data'];
             }
-            
+
             $asuransi = null;
             $staf = null;
             $selected_cabang = null;
@@ -302,7 +301,7 @@ class RegistrasiController extends Controller
                     }
                 }
             }
-            
+
             $data = [
                 'cabang' => $allCabang,
                 'staf' => $staf,

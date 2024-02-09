@@ -21,7 +21,7 @@ class Controller extends BaseController
     {
         $this->host = env('LOS_API_HOST');
         $this->headers = [
-            'token' => env('LOS_API_TOKEN')
+            'token' => env('LOS_API_TOKEN','gTWx1U1bVhtz9h51cRNoiluuBfsHqty5MCdXRdmWthFDo9RMhHgHIwrU9DBFVaNj')
         ];
         $this->getLoginSession();
     }
@@ -93,17 +93,17 @@ class Controller extends BaseController
             'status' => 'gagal',
             'message' => 'Gagal mengambil data'
         ];
-
+        $this->host = 'http://127.0.0.1:8001/api/v1/get-cabang';
         if ($this->host) {
-            $apiURL = $this->host . '/v1/get-cabang';
+            $apiURL = $this->host . 'http://127.0.0.1:8001/api/v1/get-cabang';
             $token = \Session::get(config('global.user_token_session'));
             $this->headers['Authorization'] = $token;
-            
+            $this->headers['token'] = 'gTWx1U1bVhtz9h51cRNoiluuBfsHqty5MCdXRdmWthFDo9RMhHgHIwrU9DBFVaNj';
             try {
                 $response = Http::timeout(3)
                                 ->withHeaders($this->headers)
                                 ->withOptions(['verify' => false])
-                                ->get($apiURL);
+                                ->get('http://127.0.0.1:8001/api/v1/get-cabang');
                 $responseBody = json_decode($response->getBody(), true);
 
                 if (array_key_exists('status', $responseBody)) {
