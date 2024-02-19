@@ -13,4 +13,5 @@ return [
     'user_token_session' => 'user_token_session',
     'user_kode_cabang_session' => 'user_kode_cabang_session',
     'role_id_session' => 'role_id_session',
+    'is_upload_kkb' => 'is_upload_kkb',
 ];

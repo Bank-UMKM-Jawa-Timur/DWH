@@ -62,7 +62,6 @@ class AuthenticatedSessionController extends Controller
                                     'ip' => $ip,
                                 ]);
                 $responseBody = json_decode($response->getBody(), true);
-
                 if ($responseBody) {
                     if (array_key_exists('status', $responseBody)) {
                         if (strtolower($responseBody['status']) == 'berhasil') {
