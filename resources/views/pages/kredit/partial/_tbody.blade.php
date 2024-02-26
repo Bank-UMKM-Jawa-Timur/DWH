@@ -1003,7 +1003,6 @@
                 <span class="text-warning">-</span>
             @endif
         </td>
-
         {{--  BPKB  --}}
         <td>
             @if ($item->penyerahan_unit)
