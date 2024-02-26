@@ -757,14 +757,23 @@ class KreditController extends Controller
                     $apiDataPengajuanSearch = $this->losHost . '/kkb/get-data-pengajuan-search/' . $user_id . '?query=' . $request->get('query');
                     $api_req_pengajuan = Http::timeout(6)->withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiDataPengajuanSearch);
                     $responseDataPengajuanSearch = json_decode($api_req_pengajuan->getBody(), true);
-
                     $arr_response_search = $responseDataPengajuanSearch ? $responseDataPengajuanSearch['data'] : null;
 
                     $result_search = [];
                     if ($responseDataPengajuanSearch) {
                         for ($i = 0; $i < count($arr_response_search); $i++) {
                             $detail = $this->loadKreditById($arr_response_search[$i]['id_pengajuan']);
+                            $id_pengajuan = $detail->pengajuan_id;
+                            $format = '/upload/' . $id_pengajuan . '/po/';
+                            $po = $arr_response_search[$i]['po'];
+                            $set_po = array($format, $po);
+                            $detal_po_array = implode('', $set_po);
                             $detail['detail'] = $arr_response_search[$i];
+                            $detail['po'] = [
+                                'tanggal' => $arr_response_search[$i]['tanggal'],
+                                'no_po' => $arr_response_search[$i]['no_po'],
+                                'file_po' => $detal_po_array,
+                            ];
                             array_push($result_search, $detail);
                         }
                     }
@@ -799,7 +808,17 @@ class KreditController extends Controller
                     $result_search = [];
                     for ($i = 0; $i < count($arr_response_search); $i++) {
                         $detail = $this->loadKreditById($arr_response_search[$i]['id_pengajuan']);
+                        $id_pengajuan = $detail->pengajuan_id;
+                        $format = '/upload/' . $id_pengajuan . '/po/';
+                        $po = $arr_response_search[$i]['po'];
+                        $set_po = array($format, $po);
+                        $detal_po_array = implode('', $set_po);
                         $detail['detail'] = $arr_response_search[$i];
+                        $detail['po'] = [
+                            'tanggal' => $arr_response_search[$i]['tanggal'],
+                            'no_po' => $arr_response_search[$i]['no_po'],
+                            'file_po' => $detal_po_array,
+                        ];
                         array_push($result_search, $detail);
                     }
 
@@ -835,6 +854,11 @@ class KreditController extends Controller
             $api_req = Http::timeout(6)->withHeaders($this->losHeaders)->get($apiCabang);
             $responseCabang = json_decode($api_req->getBody(), true);
 
+            // if ($request->has('query')) {
+            //     return $responseDataPengajuanSearch;
+            // } else {
+            //     return $this->param['data'];
+            // }
 
             $this->param['dataCabang'] = $responseCabang;
             return view('pages.kredit.index', $this->param);
@@ -1654,7 +1678,17 @@ class KreditController extends Controller
                     if ($responseDataPengajuanSearch) {
                         for ($i = 0; $i < count($arr_response_search); $i++) {
                             $detail = $this->loadKreditById($arr_response_search[$i]['id_pengajuan']);
+                            $id_pengajuan = $detail->pengajuan_id;
+                            $format = '/upload/' . $id_pengajuan . '/po/';
+                            $po = $arr_response_search[$i]['po'];
+                            $set_po = array($format, $po);
+                            $detal_po_array = implode('', $set_po);
                             $detail['detail'] = $arr_response_search[$i];
+                            $detail['po'] = [
+                                'tanggal' => $arr_response_search[$i]['tanggal'],
+                                'no_po' => $arr_response_search[$i]['no_po'],
+                                'file_po' => $detal_po_array,
+                            ];
                             array_push($result_search, $detail);
                         }
                     }
@@ -1689,7 +1723,17 @@ class KreditController extends Controller
                     $result_search = [];
                     for ($i = 0; $i < count($arr_response_search); $i++) {
                         $detail = $this->loadKreditById($arr_response_search[$i]['id_pengajuan']);
+                        $id_pengajuan = $detail->pengajuan_id;
+                        $format = '/upload/' . $id_pengajuan . '/po/';
+                        $po = $arr_response_search[$i]['po'];
+                        $set_po = array($format, $po);
+                        $detal_po_array = implode('', $set_po);
                         $detail['detail'] = $arr_response_search[$i];
+                        $detail['po'] = [
+                            'tanggal' => $arr_response_search[$i]['tanggal'],
+                            'no_po' => $arr_response_search[$i]['no_po'],
+                            'file_po' => $detal_po_array,
+                        ];
                         array_push($result_search, $detail);
                     }
 
