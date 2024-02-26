@@ -47,7 +47,7 @@
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_stnk" name="no_stnk" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                             </div>
                         </div>
-                        <input type="hidden" id="test" placeholder="afsaf" name="is_upload">
+                        <input type="hidden" id="test" name="is_upload">
                         <iframe id="preview_stnk" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3" id="stnk_input">
@@ -96,8 +96,8 @@
                         <div id="alert_bpkb" class="hidden p-5 text-center mt-2 space-y-5">
                             <img src="{{asset('template/assets/img/news/not-uploaded.svg')}}" alt=""
                             class="max-w-sm mx-auto" />
-                            <p class="font-semibold tracking-tighter text-theme-text">
-                                File BPKB belum di upload
+                            <p class="font-semibold tracking-tighter text-theme-text" >
+                                File BPKB belum di upload <span id="text_bpkb"></span>
                             </p>
                         </div>
                         {{-- @if(\Session::get(config('global.role_id_session')) == 2)
@@ -117,7 +117,7 @@
                             <input type="hidden" name="id_polis" id="id_polis">
                             <div class="px-3 space-y-4" >
                                 <label for="" class="uppercase">Nomor</label>
-                                <input type="text" class="p-2 w-full border bg-gray-100" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
+                                <input type="text" class="p-2 w-full border bg-gray-100 no_polis" id="no_polis" name="no_polis" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                             </div>
                         </div>
                         <iframe id="preview_polis" class="mt-4" src="" width="100%" height="450px"></iframe>

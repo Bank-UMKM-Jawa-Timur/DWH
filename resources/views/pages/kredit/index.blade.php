@@ -557,8 +557,6 @@
                         console.log('ini vendor hanya upload stnk, polis dan konfirmasi BPKB');
 
                     }
-                    console.log('ini vendor upload semua');
-
                 }
 
                 var id_stnk = $(identifier).data('id-stnk') ? $(identifier).data('id-stnk') : '';
@@ -628,6 +626,8 @@
                     $(`#${targetId} #btn-confirm-stnk`).addClass('hidden')
                 }
 
+                // polis
+                console.log(upload_polis);
                 if (upload_polis != '') {
                     if (is_confirm_polis != '')
                         $(`#${targetId} #btn-confirm-polis`).addClass('hidden')
@@ -666,8 +666,8 @@
                             $(`#${targetId} .form-submit-berkas`).css('display', 'block')
                     }
                 }
-                console.log(status);
                 try {
+                    // ccabang
                     if (role_id == 2) {
                         if (status == 'vendor') {
                             $(`#${targetId} #modal-berkas #id_kkb`).val(id);
@@ -679,8 +679,8 @@
                                 $(`#${targetId} #modal-berkas #id_bpkb`).val(id_bpkb);
                             if (no_stnk != '')
                                 $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
-                            if (no_polis != '')
-                                $(`#${targetId} #modal-berkas #no_polis`).val(no_polis);
+                            if (no_polis)
+                                $(`#${targetId} #modal-berkas .no_polis`).val(no_polis);
                             if (no_bpkb != '')
                                 $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
                             if (file_stnk != '')
@@ -700,7 +700,7 @@
                             if (no_stnk != '')
                                 $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
                             if (no_polis != '')
-                                $(`#${targetId} #modal-berkas #no_polis`).val(no_polis);
+                                $(`#${targetId} #modal-berkas .no_polis`).val(no_polis);
                             if (no_bpkb != '')
                                 $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
                             if (file_stnk != '')
@@ -711,6 +711,7 @@
                                 $(`#${targetId} #modal-berkas #bpkb_scan`).val(file_bpkb);
                         }
                     } else {
+                        // vendor
                         if (status == 'cabang') {
                             console.log(id_bpkb);
                             $(`#${targetId} #modal-berkas #id_kkb`).val(id);
@@ -721,13 +722,13 @@
                             if (id_bpkb != '')
                                 $(`#${targetId} #modal-berkas #id_bpkb`).val(id_bpkb);
                             if (no_stnk != '')
-                                $(`#${targetId} #modal-berkas #no_stnk`).val('');
+                                $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
                             if (no_polis != '')
-                                $(`#${targetId} #modal-berkas #no_polis`).val('');
+                                $(`#${targetId} #modal-berkas .no_polis`).val(no_polis);
                             if (no_bpkb != '')
                                 $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
                             if (file_stnk != '')
-                                $(`#${targetId} #modal-berkas #stnk_scan`).val('');
+                                $(`#${targetId} #modal-berkas #stnk_scan`).val(file_stnk);
                             if (file_polis != '')
                                 $(`#${targetId} #modal-berkas #polis_scan`).val('');
                             if (file_bpkb != '')
@@ -743,7 +744,7 @@
                             if (no_stnk != '')
                                 $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
                             if (no_polis != '')
-                                $(`#${targetId} #modal-berkas #no_polis`).val(no_polis);
+                                $(`#${targetId} #modal-berkas .no_polis`).val(no_polis);
                             if (no_bpkb != '')
                                 $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
                             if (file_stnk != '')
