@@ -47,7 +47,7 @@
                                 <input type="text" class="p-2 w-full border bg-gray-100" id="no_stnk" name="no_stnk" @if (\Session::get(config('global.role_id_session')) == 2) readonly @endif />
                             </div>
                         </div>
-                        <input type="text" id="test" placeholder="afsaf" name="is_upload">
+                        <input type="hidden" id="test" placeholder="afsaf" name="is_upload">
                         <iframe id="preview_stnk" class="mt-4" src="" width="100%" height="450px"></iframe>
                         @if (\Session::get(config('global.role_id_session')) == 3)
                             <div class="input-box space-y-3" id="stnk_input">
