@@ -25,16 +25,16 @@
             </td>
         @endif
         {{--  No PO  --}}
-        <td class="@if ($item->detail) link-po @endif">
+        <td class="@if ($item->po) link-po @endif">
             @if ($item->bukti_pembayaran)
                 @if ($item->kategori == 'data_kkb')
-                    @if ($item->detail)
+                    @if ($item->po)
                         <button class="toggle-modal-po underline" data-target-id="modalPO"
-                            data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
-                            data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
-                            data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
+                            data-nomorPo="{{ array_key_exists('no_po', $item->po) ? $item->po['no_po'] : '' }}"
+                            data-tanggalPo="{{ array_key_exists('tanggal', $item->po) ? date('d-m-Y', strtotime($item->po['tanggal'])) : '' }}"
+                            data-filepo="{{config('global.los_asset_url') . $item->po['file_po']}}"
                             onclick="showModal(this)">
-                            {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
+                            {{ array_key_exists('no_po', $item->po) ? $item->po['no_po'] : '' }}
                         </button>
                     @else
                         -
@@ -46,11 +46,11 @@
                 @if ($item->kategori == 'data_kkb')
                     @if ($item->detail)
                         <button class="toggle-modal-po underline" data-target-id="modalPO"
-                        data-nomorPo="{{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}"
-                        data-tanggalPo="{{ array_key_exists('tanggal', $item->detail) ? date('d-m-Y', strtotime($item->detail['tanggal'])) : '' }}"
-                        data-filepo="{{ array_key_exists('po', $item->detail) ? config('global.los_asset_url') . $item->detail['po'] : '' }}"
-                        onclick="showModal(this)">
-                            {{ array_key_exists('no_po', $item->detail) ? $item->detail['no_po'] : '' }}
+                            data-nomorPo="{{ array_key_exists('no_po', $item->po) ? $item->po['no_po'] : '' }}"
+                            data-tanggalPo="{{ array_key_exists('tanggal', $item->po) ? date('d-m-Y', strtotime($item->po['tanggal'])) : '' }}"
+                            data-filepo="{{config('global.los_asset_url') . $item->po['file_po']}}"
+                            onclick="showModal(this)">
+                            {{ array_key_exists('no_po', $item->po) ? $item->po['no_po'] : '' }}
                         </button>
                     @else
                         -
