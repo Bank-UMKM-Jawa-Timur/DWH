@@ -106,7 +106,7 @@
                             id="btn-confirm-bpkb">
                             Konfirmasi
                         </button>
-                        <div class="kirim-bpkb mt-4">
+                        <div class="kirim-bpkb mt-4 hidden">
                             <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
                                 Kirim
                             </button>
@@ -149,7 +149,7 @@
                 </div>
             </div>
             {{-- @if (\Session::get(config('global.role_id_session')) == 3) --}}
-                <div class="modal-footer hidden">
+                <div class="modal-footer">
                     <button type="submit" class="bg-theme-primary px-7 py-3 text-white rounded">
                         Kirim
                     </button>

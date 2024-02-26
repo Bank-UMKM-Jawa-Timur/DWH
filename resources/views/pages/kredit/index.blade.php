@@ -588,25 +588,37 @@
                 var is_confirm_bpkb = $(identifier).data('confirm-bpkb') ? $(identifier).data('confirm-bpkb') : ''
 
                 // cabang atau vendor
-                console.log(status);
-                if (status == 'cabang') {
-                    if (user_role_id == 2){
+                if (user_role_id == 2){
+                    if (status == 'cabang') {
                         $(`#${targetId} #no_bpkb`).prop('disabled', false);
                     }else{
                         $(`#${targetId} #no_bpkb`).prop('disabled', true);
-
                     }
-                }else if(status == 'vendor'){
-                    if (user_role_id == 2){
-                        $(`#${targetId} #no_bpkb`).prop('disabled', true);
-                    }else{
-                        $(`#${targetId} #no_bpkb`).prop('disabled', false);
-                    }
-
                 }else{
-                    $(`#${targetId} #no_bpkb`).prop('disabled', true);
-
+                    if (status == 'cabang') {
+                        $(`#${targetId} #no_bpkb`).prop('disabled', true);
+                    }else{
+                        $(`#${targetId} #no_bpkb`).prop('disabled', false);
+                    }
                 }
+                // if (status == 'cabang') {
+                //     if (user_role_id == 2){
+                //         $(`#${targetId} #no_bpkb`).prop('disabled', false);
+                //     }else{
+                //         $(`#${targetId} #no_bpkb`).prop('disabled', true);
+
+                //     }
+                // }else if(status == 'vendor'){
+                //     if (user_role_id == 2){
+                //         $(`#${targetId} #no_bpkb`).prop('disabled', true);
+                //     }else{
+                //         $(`#${targetId} #no_bpkb`).prop('disabled', false);
+                //     }
+
+                // }else{
+                //     $(`#${targetId} #no_bpkb`).prop('disabled', true);
+
+                // }
                 if (upload_stnk != '') {
                     if (is_confirm_stnk != '')
                         $(`#${targetId} #btn-confirm-stnk`).addClass('hidden')
@@ -788,62 +800,63 @@
                 }
                 // cek button kirim
                 // console.log(user_role);
-                if (user_role == 2) {
-                    if (status == 'cabang') {
-                        if (file_bpkb == '') {
-                            $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
-                        }else{
-                            $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
+                // if (user_role == 2) {
+                //     if (status == 'cabang') {
+                //         if (file_bpkb == '') {
+                //             $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
+                //         }else{
+                //             $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
 
-                        }
-                        $(`#${targetId} .modal-footer`).addClass('hidden');
-                    }else{
-                        $(`#${targetId} .kirim-bpkb`).addClass('hidden');
-                        $(`#${targetId} .modal-footer`).addClass('hidden');
-                    }
-                } else {
-                    if (status == 'cabang') {
-                        $(`#${targetId} .kirim-bpkb`).addClass('hidden');
-                        $(`#${targetId} .modal-footer`).removeClass('hidden');
-                        if (file_bpkb == '') {
-                            $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
-                            $(`#${targetId} .modal-footer`).removeClass('hidden');
-                        }
-                        $(".tab-wrapping .tab-button").click(function (e) {
-                            e.preventDefault();
-                            var tabId = $(this).data("tab");
-                            if (tabId == 'tab2') {
-                                $(`#${targetId} .modal-footer`).addClass('hidden');
-                            }else{
-                                $(`#${targetId} .modal-footer`).removeClass('hidden');
-                            }
-                        });
-                    }else{
-                        $(`#${targetId} .modal-footer`).removeClass('hidden');
-                        $(".tab-wrapping .tab-button").click(function (e) {
-                            e.preventDefault();
-                            var tabId = $(this).data("tab");
-                            if (tabId == 'tab2') {
-                                $(`#${targetId} .modal-footer`).addClass('hidden');
-                            }else{
-                                $(`#${targetId} .modal-footer`).removeClass('hidden');
-                            }
-                        });
-                    }
-                    // let checkTabBPKB = $(`#${targetId} #tab2`).hasClass('hidden');
-                    // console.log(checkTabBPKB);
-                    // if (checkTabBPKB) {
-                    //     $(`#${targetId} .modal-footer`).addClass('hidden');
-                    // }
-                }
+                //         }
+                //         $(`#${targetId} .modal-footer`).addClass('hidden');
+                //     }else{
+                //         $(`#${targetId} .kirim-bpkb`).addClass('hidden');
+                //         $(`#${targetId} .modal-footer`).addClass('hidden');
+                //     }
+                // } else {
+                //     if (status == 'cabang') {
+                //         console.log('ini cabang seharusnya konfirmasi');
+                //         // $(`#${targetId} .modal-footer`).removeClass('hidden');
+                //         // if (file_bpkb == '') {
+                //         //     $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                //         // }
+                //         // $(".tab-wrapping .tab-button").click(function (e) {
+                //         //     e.preventDefault();
+                //         //     var tabId = $(this).data("tab");
+                //         //     if (tabId == 'tab2') {
+                //         //         $(`#${targetId} .modal-footer`).addClass('hidden');
+                //         //     }else{
+                //         //         $(`#${targetId} .modal-footer`).removeClass('hidden');
+                //         //     }
+                //         // });
+                //     }else{
+                //         $(`#${targetId} .modal-footer`).removeClass('hidden');
+                //         $(".tab-wrapping .tab-button").click(function (e) {
+                //             e.preventDefault();
+                //             var tabId = $(this).data("tab");
+                //             if (tabId == 'tab2') {
+                //                 $(`#${targetId} .modal-footer`).addClass('hidden');
+                //             }else{
+                //                 $(`#${targetId} .modal-footer`).removeClass('hidden');
+                //             }
+                //         });
+                //     }
+                //     // let checkTabBPKB = $(`#${targetId} #tab2`).hasClass('hidden');
+                //     // console.log(checkTabBPKB);
+                //     // if (checkTabBPKB) {
+                //     //     $(`#${targetId} .modal-footer`).addClass('hidden');
+                //     // }
+                // }
                 // cek file bpkb
                 if (file_bpkb != '') {
+                    console.log('masuk sini');
                     var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#navpanes=0";
                     $(`#${targetId} #preview_bpkb`).attr("src", path_bpkb);
                     if (user_role == 2) {
                         if (status == 'cabang') {
                             $(`#${targetId} #preview_bpkb`).css("display", 'none');
                             $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                            $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
                             if (file_bpkb == '') {
                                 $(`#${targetId} #bpkb_input`).removeClass("hidden")
                             }else{
@@ -852,48 +865,104 @@
                             // $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
 
                             // $(`#${targetId} .kirim-bpkb button`).eq(0).attr('id', 'btn-confirm-bpkb');
+                            $(`#${targetId} .modal-footer`).addClass('hidden');
+                            $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
+
                         }else{
                             if (file_bpkb == '') {
                                 $(`#${targetId} #alert_bpkb`).removeClass("hidden")
                             }
-                            // $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
+                            $(`#${targetId} .kirim-bpkb`).addClass('hidden');
+                            $(`#${targetId} #bpkb_input`).addClass("hidden")
+                            $(`#${targetId} #preview_bpkb`).css("display", 'block');
+                            $(`#${targetId} .modal-footer`).addClass('hidden');
+                            $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
                         }
                     } else {
                         if (status == 'cabang') {
-                            $(`#${targetId} #preview_bpkb`).css("display", 'block');
                             $(`#${targetId} #bpkb_input`).addClass("hidden")
 
                             $(`#${targetId} #alert_bpkb`).addClass("hidden")
                             if (file_bpkb == '') {
                                 $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                                $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                            }else{
+                                $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                                $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
                             }
-                            $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
+                             $(".tab-wrapping .tab-button").click(function (e) {
+                                e.preventDefault();
+                                var tabId = $(this).data("tab");
+                                if (tabId == 'tab2') {
+                                    $(`#${targetId} .modal-footer`).addClass('hidden');
+                                }else{
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }
+                            });
                         }else{
+                            $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                            $(".tab-wrapping .tab-button").click(function (e) {
+                                e.preventDefault();
+                                var tabId = $(this).data("tab");
+                                if (tabId == 'tab2') {
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }else{
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }
+                            });
+                            $(`#${targetId} #preview_bpkb`).css("display", 'block');
+                            $(`#${targetId} .modal-footer`).removeClass('hidden');
                             if (file_bpkb == '') {
                                 $(`#${targetId} #bpkb_input`).removeClass("hidden")
                                 $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                            }else{
+                                $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                                $(`#${targetId} .modal-footer`).removeClass('hidden');
+
                             }
-                            $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
                         }
                     }
                 } else {
                     $(`#${targetId} #preview_bpkb`).css("display", 'none');
                     if (user_role == 2) {
+                        console.log('masuk sini');
+                        $(`#${targetId} .modal-footer`).addClass('hidden');
                         if (status == 'cabang') {
                             $(`#${targetId} #bpkb_input`).removeClass("hidden")
                             $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
-
+                            $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                            $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
                         }else{
+                            $(`#${targetId} .kirim-bpkb`).addClass('hidden');
+                            $(`#${targetId} #bpkb_input`).addClass("hidden")
+                            $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
                             $(`#${targetId} #alert_bpkb`).removeClass("hidden")
                         }
                     } else {
                         if (status == 'cabang') {
                             $(`#${targetId} #bpkb_input`).addClass("hidden")
                             $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                            $(".tab-wrapping .tab-button").click(function (e) {
+                                e.preventDefault();
+                                var tabId = $(this).data("tab");
+                                if (tabId == 'tab2') {
+                                    $(`#${targetId} .modal-footer`).addClass('hidden');
+                                }else{
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }
+                            });
                         }else{
                             $(`#${targetId} #alert_bpkb`).addClass("hidden")
                             $(`#${targetId} #bpkb_input`).removeClass("hidden")
-
+                            $(".tab-wrapping .tab-button").click(function (e) {
+                                e.preventDefault();
+                                var tabId = $(this).data("tab");
+                                if (tabId == 'tab2') {
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }else{
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }
+                            });
                         }
                     }
                 }

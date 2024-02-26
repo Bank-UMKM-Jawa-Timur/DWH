@@ -50,6 +50,10 @@
                                 class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BP</a>
                         </li>
                         <li class="tab-li">
+                            <a data-tab="tab-polis"
+                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">Polis</a>
+                        </li>
+                        <li class="tab-li">
                             <a data-tab="tab-stnk"
                                 class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">STNK</a>
                         </li>
@@ -57,10 +61,7 @@
                             <a data-tab="tab-bpkb"
                                 class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">BPKB</a>
                         </li>
-                        <li class="tab-li">
-                            <a data-tab="tab-polis"
-                                class="tab-button cursor-pointer hover:border-b-2 hover:border-theme-primary hover:text-theme-primary bg-white text-gray-400 py-2 px-4">Polis</a>
-                        </li>
+
                     </ul>
                 </div>
 
