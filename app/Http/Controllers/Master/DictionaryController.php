@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogActivitesController;
 use App\Models\MstFileDictionary;
 use Illuminate\Http\Request;
-use Alert;
+use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\MstFileContentDictionary;
 use Illuminate\Support\Facades\DB;
 

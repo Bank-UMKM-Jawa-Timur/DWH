@@ -65,16 +65,6 @@
             });
         }
 
-        function generateCsrfToken() {
-            var token = "{{csrf_token()}}"
-            if (token == '') {
-                generateCsrfToken();
-            }
-            else {
-                return token;
-            }
-        }
-
         function showModal(identifier) {
             const targetId = $(identifier).data("target-id");
             const user_role_id = "{{ \Session::get(config('global.role_id_session')) }}";
@@ -516,12 +506,49 @@
                 $(`#${targetId} #tanggalPo`).val(tanggalPo);
                 $(`#${targetId} #filepo`).attr("src", filePo);
             } else if (targetId == 'modalUploadBerkas') {
+                var role_id = "{{ \Session::get(config('global.role_id_session')) }}"
+                var role_name = "{{ \Session::get(config('global.user_role_session')) }}"
                 $(`#${targetId}`).removeClass("hidden");
                 $(".layout-overlay-edit-form").removeClass("hidden");
                 const token = generateCsrfToken()
                 $(`#${targetId}`).find('#_token').val(token);
-
                 var id = $(identifier).data('id_kkb')
+                var status = $(identifier).data('berkas-unggah');
+                $(`#${targetId} #test`).val(status);
+                if (role_id == 3) {
+                    if (status == 'cabang') {
+                        // kondisi no_stnk
+
+                        // $(`#${targetId} .berkas-lain`).addClass('hidden');
+                        // $(`#${targetId} #stnk-tab-menu`).addClass('hidden')
+                        // $(`#${targetId} #polis-tab-menu`).addClass('hidden')
+                        // $(`#${targetId} .bpkb`).addClass('hidden');
+                        // var bpkbActive = $(`#${targetId} #bpkb-tab-menu`).hasClass('active')
+                        // if (bpkbActive) {
+                        //     $(`#${targetId} #bpkb-tab-menu`).removeClass('active')
+                        // }
+                        console.log('ini cabang hanya upload bpkb');
+                    }else{
+                        console.log('ini vendor hanya upload stnk, polis dan konfirmasi BPKB');
+
+                    }
+                }else{
+                    if (status == 'cabang') {
+                        // $(`#${targetId} .berkas-lain`).addClass('hidden');
+                        // $(`#${targetId} #stnk-tab-menu`).addClass('hidden')
+                        // $(`#${targetId} #polis-tab-menu`).addClass('hidden')
+                        // $(`#${targetId} .bpkb`).addClass('hidden')
+                        // var bpkbActive = $(`#${targetId} #bpkb-tab-menu`).hasClass('active')
+                        // if (bpkbActive) {
+                        //     $(`#${targetId} #bpkb-tab-menu`).removeClass('active')
+                        // }
+                        console.log('ini cabang hanya upload bpkb');
+                    }else{
+                        console.log('ini vendor hanya upload stnk, polis dan konfirmasi BPKB');
+
+                    }
+                }
+
                 var id_stnk = $(identifier).data('id-stnk') ? $(identifier).data('id-stnk') : '';
                 var id_polis = $(identifier).data('id-polis') ? $(identifier).data('id-polis') : '';
                 var id_bpkb = $(identifier).data('id-bpkb') ? $(identifier).data('id-bpkb') : '';
@@ -548,6 +575,38 @@
                 var is_confirm_polis = $(identifier).data('confirm-polis') ? $(identifier).data('confirm-polis') : ''
                 var is_confirm_bpkb = $(identifier).data('confirm-bpkb') ? $(identifier).data('confirm-bpkb') : ''
 
+                // cabang atau vendor
+                if (user_role_id == 2){
+                    if (status == 'cabang') {
+                        $(`#${targetId} #no_bpkb`).prop('disabled', false);
+                    }else{
+                        $(`#${targetId} #no_bpkb`).prop('disabled', true);
+                    }
+                }else{
+                    if (status == 'cabang') {
+                        $(`#${targetId} #no_bpkb`).prop('disabled', true);
+                    }else{
+                        $(`#${targetId} #no_bpkb`).prop('disabled', false);
+                    }
+                }
+                // if (status == 'cabang') {
+                //     if (user_role_id == 2){
+                //         $(`#${targetId} #no_bpkb`).prop('disabled', false);
+                //     }else{
+                //         $(`#${targetId} #no_bpkb`).prop('disabled', true);
+
+                //     }
+                // }else if(status == 'vendor'){
+                //     if (user_role_id == 2){
+                //         $(`#${targetId} #no_bpkb`).prop('disabled', true);
+                //     }else{
+                //         $(`#${targetId} #no_bpkb`).prop('disabled', false);
+                //     }
+
+                // }else{
+                //     $(`#${targetId} #no_bpkb`).prop('disabled', true);
+
+                // }
                 if (upload_stnk != '') {
                     if (is_confirm_stnk != '')
                         $(`#${targetId} #btn-confirm-stnk`).addClass('hidden')
@@ -557,15 +616,8 @@
                     $(`#${targetId} #btn-confirm-stnk`).addClass('hidden')
                 }
 
-                if (upload_bpkb != '') {
-                    if (is_confirm_bpkb != '')
-                        $(`#${targetId} #btn-confirm-bpkb`).addClass('hidden')
-                } else {
-                    if (user_role_id == 2)
-                        $(`#${targetId} .confirm-input-bpkb`).addClass('hidden')
-                    $(`#${targetId} #btn-confirm-bpkb`).addClass('hidden')
-                }
-
+                // polis
+                console.log(upload_polis);
                 if (upload_polis != '') {
                     if (is_confirm_polis != '')
                         $(`#${targetId} #btn-confirm-polis`).addClass('hidden')
@@ -604,27 +656,97 @@
                             $(`#${targetId} .form-submit-berkas`).css('display', 'block')
                     }
                 }
-
                 try {
-                    $(`#${targetId} #modal-berkas #id_kkb`).val(id);
-                    if (id_stnk != '')
-                        $(`#${targetId} #modal-berkas #id_stnk`).val(id_stnk);
-                    if (id_polis != '')
-                        $(`#${targetId} #modal-berkas #id_polis`).val(id_polis);
-                    if (id_bpkb != '')
-                        $(`#${targetId} #modal-berkas #id_bpkb`).val(id_bpkb);
-                    if (no_stnk != '')
-                        $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
-                    if (no_polis != '')
-                        $(`#${targetId} #modal-berkas #no_polis`).val(no_polis);
-                    if (no_bpkb != '')
-                        $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
-                    if (file_stnk != '')
-                        $(`#${targetId} #modal-berkas #stnk_scan`).val(file_stnk);
-                    if (file_polis != '')
-                        $(`#${targetId} #modal-berkas #polis_scan`).val(file_polis);
-                    if (file_bpkb != '')
-                        $(`#${targetId} #modal-berkas #bpkb_scan`).val(file_bpkb);
+                    // ccabang
+                    if (role_id == 2) {
+                        if (status == 'vendor') {
+                            $(`#${targetId} #modal-berkas #id_kkb`).val(id);
+                            if (id_stnk != '')
+                                $(`#${targetId} #modal-berkas #id_stnk`).val(id_stnk);
+                            if (id_polis != '')
+                                $(`#${targetId} #modal-berkas #id_polis`).val(id_polis);
+                            if (id_bpkb != '')
+                                $(`#${targetId} #modal-berkas #id_bpkb`).val(id_bpkb);
+                            if (no_stnk != '')
+                                $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
+                            if (no_polis)
+                                $(`#${targetId} #modal-berkas .no_polis`).val(no_polis);
+                            if (no_bpkb != '')
+                                $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
+                            if (file_stnk != '')
+                                $(`#${targetId} #modal-berkas #stnk_scan`).val(file_stnk);
+                            if (file_polis != '')
+                                $(`#${targetId} #modal-berkas #polis_scan`).val(file_polis);
+                            if (file_bpkb != '')
+                                $(`#${targetId} #modal-berkas #bpkb_scan`).val(file_bpkb);
+                        }else{
+                            $(`#${targetId} #modal-berkas #id_kkb`).val(id);
+                            if (id_stnk != '')
+                                $(`#${targetId} #modal-berkas #id_stnk`).val(id_stnk);
+                            if (id_polis != '')
+                                $(`#${targetId} #modal-berkas #id_polis`).val(id_polis);
+                            if (id_bpkb != '')
+                                $(`#${targetId} #modal-berkas #id_bpkb`).val(id_bpkb);
+                            if (no_stnk != '')
+                                $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
+                            if (no_polis != '')
+                                $(`#${targetId} #modal-berkas .no_polis`).val(no_polis);
+                            if (no_bpkb != '')
+                                $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
+                            if (file_stnk != '')
+                                $(`#${targetId} #modal-berkas #stnk_scan`).val(file_stnk);
+                            if (file_polis != '')
+                                $(`#${targetId} #modal-berkas #polis_scan`).val(file_polis);
+                            if (file_bpkb != '')
+                                $(`#${targetId} #modal-berkas #bpkb_scan`).val(file_bpkb);
+                        }
+                    } else {
+                        // vendor
+                        if (status == 'cabang') {
+                            console.log(id_bpkb);
+                            $(`#${targetId} #modal-berkas #id_kkb`).val(id);
+                            if (id_stnk != '')
+                                $(`#${targetId} #modal-berkas #id_stnk`).val('');
+                            if (id_polis != '')
+                                $(`#${targetId} #modal-berkas #id_polis`).val('');
+                            if (id_bpkb != '')
+                                $(`#${targetId} #modal-berkas #id_bpkb`).val(id_bpkb);
+                            if (no_stnk != '')
+                                $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
+                            if (no_polis != '')
+                                $(`#${targetId} #modal-berkas .no_polis`).val(no_polis);
+                            if (no_bpkb != '')
+                                $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
+                            if (file_stnk != '')
+                                $(`#${targetId} #modal-berkas #stnk_scan`).val(file_stnk);
+                            if (file_polis != '')
+                                $(`#${targetId} #modal-berkas #polis_scan`).val('');
+                            if (file_bpkb != '')
+                                $(`#${targetId} #modal-berkas #bpkb_scan`).val('');
+                        }else{
+                            $(`#${targetId} #modal-berkas #id_kkb`).val(id);
+                            if (id_stnk != '')
+                                $(`#${targetId} #modal-berkas #id_stnk`).val(id_stnk);
+                            if (id_polis != '')
+                                $(`#${targetId} #modal-berkas #id_polis`).val(id_polis);
+                            if (id_bpkb != '')
+                                $(`#${targetId} #modal-berkas #id_bpkb`).val(id_bpkb);
+                            if (no_stnk != '')
+                                $(`#${targetId} #modal-berkas #no_stnk`).val(no_stnk);
+                            if (no_polis != '')
+                                $(`#${targetId} #modal-berkas .no_polis`).val(no_polis);
+                            if (no_bpkb != '')
+                                $(`#${targetId} #modal-berkas #no_bpkb`).val(no_bpkb);
+                            if (file_stnk != '')
+                                $(`#${targetId} #modal-berkas #stnk_scan`).val(file_stnk);
+                            if (file_polis != '')
+                                $(`#${targetId} #modal-berkas #polis_scan`).val(file_polis);
+                            if (file_bpkb != '')
+                                $(`#${targetId} #modal-berkas #bpkb_scan`).val(file_bpkb);
+                        }
+
+                    }
+
                 } catch (e) {
                     console.log('error : ' + e)
                 }
@@ -667,21 +789,172 @@
                         $(`#${targetId} #polis_input`).removeClass("hidden")
                     }
                 }
+                // cek button kirim
+                // console.log(user_role);
+                // if (user_role == 2) {
+                //     if (status == 'cabang') {
+                //         if (file_bpkb == '') {
+                //             $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
+                //         }else{
+                //             $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
 
+                //         }
+                //         $(`#${targetId} .modal-footer`).addClass('hidden');
+                //     }else{
+                //         $(`#${targetId} .kirim-bpkb`).addClass('hidden');
+                //         $(`#${targetId} .modal-footer`).addClass('hidden');
+                //     }
+                // } else {
+                //     if (status == 'cabang') {
+                //         console.log('ini cabang seharusnya konfirmasi');
+                //         // $(`#${targetId} .modal-footer`).removeClass('hidden');
+                //         // if (file_bpkb == '') {
+                //         //     $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                //         // }
+                //         // $(".tab-wrapping .tab-button").click(function (e) {
+                //         //     e.preventDefault();
+                //         //     var tabId = $(this).data("tab");
+                //         //     if (tabId == 'tab2') {
+                //         //         $(`#${targetId} .modal-footer`).addClass('hidden');
+                //         //     }else{
+                //         //         $(`#${targetId} .modal-footer`).removeClass('hidden');
+                //         //     }
+                //         // });
+                //     }else{
+                //         $(`#${targetId} .modal-footer`).removeClass('hidden');
+                //         $(".tab-wrapping .tab-button").click(function (e) {
+                //             e.preventDefault();
+                //             var tabId = $(this).data("tab");
+                //             if (tabId == 'tab2') {
+                //                 $(`#${targetId} .modal-footer`).addClass('hidden');
+                //             }else{
+                //                 $(`#${targetId} .modal-footer`).removeClass('hidden');
+                //             }
+                //         });
+                //     }
+                //     // let checkTabBPKB = $(`#${targetId} #tab2`).hasClass('hidden');
+                //     // console.log(checkTabBPKB);
+                //     // if (checkTabBPKB) {
+                //     //     $(`#${targetId} .modal-footer`).addClass('hidden');
+                //     // }
+                // }
+                // cek file bpkb
                 if (file_bpkb != '') {
+                    console.log('masuk sini');
                     var path_bpkb = "{{ asset('storage') }}" + "/dokumentasi-bpkb/" + file_bpkb + "#navpanes=0";
                     $(`#${targetId} #preview_bpkb`).attr("src", path_bpkb);
                     if (user_role == 2) {
-                        $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                        if (status == 'cabang') {
+                            $(`#${targetId} #preview_bpkb`).css("display", 'none');
+                            $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                            $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                            if (file_bpkb == '') {
+                                $(`#${targetId} #bpkb_input`).removeClass("hidden")
+                            }else{
+                                $(`#${targetId} #preview_bpkb`).css("display", 'block');
+                            }
+                            // $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
+
+                            // $(`#${targetId} .kirim-bpkb button`).eq(0).attr('id', 'btn-confirm-bpkb');
+                            $(`#${targetId} .modal-footer`).addClass('hidden');
+                            $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
+
+                        }else{
+                            if (file_bpkb == '') {
+                                $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                            }
+                            $(`#${targetId} .kirim-bpkb`).addClass('hidden');
+                            $(`#${targetId} #bpkb_input`).addClass("hidden")
+                            $(`#${targetId} #preview_bpkb`).css("display", 'block');
+                            $(`#${targetId} .modal-footer`).addClass('hidden');
+                            $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
+                        }
                     } else {
-                        $(`#${targetId} #bpkb_input`).addClass("hidden")
+                        if (status == 'cabang') {
+                            $(`#${targetId} #bpkb_input`).addClass("hidden")
+
+                            $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                            if (file_bpkb == '') {
+                                $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                                $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                            }else{
+                                $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                                $(`#${targetId} #btn-confirm-bpkb`).removeClass("hidden")
+                            }
+                             $(".tab-wrapping .tab-button").click(function (e) {
+                                e.preventDefault();
+                                var tabId = $(this).data("tab");
+                                if (tabId == 'tab2') {
+                                    $(`#${targetId} .modal-footer`).addClass('hidden');
+                                }else{
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }
+                            });
+                        }else{
+                            $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                            $(".tab-wrapping .tab-button").click(function (e) {
+                                e.preventDefault();
+                                var tabId = $(this).data("tab");
+                                if (tabId == 'tab2') {
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }else{
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }
+                            });
+                            $(`#${targetId} #preview_bpkb`).css("display", 'block');
+                            $(`#${targetId} .modal-footer`).removeClass('hidden');
+                            if (file_bpkb == '') {
+                                $(`#${targetId} #bpkb_input`).removeClass("hidden")
+                                $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                            }else{
+                                $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                                $(`#${targetId} .modal-footer`).removeClass('hidden');
+
+                            }
+                        }
                     }
                 } else {
                     $(`#${targetId} #preview_bpkb`).css("display", 'none');
                     if (user_role == 2) {
-                        $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                        console.log('masuk sini');
+                        $(`#${targetId} .modal-footer`).addClass('hidden');
+                        if (status == 'cabang') {
+                            $(`#${targetId} #bpkb_input`).removeClass("hidden")
+                            $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                            $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                            $(`#${targetId} .kirim-bpkb`).removeClass('hidden');
+                        }else{
+                            $(`#${targetId} .kirim-bpkb`).addClass('hidden');
+                            $(`#${targetId} #bpkb_input`).addClass("hidden")
+                            $(`#${targetId} #btn-confirm-bpkb`).addClass("hidden")
+                            $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                        }
                     } else {
-                        $(`#${targetId} #bpkb_input`).removeClass("hidden")
+                        if (status == 'cabang') {
+                            $(`#${targetId} #bpkb_input`).addClass("hidden")
+                            $(`#${targetId} #alert_bpkb`).removeClass("hidden")
+                            $(".tab-wrapping .tab-button").click(function (e) {
+                                e.preventDefault();
+                                var tabId = $(this).data("tab");
+                                if (tabId == 'tab2') {
+                                    $(`#${targetId} .modal-footer`).addClass('hidden');
+                                }else{
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }
+                            });
+                        }else{
+                            $(`#${targetId} #alert_bpkb`).addClass("hidden")
+                            $(`#${targetId} #bpkb_input`).removeClass("hidden")
+                            $(".tab-wrapping .tab-button").click(function (e) {
+                                e.preventDefault();
+                                var tabId = $(this).data("tab");
+                                if (tabId == 'tab2') {
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }else{
+                                    $(`#${targetId} .modal-footer`).removeClass('hidden');
+                                }
+                            });
+                        }
                     }
                 }
             } else if (targetId == 'modalUploadImbalJasa') {
@@ -755,6 +1028,7 @@
     @include('pages.kredit.modal.show-tagihan-modal')
     <!-- Modal Upload Berkas -->
     @include('pages.kredit.modal.upload-berkas-modal')
+    {{-- @include('pages.kredit.modal.upload-berkas-modal-cabang') --}}
     <!-- Modal Upload Imbal Jasa -->
     @include('pages.kredit.modal.upload-bukti-imbal-jasa')
     <!-- Modal Confirm Imbal Jasa -->
@@ -965,7 +1239,7 @@
         $(".tab-wrapper .tab-btn").click(function(e) {
             e.preventDefault();
             tabId = $(this).data("tab")
-            
+
             $('#tab_type').val(tabId)
             if (tabId == 'tab-kkb') {
                 $('.tab_type_kkb').val(tabId)

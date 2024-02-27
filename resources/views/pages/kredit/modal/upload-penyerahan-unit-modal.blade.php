@@ -29,6 +29,21 @@
                             name="upload_penyerahan_unit" accept="image/png, image/jpeg, image/jpeg"/>
                     </div>
                 </div>
+                <div class="input-box space-y-3">
+                    <div class="p-5 space-y-4">
+                        <label for="" class="uppercase">Pengunggah BPKB</label>
+                        <div class="flex items-center mb-4 gap-3">
+                            <div>
+                                <input id="default-radio-1" type="radio" value="cabang" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="default-radio-1" class="ms-2 mb-3 text-sm font-medium text-gray-900">Cabang</label>
+                            </div>
+                            <div>
+                                <input checked id="default-radio-2" type="radio" value="vendor" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="default-radio-2" class="ms-2 mb-3 text-sm font-medium text-gray-900">Vendor</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button data-dismiss-id="modalUploadBuktiPenyerahanUnit" class="border px-7 py-3 text-black rounded">

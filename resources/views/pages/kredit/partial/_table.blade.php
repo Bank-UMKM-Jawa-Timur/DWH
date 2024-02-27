@@ -14,9 +14,9 @@
                 <th>Penyerahan Unit</th>
                 <th>Bukti Pembayaran Imbal Jasa</th>
                 <th>Imbal Jasa + 2% Pajak</th>
+                <th>Polis</th>
                 <th>STNK</th>
                 <th>BPKB</th>
-                <th>Polis</th>
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>

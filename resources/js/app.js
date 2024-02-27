@@ -186,4 +186,3 @@ function closeFullscreen() {
         document.msExitFullscreen();
     }
 }
-

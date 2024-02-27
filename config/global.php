@@ -5,6 +5,8 @@ return [
     'los_api_host' => env('LOS_API_HOST'),
     'los_asset_url' => env('LOS_ASSET_URL'),
     'los_api_token' => env('LOS_API_TOKEN'),
+    'eka_lloyd_host' => env('EKA_LLOYD_HOST'),
+    'eka_lloyd_token' => env('EKA_LLOYD_TOKEN'),
     'auth_session' => 'auth_session',
     'user_id_session' => 'user_id_session',
     'user_nip_session' => 'user_nip_session',
@@ -13,4 +15,5 @@ return [
     'user_token_session' => 'user_token_session',
     'user_kode_cabang_session' => 'user_kode_cabang_session',
     'role_id_session' => 'role_id_session',
+    'is_upload_kkb' => 'is_upload_kkb',
 ];

@@ -66,7 +66,7 @@ class LogActivitesController extends Controller
                 $apiURL = $this->losHost . '/kkb/get-data-users-by-id/' . $value->user_id;
                 $responseBody = null;
                 $user = null;
-    
+
                 try {
                     $response = Http::withHeaders($this->losHeaders)->withOptions(['verify' => false])->get($apiURL);
 
@@ -94,12 +94,28 @@ class LogActivitesController extends Controller
         return $data;
     }
 
-    public function store($content)
+    public function store($content, $asuransi_id = null, $is_asuransi = 0)
     {
         $token = \Session::get(config('global.user_token_session'));
         $newActivity = new LogActivity();
         $newActivity->user_id = $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id;
         $newActivity->content = $content;
+        $newActivity->asuransi_id = $asuransi_id;
+        $newActivity->is_asuransi = $is_asuransi;
+
+        $newActivity->save();
+    }
+
+    public function storeAsuransi($content, $asuransi_id, $is_asuransi)
+    {
+
+        $token = \Session::get(config('global.user_token_session'));
+
+        $newActivity = new LogActivity();
+        $newActivity->user_id = $token ? \Session::get(config('global.user_id_session')) : Auth::user()->id;
+        $newActivity->content = $content;
+        $newActivity->asuransi_id = $asuransi_id;
+        $newActivity->is_asuransi = $is_asuransi;
 
         $newActivity->save();
     }

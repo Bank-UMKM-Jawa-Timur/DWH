@@ -14,7 +14,6 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('template/assets/img/icon_title.ico') }}">
     @stack('extraStyle')
 </head>
-
 <body>
     @include('sweetalert::alert')
     @php
@@ -48,7 +47,7 @@
                     <div class="text-center space-y-5">
                         <img src="{{ asset('template/assets/img/news/loading.svg') }}" class="max-w-[120px] mx-auto"
                             alt="">
-                        <p class="text-white">Updating data...</p>
+                        <p class="text-white">Harap tunggu...</p>
                     </div>
                 </div>
             </div>
@@ -70,14 +69,16 @@
 <script src="{{ asset('template/assets/js/select2.min.js') }}"></script>
 <script src="{{ asset('template/assets/js/apexcharts.js') }}"></script>
 <script src="{{ asset('template/assets/js/jquery-ui.js') }}"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 <script src="{{ asset('js/app.js') }}"></script>
 
 <script>
     function generateCsrfToken() {
-        var token = "{{ csrf_token() }}"
+        var token = "{{csrf_token()}}"
         if (token == '') {
             generateCsrfToken();
-        } else {
+        }
+        else {
             return token;
         }
     }
@@ -89,29 +90,6 @@
         months += d2.getMonth();
         return months <= 0 ? 0 : months;
     }
-
-    /*window.onbeforeunload = function(e) {
-        $.ajax({
-            type: "POST",
-            url: "{{ route('logout') }}",
-            data: {
-                _token: "{{ csrf_token() }}",
-            },
-            success: function(data) {
-                console.log(data);
-                if (data.status == 'success') {
-                    const url = "{{ route('login') }}"
-                    window.location.href = url;
-                } else {
-                    ErrorMessage(data.message)
-                }
-            },
-            error: function(e) {
-                console.log(e)
-                ErrorMessage('Terjadi kesalahan. Harap muat ulang halaman terlebih dahulu.')
-            }
-        });
-    }*/
 
     function SuccessMessage(message) {
         Swal.fire({
@@ -191,7 +169,6 @@
         return rupiah;
     }
 
-
     $("#btn-logout").on('click', function() {
         Swal.fire({
             title: 'Konfirmasi',
@@ -220,15 +197,44 @@
                         }
                     },
                     error: function(e) {
-                        console.log(e)
-                        ErrorMessage(
-                            'Terjadi kesalahan. Harap muat ulang halaman terlebih dahulu.'
-                            )
+                    console.log(e)
+                    ErrorMessage('Terjadi kesalahan. Harap muat ulang halaman terlebih dahulu.')
                     }
                 });
             }
         })
     })
+
+    function monthDiff(d1, d2) {
+        var months;
+        months = (d2.getFullYear() - d1.getFullYear()) * 12;
+        months -= d1.getMonth();
+        months += d2.getMonth();
+        return months <= 0 ? 0 : months;
+    }
+
+    /*window.onbeforeunload = function(e) {
+        $.ajax({
+            type: "POST",
+            url: "{{ route('logout') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+            },
+            success: function(data) {
+                console.log(data);
+                if (data.status == 'success') {
+                    const url = "{{ route('login') }}"
+                    window.location.href = url;
+                } else {
+                    ErrorMessage(data.message)
+                }
+            },
+            error: function(e) {
+                console.log(e)
+                ErrorMessage('Terjadi kesalahan. Harap muat ulang halaman terlebih dahulu.')
+            }
+        });
+    }*/
 </script>
 @stack('extraScript')
 
